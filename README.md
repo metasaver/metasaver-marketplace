@@ -71,6 +71,8 @@ All agents, skills, and commands are immediately available:
 - `coder` - Implementation specialist enforcing MetaSaver coding standards and SOLID principles
 - `devops` - DevOps specialist with Docker, Turborepo, and GitHub Actions expertise
 
+> **Roadmap:** Additional agents planned - `frontend-dev` (general frontend development) and `ux-ui-agent` (UX/UI design and patterns)
+
 **Quality & Testing:**
 - `tester` - Testing specialist with Jest expertise and MetaSaver test patterns
 - `reviewer` - Code review specialist enforcing MetaSaver quality standards and security checklist
@@ -84,6 +86,8 @@ All agents, skills, and commands are immediately available:
 - `root-cause-analyst` - Systematic debugging specialist using evidence-based investigation
 
 ### Domain Agents (9)
+All domain agents support both **Build** and **Audit** modes.
+
 **Backend Services:**
 - `data-service-agent` - REST APIs, CRUD operations, validation, authentication, database integration
 - `integration-service-agent` - External API integration, webhooks, HTTP clients, retry logic, circuit breakers
@@ -100,8 +104,8 @@ All agents, skills, and commands are immediately available:
 - `unit-test-agent` - Jest unit tests, AAA pattern, mocking strategies, coverage requirements
 - `integration-test-agent` - API integration tests, Supertest, database fixtures, end-to-end flows
 
-**Infrastructure:**
-- `monorepo-setup-agent` - New monorepo creation, Turborepo setup, pnpm workspaces, root structure
+**Monorepo:**
+- `monorepo-setup-agent` - Monorepo creation and auditing, Turborepo setup, pnpm workspaces, root structure validation
 
 ### Config Agents (26)
 **Build Tools (8):**
