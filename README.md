@@ -1,5 +1,10 @@
 # MetaSaver Official Marketplace
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/metasaver/claude-marketplace)
+[![Agents](https://img.shields.io/badge/Agents-48-green)](https://github.com/metasaver/claude-marketplace)
+[![Skills](https://img.shields.io/badge/Skills-29-green)](https://github.com/metasaver/claude-marketplace)
+
 Official marketplace for MetaSaver plugins - Professional development tools, agents, and skills for Claude Code.
 
 ## What is MetaSaver?
