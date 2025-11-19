@@ -29,7 +29,7 @@ Cross-cutting skills, domain skills, and complete config skill libraries with te
 Install via the MetaSaver marketplace:
 
 ```bash
-/plugin marketplace add https://github.com/metasaver/metasaver-marketplace
+/plugin marketplace add https://github.com/metasaver/claude-marketplace
 /plugin install @metasaver/core-claude-plugin
 ```
 

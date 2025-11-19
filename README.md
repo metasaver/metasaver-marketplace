@@ -34,7 +34,7 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 ### Step 1: Add the Marketplace
 
 ```bash
-/plugin marketplace add https://github.com/metasaver/metasaver-marketplace
+/plugin marketplace add https://github.com/metasaver/claude-marketplace
 ```
 
 ### Step 2: Install a Plugin
@@ -89,7 +89,7 @@ Intelligent routing and audit commands with complexity scoring and auto-agent sp
 This repository follows the **official Claude Code marketplace standard**:
 
 ```
-metasaver-marketplace/
+claude-marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json        # Required: Marketplace manifest
 ├── plugins/
@@ -115,7 +115,7 @@ metasaver-marketplace/
 
 ## Support & Documentation
 
-- Repository: https://github.com/metasaver/metasaver-marketplace
+- Repository: https://github.com/metasaver/claude-marketplace
 - Plugin Documentation: See `plugins/metasaver-core/README.md`
 - Issues & Feature Requests: Create issues in this repository
 
