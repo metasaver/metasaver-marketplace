@@ -1,0 +1,46 @@
+# ==============================================
+# MetaSaver NPM Registry Configuration Template
+# ==============================================
+# This is a TEMPLATE file - DO NOT edit directly
+#
+# Setup Instructions:
+# 1. Copy .env.example to .env
+# 2. Add your GITHUB_TOKEN to .env
+# 3. Run: pnpm setup:npmrc
+#
+# The setup script will replace ${GITHUB_TOKEN} with your actual token
+# and generate .npmrc (which is gitignored)
+# ==============================================
+
+# ==============================================
+# GitHub Package Registry
+# ==============================================
+# Configure GitHub Packages for @metasaver scope
+@metasaver:registry=https://npm.pkg.github.com
+
+# Authentication token (replaced by setup script)
+# Generate token at: https://github.com/settings/tokens
+# Required scopes: read:packages
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+
+# ==============================================
+# pnpm Configuration
+# ==============================================
+# Hoisting configuration for proper module resolution
+shamefully-hoist=true
+strict-peer-dependencies=false
+auto-install-peers=true
+node-linker=hoisted
+
+# ==============================================
+# Dependency Management
+# ==============================================
+# Use exact versions (no ^ or ~)
+save-exact=true
+save-prefix=''
+
+# ==============================================
+# Optional: Public Registry (npmjs.com)
+# ==============================================
+# Uncomment if you need to explicitly configure public registry
+# registry=https://registry.npmjs.org/

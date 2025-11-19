@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Testing
+coverage/
+.nyc_output/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+__tests__/
+__mocks__/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Documentation (except README)
+docs/
+*.md
+!README.md
+
+# Temporary
+*.tmp
+*.temp
+.cache/
+
+# Prisma (if applicable)
+prisma/*.db
+prisma/*.db-journal

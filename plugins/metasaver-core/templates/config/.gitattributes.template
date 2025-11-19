@@ -1,0 +1,122 @@
+# ========================================
+# Git Attributes Configuration
+# ========================================
+# Ensures consistent line endings and file handling across platforms
+# Critical for Windows WSL compatibility
+
+# ========================================
+# Auto-detection (REQUIRED)
+# ========================================
+* text=auto eol=lf
+
+# ========================================
+# Source Code - Explicit LF
+# ========================================
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.mdx text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.less text eol=lf
+*.html text eol=lf
+*.htm text eol=lf
+*.xml text eol=lf
+*.graphql text eol=lf
+*.gql text eol=lf
+
+# ========================================
+# Shell Scripts - CRITICAL for Unix/WSL
+# ========================================
+*.sh text eol=lf
+.husky/* text eol=lf
+
+# ========================================
+# Windows Scripts - CRLF required
+# ========================================
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# ========================================
+# Docker Files
+# ========================================
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+docker-compose.yml text eol=lf
+docker-compose.yaml text eol=lf
+.dockerignore text eol=lf
+
+# ========================================
+# Configuration Files
+# ========================================
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+.prettierrc text eol=lf
+.prettierignore text eol=lf
+.eslintrc text eol=lf
+.nvmrc text eol=lf
+
+# ========================================
+# Binary Files - No transformation
+# ========================================
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.bmp binary
+*.tiff binary
+*.svg text eol=lf
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.otf binary
+
+# Documents
+*.pdf binary
+
+# Archives
+*.zip binary
+*.gz binary
+*.tar binary
+*.7z binary
+*.rar binary
+
+# Media
+*.mp3 binary
+*.mp4 binary
+*.webm binary
+*.ogg binary
+*.wav binary
+*.flac binary
+
+# ========================================
+# Lock Files - Merge Strategy
+# ========================================
+pnpm-lock.yaml merge=ours linguist-generated
+package-lock.json merge=ours linguist-generated
+yarn.lock merge=ours linguist-generated
+
+# ========================================
+# Generated Files
+# ========================================
+*.min.js linguist-generated
+*.min.css linguist-generated
+*.bundle.js linguist-generated
+dist/** linguist-generated
+build/** linguist-generated
+coverage/** linguist-generated

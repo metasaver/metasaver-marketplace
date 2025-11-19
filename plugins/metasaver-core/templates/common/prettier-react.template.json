@@ -1,0 +1,11 @@
+{
+  "prettier": "@metasaver/core-prettier-config/react",
+  "devDependencies": {
+    "@metasaver/core-prettier-config": "workspace:*",
+    "prettier-plugin-tailwindcss": "^0.6.1"
+  },
+  "scripts": {
+    "prettier": "prettier --check \"*.{ts,js,json,md}\"",
+    "prettier:fix": "prettier --write \"*.{ts,js,json,md}\""
+  }
+}

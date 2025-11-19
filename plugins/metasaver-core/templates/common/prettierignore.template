@@ -1,0 +1,21 @@
+# Prettier Ignore File
+# Root .prettierignore for monorepo
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Database migrations and generated files
+**/prisma/migrations/**
+**/@prisma/client/**
+
+# Template files
+**/*.hbs
+
+# Changelog
+CHANGELOG.md
+
+# ESLint flat config files (not formatted by Prettier)
+eslint.config.js
+**/eslint.config.js

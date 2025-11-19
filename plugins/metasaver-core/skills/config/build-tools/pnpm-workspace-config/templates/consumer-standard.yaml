@@ -1,0 +1,6 @@
+packages:
+  - "apps/*"
+  - "packages/contracts/*"
+  - "packages/database/*"
+  - "services/data/*"
+  - "services/integrations/*"

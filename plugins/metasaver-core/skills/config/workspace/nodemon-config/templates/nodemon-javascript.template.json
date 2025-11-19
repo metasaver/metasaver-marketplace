@@ -1,0 +1,17 @@
+{
+  "watch": ["src"],
+  "ext": "js,json",
+  "ignore": [
+    "node_modules/**",
+    "dist/**",
+    "**/*.test.js",
+    "**/*.spec.js",
+    ".git/**"
+  ],
+  "exec": "node src/index.js",
+  "verbose": false,
+  "delay": 1000,
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

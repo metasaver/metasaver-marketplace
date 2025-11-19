@@ -1,0 +1,68 @@
+{
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.trimAutoWhitespace": true,
+  "[handlebars]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false
+  },
+  "editor.rulers": [80],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "npm.packageManager": "pnpm",
+  "terminal.integrated.env.linux": {
+    "PATH": "${env:PATH}"
+  },
+  "npm.scriptExplorerAction": "open",
+  "npm.runInTerminal": true,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash",
+      "args": ["-l"]
+    }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.turbo": true,
+    "**/coverage": true,
+    "**/*.tsbuildinfo": true,
+    "**/pnpm-lock.yaml": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/build": true
+  },
+  "files.exclude": {
+    "**/.turbo": true,
+    "**/*.tsbuildinfo": true
+  },
+  "editor.inlayHints.enabled": "off",
+  "editor.guides.indentation": false,
+  "editor.guides.bracketPairs": false,
+  "editor.wordWrap": "off",
+  "diffEditor.wordWrap": "off",
+  "workbench.colorCustomizations": {
+    "editor.lineHighlightBorder": "#9fced11f",
+    "editor.lineHighlightBackground": "#1073cf2d"
+  },
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".copilot-commit-message-instructions.md"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "extends": "@metasaver/core-typescript-config/{{TYPESCRIPT_CONFIG_TYPE}}",
+  "compilerOptions": {
+    "outDir": "dist",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"{{#if IS_DATABASE}},
+    "prisma"{{/if}}
+  ]
+}

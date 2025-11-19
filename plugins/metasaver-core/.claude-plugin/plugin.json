@@ -1,0 +1,60 @@
+{
+  "name": "@metasaver/core",
+  "displayName": "MetaSaver Core System",
+  "version": "1.0.0",
+  "description": "Complete agent and skill system for professional monorepo development. Includes 43+ specialized agents, 20+ skills, and intelligent routing commands for Turborepo/pnpm/TypeScript projects.",
+  "author": {
+    "name": "MetaSaver Team"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metasaver/metasaver-marketplace"
+  },
+  "keywords": [
+    "agents",
+    "skills",
+    "monorepo",
+    "turborepo",
+    "pnpm",
+    "typescript",
+    "metasaver",
+    "productivity",
+    "developer-tools"
+  ],
+  "engines": {
+    "claude-code": ">=1.0.0"
+  },
+  "capabilities": {
+    "agents": true,
+    "skills": true,
+    "commands": true,
+    "mcp": false,
+    "hooks": false
+  },
+  "contents": {
+    "agents": ".claude/agents/**/*.md",
+    "skills": ".claude/skills/**/SKILL.md",
+    "commands": ".claude/commands/**/*.md",
+    "settings": ".claude/settings.json"
+  },
+  "pluginMetadata": {
+    "agentCount": 43,
+    "skillCount": 20,
+    "commandCount": 2,
+    "categories": [
+      "Generic Agents: architect, backend-dev, coder, tester, reviewer, business-analyst, project-manager, devops, production-validator, security-engineer, performance-engineer, root-cause-analyst",
+      "Domain Agents: data-service, integration-service, prisma-database, react-component, mfe-host, mfe-remote, unit-test, integration-test, monorepo-setup",
+      "Config Agents: eslint, prettier, typescript, vite, vitest, turbo, pnpm, docker, git, husky, commitlint, gitignore, gitattributes, editorconfig, tailwind, postcss, vscode, github-workflow, nodemon, npmrc, nvmrc, env-example, claude-md, readme, root-package-json, scripts, monorepo-root-structure",
+      "Cross-Cutting Skills: building-blocks-advisor, mcp-coordination, confidence-check, monorepo-navigation, mcp-tool-selection",
+      "Domain Skills: audit-workflow, config-validation, monorepo-audit, remediation-options, workflow-orchestration, repository-detection",
+      "Config Skills: Complete template library for all config agents"
+    ],
+    "mcpDependencies": [
+      "recall (recommended)",
+      "sequential-thinking (recommended)",
+      "serena (recommended)",
+      "Context7 (recommended)"
+    ]
+  }
+}

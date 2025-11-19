@@ -1,0 +1,117 @@
+name: Release (Library)
+
+# For library repos (multi-mono) - publishes packages to npm/GitHub Packages
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version bump type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    name: Release and Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for changelog
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm turbo build
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - name: Run tests
+        run: pnpm turbo test:unit
+
+      - name: Version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Using changesets (recommended)
+          # pnpm changeset version
+
+          # Or manual version bump
+          pnpm --recursive exec -- npm version ${{ github.event.inputs.version }} --no-git-tag-version
+
+          git add .
+          git commit -m "chore: bump version to ${{ github.event.inputs.version }}"
+          git push
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Generate changelog (using conventional-changelog or changesets)
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0)..HEAD >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.event.inputs.version }}-${{ github.run_number }}
+          release_name: Release v${{ github.event.inputs.version }}
+          body: |
+            ## Changes
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            🤖 Auto-generated release
+          draft: false
+          prerelease: false
+
+      - name: Publish to npm
+        run: |
+          # Publish all packages
+          pnpm --filter "./packages/**" publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to GitHub Packages
+        run: |
+          # Configure for GitHub Packages
+          echo "@metasaver:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+
+          # Publish to GitHub Packages
+          pnpm --filter "./packages/**" publish --registry=https://npm.pkg.github.com --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Packages published successfully!"
+          echo "📦 Check npm: https://www.npmjs.com/org/metasaver"
+          echo "📦 Check GitHub: https://github.com/orgs/metasaver/packages"

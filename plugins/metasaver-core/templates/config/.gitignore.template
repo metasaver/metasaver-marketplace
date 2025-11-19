@@ -1,0 +1,102 @@
+# ========================================
+# Dependencies
+# ========================================
+node_modules
+.pnpm-store
+.yarn
+.npm
+jspm_packages
+
+# ========================================
+# Build outputs
+# ========================================
+dist
+build
+out
+.turbo
+.next
+.nuxt
+.cache
+.parcel-cache
+*.tsbuildinfo
+
+# ========================================
+# Environment files - SECURITY CRITICAL
+# ========================================
+.env
+.env.*
+!.env.example
+!.env.template
+.npmrc
+!.npmrc.template
+
+# ========================================
+# Logs
+# ========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ========================================
+# Testing and coverage
+# ========================================
+coverage
+.nyc_output
+test-results
+playwright-report
+*.lcov
+
+# ========================================
+# IDE and editor files
+# ========================================
+.idea
+*.swp
+*.swo
+*~
+*.sublime-workspace
+.project
+.classpath
+.settings
+
+# ========================================
+# Operating system files
+# ========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ========================================
+# Database files
+# ========================================
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# ========================================
+# Cache files
+# ========================================
+.cache
+.eslintcache
+.stylelintcache
+.prettiercache
+*.cache
+
+# ========================================
+# Temporary files
+# ========================================
+tmp
+temp
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig

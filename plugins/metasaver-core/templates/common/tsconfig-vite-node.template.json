@@ -1,0 +1,19 @@
+{
+  "extends": "@metasaver/core-typescript-config/vite-node",
+  "compilerOptions": {
+    "outDir": "dist",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "rootDir": "."
+  },
+  "include": [
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

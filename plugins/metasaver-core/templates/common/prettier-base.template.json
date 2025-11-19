@@ -1,0 +1,10 @@
+{
+  "prettier": "@metasaver/core-prettier-config",
+  "devDependencies": {
+    "@metasaver/core-prettier-config": "workspace:*"
+  },
+  "scripts": {
+    "prettier": "prettier --check \"*.{ts,js,json,md}\"",
+    "prettier:fix": "prettier --write \"*.{ts,js,json,md}\""
+  }
+}

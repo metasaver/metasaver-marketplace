@@ -1,0 +1,14 @@
+{
+  "name": "metasaver-marketplace",
+  "owner": {
+    "name": "MetaSaver Team",
+    "email": "noreply@metasaver.dev"
+  },
+  "plugins": [
+    {
+      "name": "@metasaver/core",
+      "repository": "./plugins/metasaver-core",
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+name: CodeQL Security Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # Run weekly on Mondays at 9:00 UTC
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    permissions:
+      # Required for all workflows
+      security-events: write
+      # Required for workflows in private repositories
+      contents: read
+      actions: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # CodeQL supports JavaScript/TypeScript, Python, C/C++, C#, Go, Java, Ruby, Swift
+        # For this project, we analyze JavaScript/TypeScript
+        language: ["javascript"]
+        # Learn more about CodeQL language support at:
+        # https://aka.ms/codeql-docs/language-support
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Full history is not required for CodeQL
+          fetch-depth: 0
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
+
+          # Use default CodeQL query suite
+          # queries: security-and-quality
+
+          # Advanced configuration
+          # config-file: ./.github/codeql/codeql-config.yml
+
+      # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
+      # For JavaScript/TypeScript, autobuild is not needed
+      # If autobuild fails, remove it and add manual build steps
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      # Manual build steps (if autobuild fails, uncomment and customize)
+      # - name: Setup pnpm
+      #   uses: pnpm/action-setup@v3
+      #   with:
+      #     version: 10
+      #
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      #     cache: 'pnpm'
+      #
+      # - name: Install dependencies
+      #   run: pnpm install --frozen-lockfile
+      #
+      # - name: Build
+      #   run: pnpm turbo build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
+          # Upload SARIF file to GitHub Security tab
+          upload: true
+
+      - name: Upload SARIF as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-sarif-${{ matrix.language }}
+          path: ../results/*.sarif
+          retention-days: 30
+
+      # Optional: Fail the workflow if vulnerabilities are found
+      # Uncomment to enable strict security enforcement
+      # - name: Check for vulnerabilities
+      #   if: always()
+      #   run: |
+      #     if [ -f ../results/*.sarif ]; then
+      #       echo "CodeQL analysis complete. Check Security tab for results."
+      #       # Add custom logic to fail on high-severity findings
+      #     fi
