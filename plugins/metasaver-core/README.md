@@ -1,6 +1,6 @@
 # MetaSaver Core Claude Plugin
 
-Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture with Turborepo, pnpm, and TypeScript.
+Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture. Built for professional multi-monorepo development with Turborepo, pnpm, and TypeScript.
 
 ## What's Included
 

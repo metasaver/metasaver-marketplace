@@ -4,7 +4,7 @@ Official marketplace for MetaSaver plugins - Professional development tools, age
 
 ## What is MetaSaver?
 
-MetaSaver is a comprehensive system of specialized agents, reusable skills, and intelligent routing commands designed to supercharge your development workflow in Claude Code. Built for professional monorepo development with Turborepo, pnpm, and TypeScript.
+MetaSaver is a comprehensive system of specialized agents, reusable skills, and intelligent routing commands designed to supercharge your development workflow in Claude Code. Built for professional multi-monorepo development with Turborepo, pnpm, and TypeScript.
 
 ## Available Plugins
 
