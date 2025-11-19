@@ -6,7 +6,7 @@
   },
   "plugins": [
     {
-      "name": "@metasaver/core",
+      "name": "@metasaver/core-claude-plugin",
       "repository": "./plugins/metasaver-core",
       "version": "1.0.0"
     }

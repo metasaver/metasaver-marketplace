@@ -1,6 +1,6 @@
-# MetaSaver Core System
+# MetaSaver Core Claude Plugin
 
-Complete agent and skill system for professional monorepo development with Turborepo, pnpm, and TypeScript.
+Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture with Turborepo, pnpm, and TypeScript.
 
 ## What's Included
 
@@ -30,7 +30,7 @@ Install via the MetaSaver marketplace:
 
 ```bash
 /plugin marketplace add https://github.com/metasaver/metasaver-marketplace
-/plugin install @metasaver/core
+/plugin install @metasaver/core-claude-plugin
 ```
 
 ## Usage

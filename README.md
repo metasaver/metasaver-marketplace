@@ -8,9 +8,9 @@ MetaSaver is a comprehensive system of specialized agents, reusable skills, and 
 
 ## Available Plugins
 
-### @metasaver/core (v1.0.0)
+### @metasaver/core-claude-plugin (v1.0.0)
 
-Complete agent and skill system for professional monorepo development.
+Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture.
 
 **Includes:**
 - 43+ specialized agents (generic, domain, config)
@@ -44,7 +44,7 @@ Complete agent and skill system for professional monorepo development.
 /plugin install
 
 # Direct installation
-/plugin install @metasaver/core
+/plugin install @metasaver/core-claude-plugin
 ```
 
 ### Step 3: Start Using
@@ -133,4 +133,5 @@ Individual plugins: See respective plugin repositories for license information.
 
 ### v1.0.0 (2025-01-18)
 - Initial marketplace release
-- Added @metasaver/core v1.0.0
+- Added @metasaver/core-claude-plugin v1.0.0
+- Multi-mono (producer-consumer monorepo) architecture support
