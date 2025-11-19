@@ -52,14 +52,14 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 All agents, skills, and commands are immediately available:
 
 ```bash
-# Use intelligent routing
-/ms "Build new REST API with authentication"
+# Use intelligent routing (no quotes needed)
+/ms Build new REST API with authentication
 
 # Run comprehensive audits
 /audit monorepo root
 
-# Spawn specific agents
-Task("backend-dev", "Create user service", "backend-dev")
+# System automatically spawns appropriate agents based on complexity
+# You just describe what you want - agents handle the rest
 ```
 
 ## Plugin Categories

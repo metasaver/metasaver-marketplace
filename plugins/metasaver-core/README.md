@@ -37,6 +37,22 @@ Install via the MetaSaver marketplace:
 
 All agents, skills, and commands are immediately available in Claude Code.
 
+```bash
+# Intelligent routing - just describe what you want
+/ms add authentication to the user API
+/ms fix the TypeScript errors in services
+
+# Comprehensive audits
+/audit eslint.config.js
+/audit check all docker configs
+
+# System automatically:
+- Analyzes complexity
+- Spawns appropriate agents
+- Coordinates multi-agent workflows
+- No manual agent spawning needed
+```
+
 See the main marketplace README for complete documentation.
 
 ## License
