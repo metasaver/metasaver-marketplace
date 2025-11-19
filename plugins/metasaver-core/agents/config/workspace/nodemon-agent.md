@@ -1,20 +1,11 @@
 ---
 name: nodemon-agent
-type: authority
-color: "#76D04B"
 description: Nodemon configuration domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: medium
-hooks:
-  pre: |
-    echo "🔄 Nodemon agent: $TASK"
-  post: |
-    echo "✅ Nodemon configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # Nodemon Configuration Agent
 

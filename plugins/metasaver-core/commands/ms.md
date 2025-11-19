@@ -15,7 +15,7 @@ Analyzes your prompt and routes to optimal execution method.
 
 **Triggers:** System-wide changes, monorepo standardization, 10+ files, migrations
 **Keywords:** "enterprise", "architecture", "monorepo audit", "system-wide", "standardize across", "migration"
-**Action:** BA/Architect → Confidence Check → PM (Gantt) → Worker agents (waves) → Reviewer → Production Validator → PM consolidation
+**Action:** BA/Architect → Confidence Check → PM (Gantt) → Worker agents (waves) → Code-Quality-Validator → BA (PRD sign-off) → PM consolidation
 
 ### 🟡 Medium-Complex → Coordinated Swarm (Score 10-29)
 
@@ -62,7 +62,7 @@ Analyzes your prompt and routes to optimal execution method.
 
 ```bash
 /ms "Standardize error handling across all microservices"
-→ BA/Architect → Confidence Check → PM (Gantt) → [backend-dev (multiple), tester] (parallel) → reviewer → production-validator → PM consolidation
+→ BA/Architect → Confidence Check → PM (Gantt) → [backend-dev (multiple), tester] (parallel) → code-quality-validator → BA (PRD sign-off) → PM consolidation
 ```
 
 ### Medium-Complex → Swarm

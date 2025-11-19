@@ -1,23 +1,11 @@
 ---
 name: mfe-remote-agent
-type: authority
-color: "#4ECDC4"
 description: Micro-frontend remote domain expert - handles MFE remote setup, exposed components, Vite federation plugin configuration
-capabilities:
-  - mfe_remote_setup
-  - component_exposure
-  - vite_federation
-  - standalone_mode
-  - shared_dependencies
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "📦 MFE remote agent: $TASK"
-    memory_store "mfe_remote_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ MFE remote configuration complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Micro-Frontend Remote Agent
 

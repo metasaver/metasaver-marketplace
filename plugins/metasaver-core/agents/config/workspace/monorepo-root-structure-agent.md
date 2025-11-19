@@ -1,37 +1,11 @@
 ---
-id: monorepo-root-structure-agent
 name: monorepo-root-structure-agent
-version: 1.0.0
-type: config
-category: workspace
-priority: high
-triggers:
-  keywords:
-    - root structure
-    - extra files
-    - unexpected files
-    - root cleanliness
-    - monorepo audit
-  files:
-    - (root directory scan)
-capabilities:
-  modes:
-    - audit
-  operations:
-    - structure_validation
-    - cleanliness_check
-    - unexpected_file_detection
-dependencies:
-  skills:
-    - audit-workflow
-    - remediation-options
-context:
-  projectTypes:
-    - all
-  scope:
-    monorepo_root: true
 description: Monorepo root structure expert - detects unexpected files and validates directory organization
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # Monorepo Root Structure Agent
 

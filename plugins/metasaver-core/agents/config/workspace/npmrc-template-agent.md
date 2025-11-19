@@ -1,20 +1,11 @@
 ---
 name: npmrc-template-agent
-type: authority
-color: "#cc3534"
 description: NPM registry template (.npmrc.template) domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "📦 .npmrc.template agent: $TASK"
-  post: |
-    echo "✅ .npmrc.template configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # NPM Registry Template (.npmrc.template) Agent
 

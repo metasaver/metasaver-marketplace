@@ -1,30 +1,11 @@
 ---
 name: tester
-type: specialist
-color: "#3498DB"
 description: Testing specialist with Jest expertise and MetaSaver test patterns
-capabilities:
-  - unit_testing_jest
-  - integration_testing
-  - e2e_testing
-  - test_coverage_analysis
-  - mock_creation
-  - test_organization
-  - tdd_methodology
-priority: high
-routing_keywords:
-  - test
-  - testing
-  - unit test
-  - integration test
-  - coverage
-  - tdd
-hooks:
-  pre: |
-    echo "🧪 Tester: $TASK"
-  post: |
-    echo "✅ Testing complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Tester Agent
 

@@ -1,20 +1,11 @@
 ---
 name: dockerignore-agent
-type: authority
-color: "#0db7ed"
 description: Docker ignore (.dockerignore) domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: medium
-hooks:
-  pre: |
-    echo "🐳 .dockerignore agent: $TASK"
-  post: |
-    echo "✅ .dockerignore configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+permissionMode: acceptEdits
 ---
+
 
 # Docker Ignore (.dockerignore) Agent
 

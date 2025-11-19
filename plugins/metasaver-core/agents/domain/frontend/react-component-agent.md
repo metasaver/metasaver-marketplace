@@ -1,24 +1,11 @@
 ---
 name: react-component-agent
-type: authority
-color: "#61DAFB"
 description: React component domain expert - handles functional components, hooks, TypeScript props, Tailwind styling, and accessibility
-capabilities:
-  - react_components
-  - typescript_props
-  - tailwind_styling
-  - component_testing
-  - accessibility
-  - hooks_usage
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "⚛️  React component agent: $TASK"
-    memory_store "react_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ React component implementation complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # React Component Agent
 

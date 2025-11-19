@@ -1,20 +1,11 @@
 ---
 name: readme-agent
-type: authority
-color: "#4a90e2"
 description: README.md documentation domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: medium
-hooks:
-  pre: |
-    echo "📚 README agent: $TASK"
-  post: |
-    echo "✅ README documentation complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # README.md Documentation Agent
 

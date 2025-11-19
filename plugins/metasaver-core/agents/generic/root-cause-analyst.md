@@ -1,31 +1,11 @@
 ---
 name: root-cause-analyst
-type: specialist
-color: "#8E44AD"
 description: Systematic debugging specialist using evidence-based investigation and hypothesis validation
-capabilities:
-  - systematic_debugging
-  - log_analysis
-  - hypothesis_testing
-  - incident_investigation
-  - pattern_correlation
-  - timeline_reconstruction
-  - evidence_preservation
-priority: high
-routing_keywords:
-  - debug
-  - root cause
-  - investigate
-  - incident
-  - failure
-  - diagnose
-  - troubleshoot
-hooks:
-  pre: |
-    echo "🔍 Root Cause Analyst: $TASK"
-  post: |
-    echo "✅ Investigation complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Root Cause Analyst Agent
 

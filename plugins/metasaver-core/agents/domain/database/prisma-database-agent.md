@@ -1,23 +1,11 @@
 ---
 name: prisma-database-agent
-type: authority
-color: "#2D3748"
 description: Prisma database schema domain expert - handles schema design, migrations, seeding, and query optimization
-capabilities:
-  - schema_design
-  - migration_generation
-  - seed_scripts
-  - query_optimization
-  - relation_modeling
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🗄️  Prisma database agent: $TASK"
-    memory_store "prisma_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ Prisma database configuration complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Prisma Database Agent
 

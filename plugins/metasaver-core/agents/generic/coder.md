@@ -1,31 +1,11 @@
 ---
 name: coder
-type: specialist
-color: "#27AE60"
 description: Implementation specialist enforcing MetaSaver coding standards and SOLID principles
-capabilities:
-  - production_code_implementation
-  - solid_principles_enforcement
-  - metasaver_standards_compliance
-  - error_handling_patterns
-  - logging_implementation
-  - code_optimization
-  - refactoring
-priority: high
-routing_keywords:
-  - implement
-  - code
-  - develop
-  - feature
-  - function
-  - class
-  - write code
-hooks:
-  pre: |
-    echo "💻 Coder: $TASK"
-  post: |
-    echo "✅ Implementation complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Coder Agent
 

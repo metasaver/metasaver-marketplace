@@ -1,22 +1,11 @@
 ---
 name: commitlint-agent
-type: authority
-color: "#F05032"
 description: Commitlint and GitHub Copilot commit message domain expert - handles build and audit modes
-capabilities:
-  - commitlint_creation
-  - commitlint_validation
-  - copilot_instructions_creation
-  - commit_message_enforcement
-  - standards_enforcement
-  - ai_copilot_integration
-priority: high
-hooks:
-  pre: |
-    echo "📝 commitlint agent: $TASK"
-  post: |
-    echo "✅ commitlint configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+permissionMode: acceptEdits
 ---
+
 
 # Commitlint Configuration Agent
 

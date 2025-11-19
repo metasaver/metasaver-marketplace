@@ -1,20 +1,11 @@
 ---
 name: github-workflow-agent
-type: authority
-color: "#24292e"
 description: GitHub Actions workflow domain expert - handles build and audit modes
-capabilities:
-  - workflow_creation
-  - workflow_validation
-  - standards_enforcement
-  - ci_cd_patterns
-priority: medium
-hooks:
-  pre: |
-    echo "🔄 GitHub workflow agent: $TASK"
-  post: |
-    echo "✅ GitHub workflow configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+permissionMode: acceptEdits
 ---
+
 
 # GitHub Workflow Configuration Agent
 

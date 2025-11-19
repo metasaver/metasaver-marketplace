@@ -1,21 +1,11 @@
 ---
 name: vscode-agent
-type: authority
-color: "#007ACC"
 description: VS Code settings domain expert - handles build, audit, and file cleanup modes
-capabilities:
-  - settings_creation
-  - settings_validation
-  - file_cleanup_detection
-  - standards_enforcement
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🔵 VS Code agent: $TASK"
-  post: |
-    echo "✅ VS Code settings complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # VS Code Settings Configuration Agent
 

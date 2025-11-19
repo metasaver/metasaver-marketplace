@@ -1,20 +1,11 @@
 ---
 name: nvmrc-agent
-type: authority
-color: "#68A063"
 description: Node version (.nvmrc) domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: low
-hooks:
-  pre: |
-    echo "📦 .nvmrc agent: $TASK"
-  post: |
-    echo "✅ .nvmrc configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # Node Version (.nvmrc) Agent
 

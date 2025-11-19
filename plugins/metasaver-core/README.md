@@ -6,8 +6,8 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 
 ### 43+ Specialized Agents
 
-**Generic Agents (12):**
-- architect, backend-dev, coder, tester, reviewer, business-analyst, project-manager, devops, production-validator, security-engineer, performance-engineer, root-cause-analyst
+**Generic Agents (13):**
+- architect, backend-dev, coder, tester, reviewer, business-analyst, project-manager, devops, code-quality-validator, agent-author, security-engineer, performance-engineer, root-cause-analyst
 
 **Domain Agents (9):**
 - data-service-agent, integration-service-agent, prisma-database-agent, react-component-agent, mfe-host-agent, mfe-remote-agent, unit-test-agent, integration-test-agent, monorepo-setup-agent
@@ -22,6 +22,7 @@ Cross-cutting skills, domain skills, and complete config skill libraries with te
 ### Intelligent Routing Commands
 
 - `/audit` - Natural language audit command
+- `/build` - Build new features with architecture validation
 - `/ms` - MetaSaver intelligent command router
 
 ## Installation
@@ -38,13 +39,17 @@ Install via the MetaSaver marketplace:
 All agents, skills, and commands are immediately available in Claude Code.
 
 ```bash
-# Intelligent routing - just describe what you want
-/ms add authentication to the user API
-/ms fix the TypeScript errors in services
+# Build new features with architecture validation
+/build JWT authentication with refresh tokens
+/build React dashboard with charts
 
 # Comprehensive audits
 /audit eslint.config.js
 /audit check all docker configs
+
+# Intelligent routing for any task
+/ms add authentication to the user API
+/ms fix the TypeScript errors in services
 
 # System automatically:
 - Analyzes complexity

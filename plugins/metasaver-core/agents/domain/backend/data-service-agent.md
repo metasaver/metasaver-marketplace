@@ -1,24 +1,11 @@
 ---
 name: data-service-agent
-type: authority
-color: "#10B981"
 description: Data service API domain expert - handles REST APIs, CRUD operations, validation, authentication, and database integration
-capabilities:
-  - rest_api_design
-  - crud_operations
-  - request_validation
-  - jwt_authentication
-  - error_handling
-  - prisma_integration
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🌐 Data service agent: $TASK"
-    memory_store "data_service_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ Data service implementation complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Data Service Agent
 

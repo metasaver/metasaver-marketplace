@@ -1,24 +1,11 @@
 ---
 name: mfe-host-agent
-type: authority
-color: "#FF6B6B"
 description: Micro-frontend host domain expert - handles MFE host setup, module federation, remote loading, and shared dependencies
-capabilities:
-  - mfe_host_setup
-  - module_federation
-  - remote_loading
-  - shared_dependencies
-  - routing_integration
-  - error_boundaries
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🏠 MFE host agent: $TASK"
-    memory_store "mfe_host_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ MFE host configuration complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Micro-Frontend Host Agent
 

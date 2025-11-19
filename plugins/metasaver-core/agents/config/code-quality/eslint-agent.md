@@ -1,60 +1,11 @@
 ---
-id: eslint-agent
 name: eslint-agent
-version: 1.0.0
-type: config
-category: code-quality
-priority: high
-triggers:
-  keywords:
-    - eslint
-    - lint config
-    - eslint.config.js
-    - linting
-    - code quality
-  files:
-    - eslint.config.js
-    - .eslintrc*
-    - .eslintrc.js
-    - .eslintrc.json
-  commands:
-    - pnpm lint
-    - npm run lint
-    - eslint
-capabilities:
-  modes:
-    - audit
-    - build
-    - fix
-  operations:
-    - config_creation
-    - config_validation
-    - standards_enforcement
-    - monorepo_coordination
-dependencies:
-  skills:
-    - audit-workflow
-    - remediation-options
-    - repository-detection
-  templates:
-    - .claude/templates/common/eslint.template.js
-  agents:
-    - prettier-agent
-    - typescript-agent
-context:
-  projectTypes:
-    - all
-  scope:
-    single_file: true
-    package: true
-    monorepo: true
 description: ESLint flat config domain expert - handles build and audit modes
-hooks:
-  pre: |
-    echo "🔍 ESLint agent: $TASK"
-  post: |
-    echo "✅ ESLint configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*,eslint:*,prettier:*)
+permissionMode: acceptEdits
 ---
+
 
 # ESLint Configuration Agent
 

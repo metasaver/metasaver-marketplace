@@ -1,20 +1,11 @@
 ---
 name: scripts-agent
-type: authority
-color: "#2ecc71"
 description: Scripts directory (/scripts) domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "📜 Scripts agent: $TASK"
-  post: |
-    echo "✅ Scripts directory complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # Scripts Directory Agent
 

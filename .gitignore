@@ -1,0 +1,65 @@
+.serena/
+cleanup-agents.js
+node_modules/
+.DS_Store
+
+# Environment files - SECURITY CRITICAL
+.env
+.env.*
+!.env.example
+!.env.template
+
+# NPM configuration - SECURITY CRITICAL
+.npmrc
+!.npmrc.template
+
+# Build outputs
+dist/
+build/
+out/
+.turbo/
+.next/
+coverage/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Cache files
+.cache/
+.eslintcache
+.stylelintcache
+.prettiercache
+
+# Database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Security audit reports (generated)
+SECURITY_*.md
+SECURITY_*.txt
+AUDIT_*.md
+REMEDIATION_*.md

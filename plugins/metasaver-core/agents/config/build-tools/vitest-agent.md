@@ -1,20 +1,11 @@
 ---
 name: vitest-agent
-type: authority
-color: "#729B1B"
 description: Vitest configuration domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🧪 Vitest agent: $TASK"
-  post: |
-    echo "✅ Vitest configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+permissionMode: acceptEdits
 ---
+
 
 # Vitest Configuration Agent
 

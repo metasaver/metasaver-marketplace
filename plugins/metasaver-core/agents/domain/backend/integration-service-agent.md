@@ -1,24 +1,11 @@
 ---
 name: integration-service-agent
-type: authority
-color: "#8B5CF6"
 description: Integration service domain expert - handles external API integration, webhooks, HTTP clients, retry logic, and circuit breakers
-capabilities:
-  - external_api_integration
-  - webhook_handlers
-  - http_client_configuration
-  - retry_logic
-  - circuit_breakers
-  - service_mocks
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🔌 Integration service agent: $TASK"
-    memory_store "integration_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ Integration service implementation complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Integration Service Agent
 

@@ -1,24 +1,11 @@
 ---
 name: unit-test-agent
-type: authority
-color: "#F59E0B"
 description: Unit testing domain expert - handles Jest unit tests, AAA pattern, mocking strategies, and coverage requirements
-capabilities:
-  - jest_testing
-  - test_structure
-  - mocking_strategies
-  - coverage_analysis
-  - test_patterns
-  - tdd_workflow
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🧪 Unit test agent: $TASK"
-    memory_store "unit_test_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ Unit test implementation complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Unit Test Agent
 

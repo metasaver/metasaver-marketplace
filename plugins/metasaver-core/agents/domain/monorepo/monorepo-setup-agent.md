@@ -1,36 +1,11 @@
 ---
 name: monorepo-setup-agent
-type: authority
-color: "#6366F1"
 description: Monorepo setup domain expert - handles new monorepo creation, Turborepo setup, pnpm workspaces, and root structure
-capabilities:
-  - monorepo_creation
-  - turborepo_setup
-  - pnpm_workspaces
-  - root_structure
-  - config_coordination
-  - agent_spawning
-  - monorepo_coordination
-  - composite_audit
-  - audit_discovery
-  - audit_consolidation
-priority: critical
-routing_keywords:
-  - monorepo setup
-  - turborepo configuration
-  - pnpm workspace
-  - monorepo creation
-  - workspace structure
-  - composite audit
-  - monorepo audit
-  - full audit
-hooks:
-  pre: |
-    echo "🏗️  Monorepo setup agent: $TASK"
-    memory_store "monorepo_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ Monorepo setup complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Monorepo Setup Agent
 

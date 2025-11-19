@@ -1,20 +1,11 @@
 ---
 name: tailwind-agent
-type: authority
-color: "#06B6D4"
 description: Tailwind CSS configuration domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: medium
-hooks:
-  pre: |
-    echo "🎨 Tailwind agent: $TASK"
-  post: |
-    echo "✅ Tailwind configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+permissionMode: acceptEdits
 ---
+
 
 # Tailwind CSS Configuration Agent
 

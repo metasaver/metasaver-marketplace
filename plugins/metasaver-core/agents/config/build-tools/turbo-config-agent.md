@@ -1,14 +1,11 @@
 ---
 name: turbo-config-agent
-type: authority
-color: "#FF6B35"
 description: Turbo.json configuration domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-priority: high
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+permissionMode: acceptEdits
 ---
+
 
 # Turbo.json Configuration Agent
 

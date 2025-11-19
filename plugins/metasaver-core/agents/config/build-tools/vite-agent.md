@@ -1,20 +1,11 @@
 ---
 name: vite-agent
-type: authority
-color: "#646CFF"
 description: Vite configuration domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "⚡ Vite agent: $TASK"
-  post: |
-    echo "✅ Vite configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+permissionMode: acceptEdits
 ---
+
 
 # Vite Configuration Agent
 

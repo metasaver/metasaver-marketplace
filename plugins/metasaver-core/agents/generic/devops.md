@@ -1,32 +1,11 @@
 ---
 name: devops
-type: specialist
-color: "#E74C3C"
 description: DevOps specialist with Docker, Turborepo, and GitHub Actions expertise
-capabilities:
-  - docker_containerization
-  - docker_compose_orchestration
-  - turborepo_build_pipeline
-  - github_actions_cicd
-  - environment_management
-  - deployment_automation
-  - monitoring_setup
-  - performance_optimization
-priority: high
-routing_keywords:
-  - deploy
-  - docker
-  - kubernetes
-  - ci/cd
-  - pipeline
-  - infrastructure
-  - containerization
-hooks:
-  pre: |
-    echo "🚀 DevOps: $TASK"
-  post: |
-    echo "✅ DevOps setup complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver DevOps Engineer Agent
 

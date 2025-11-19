@@ -1,39 +1,11 @@
 ---
-id: husky-agent
 name: husky-git-hooks-agent
-version: 1.0.0
-type: config
-category: version-control
-priority: high
-triggers:
-  keywords:
-    - husky
-    - git hooks
-    - pre-commit
-    - commit-msg
-  files:
-    - .husky/*
-capabilities:
-  modes:
-    - audit
-    - build
-  operations:
-    - config_creation
-    - config_validation
-    - standards_enforcement
-dependencies:
-  skills:
-    - audit-workflow
-    - remediation-options
-context:
-  projectTypes:
-    - all
-  scope:
-    single_file: true
-    package: true
-    monorepo: true
 description: Husky git hooks domain expert - handles build and audit modes
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+permissionMode: acceptEdits
 ---
+
 
 # Husky Git Hooks Configuration Agent
 

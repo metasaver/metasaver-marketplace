@@ -1,31 +1,11 @@
 ---
 name: architect
-type: authority
-color: "#9B59B6"
 description: Architecture design specialist with MetaSaver standards and SPARC methodology
-capabilities:
-  - architecture_design
-  - technology_stack_decisions
-  - solid_principles
-  - design_pattern_selection
-  - monorepo_architecture
-  - scalability_planning
-  - sparc_methodology
-  - plan_creation
-priority: high
-routing_keywords:
-  - architecture
-  - design system
-  - system design
-  - patterns
-  - scalability
-  - sparc
-hooks:
-  pre: |
-    echo "🏛️ Architect: $TASK"
-  post: |
-    echo "✅ Architecture design complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Architect Agent
 

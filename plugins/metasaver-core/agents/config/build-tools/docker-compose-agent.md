@@ -1,20 +1,11 @@
 ---
 name: docker-compose-agent
-type: authority
-color: "#0db7ed"
 description: Docker Compose (docker-compose.yml) domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: medium
-hooks:
-  pre: |
-    echo "🐳 docker-compose agent: $TASK"
-  post: |
-    echo "✅ docker-compose configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+permissionMode: acceptEdits
 ---
+
 
 # Docker Compose (docker-compose.yml) Agent
 

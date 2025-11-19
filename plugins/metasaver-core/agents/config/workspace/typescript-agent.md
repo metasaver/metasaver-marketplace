@@ -1,39 +1,11 @@
 ---
-id: typescript-agent
 name: typescript-configuration-agent
-version: 1.0.0
-type: config
-category: workspace
-priority: high
-triggers:
-  keywords:
-    - typescript
-    - tsconfig
-    - tsc
-    - type checking
-  files:
-    - tsconfig*.json
-capabilities:
-  modes:
-    - audit
-    - build
-  operations:
-    - config_creation
-    - config_validation
-    - standards_enforcement
-dependencies:
-  skills:
-    - audit-workflow
-    - remediation-options
-context:
-  projectTypes:
-    - all
-  scope:
-    single_file: true
-    package: true
-    monorepo: true
 description: TypeScript configuration domain expert - handles build and audit modes
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # TypeScript Configuration Agent
 

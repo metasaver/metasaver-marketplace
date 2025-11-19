@@ -1,20 +1,11 @@
 ---
 name: editorconfig-agent
-type: authority
-color: "#E34C26"
 description: EditorConfig domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: medium
-hooks:
-  pre: |
-    echo "⚙️ EditorConfig agent: $TASK"
-  post: |
-    echo "✅ EditorConfig configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*,eslint:*,prettier:*)
+permissionMode: acceptEdits
 ---
+
 
 # EditorConfig Configuration Agent
 

@@ -1,36 +1,11 @@
 ---
 name: agent-author
-type: authority
-color: "#9f7aea"
 description: Meta-level agent specialist for creating, refactoring, and validating .claude/agents/ and .claude/skills/ files. Use for ANY work on agent system documentation, NOT for user application code.
-capabilities:
-  - agent_creation
-  - skill_creation
-  - agent_refactoring
-  - agent_validation
-  - prompt_engineering
-  - standards_enforcement
-  - agent_documentation
-  - skill_documentation
-priority: high
-routing_keywords:
-  - "fix agent"
-  - "update agent"
-  - "create agent"
-  - "refactor agent"
-  - "validate agent"
-  - "create skill"
-  - "update skill"
-  - ".claude/agents/"
-  - ".claude/skills/"
-  - "agent documentation"
-  - "skill documentation"
-hooks:
-  pre: |
-    echo "📝 agent-author: $TASK"
-  post: |
-    echo "✅ Agent/skill authoring complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # Agent Author Agent
 

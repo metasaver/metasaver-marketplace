@@ -1,40 +1,11 @@
 ---
-id: claude-md-agent
 name: claude-md-configuration-agent
-version: 1.0.0
-type: config
-category: workspace
-priority: high
-triggers:
-  keywords:
-    - claude.md
-    - ai assistant config
-    - project instructions
-    - codebase guidance
-  files:
-    - CLAUDE.md
-capabilities:
-  modes:
-    - audit
-    - build
-  operations:
-    - config_creation
-    - config_validation
-    - standards_enforcement
-    - multi_mono_awareness
-dependencies:
-  skills:
-    - audit-workflow
-    - remediation-options
-context:
-  projectTypes:
-    - all
-  scope:
-    single_file: true
-    package: false
-    monorepo: true
 description: CLAUDE.md configuration domain expert - handles build and audit modes with multi-mono architecture awareness
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # CLAUDE.md Configuration Agent
 

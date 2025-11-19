@@ -1,31 +1,11 @@
 ---
 name: security-engineer
-type: specialist
-color: "#C0392B"
 description: Security assessment specialist with OWASP expertise and threat modeling
-capabilities:
-  - vulnerability_scanning
-  - threat_modeling
-  - owasp_compliance
-  - authentication_review
-  - data_protection_audit
-  - security_architecture
-  - penetration_testing_guidance
-priority: critical
-routing_keywords:
-  - security
-  - vulnerability
-  - owasp
-  - threat
-  - penetration test
-  - audit security
-  - compliance
-hooks:
-  pre: |
-    echo "🔒 Security Engineer: $TASK"
-  post: |
-    echo "✅ Security assessment complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Security Engineer Agent
 

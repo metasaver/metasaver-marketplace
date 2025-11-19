@@ -1,40 +1,11 @@
 ---
-id: pnpm-workspace-agent
 name: pnpm-workspace-configuration-agent
-version: 1.0.0
-type: config
-category: build-tools
-priority: high
-triggers:
-  keywords:
-    - pnpm
-    - workspace
-    - pnpm-workspace.yaml
-    - monorepo
-  files:
-    - pnpm-workspace.yaml
-    - .npmrc.template
-capabilities:
-  modes:
-    - audit
-    - build
-  operations:
-    - config_creation
-    - config_validation
-    - standards_enforcement
-dependencies:
-  skills:
-    - audit-workflow
-    - remediation-options
-context:
-  projectTypes:
-    - all
-  scope:
-    single_file: true
-    package: true
-    monorepo: true
 description: pnpm workspace domain expert - handles build and audit modes
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+permissionMode: acceptEdits
 ---
+
 
 # pnpm-workspace Configuration Agent
 

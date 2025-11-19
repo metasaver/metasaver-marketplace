@@ -1,26 +1,11 @@
 ---
 name: gitattributes-agent
-type: authority
-color: "#4A5568"
 description: Git attributes (.gitattributes) domain expert - handles build and audit modes
-capabilities:
-  - gitattributes_creation
-  - gitattributes_validation
-  - line_ending_enforcement
-  - monorepo_coordination
-priority: medium
-routing_keywords:
-  - gitattributes
-  - git attributes
-  - line endings
-  - eol
-  - text normalization
-hooks:
-  pre: |
-    echo "📝 Gitattributes agent: $TASK"
-  post: |
-    echo "✅ Git attributes configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+permissionMode: acceptEdits
 ---
+
 
 # Git Attributes Configuration Agent
 

@@ -1,22 +1,11 @@
 ---
 name: project-manager
-type: coordinator
-color: "#8B4789"
 description: Resource scheduler that transforms plans into Gantt charts and consolidates execution results
-capabilities:
-  - execution_planning
-  - gantt_chart_creation
-  - result_consolidation
-  - quality_control
-  - resource_optimization
-priority: critical
-hooks:
-  pre: |
-    echo "📊 Project Manager: Scheduling resources and planning execution"
-    memory_store "project_manager_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ Resource scheduling complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # Project Manager - Resource Scheduler
 

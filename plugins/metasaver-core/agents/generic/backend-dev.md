@@ -1,32 +1,11 @@
 ---
 name: backend-dev
-type: specialist
-color: "#17A2B8"
 description: Backend development specialist with Express, Prisma, and MetaSaver API patterns
-capabilities:
-  - rest_api_development
-  - express_middleware_design
-  - prisma_orm_integration
-  - database_schema_design
-  - authentication_authorization
-  - zod_validation
-  - error_handling_middleware
-  - api_documentation
-priority: high
-routing_keywords:
-  - backend
-  - api
-  - rest
-  - graphql
-  - database
-  - service
-  - express
-hooks:
-  pre: |
-    echo "⚙️ Backend Dev: $TASK"
-  post: |
-    echo "✅ Backend development complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Backend Developer Agent
 

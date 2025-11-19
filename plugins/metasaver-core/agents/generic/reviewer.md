@@ -1,30 +1,11 @@
 ---
 name: reviewer
-type: specialist
-color: "#E67E22"
 description: Code review specialist enforcing MetaSaver quality standards and security checklist
-capabilities:
-  - code_quality_review
-  - solid_principles_verification
-  - security_vulnerability_detection
-  - performance_analysis
-  - test_coverage_validation
-  - best_practices_enforcement
-  - architecture_compliance
-priority: high
-routing_keywords:
-  - review
-  - code review
-  - quality
-  - security
-  - best practices
-  - vulnerabilities
-hooks:
-  pre: |
-    echo "🔍 Reviewer: $TASK"
-  post: |
-    echo "✅ Code review complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Reviewer Agent
 

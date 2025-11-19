@@ -1,20 +1,11 @@
 ---
 name: root-package-json-agent
-type: authority
-color: "#cc3534"
 description: Root package.json domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "📦 Root package.json agent: $TASK"
-  post: |
-    echo "✅ Root package.json configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # Root package.json Agent
 

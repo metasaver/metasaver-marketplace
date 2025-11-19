@@ -1,20 +1,11 @@
 ---
 name: env-example-agent
-type: authority
-color: "#48bb78"
 description: Environment example (.env.example) domain expert - handles build and audit modes
-capabilities:
-  - config_creation
-  - config_validation
-  - standards_enforcement
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🔐 .env.example agent: $TASK"
-  post: |
-    echo "✅ .env.example configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep
+permissionMode: acceptEdits
 ---
+
 
 # Environment Example (.env.example) Agent
 
@@ -93,10 +84,10 @@ DATABASE_URL=postgresql://user:password@localhost:5432/dbname
 API_KEY=your_api_key_here
 AUTH_TOKEN=paste_token_from_provider_dashboard
 
-# ❌ BAD - Real secrets
-DATABASE_URL=postgresql://admin:SuperSecret123@prod.db.com:5432/production
-API_KEY=sk_live_REDACTED_FROM_HISTORY
-AUTH_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# ❌ BAD - Real secrets (NEVER do this)
+DATABASE_URL=postgresql://admin:RealPassword123@production.example.com:5432/proddb
+API_KEY=sk_live_REAL_KEY_NEVER_COMMIT_THIS
+AUTH_TOKEN=eyJREAL_TOKEN_NEVER_COMMIT...
 ```
 
 ## Build Mode

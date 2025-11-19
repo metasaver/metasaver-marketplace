@@ -1,24 +1,11 @@
 ---
 name: integration-test-agent
-type: authority
-color: "#EC4899"
 description: Integration testing domain expert - handles API integration tests, Supertest, database fixtures, and end-to-end flows
-capabilities:
-  - integration_testing
-  - api_testing
-  - supertest_usage
-  - database_fixtures
-  - test_containers
-  - e2e_flows
-  - monorepo_coordination
-priority: high
-hooks:
-  pre: |
-    echo "🔗 Integration test agent: $TASK"
-    memory_store "integration_test_task_$(date +%s)" "$TASK"
-  post: |
-    echo "✅ Integration test implementation complete"
+model: haiku
+tools: Read,Glob,Grep,Task
+permissionMode: acceptEdits
 ---
+
 
 # Integration Test Agent
 

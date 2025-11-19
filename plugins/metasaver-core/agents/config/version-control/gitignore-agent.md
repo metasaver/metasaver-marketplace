@@ -1,25 +1,11 @@
 ---
 name: gitignore-agent
-type: authority
-color: "#2D3748"
 description: Git ignore (.gitignore) domain expert - handles build and audit modes
-capabilities:
-  - gitignore_creation
-  - gitignore_validation
-  - pattern_enforcement
-  - monorepo_coordination
-priority: medium
-routing_keywords:
-  - gitignore
-  - git ignore
-  - ignore patterns
-  - exclude files
-hooks:
-  pre: |
-    echo "🚫 Gitignore agent: $TASK"
-  post: |
-    echo "✅ Git ignore configuration complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+permissionMode: acceptEdits
 ---
+
 
 # Git Ignore Configuration Agent
 

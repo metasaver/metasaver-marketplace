@@ -2,13 +2,35 @@
   "name": "claude-marketplace",
   "owner": {
     "name": "MetaSaver Team",
-    "email": "noreply@metasaver.dev"
+    "email": "info@metasaver.dev",
+    "url": "https://github.com/metasaver"
+  },
+  "metadata": {
+    "description": "Marketplace for Metasaver plugins for advanced AI coding",
+    "version": "0.5.0"
   },
   "plugins": [
     {
-      "name": "@metasaver/core-claude-plugin",
-      "repository": "./plugins/metasaver-core",
-      "version": "1.0.0"
+      "name": "core-claude-plugin",
+      "source": "./plugins/metasaver-core",
+      "description": "Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture. Features 43+ specialized agents, 20+ skills, and intelligent routing commands. Built for Turborepo/pnpm/TypeScript projects with Prisma, React, and micro-frontend support.",
+      "version": "0.5.0",
+      "category": "multi-mono development",
+      "keywords": [
+        "agents",
+        "skills",
+        "monorepo",
+        "multi-mono",
+        "producer-consumer",
+        "turborepo",
+        "pnpm",
+        "typescript",
+        "metasaver",
+        "productivity",
+        "developer-tools",
+        "prisma",
+        "micro-frontend"
+      ]
     }
   ]
 }

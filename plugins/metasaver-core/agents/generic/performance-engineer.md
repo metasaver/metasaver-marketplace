@@ -1,31 +1,11 @@
 ---
 name: performance-engineer
-type: specialist
-color: "#F39C12"
 description: Performance optimization specialist using data-driven profiling and metrics-based improvements
-capabilities:
-  - performance_profiling
-  - bottleneck_identification
-  - query_optimization
-  - bundle_size_analysis
-  - core_web_vitals
-  - memory_optimization
-  - load_testing
-priority: high
-routing_keywords:
-  - performance
-  - optimize
-  - slow
-  - bottleneck
-  - profiling
-  - latency
-  - bundle size
-hooks:
-  pre: |
-    echo "⚡ Performance Engineer: $TASK"
-  post: |
-    echo "✅ Performance analysis complete"
+model: haiku
+tools: Read,Write,Edit,Glob,Grep,Bash,Task
+permissionMode: acceptEdits
 ---
+
 
 # MetaSaver Performance Engineer Agent
 

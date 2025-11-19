@@ -13,8 +13,8 @@ MetaSaver is a comprehensive system of specialized agents, reusable skills, and 
 Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture.
 
 **Includes:**
-- 43+ specialized agents (generic, domain, config)
-- 20+ reusable skills with templates
+- 48 specialized agents (13 generic, 9 domain, 26 config)
+- 29 reusable skills with templates
 - Intelligent routing commands (/ms, /audit)
 - Complete template libraries
 - Cross-platform compatibility (Windows WSL + Linux)
@@ -64,19 +64,23 @@ All agents, skills, and commands are immediately available:
 
 ## Complete Agent & Skill Inventory
 
-### Generic Agents (12)
+### Generic Agents (13)
 **Development & Architecture:**
 - `architect` - Architecture design specialist with SPARC methodology
 - `backend-dev` - Backend development with Express, Prisma, and MetaSaver API patterns
 - `coder` - Implementation specialist enforcing MetaSaver coding standards and SOLID principles
 - `devops` - DevOps specialist with Docker, Turborepo, and GitHub Actions expertise
+- `agent-author` - Meta-level agent for creating, refactoring, and validating agent/skill definitions
 
 > **Roadmap:** Additional agents planned - `frontend-dev` (general frontend development) and `ux-ui-agent` (UX/UI design and patterns)
 
-**Quality & Testing:**
+**Quality & Validation:**
 - `tester` - Testing specialist with Jest expertise and MetaSaver test patterns
-- `reviewer` - Code review specialist enforcing MetaSaver quality standards and security checklist
-- `production-validator` - Technical validation ensuring code compiles and passes all checks
+- `code-quality-validator` - Technical validation with scaled quality checks (build/lint/prettier/test based on change size)
+
+> **Note:** Final workflow validation has two phases:
+> 1. **code-quality-validator** - Technical validation (does code build/compile?)
+> 2. **business-analyst** - PRD sign-off (are all requirements complete?)
 
 **Analysis & Planning:**
 - `business-analyst` - Requirements analysis and audit planning specialist
@@ -145,11 +149,15 @@ All domain agents support both **Build** and **Audit** modes.
 
 ### Cross-Cutting Skills (6)
 - `building-blocks-advisor` - Pattern and building block recommendations
-- `mcp-coordination` - MCP tool coordination and orchestration
-- `mcp-tool-selection` - Intelligent MCP tool selection based on task requirements
+- `mcp-coordination` - Agent-to-agent coordination via MCP memory (status sharing, task handoffs, swarm communication)
+- `mcp-tool-selection` - Determines WHICH external MCP tools to use based on task type (Context7, Sequential Thinking, Serena, Recall, etc.)
 - `confidence-check` - Pre-implementation confidence assessment (prevents wrong-direction work)
 - `monorepo-navigation` - Workspace navigation patterns
 - `repository-detection` - Repository type detection and analysis
+
+> **Note:** `mcp-coordination` and `mcp-tool-selection` serve different purposes:
+> - **mcp-coordination**: Agent swarm communication patterns (how agents talk to each other via MCP memory)
+> - **mcp-tool-selection**: External tool selection logic (which MCP servers to invoke for a task)
 
 ### Domain Skills (6)
 - `audit-workflow` - Comprehensive audit orchestration across files and domains
@@ -159,15 +167,66 @@ All domain agents support both **Build** and **Audit** modes.
 - `workflow-orchestration` - Complex workflow coordination for multi-step tasks
 - `repository-detection` - Identifies monorepo structure and architecture patterns
 
+## Understanding Skills vs Agents
+
+**Domain Agents** (specialized workers):
+
+- Agents that BUILD or AUDIT domain-specific things
+- Examples: `data-service-agent` builds REST APIs, `react-component-agent` builds React components
+- All domain agents support both Build and Audit modes
+- They DO the actual work (code generation, auditing, testing)
+
+**Domain Skills** (reusable workflows):
+
+- Patterns and processes that agents USE to do their work
+- Examples: `audit-workflow` provides the comparison logic, `config-validation` provides validation patterns
+- Skills are like libraries/utilities that multiple agents can invoke
+- They define HOW to do something, not the actual implementation
+
+**Key Difference:**
+
+- **Agents** = Workers (who does the work)
+- **Skills** = Utilities (how the work gets done)
+
+Example: The `eslint-agent` (config agent) uses the `audit-workflow` skill (domain skill) to perform its audit.
+
 ### Config Skills (17)
 Complete template libraries for all configuration agents:
 - **Build Tools:** pnpm-workspace, postcss, turbo, vite, vitest configs with templates
 - **Version Control:** commitlint, gitattributes, gitignore, husky hooks with templates
 - **Workspace:** dockerignore, nodemon, npmrc, tailwind, vscode with templates
 
-### Commands (2)
+### Commands (3)
 - `/audit` - Natural language audit command (validates configs, code quality, standards compliance)
+- `/build` - Build new features with architecture validation and technical documentation
 - `/ms` - MetaSaver intelligent command router (complexity scoring, automatic agent spawning)
+
+## MCP Server Configuration
+
+The plugin includes `.mcp.json` configuration for recommended MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "chrome-devtools": { "command": "npx", "args": ["chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"] },
+    "Context7": { "command": "npx", "args": ["-y", "@upstash/context7-mcp@latest"] },
+    "playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] },
+    "recall": { "command": "npx", "args": ["-y", "@joseairosa/recall"], "env": { "REDIS_URL": "redis://localhost:6379" } },
+    "sequential-thinking": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"] },
+    "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"] }
+  }
+}
+```
+
+**Recommended MCP Servers:**
+
+- **serena** - Semantic code navigation and symbol search
+- **recall** - Cross-session memory and architectural pattern persistence
+- **sequential-thinking** - Multi-step reasoning for complex debugging
+- **Context7** - Up-to-date technical documentation for libraries
+- **playwright / chrome-devtools** - Browser automation and testing
+
+**Note:** MCP servers enhance agent capabilities but are not required for basic functionality.
 
 ## Requirements
 
