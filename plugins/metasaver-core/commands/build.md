@@ -23,9 +23,13 @@ The `/build` command is optimized for **creating new code** (not auditing existi
 ### Phase 1: Analysis & Architecture
 
 1. **Complexity Analysis** (same scoring as `/ms`)
-2. **Architecture Design**:
-   - Simple (score <10): Direct implementation with patterns
-   - Medium (10-29): Architect → Building blocks advisor
+2. **Model Selection**:
+   - Simple (score ≤=5): **haiku** - Fast, simple operations only
+   - Medium (6-29): **sonnet** - Standard development (default)
+   - Complex (≥30): **opus** - Deep architectural reasoning (rare)
+3. **Architecture Design**:
+   - Simple (score ≤4): Direct implementation with patterns
+   - Medium (5-29): Architect → Building blocks advisor
    - Complex (≥30): BA → Architect → Confidence check
 
 ### Phase 2: Research
@@ -45,44 +49,50 @@ The `/build` command is optimized for **creating new code** (not auditing existi
 
 Based on complexity score:
 
-#### Simple (Score <10)
+#### Simple (Score ≤4)
 
 ```
-/build simple API endpoint
-→ Direct Claude with:
-  1. Context7 (if library needed)
-  2. Building blocks advisor (pattern selection)
-  3. Implement
-  4. Basic validation
+/build fix TypeScript error in service
+→ Direct Claude (haiku model) with:
+  1. Quick fix
+  2. Basic validation
 ```
 
-#### Medium (Score 10-29)
+#### Medium (Score 5-29)
 
 ```
 /build JWT authentication API
-→ Workflow:
+→ Workflow (sonnet model for all agents):
   1. Architect (design)
   2. Context7 (JWT library research)
-  3. Confidence check
-  4. PM (creates Gantt with parallel tasks)
-  5. Domain agents (backend-dev, unit-test)
-  6. Integration validation
+  3. Confidence check (≥15: verify understanding)
+  4. **Vibe check** (≥15: prevent over-engineering)
+     - Challenge: "Is JWT + refresh token + Redis overkill?"
+     - Validate: Simpler approach exists?
+  5. PM (creates Gantt with parallel tasks)
+  6. Domain agents (backend-dev, unit-test) - sonnet
+  7. Integration validation
 ```
 
 #### Complex (Score ≥30)
 
 ```
 /build multi-tenant SaaS architecture
-→ Full orchestration:
-  1. BA (requirements analysis, creates PRD)
-  2. Architect (system design)
+→ Full orchestration (opus for BA/Architect, sonnet for workers):
+  1. BA (requirements analysis, creates PRD) - opus
+  2. Architect (system design) - opus
   3. Context7 (research all tech)
-  4. Confidence check
-  5. PM (multi-wave Gantt)
-  6. Domain agents (multiple waves)
-  7. Code-quality-validator (technical validation)
-  8. BA (PRD sign-off)
-  9. PM consolidation
+  4. Confidence check (verify architectural understanding)
+  5. **Vibe check** (≥15: challenge architecture)
+     - Challenge: "Do we need event sourcing or is CRUD sufficient?"
+     - Validate: Are we building for scale we'll never reach?
+  6. PM (multi-wave Gantt) - sonnet
+  7. Domain agents (multiple waves) - sonnet
+  8. Code-quality-validator (technical validation) - sonnet
+  9. BA (PRD sign-off) - opus
+  10. PM consolidation - sonnet
+
+  **On error:** Call vibe_learn to capture mistake
 ```
 
 ### Phase 4: Validation
@@ -90,6 +100,7 @@ Based on complexity score:
 **Always validate at the end (two-phase validation):**
 
 1. **Code-Quality-Validator** - Technical validation (scaled by change size)
+
    - Small change: Build only
    - Medium change: Build + Lint + Prettier
    - Large change: Build + Lint + Prettier + Tests
@@ -199,11 +210,11 @@ Based on complexity score:
 
 ## Comparison: /build vs /ms vs /audit
 
-| Command | Purpose | Focus | Validation |
-|---------|---------|-------|------------|
-| `/build` | Create new code | Architecture + implementation | Production validator |
-| `/ms` | Intelligent routing | Any task (build, fix, audit, etc.) | Context-dependent |
-| `/audit` | Validate existing | Standards compliance | Config agents |
+| Command  | Purpose             | Focus                              | Validation           |
+| -------- | ------------------- | ---------------------------------- | -------------------- |
+| `/build` | Create new code     | Architecture + implementation      | Production validator |
+| `/ms`    | Intelligent routing | Any task (build, fix, audit, etc.) | Context-dependent    |
+| `/audit` | Validate existing   | Standards compliance               | Config agents        |
 
 **Rule of thumb:**
 
@@ -238,8 +249,12 @@ try {
 1. **Start with architecture** - Don't jump straight to code
 2. **Use Context7 liberally** - Better to over-research than under-research
 3. **Check building blocks** - Ensure you're using the right pattern
-4. **Validate thoroughly** - Production validator catches issues early
-5. **Leverage Recall** - Reuse established patterns from memory
+4. **Select appropriate model**:
+   - haiku: Only truly simple fixes/explanations (score ≤4)
+   - sonnet: All implementation work - create, build, implement, refactor (score 5-29)
+   - opus: Novel architecture, ultra-complex (score ≥30, rare)
+5. **Validate thoroughly** - Production validator catches issues early
+6. **Leverage Recall** - Reuse established patterns from memory
 
 ## Command Invocation
 

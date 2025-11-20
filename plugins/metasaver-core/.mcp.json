@@ -30,6 +30,10 @@
         "."
       ],
       "env": {}
+    },
+    "vibe-check": {
+      "command": "npx",
+      "args": ["-y", "@pv-bhat/vibe-check-mcp", "start", "--stdio"]
     }
   }
 }

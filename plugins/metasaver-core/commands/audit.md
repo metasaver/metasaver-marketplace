@@ -73,22 +73,28 @@ complexity = 25 (all config agents, parallel)
 complexity = 40 (all configs + workspace packages)
 ```
 
-### Step 3: Select Workflow
+### Step 3: Select Workflow & Model
 
-**Simple (Complexity <10):**
+**Simple (Complexity ≤=5):**
 ```
-Direct → Single config agent → Report
+Direct → Single config agent (haiku model) → Report
 ```
 
-**Medium (Complexity 10-24):**
+**Medium (Complexity 6-25):**
 ```
-Business Analyst → PM → Domain agents (parallel) → Reviewer → PM consolidation
+Business Analyst (sonnet) → PM (sonnet) → Domain agents (haiku for config, sonnet for domain) → Reviewer (sonnet) → PM consolidation
 ```
 
 **Complex (Complexity ≥25):**
 ```
-Business Analyst → Confidence Check → PM (Gantt) → Config agents (waves of 10) → Reviewer → PM consolidation
+Business Analyst (opus) → Confidence Check → PM (sonnet) → Config agents (haiku, waves of 10) → Reviewer (sonnet) → PM consolidation (sonnet)
 ```
+
+**Model Selection Rules:**
+- **Config agents** (single file audits): haiku - Fast, efficient for standards checking (always score ≤4)
+- **Domain agents** (implementation audits): sonnet - Standard validation work
+- **BA/Architect** (complex scope): opus for ≥25 complexity, sonnet otherwise
+- **PM/Reviewer**: sonnet - Coordination and validation work
 
 ### Step 4: Execute Workflow
 
@@ -208,19 +214,26 @@ Task("monorepo-setup-agent", `
 
 **Parallel Execution:**
 
-Spawn all agents in current wave (max 10):
+Spawn all agents in current wave (max 10) with appropriate models:
 
 ```typescript
-// Wave 1 (code quality)
-Task("eslint-agent", "AUDIT /mnt/f/code/resume-builder/eslint.config.js")
-Task("prettier-agent", "AUDIT /mnt/f/code/resume-builder/.prettierrc.json")
-Task("typescript-agent", "AUDIT /mnt/f/code/resume-builder/tsconfig.json")
-Task("editorconfig-agent", "AUDIT /mnt/f/code/resume-builder/.editorconfig")
+// Wave 1 (code quality) - haiku for config agents
+Task("eslint-agent", "AUDIT /mnt/f/code/resume-builder/eslint.config.js",
+  subagent_type: "eslint-agent", model: "haiku")
+Task("prettier-agent", "AUDIT /mnt/f/code/resume-builder/.prettierrc.json",
+  subagent_type: "prettier-agent", model: "haiku")
+Task("typescript-agent", "AUDIT /mnt/f/code/resume-builder/tsconfig.json",
+  subagent_type: "typescript-agent", model: "haiku")
+Task("editorconfig-agent", "AUDIT /mnt/f/code/resume-builder/.editorconfig",
+  subagent_type: "editorconfig-agent", model: "haiku")
 
-// Wave 2 (build tools)
-Task("turbo-config-agent", "AUDIT /mnt/f/code/resume-builder/turbo.json")
-Task("pnpm-workspace-agent", "AUDIT /mnt/f/code/resume-builder/pnpm-workspace.yaml")
-Task("vitest-agent", "AUDIT /mnt/f/code/resume-builder/vitest.config.ts")
+// Wave 2 (build tools) - haiku for config agents
+Task("turbo-config-agent", "AUDIT /mnt/f/code/resume-builder/turbo.json",
+  subagent_type: "turbo-config-agent", model: "haiku")
+Task("pnpm-workspace-agent", "AUDIT /mnt/f/code/resume-builder/pnpm-workspace.yaml",
+  subagent_type: "pnpm-workspace-agent", model: "haiku")
+Task("vitest-agent", "AUDIT /mnt/f/code/resume-builder/vitest.config.ts",
+  subagent_type: "vitest-agent", model: "haiku")
 ```
 
 Each agent:
@@ -362,9 +375,9 @@ function calculateAuditComplexity(request: string): number {
 ```
 
 **Thresholds:**
-- <10: Simple (direct execution)
-- 10-24: Medium (BA → PM → Workers)
-- ≥25: Complex (BA → Confidence → PM → Workers)
+- ≤4: Simple (direct execution, haiku)
+- 5-24: Medium (BA → PM → Workers, sonnet orchestration)
+- ≥25: Complex (BA → Confidence → PM → Workers, opus for BA)
 
 ## Examples
 
@@ -375,8 +388,10 @@ User: /audit turbo.json
 
 Complexity: 5 (simple)
 Workflow: Direct execution
+Model: haiku
 
-→ Task("turbo-config-agent", "AUDIT turbo.json")
+→ Task("turbo-config-agent", "AUDIT turbo.json",
+    subagent_type: "turbo-config-agent", model: "haiku")
 → Report directly to user
 ```
 
@@ -387,12 +402,13 @@ User: /audit code quality configs
 
 Complexity: 12 (medium)
 Workflow: BA → PM → Workers → Reviewer → PM
+Models: sonnet for orchestration, haiku for config agents
 
-→ BA: Define scope (eslint, prettier, typescript, editorconfig)
-→ PM: Plan 4 agents in parallel
-→ Workers: All 4 agents execute concurrently
-→ Reviewer: Assess consistency
-→ PM: Consolidate report
+→ BA (sonnet): Define scope (eslint, prettier, typescript, editorconfig)
+→ PM (sonnet): Plan 4 agents in parallel
+→ Workers (haiku): All 4 config agents execute concurrently
+→ Reviewer (sonnet): Assess consistency
+→ PM (sonnet): Consolidate report
 ```
 
 ### Example 3: Full Monorepo Audit
@@ -402,15 +418,16 @@ User: /audit all monorepo configs
 
 Complexity: 25 (complex)
 Workflow: BA → Confidence Check → PM → Workers (waves) → Reviewer → PM
+Models: opus for BA (complex scope), sonnet for orchestration, haiku for config agents
 
-→ BA: Define comprehensive scope (26 config agents)
+→ BA (opus): Define comprehensive scope (26 config agents)
 → Confidence Check: Verify understanding and readiness
-→ PM: Plan 3 waves of 10 agents each
-→ Workers Wave 1: 10 agents in parallel
-→ Workers Wave 2: 10 agents in parallel
-→ Workers Wave 3: 6 agents in parallel
-→ Reviewer: Overall quality assessment
-→ PM: Consolidated executive report
+→ PM (sonnet): Plan 3 waves of 10 agents each
+→ Workers Wave 1 (haiku): 10 config agents in parallel
+→ Workers Wave 2 (haiku): 10 config agents in parallel
+→ Workers Wave 3 (haiku): 6 config agents in parallel
+→ Reviewer (sonnet): Overall quality assessment
+→ PM (sonnet): Consolidated executive report
 ```
 
 ## Output Format
@@ -473,10 +490,14 @@ Use `/skill remediation-options` for next steps:
 
 1. **Parse intent first** - Understand what user wants to audit before spawning agents
 2. **Use domain agents** - For composite audits, let domain agents discover what's needed
-3. **Respect parallelism** - Max 10 agents per wave (Claude Code limitation)
-4. **Always consolidate** - PM must summarize all results into executive report
-5. **Prioritize findings** - Critical → Warning → Info hierarchy
-6. **Offer remediation** - Always present conform/ignore/update options
+3. **Select appropriate models**:
+   - haiku: All config agents (fast, efficient for standards checking)
+   - sonnet: PM, Reviewer, domain agents (coordination work)
+   - opus: BA for ultra-complex scope (≥25 complexity, rare)
+4. **Respect parallelism** - Max 10 agents per wave (Claude Code limitation)
+5. **Always consolidate** - PM must summarize all results into executive report
+6. **Prioritize findings** - Critical → Warning → Info hierarchy
+7. **Offer remediation** - Always present conform/ignore/update options
 
 ## Integration
 

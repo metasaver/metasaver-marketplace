@@ -15,13 +15,13 @@ Analyzes your prompt and routes to optimal execution method.
 
 **Triggers:** System-wide changes, monorepo standardization, 10+ files, migrations
 **Keywords:** "enterprise", "architecture", "monorepo audit", "system-wide", "standardize across", "migration"
-**Action:** BA/Architect → Confidence Check → PM (Gantt) → Worker agents (waves) → Code-Quality-Validator → BA (PRD sign-off) → PM consolidation
+**Action:** BA/Architect → Confidence Check → **Vibe Check** → PM (Gantt) → Worker agents (waves) → Code-Quality-Validator → BA (PRD sign-off) → PM consolidation
 
-### 🟡 Medium-Complex → Coordinated Swarm (Score 10-29)
+### 🟡 Medium-Complex → Coordinated Swarm (Score 5-29)
 
 **Triggers:** Multi-file work, API development, feature builds
 **Keywords:** "implement", "build", "create service", "API", "feature", "testing"
-**Action:** Architect → Confidence Check → PM → Worker agents (parallel) → Reviewer → Validation
+**Action:** Architect → Confidence Check → **Vibe Check** → PM → Worker agents (parallel) → Reviewer → Validation
 
 ### 🟢 Simple → Enhanced Claude (Score <10)
 
@@ -44,6 +44,33 @@ Analyzes your prompt and routes to optimal execution method.
 - Database changes
 - Config management
 - Security-critical
+
+## Model Selection
+
+**Opus** (Score ≥30, rare):
+
+- Ultra-complex architectural decisions
+- System-wide migrations
+- Novel pattern design
+- Critical security analysis
+- USE SPARINGLY - Only when truly needed
+
+**Sonnet** (Score 6-29, default):
+
+- Most implementation work (create, implement, build, refactor)
+- Architecture with clear patterns
+- Code review and testing
+- Multi-file changes
+- Domain agents (standard work)
+- Standard development tasks
+
+**Haiku** (Score ≤=5, fast):
+
+- Single file operations (fix, debug, explain)
+- Simple config audits only
+- Quick explanations and help
+- Basic validation tasks
+- Truly simple operations
 
 ## Claude Thinking Levels
 
@@ -97,16 +124,43 @@ Domain agents identify WHAT sub-agents/skills are needed. They can't spawn agent
 
 ## Agent Spawning
 
-**Self-aware pattern:** Tell agents to read their own instruction files.
+**Self-aware pattern with model selection:**
 
-```
-Task("agent-name",
+```typescript
+// Haiku for simple config audits
+Task("eslint-agent",
   "AUDIT MODE for [path].
-   You are [Agent Name].
-   READ YOUR INSTRUCTIONS at .claude/agents/config/[category]/[agent].md
+   You are ESLint Agent.
+   READ YOUR INSTRUCTIONS at .claude/agents/config/code-quality/eslint-agent.md
    Follow YOUR rules, invoke YOUR skills, use YOUR output format.",
-  "agent-name")
+  subagent_type: "eslint-agent",
+  model: "haiku")
+
+// Sonnet for domain work (default)
+Task("backend-dev",
+  "BUILD MODE: Create REST API for user management.
+   You are Backend Developer.
+   READ YOUR INSTRUCTIONS at .claude/agents/generic/backend-dev.md
+   Follow YOUR rules, invoke YOUR skills, use YOUR output format.",
+  subagent_type: "backend-dev",
+  model: "sonnet")
+
+// Opus for ultra-complex (rare)
+Task("architect",
+  "Design multi-tenant microservices architecture with event sourcing.
+   You are Architect.
+   READ YOUR INSTRUCTIONS at .claude/agents/generic/architect.md
+   Follow YOUR rules, invoke YOUR skills, use YOUR output format.",
+  subagent_type: "architect",
+  model: "opus")
 ```
+
+**Model selection rules:**
+
+- Config agents (single file audit): **haiku**
+- Domain agents (implementation): **sonnet**
+- Generic agents (orchestration): **sonnet**
+- Ultra-complex architecture: **opus** (rare)
 
 ## Confidence Check (Pre-Implementation Gate)
 
@@ -115,6 +169,7 @@ Task("agent-name",
 **Skill location:** `.claude/skills/confidence-check/SKILL.md`
 
 **Protocol:**
+
 1. Calculate complexity score
 2. IF score ≥ 15:
    - Run 5-point confidence assessment
@@ -129,6 +184,37 @@ Task("agent-name",
 
 **Skip confidence check for:** Research tasks, single file fixes, debugging, documentation.
 
+## Vibe Check (Metacognitive Validation)
+
+**For complexity score ≥15, MUST run vibe_check after planning to prevent over-engineering and tunnel vision.**
+
+**MCP Tool:** `vibe_check` from `@pv-bhat/vibe-check-mcp`
+
+**Protocol:**
+
+1. **After planning phase:**
+
+   - Call `vibe_check` with full user request + current plan
+   - Tool returns metacognitive feedback: risks, assumptions, simpler alternatives
+   - IF risks identified → revise plan before proceeding
+   - IF over-engineering detected → simplify approach
+
+2. **Post-error (always):**
+
+   - Call `vibe_learn` to capture mistake for future improvement
+   - Type: coding_error, architectural_misstep, over_engineering
+   - Builds self-improving feedback loop
+
+3. **High-risk tasks:**
+   - Call `update_constitution` to set session-level guardrails
+   - Examples: "No external network calls", "Prefer battle-tested libraries"
+
+**Research Impact:** 27% improvement in success rates, 41% reduction in harmful actions (153 test runs)
+
+**Dosage:** Optimal frequency is 10-20% of total agent steps. One checkpoint after planning for all complexity ≥15.
+
+**Skip vibe check for:** Score <15 (simple tasks where over-engineering unlikely).
+
 ---
 
 ## Enforcement Rules
@@ -137,10 +223,13 @@ Task("agent-name",
 
 1. Calculate complexity score first
 2. **IF score ≥15: Run confidence check BEFORE routing**
-3. Select thinking level based on score
-4. Route by task type
-5. Spawn project-manager if 2+ agents
-6. Tell agents to read their own instruction files
+3. **IF score ≥15: Run vibe_check AFTER planning to prevent over-engineering**
+4. Select model based on score (haiku ≤5, sonnet 6-29, opus ≥30)
+5. Select thinking level based on score
+6. Route by task type
+7. Spawn project-manager if 2+ agents
+8. Tell agents to read their own instruction files
+9. **ALWAYS call vibe_learn after fixing errors**
 
 **DON'T:**
 
@@ -150,4 +239,4 @@ Task("agent-name",
 4. Hardcode agent rules in /ms
 5. Bloat with code examples
 
-**Remember:** Calculate → **Confidence Check (if ≥15)** → Think → Route → Spawn → Let agents figure it out.
+**Remember:** Calculate → **Confidence Check (if ≥15)** → Plan → **Vibe Check (if ≥15)** → Route → Spawn → **Vibe Learn (on errors)** → Let agents figure it out.

@@ -101,23 +101,47 @@ Lightweight trigger rules for determining which MCP servers to use.
 - Finding symbols, classes, functions by name
 - Understanding code architecture
 - Searching for patterns across files
+- ANY task requiring code reading (use symbol-level tools instead of reading entire files)
+
+**TOKEN EFFICIENCY (90-95% savings):**
+```
+Traditional: Read entire file → 2,000 lines = ~5,000 tokens
+Serena:      get_symbols_overview → ~200 tokens
+             find_symbol (no body) → ~50 tokens
+             find_symbol (with body) → ~100 tokens
+             Total: ~350 tokens (93% savings)
+```
+
+**CRITICAL PATTERN:**
+1. **First:** Use `get_symbols_overview` to see file structure
+2. **Then:** Use `find_symbol` (without body) to understand symbol signatures
+3. **Finally:** Use `find_symbol` (with body) ONLY for symbols you need to read
+
+**NEVER read entire files unless absolutely necessary!**
 
 **EXAMPLES:**
-- "where is authentication handled?"
-- "find all API endpoints"
-- "show me the User model definition"
-- "find references to this function"
+- "where is authentication handled?" → find_symbol + find_referencing_symbols
+- "find all API endpoints" → search_for_pattern + get_symbols_overview
+- "show me the User model definition" → find_symbol("User", include_body=true)
+- "find references to this function" → find_referencing_symbols
 
-**PATTERN:** `IF (code_exploration OR symbol_search OR architecture_understanding) → Use Serena`
+**PATTERN:** `IF (code_exploration OR symbol_search OR architecture_understanding OR reading_code) → Use Serena`
 
 **NOTE:** Serena is already available in this environment. Use naturally via `mcp__serena__*` tools.
 
+**KEY TOOLS:**
+- `get_symbols_overview` - File outline (200 tokens vs 5,000)
+- `find_symbol` - Symbol-level reading (100 tokens vs 5,000)
+- `find_referencing_symbols` - Find usage (500 tokens vs 20,000)
+- `replace_symbol_body` - Edit symbols without reading entire file
+- `insert_after_symbol` / `insert_before_symbol` - Precise insertion
+
 **CAPABILITIES:**
-- Symbol search and navigation
-- Find references
+- Symbol search and navigation (95% token reduction)
+- Find references across codebase
 - Code pattern search
-- Semantic understanding
-- Memory storage for codebase knowledge
+- Semantic understanding via LSP
+- Progressive disclosure (overview → signature → body)
 
 ---
 
