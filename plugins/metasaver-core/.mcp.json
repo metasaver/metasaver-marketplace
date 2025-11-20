@@ -4,6 +4,13 @@
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"]
     },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "env": {
+        "PLAYWRIGHT_BROWSERS_PATH": "/home/metasaver/.cache/ms-playwright"
+      }
+    },
     "recall": {
       "command": "npx",
       "args": ["-y", "@joseairosa/recall"],

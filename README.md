@@ -254,23 +254,24 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 ```json
 {
   "mcpServers": {
-    "chrome-devtools": { "command": "npx", "args": ["chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"] },
     "Context7": { "command": "npx", "args": ["-y", "@upstash/context7-mcp@latest"] },
     "playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] },
     "recall": { "command": "npx", "args": ["-y", "@joseairosa/recall"], "env": { "REDIS_URL": "redis://localhost:6379" } },
     "sequential-thinking": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"] },
-    "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"] }
+    "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"] },
+    "vibe-check": { "command": "npx", "args": ["-y", "@pv-bhat/vibe-check-mcp", "start", "--stdio"] }
   }
 }
 ```
 
 **Recommended MCP Servers:**
 
-- **serena** - Semantic code navigation and symbol search
+- **serena** - Semantic code navigation and symbol search (90-95% token savings on code operations)
 - **recall** - Cross-session memory and architectural pattern persistence
 - **sequential-thinking** - Multi-step reasoning for complex debugging
 - **Context7** - Up-to-date technical documentation for libraries
-- **playwright / chrome-devtools** - Browser automation and testing
+- **playwright** - Browser automation and testing (requires Chrome: `sudo apt install google-chrome-stable` on WSL)
+- **vibe-check** - Metacognitive validation to prevent over-engineering and tunnel vision
 
 **Note:** MCP servers enhance agent capabilities but are not required for basic functionality.
 
