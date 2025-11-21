@@ -81,7 +81,21 @@ Analyzes your prompt and routes to optimal execution method.
 ## Additional Tools
 
 **Context7:** Library research, API documentation
+
 **Sequential Thinking:** Multi-step analysis, complex debugging
+- **USE WHEN:** Complexity score ≥20, deep debugging, or multi-phase reasoning
+- **AVOID:** Simple tasks (score <20), straightforward implementations
+- **MCP Tool:** `mcp__sequential_thinking__sequentialthinking`
+- **Pattern:** Iterative hypothesis → test → validate workflow
+- **Example:**
+  ```javascript
+  mcp__sequential_thinking__sequentialthinking({
+    thought: "Analyzing race condition in payment flow...",
+    thoughtNumber: 1,
+    totalThoughts: 8,
+    nextThoughtNeeded: true
+  });
+  ```
 
 ## Examples
 

@@ -1,6 +1,6 @@
 ---
 name: mcp-tool-selection
-description: Determines which MCP tools to use based on task type and complexity. Provides trigger conditions for Context7 (technical docs), Sequential Thinking (complex reasoning), Zen (multi-model consensus), Serena (code navigation), Recall (session memory), Tavily (web search), Playwright/Chrome DevTools (browser automation). Use when determining which external tools apply to current task.
+description: Determines which MCP tools to use based on task type and complexity. Provides trigger conditions for Context7 (technical docs), Sequential Thinking (complex reasoning), Zen (multi-model consensus), Serena (code navigation), Recall (session memory), Tavily (web search), Chrome DevTools (browser automation). Use when determining which external tools apply to current task.
 ---
 
 # MCP Tool Selection
@@ -197,7 +197,7 @@ Serena:      get_symbols_overview → ~200 tokens
 
 ---
 
-### Playwright / Chrome DevTools (Browser Automation)
+### Chrome DevTools (Browser Automation)
 
 **USE WHEN:**
 - Web testing and automation
@@ -211,7 +211,19 @@ Serena:      get_symbols_overview → ~200 tokens
 - "check responsive design at different viewports"
 - "capture screenshots for regression testing"
 
-**PATTERN:** `IF (browser_testing OR web_automation OR visual_testing) → Use Playwright/Chrome DevTools`
+**PATTERN:** `IF (browser_testing OR web_automation OR visual_testing) → Use Chrome DevTools`
+
+**KEY TOOLS:**
+- `mcp__chrome_devtools__navigate_page` - Load URLs, navigate history, reload
+- `mcp__chrome_devtools__take_snapshot` - Get page structure with UIDs
+- `mcp__chrome_devtools__fill_form` - Fill multiple form inputs at once
+- `mcp__chrome_devtools__click` - Click elements by UID
+- `mcp__chrome_devtools__wait_for` - Wait for text to appear
+- `mcp__chrome_devtools__take_screenshot` - Capture full page or element
+- `mcp__chrome_devtools__list_network_requests` - Get all network requests
+- `mcp__chrome_devtools__evaluate_script` - Execute JavaScript in page
+- `mcp__chrome_devtools__performance_start_trace` - Begin performance recording
+- `mcp__chrome_devtools__performance_stop_trace` - End performance recording
 
 **AVOID:**
 - Unit tests (use Jest/Vitest)
@@ -230,7 +242,7 @@ Serena:      get_symbols_overview → ~200 tokens
 | Explore codebase | Serena | Recall (knowledge) |
 | Continue previous work | Recall | Serena (code nav) |
 | Research current tech | Tavily | Context7 (docs) |
-| Web testing | Playwright | None |
+| Web testing | Chrome DevTools | None |
 | Multi-step analysis | Sequential Thinking | Zen (validation) |
 
 ## Best Practices

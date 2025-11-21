@@ -255,7 +255,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 {
   "mcpServers": {
     "Context7": { "command": "npx", "args": ["-y", "@upstash/context7-mcp@latest"] },
-    "playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] },
+    "chrome-devtools": { "command": "npx", "args": ["-y", "chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"] },
     "recall": { "command": "npx", "args": ["-y", "@joseairosa/recall"], "env": { "REDIS_URL": "redis://localhost:6379" } },
     "sequential-thinking": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"] },
     "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"] },
@@ -270,7 +270,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 - **recall** - Cross-session memory and architectural pattern persistence
 - **sequential-thinking** - Multi-step reasoning for complex debugging
 - **Context7** - Up-to-date technical documentation for libraries
-- **playwright** - Browser automation and testing (requires Chrome: `sudo apt install google-chrome-stable` on WSL)
+- **chrome-devtools** - Browser automation, debugging, and performance profiling (requires Chrome: `sudo apt install google-chrome-stable` on WSL)
 - **vibe-check** - Metacognitive validation to prevent over-engineering and tunnel vision
 
 **Note:** MCP servers enhance agent capabilities but are not required for basic functionality.

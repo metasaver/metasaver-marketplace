@@ -437,6 +437,57 @@ mcp__recall__search_memories({
 });
 ```
 
+## MCP Tool Integration
+
+### Sequential Thinking for Deep Debugging
+
+When investigating complex bugs, race conditions, or multi-layered failures, use sequential thinking to break down the analysis:
+
+```javascript
+// Use for complex debugging requiring multi-step reasoning
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 1: Analyzing the error stack trace to identify entry point...",
+  thoughtNumber: 1,
+  totalThoughts: 10,
+  nextThoughtNeeded: true
+});
+
+// Continue with hypothesis development
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 2: Evidence shows connection pool exhaustion. Hypothesis: connection leak in transaction handling...",
+  thoughtNumber: 2,
+  totalThoughts: 10,
+  nextThoughtNeeded: true
+});
+
+// Validate hypothesis
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 3: Testing hypothesis by checking for missing finally blocks in database operations...",
+  thoughtNumber: 3,
+  totalThoughts: 10,
+  nextThoughtNeeded: true
+});
+
+// Continue until root cause identified
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 10: Root cause confirmed - missing connection.release() in error path. Fix: Add finally block.",
+  thoughtNumber: 10,
+  totalThoughts: 10,
+  nextThoughtNeeded: false
+});
+```
+
+**USE WHEN:**
+- Complex race conditions or timing issues
+- Multi-layered failures requiring step-by-step analysis
+- Incidents with multiple potential root causes
+- Need to trace through complex execution paths
+
+**AVOID:**
+- Simple bugs with obvious causes
+- Single-layer failures
+- Issues with clear error messages
+
 ## Best Practices
 
 1. **Evidence First**: Never theorize without data, gather facts before hypothesizing

@@ -187,7 +187,7 @@ Complexity scoring based on keywords, scope, and technical factors.
 
 **MCP Integration:**
 - `enabledMcpjsonServers`: Configured MCP servers
-- `.mcp.json`: Recommended servers (serena, recall, sequential-thinking, Context7, playwright)
+- `.mcp.json`: Recommended servers (serena, recall, sequential-thinking, Context7, chrome-devtools)
 
 ## Common Workflows
 

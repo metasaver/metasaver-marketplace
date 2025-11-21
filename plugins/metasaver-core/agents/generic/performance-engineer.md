@@ -546,6 +546,65 @@ mcp__recall__search_memories({
 });
 ```
 
+## MCP Tool Integration
+
+### Sequential Thinking for Performance Analysis
+
+When profiling complex performance issues or analyzing bottlenecks across multiple layers, use sequential thinking:
+
+```javascript
+// Use for multi-step performance analysis
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 1: Analyzing APM data - API response time p95 is 2.3s, well above 500ms target...",
+  thoughtNumber: 1,
+  totalThoughts: 12,
+  nextThoughtNeeded: true
+});
+
+// Break down the bottleneck
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 2: Distributed trace shows 1.8s in database layer, 300ms in API layer, 200ms in network...",
+  thoughtNumber: 2,
+  totalThoughts: 12,
+  nextThoughtNeeded: true
+});
+
+// Investigate database layer
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 3: Database query profile shows N+1 query pattern - 50 separate queries for user data...",
+  thoughtNumber: 3,
+  totalThoughts: 12,
+  nextThoughtNeeded: true
+});
+
+// Analyze query execution
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 4: EXPLAIN shows full table scan on users table (500k rows), missing index on email...",
+  thoughtNumber: 4,
+  totalThoughts: 12,
+  nextThoughtNeeded: true
+});
+
+// Continue through analysis
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 12: Optimization plan - Add composite index, batch queries, implement Redis cache. Expected improvement: 2.3s → 400ms",
+  thoughtNumber: 12,
+  totalThoughts: 12,
+  nextThoughtNeeded: false
+});
+```
+
+**USE WHEN:**
+- Complex multi-layer performance bottlenecks
+- Analyzing distributed system latency
+- Profiling memory leaks or resource exhaustion
+- Investigating cache inefficiencies
+
+**AVOID:**
+- Simple single-query optimizations
+- Obvious bottlenecks
+- Performance issues with clear causes
+
 ## Best Practices
 
 1. **Measure First**: Profile before optimizing, never assume where bottlenecks are

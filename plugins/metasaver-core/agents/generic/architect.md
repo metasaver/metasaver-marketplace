@@ -303,6 +303,64 @@ mcp__recall__store_memory({
 - Specify error handling strategy
 - Include scalability considerations
 
+## MCP Tool Integration
+
+### Sequential Thinking for Architecture Analysis
+
+When evaluating complex architectural decisions or designing novel systems, use sequential thinking to work through tradeoffs:
+
+```javascript
+// Use for multi-step architecture evaluation
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 1: Analyzing requirements - Need real-time updates, high concurrency, data consistency...",
+  thoughtNumber: 1,
+  totalThoughts: 8,
+  nextThoughtNeeded: true
+});
+
+// Evaluate options
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 2: Option A (WebSockets) - Pros: Real-time, stateful. Cons: Scaling complexity, connection management...",
+  thoughtNumber: 2,
+  totalThoughts: 8,
+  nextThoughtNeeded: true
+});
+
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 3: Option B (SSE) - Pros: Simpler, HTTP-compatible. Cons: Unidirectional, browser limits...",
+  thoughtNumber: 3,
+  totalThoughts: 8,
+  nextThoughtNeeded: true
+});
+
+// Continue analysis
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 4: Evaluating scalability - WebSockets require sticky sessions, SSE works with load balancing...",
+  thoughtNumber: 4,
+  totalThoughts: 8,
+  nextThoughtNeeded: true
+});
+
+// Reach decision
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 8: Decision - SSE for notifications (scalable, simpler), WebSockets only for collaborative features (limited scope)",
+  thoughtNumber: 8,
+  totalThoughts: 8,
+  nextThoughtNeeded: false
+});
+```
+
+**USE WHEN:**
+- Complex architectural decisions with multiple tradeoffs
+- Novel system designs without clear precedent
+- Evaluating multiple technical approaches
+- Analyzing system-wide implications of design choices
+
+**AVOID:**
+- Straightforward architectures with established patterns
+- Simple feature designs
+- Decisions with obvious solutions
+
 ## Best Practices
 
 1. **Start with Requirements**: Understand business needs before designing

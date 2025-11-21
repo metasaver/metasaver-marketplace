@@ -678,6 +678,68 @@ mcp__recall__search_memories({
 });
 ```
 
+### Chrome DevTools for E2E Web Testing
+
+When integration tests require browser interaction or UI validation, use Chrome DevTools MCP:
+
+```javascript
+// Navigate to application
+mcp__chrome_devtools__navigate_page({
+  url: "http://localhost:5173/login",
+  type: "url"
+});
+
+// Take snapshot to understand page structure
+const snapshot = mcp__chrome_devtools__take_snapshot({});
+
+// Fill login form
+mcp__chrome_devtools__fill_form({
+  elements: [
+    { uid: "email-input", value: "test@example.com" },
+    { uid: "password-input", value: "Test123!" }
+  ]
+});
+
+// Submit form
+mcp__chrome_devtools__click({ uid: "submit-button" });
+
+// Wait for navigation
+mcp__chrome_devtools__wait_for({ text: "Dashboard" });
+
+// Verify success
+mcp__chrome_devtools__take_screenshot({
+  filePath: "./test-results/login-success.png"
+});
+
+// Check network requests
+const requests = mcp__chrome_devtools__list_network_requests({
+  resourceTypes: ["xhr", "fetch"]
+});
+
+// Store E2E test results
+mcp__recall__store_memory({
+  content: JSON.stringify({
+    test: "login-flow-e2e",
+    status: "passed",
+    screenshot: "./test-results/login-success.png",
+    networkRequests: requests.length
+  }),
+  context_type: "information",
+  tags: ["e2e", "browser", "login"]
+});
+```
+
+**USE WHEN:**
+- Testing user workflows that require browser interaction
+- Validating UI state after API calls
+- Testing form submissions and validations
+- Capturing visual evidence for test reports
+
+**AVOID:**
+- Pure API tests (use Supertest instead)
+- Unit tests (use Jest/Vitest)
+- Backend-only integration tests
+
 ## Collaboration Guidelines
 
 - Coordinate with data-service-agent for API implementation

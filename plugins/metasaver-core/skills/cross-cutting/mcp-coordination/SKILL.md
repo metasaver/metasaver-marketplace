@@ -401,6 +401,295 @@ export async function executeAgentTask(agentId: string, task: string) {
 }
 ```
 
+## Multi-MCP Coordination Workflows
+
+### Workflow 1: Feature Implementation with Full MCP Stack
+
+When implementing a complex feature, coordinate multiple MCP tools:
+
+```javascript
+// 1. Context7: Research library
+const jwtDocs = await mcp__Context7__get_library_docs({
+  context7CompatibleLibraryID: "/vercel/jsonwebtoken"
+});
+
+// 2. Recall: Check prior patterns
+const authPatterns = await mcp__recall__search_memories({
+  query: "JWT authentication implementation patterns",
+  context_types: ["code_pattern", "decision"],
+  limit: 5
+});
+
+// 3. Serena: Find existing auth code
+const existingAuth = await mcp__serena__find_symbol({
+  name_path_pattern: "auth",
+  include_body: false,
+  relative_path: "src"
+});
+
+// 4. Sequential Thinking: Plan implementation (if complex)
+if (complexityScore >= 20) {
+  await mcp__sequential_thinking__sequentialthinking({
+    thought: "Step 1: Analyzing existing auth vs new JWT approach...",
+    thoughtNumber: 1,
+    totalThoughts: 8,
+    nextThoughtNeeded: true
+  });
+}
+
+// 5. Vibe Check: Validate approach
+const vibeCheck = await mcp__vibe_check__vibe_check({
+  goal: "Implement JWT auth with refresh tokens",
+  plan: "Add JWT middleware + refresh token endpoint + Redis cache",
+  progress: "Researched libraries, found existing patterns",
+  taskContext: "repo: metasaver-com, feature: auth"
+});
+
+// If over-engineering detected, simplify
+if (vibeCheck.risks.includes("over-engineering")) {
+  // Revise plan based on feedback
+}
+
+// 6. Coordination: Share decision with team
+await shareFindings("architect-001", {
+  decision: "JWT + refresh tokens with httpOnly cookies",
+  libraries: ["jsonwebtoken", "bcrypt"],
+  architecture: "stateless auth with Redis for refresh tokens",
+  rationale: vibeCheck.feedback
+}, "auth-implementation");
+
+// 7. Recall: Store architectural decision
+await mcp__recall__store_memory({
+  content: JSON.stringify({
+    decision: "JWT authentication with refresh tokens",
+    rationale: "Stateless, scalable, industry standard",
+    implementation: {
+      accessTokenTTL: "15m",
+      refreshTokenTTL: "7d",
+      storage: "Redis"
+    }
+  }),
+  context_type: "decision",
+  importance: 9,
+  tags: ["auth", "jwt", "architecture"]
+});
+```
+
+### Workflow 2: Debugging Complex Issue
+
+Combine MCP tools for systematic root cause analysis:
+
+```javascript
+// 1. Serena: Find bug location
+const symbols = await mcp__serena__find_symbol({
+  name_path_pattern: "PaymentProcessor",
+  include_body: true,
+  relative_path: "src/services"
+});
+
+// 2. Sequential Thinking: Analyze issue step-by-step
+await mcp__sequential_thinking__sequentialthinking({
+  thought: "Hypothesis 1: Race condition in payment processing due to async operations...",
+  thoughtNumber: 1,
+  totalThoughts: 12,
+  nextThoughtNeeded: true
+});
+
+await mcp__sequential_thinking__sequentialthinking({
+  thought: "Testing hypothesis: Checking for missing await keywords or Promise.all...",
+  thoughtNumber: 2,
+  totalThoughts: 12,
+  nextThoughtNeeded: true
+});
+
+// 3. Chrome DevTools: Reproduce in browser (if UI-related)
+if (isUIBug) {
+  await mcp__chrome_devtools__navigate_page({
+    url: "http://localhost:5173/checkout",
+    type: "url"
+  });
+
+  const networkRequests = await mcp__chrome_devtools__list_network_requests({
+    resourceTypes: ["xhr", "fetch"]
+  });
+}
+
+// 4. Recall: Check similar past issues
+const priorBugs = await mcp__recall__search_memories({
+  query: "payment race condition async bugs",
+  context_types: ["error", "information"],
+  limit: 3
+});
+
+// 5. Coordination: Share findings with team
+await shareFindings("root-cause-analyst-001", {
+  rootCause: "Missing transaction lock in payment flow",
+  evidence: [
+    "Two concurrent payment requests created duplicate charges",
+    "No Redis lock on payment processing",
+    "Race condition in database write"
+  ],
+  fix: "Add distributed lock using Redis SETNX"
+}, "payment-bug-analysis");
+
+// 6. Vibe Learn: Document for future
+await mcp__vibe_check__vibe_learn({
+  mistake: "Payment race condition due to missing distributed lock",
+  category: "Complex Solution Bias",
+  solution: "Added Redis distributed lock with TTL",
+  type: "mistake"
+});
+
+// 7. Recall: Store solution pattern
+await mcp__recall__store_memory({
+  content: JSON.stringify({
+    pattern: "distributed-lock-for-critical-sections",
+    implementation: "Redis SETNX with TTL",
+    useCase: "Prevent race conditions in payment processing",
+    code: "await redisClient.set(lockKey, 'locked', 'NX', 'EX', 10)"
+  }),
+  context_type: "code_pattern",
+  importance: 8,
+  tags: ["redis", "concurrency", "payment"]
+});
+```
+
+### Workflow 3: Performance Optimization
+
+Multi-tool approach for performance analysis:
+
+```javascript
+// 1. Chrome DevTools: Start performance trace
+await mcp__chrome_devtools__performance_start_trace({
+  reload: true,
+  autoStop: true
+});
+
+await mcp__chrome_devtools__navigate_page({
+  url: "http://localhost:5173/dashboard",
+  type: "url"
+});
+
+// 2. Sequential Thinking: Analyze bottleneck
+await mcp__sequential_thinking__sequentialthinking({
+  thought: "Step 1: APM shows p95 response time of 2.3s (target: 500ms)...",
+  thoughtNumber: 1,
+  totalThoughts: 10,
+  nextThoughtNeeded: true
+});
+
+// 3. Serena: Find performance-critical code
+const hotPath = await mcp__serena__find_symbol({
+  name_path_pattern: "getUserDashboard",
+  include_body: true
+});
+
+// 4. Recall: Check prior optimizations
+const optimizations = await mcp__recall__search_memories({
+  query: "database query optimization N+1",
+  context_types: ["code_pattern"],
+  limit: 5
+});
+
+// 5. Context7: Research optimization library
+const prismaOptimization = await mcp__Context7__get_library_docs({
+  context7CompatibleLibraryID: "/prisma/prisma",
+  topic: "query optimization"
+});
+
+// 6. Coordination: Share optimization plan
+await shareFindings("performance-engineer-001", {
+  bottleneck: "N+1 query in getUserDashboard",
+  currentPerformance: "2.3s p95",
+  targetPerformance: "400ms p95",
+  optimizations: [
+    "Add Prisma select with relations",
+    "Implement Redis cache (5min TTL)",
+    "Add database index on user.email"
+  ],
+  expectedImprovement: "83% reduction"
+}, "dashboard-performance");
+
+// 7. Recall: Store optimization
+await mcp__recall__store_memory({
+  content: JSON.stringify({
+    optimization: "batch-query-with-cache",
+    before: "2.3s p95",
+    after: "380ms p95",
+    technique: "Prisma select + Redis cache + DB index"
+  }),
+  context_type: "code_pattern",
+  importance: 7,
+  tags: ["performance", "optimization", "prisma"]
+});
+```
+
+### Workflow 4: E2E Test Creation
+
+Combine browser automation with memory coordination:
+
+```javascript
+// 1. Recall: Get feature requirements
+const requirements = await mcp__recall__search_memories({
+  query: "user registration feature requirements",
+  context_types: ["requirement", "decision"],
+  limit: 3
+});
+
+// 2. Chrome DevTools: Test the flow
+await mcp__chrome_devtools__navigate_page({
+  url: "http://localhost:5173/register",
+  type: "url"
+});
+
+await mcp__chrome_devtools__fill_form({
+  elements: [
+    { uid: "email-input", value: "test@example.com" },
+    { uid: "password-input", value: "SecurePass123!" }
+  ]
+});
+
+await mcp__chrome_devtools__click({ uid: "register-button" });
+
+await mcp__chrome_devtools__wait_for({ text: "Registration successful" });
+
+const screenshot = await mcp__chrome_devtools__take_screenshot({
+  filePath: "./e2e-results/registration-success.png"
+});
+
+// 3. Coordination: Share test results
+await shareFindings("e2e-test-agent-001", {
+  test: "user-registration-flow",
+  status: "passed",
+  duration: "2.1s",
+  assertions: ["form validation", "API call", "success message", "redirect"],
+  screenshot: screenshot.filePath
+}, "e2e-test-results");
+
+// 4. Recall: Store test pattern
+await mcp__recall__store_memory({
+  content: JSON.stringify({
+    testPattern: "registration-e2e-workflow",
+    steps: ["navigate", "fill form", "submit", "verify success"],
+    tools: ["chrome-devtools", "recall"],
+    reusable: true
+  }),
+  context_type: "code_pattern",
+  importance: 6,
+  tags: ["e2e", "testing", "registration"]
+});
+```
+
+## Key Coordination Principles
+
+1. **Layer Tools Appropriately**: Use Context7 for docs, Serena for code, Sequential Thinking for analysis
+2. **Share Decisions**: Always broadcast architectural decisions to the team
+3. **Learn from Errors**: Use vibe_learn to capture mistakes
+4. **Cache Knowledge**: Store patterns in recall for reuse
+5. **Validate Plans**: Use vibe_check before complex implementations
+6. **Coordinate Status**: Update agent status for parallel work
+7. **Capture Evidence**: Use chrome-devtools screenshots for debugging
+
 ## Used By
 
 - ALL agents in the swarm
