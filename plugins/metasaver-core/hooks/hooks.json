@@ -5,7 +5,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
           "timeout": 5000
         }
       ]
@@ -17,7 +17,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-dangerous.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-dangerous.sh",
           "timeout": 5000
         }
       ]
@@ -27,7 +27,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-read-protect.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-read-protect.sh",
           "timeout": 5000
         }
       ]
@@ -37,7 +37,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-env-protect.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-env-protect.sh",
           "timeout": 5000
         }
       ]
@@ -49,7 +49,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/post-format.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/post-format.sh",
           "timeout": 10000
         }
       ]
@@ -61,7 +61,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-compact.sh",
+          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-compact.sh",
           "timeout": 5000
         }
       ]
