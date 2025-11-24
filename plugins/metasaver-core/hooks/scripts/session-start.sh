@@ -3,6 +3,13 @@
 
 set -euo pipefail
 
+echo
+echo "=============================================="
+echo "  PLUGIN HOOKS ARE FIXED!!!!!!"
+echo "  SessionStart hook is working!"
+echo "=============================================="
+echo
+
 # Get project name (works with or without jq)
 PROJECT_NAME="Unknown"
 if [[ -f "package.json" ]]; then
@@ -13,15 +20,12 @@ if [[ -f "package.json" ]]; then
   fi
 fi
 
-echo
-echo "📋 Project: $PROJECT_NAME"
+echo "Project: $PROJECT_NAME"
 echo
 echo "Key Reminders:"
-echo "  • Root .env for all config (never edit .env/.npmrc directly!)"
-echo "  • Use workspace: protocol for cross-package deps"
-echo "  • Multi-mono pattern - check CLAUDE.md for architecture"
-echo
-echo "✅ Session started"
+echo "  - Root .env for all config (never edit .env/.npmrc directly!)"
+echo "  - Use workspace: protocol for cross-package deps"
+echo "  - Multi-mono pattern - check CLAUDE.md for architecture"
 echo
 
 exit 0
