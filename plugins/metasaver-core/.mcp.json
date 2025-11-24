@@ -24,6 +24,10 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
+    "semgrep": {
+      "command": "semgrep",
+      "args": ["mcp"]
+    },
     "serena": {
       "type": "stdio",
       "command": "uvx",
@@ -38,6 +42,10 @@
         "."
       ],
       "env": {}
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
     },
     "vibe-check": {
       "command": "npx",

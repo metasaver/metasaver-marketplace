@@ -1,9 +1,10 @@
 {
   "name": "core-claude-plugin",
   "description": "Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture. Features 48+ specialized agents, 29+ skills, intelligent model selection (haiku/sonnet/opus), and intelligent routing commands. Built for Turborepo/pnpm/TypeScript projects with Prisma, React, and micro-frontend support.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": {
     "name": "Jim Nightingale",
     "email": "info@metasaver.com"
-  }
+  },
+  "hooks": "./hooks/hooks.json"
 }

@@ -275,3 +275,16 @@ System automatically:
 - Coordinates multi-agent workflows
 - Validates against requirements
 - No manual agent spawning needed
+
+---
+
+## Post-Workflow: Repomix Cache Refresh
+
+**At workflow completion, invoke the `repomix-cache-refresh` skill if files were created/modified.**
+
+**Skill:** `skills/cross-cutting/repomix-cache-refresh/SKILL.md`
+
+**Quick reference:**
+- Critical for /build - new files don't exist in cache yet
+- Makes newly created code immediately discoverable
+- ~2.4s overhead, ensures `/audit` can find new code immediately

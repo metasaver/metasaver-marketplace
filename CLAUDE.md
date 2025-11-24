@@ -288,6 +288,20 @@ When updating versions:
 - `replace_symbol_body` - Edit without full file read
 - `insert_after_symbol` / `insert_before_symbol` - Precise insertion
 
+### Repomix Cache Management
+
+**CRITICAL: Repomix provides 70% token reduction by compressing codebase into AI-friendly format.**
+
+**Full Documentation:** `plugins/metasaver-core/skills/cross-cutting/repomix-cache-refresh/SKILL.md`
+
+**Quick Reference:**
+- All commands (`/ms`, `/audit`, `/build`) auto-refresh cache after file changes
+- Performance: ~2.4s overhead, 70% token savings on next command
+- Triggers: `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.json`, `*.md`, `*.yaml`
+- Skips: `node_modules/`, `dist/`, `build/`, `.turbo/`, `*.log`
+- Config: `.repomix.config.json` in repository root
+- Agents MUST report `filesModified: string[]` in output
+
 ### Cross-Platform Compatibility
 - All paths use forward slashes
 - Settings configured for Windows WSL + Linux

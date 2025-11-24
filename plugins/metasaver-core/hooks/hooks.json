@@ -1,0 +1,80 @@
+{
+  "SessionStart": [
+    {
+      "matcher": "startup",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+          "timeout": 5000
+        }
+      ]
+    }
+  ],
+  "PreToolUse": [
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-dangerous.sh",
+          "timeout": 5000
+        }
+      ]
+    },
+    {
+      "matcher": "Read",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-read-protect.sh",
+          "timeout": 5000
+        }
+      ]
+    },
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-env-protect.sh",
+          "timeout": 5000
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/post-format.sh",
+          "timeout": 10000
+        }
+      ]
+    }
+  ],
+  "PreCompact": [
+    {
+      "matcher": "auto",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-compact.sh",
+          "timeout": 5000
+        }
+      ]
+    }
+  ],
+  "Stop": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash -c 'echo; echo \"📊 Session End Summary:\"; echo \"$(date)\"; echo; echo \"Modified files:\"; git status --short 2>/dev/null | head -10 || echo \"No git changes\"; echo; echo \"✅ Session complete\"'"
+        }
+      ]
+    }
+  ]
+}

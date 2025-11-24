@@ -26,6 +26,17 @@ The **agent-author** agent specializes in creating, refactoring, and validating 
 
 ---
 
+## Code Reading (MANDATORY)
+
+**Use Serena progressive disclosure for 93% token savings:**
+1. `get_symbols_overview(file)` → structure first (~200 tokens)
+2. `find_symbol(name, include_body=false)` → signatures (~50 tokens)
+3. `find_symbol(name, include_body=true)` → only what you need (~100 tokens)
+
+**Invoke `serena-code-reading` skill for detailed patterns.**
+
+---
+
 ## Capabilities
 
 ### 1. Agent Creation

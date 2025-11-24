@@ -63,3 +63,6 @@ SECURITY_*.md
 SECURITY_*.txt
 AUDIT_*.md
 REMEDIATION_*.md
+
+# Repomix outputs
+.repomix-output.*

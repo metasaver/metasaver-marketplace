@@ -254,3 +254,16 @@ Task("architect",
 5. Bloat with code examples
 
 **Remember:** Calculate → **Confidence Check (if ≥15)** → Plan → **Vibe Check (if ≥15)** → Route → Spawn → **Vibe Learn (on errors)** → Let agents figure it out.
+
+---
+
+## Post-Workflow: Repomix Cache Refresh
+
+**At workflow completion, invoke the `repomix-cache-refresh` skill if files were modified.**
+
+**Skill:** `skills/cross-cutting/repomix-cache-refresh/SKILL.md`
+
+**Quick reference:**
+- Triggers when source files (*.ts, *.tsx, *.js, *.jsx, *.json, *.md, *.yaml) modified
+- Skips for build artifacts, dependencies, logs
+- ~2.4s overhead, 70% token savings on next command

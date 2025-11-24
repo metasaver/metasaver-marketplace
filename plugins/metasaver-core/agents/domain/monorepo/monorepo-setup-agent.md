@@ -27,6 +27,16 @@ Domain authority for creating and configuring new Turborepo + pnpm monorepos. Ha
 6. **Package Management**: Setup root package.json with scripts
 7. **Coordination**: Share monorepo decisions via MCP memory
 
+## Code Reading (MANDATORY)
+
+**Use Serena progressive disclosure for 93% token savings:**
+1. `get_symbols_overview(file)` → structure first (~200 tokens)
+2. `find_symbol(name, include_body=false)` → signatures (~50 tokens)
+3. `find_symbol(name, include_body=true)` → only what you need (~100 tokens)
+
+**Invoke `serena-code-reading` skill for detailed patterns.**
+
+
 ## Repository Type Detection
 
 ### Two Types of Repositories

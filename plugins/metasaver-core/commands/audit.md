@@ -507,3 +507,16 @@ This command integrates with:
 - `/skill confidence-check` - Pre-execution validation
 - `/skill remediation-options` - Post-audit next steps
 - `/skill mcp-tool-selection` - External tool determination
+
+---
+
+## Post-Workflow: Repomix Cache Refresh
+
+**At workflow completion, invoke the `repomix-cache-refresh` skill if config files were modified.**
+
+**Skill:** `skills/cross-cutting/repomix-cache-refresh/SKILL.md`
+
+**Quick reference:**
+- Triggers when config files are fixed/updated during audit
+- Critical because audits often auto-fix violations
+- ~2.4s overhead, ensures next command sees fixed configs

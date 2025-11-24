@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/metasaver/claude-marketplace)
-[![Agents](https://img.shields.io/badge/Agents-48-green)](https://github.com/metasaver/claude-marketplace)
-[![Skills](https://img.shields.io/badge/Skills-29-green)](https://github.com/metasaver/claude-marketplace)
+[![Agents](https://img.shields.io/badge/Agents-49-green)](https://github.com/metasaver/claude-marketplace)
+[![Skills](https://img.shields.io/badge/Skills-30-green)](https://github.com/metasaver/claude-marketplace)
 
 Official marketplace for MetaSaver plugins - Professional development tools, agents, and skills for Claude Code.
 
@@ -18,8 +18,8 @@ MetaSaver is a comprehensive system of specialized agents, reusable skills, and 
 Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture.
 
 **Includes:**
-- 48 specialized agents (13 generic, 9 domain, 26 config)
-- 29 reusable skills with templates
+- 49 specialized agents (13 generic, 10 domain, 26 config)
+- 30 reusable skills with templates
 - Intelligent routing commands (/ms, /audit)
 - Complete template libraries
 - Cross-platform compatibility (Windows WSL + Linux)
@@ -81,7 +81,7 @@ All agents, skills, and commands are immediately available:
 
 **Quality & Validation:**
 - `tester` - Testing specialist with Jest expertise and MetaSaver test patterns
-- `code-quality-validator` - Technical validation with scaled quality checks (build/lint/prettier/test based on change size)
+- `code-quality-validator` - Technical validation with scaled quality checks (build/security/lint/prettier/test based on change size)
 
 > **Note:** Final workflow validation has two phases:
 > 1. **code-quality-validator** - Technical validation (does code build/compile?)
@@ -90,11 +90,11 @@ All agents, skills, and commands are immediately available:
 **Analysis & Planning:**
 - `business-analyst` - Requirements analysis and audit planning specialist
 - `project-manager` - Resource scheduler that transforms plans into Gantt charts and consolidates execution results
-- `security-engineer` - Security assessment specialist with OWASP expertise and threat modeling
+- `security-engineer` - Security assessment specialist with automated Semgrep scanning, OWASP expertise, and threat modeling
 - `performance-engineer` - Performance optimization specialist using data-driven profiling
 - `root-cause-analyst` - Systematic debugging specialist using evidence-based investigation
 
-### Domain Agents (9)
+### Domain Agents (10)
 All domain agents support both **Build** and **Audit** modes.
 
 **Backend Services:**
@@ -106,6 +106,7 @@ All domain agents support both **Build** and **Audit** modes.
 
 **Frontend:**
 - `react-component-agent` - Functional components, hooks, TypeScript props, Tailwind styling, accessibility
+- `shadcn-component-agent` - shadcn/ui component installation, customization, and integration for MetaSaver libraries
 - `mfe-host-agent` - Micro-frontend host setup, module federation, remote loading, shared dependencies
 - `mfe-remote-agent` - Micro-frontend remote setup, exposed components, Vite federation plugin configuration
 
@@ -152,11 +153,12 @@ All domain agents support both **Build** and **Audit** modes.
 - `typescript-agent` - TypeScript configuration (build & audit modes)
 - `vscode-agent` - VS Code settings (build, audit, and file cleanup modes)
 
-### Cross-Cutting Skills (6)
+### Cross-Cutting Skills (7)
 - `building-blocks-advisor` - Pattern and building block recommendations
 - `mcp-coordination` - Agent-to-agent coordination via MCP memory (status sharing, task handoffs, swarm communication)
 - `mcp-tool-selection` - Determines WHICH external MCP tools to use based on task type (Context7, Sequential Thinking, Serena, Recall, etc.)
 - `confidence-check` - Pre-implementation confidence assessment (prevents wrong-direction work)
+- `security-scan-workflow` - Automated security scanning workflow using Semgrep (OWASP Top 10, CWE patterns, hardcoded secrets)
 - `monorepo-navigation` - Workspace navigation patterns
 - `repository-detection` - Repository type detection and analysis
 
@@ -257,6 +259,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
     "Context7": { "command": "npx", "args": ["-y", "@upstash/context7-mcp@latest"] },
     "chrome-devtools": { "command": "npx", "args": ["-y", "chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"] },
     "recall": { "command": "npx", "args": ["-y", "@joseairosa/recall"], "env": { "REDIS_URL": "redis://localhost:6379" } },
+    "semgrep": { "command": "uvx", "args": ["semgrep-mcp"] },
     "sequential-thinking": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"] },
     "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"] },
     "vibe-check": { "command": "npx", "args": ["-y", "@pv-bhat/vibe-check-mcp", "start", "--stdio"] }
@@ -267,6 +270,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 **Recommended MCP Servers:**
 
 - **serena** - Semantic code navigation and symbol search (90-95% token savings on code operations)
+- **semgrep** - Automated security scanning for OWASP Top 10 vulnerabilities (scans changed files in 10-15s)
 - **recall** - Cross-session memory and architectural pattern persistence
 - **sequential-thinking** - Multi-step reasoning for complex debugging
 - **Context7** - Up-to-date technical documentation for libraries
@@ -278,7 +282,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 ## Requirements
 
 - Claude Code >=1.0.0
-- Recommended MCP servers: recall, sequential-thinking, serena, Context7
+- Recommended MCP servers: recall, sequential-thinking, serena, semgrep, Context7
 
 ## Repository Structure
 

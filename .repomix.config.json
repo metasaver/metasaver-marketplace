@@ -1,0 +1,32 @@
+{
+  "output": {
+    "filePath": ".repomix-output.txt",
+    "style": "xml",
+    "compress": true,
+    "showLineNumbers": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "topFilesLength": 5
+  },
+  "include": [
+    "plugins/**/*.md",
+    "plugins/**/*.json",
+    "plugins/**/*.ts",
+    ".claude-plugin/**/*"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "**/node_modules/**",
+      "**/.git/**",
+      "**/worktrees/**",
+      "**/.serena/**",
+      "**/.research/**",
+      ".repomix-output.*"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  }
+}
