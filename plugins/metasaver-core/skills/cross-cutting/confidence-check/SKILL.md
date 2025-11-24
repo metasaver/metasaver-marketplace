@@ -42,8 +42,9 @@ Glob "**/*{feature_keyword}*" --path /mnt/f/code/{project}
 **Action:** Verify solution uses established patterns
 
 ```bash
-# Check recall memory for patterns:
-mcp__recall__recall_relevant_context("MetaSaver patterns for {task_type}")
+# Check Serena memories for patterns:
+list_memories()  # Find pattern-*.md and decision-*.md files
+read_memory({ memory_file_name: "pattern-{task_type}.md" })
 
 # OR read relevant MULTI-MONO.md section:
 Read /mnt/f/code/{project}/docs/architecture/MULTI-MONO.md

@@ -1,411 +1,229 @@
 ---
 name: mcp-coordination
-description: Model Context Protocol (MCP) memory patterns for agent coordination, status sharing, and distributed decision-making across agent swarms. Provides storeAgentStatus, getAgentStatus, shareFindings, broadcastToSwarm, and handoffTask patterns with standard namespaces and coordination helpers. Use when implementing multi-agent coordination, task handoffs, or swarm communication.
+description: Model Context Protocol (MCP) memory patterns for agent coordination using Serena memories. Provides file-based memory storage for status sharing, decisions, and distributed decision-making across agent swarms. Use when implementing multi-agent coordination, task handoffs, or swarm communication.
 ---
 
 # MCP Coordination Skill
 
 ## Purpose
 
-Provides standard MCP (Model Context Protocol) memory patterns for agent coordination, status sharing, and distributed decision-making across the swarm.
+Provides standard patterns for agent coordination using **Serena memories** (file-based, git-tracked, per-project memory system). ~23k token savings compared to external memory MCP.
 
-## Input Parameters
+## Memory Tool Reference
+
+Serena provides 5 memory tools:
 
 ```typescript
-interface MCPCoordinationOptions {
-  agentId: string; // Unique agent identifier
-  namespace?: string; // Memory namespace (default: 'coordination')
-  operation: "store" | "retrieve" | "update" | "broadcast";
-  data?: any; // Data to store/broadcast
-  ttl?: number; // Time-to-live in seconds
-}
+// Write a memory file
+write_memory({
+  memory_file_name: "decisions.md",  // File name in .serena/memories/
+  content: "# Architecture Decisions\n..."
+});
 
-interface AgentStatus {
-  agentId: string;
-  status: "idle" | "working" | "blocked" | "completed" | "failed";
-  currentTask?: string;
-  progress?: number; // 0-100
-  dependencies?: string[]; // Other agents this depends on
-  outputs?: string[]; // Files/resources produced
-  timestamp: string;
-}
+// Read a memory file
+read_memory({
+  memory_file_name: "decisions.md"
+});
+
+// List all memory files
+list_memories();
+
+// Edit existing memory (regex replacement)
+edit_memory({
+  memory_file_name: "status.md",
+  needle: "status: working",
+  repl: "status: completed",
+  mode: "literal"  // or "regex"
+});
+
+// Delete a memory file
+delete_memory({
+  memory_file_name: "temp-notes.md"
+});
 ```
 
-## Output Format
+## Memory File Naming Conventions
 
-```typescript
-interface MCPResponse {
-  success: boolean;
-  data?: any;
-  error?: string;
-  metadata: {
-    key: string;
-    namespace: string;
-    timestamp: string;
-  };
-}
+Use consistent naming for searchability:
+
+```
+.serena/memories/
+├── agent-status-{agentId}.md    # Per-agent status
+├── decision-{topic}.md          # Architecture decisions
+├── pattern-{name}.md            # Reusable patterns
+├── finding-{topic}.md           # Research findings
+├── handoff-{from}-to-{to}.md    # Task handoffs
+└── broadcast-{timestamp}.md     # Team announcements
 ```
 
 ## Core Coordination Patterns
 
 ### 1. Store Agent Status
 
-```typescript
-async function storeAgentStatus(status: AgentStatus): Promise<MCPResponse> {
-  return await mcp.memory_usage({
-    action: "store",
-    key: `swarm/${status.agentId}/status`,
-    namespace: "coordination",
-    value: JSON.stringify(status),
-  });
-}
+```javascript
+// Store status
+write_memory({
+  memory_file_name: "agent-status-coder-001.md",
+  content: `# Agent Status: coder-001
 
-// Usage
-await storeAgentStatus({
-  agentId: "coder-001",
-  status: "working",
-  currentTask: "Implementing authentication API",
-  progress: 45,
-  outputs: ["src/auth/auth.service.ts"],
-  timestamp: new Date().toISOString(),
+Status: working
+Task: Implementing authentication API
+Progress: 45%
+Outputs:
+- src/auth/auth.service.ts
+- src/auth/auth.controller.ts
+
+Updated: ${new Date().toISOString()}`
+});
+
+// Update status (efficient edit)
+edit_memory({
+  memory_file_name: "agent-status-coder-001.md",
+  needle: "Progress: 45%",
+  repl: "Progress: 75%",
+  mode: "literal"
 });
 ```
 
 ### 2. Retrieve Agent Status
 
-```typescript
-async function getAgentStatus(agentId: string): Promise<AgentStatus | null> {
-  const response = await mcp.memory_usage({
-    action: "retrieve",
-    key: `swarm/${agentId}/status`,
-    namespace: "coordination",
-  });
+```javascript
+// Get status
+const status = await read_memory({
+  memory_file_name: "agent-status-coder-001.md"
+});
 
-  return response.success ? JSON.parse(response.data) : null;
-}
-
-// Check if dependencies are complete
-async function waitForDependencies(dependencies: string[]): Promise<boolean> {
-  const statuses = await Promise.all(
-    dependencies.map((dep) => getAgentStatus(dep))
-  );
-
-  return statuses.every((s) => s?.status === "completed");
-}
+// List all agent statuses
+const memories = await list_memories();
+const statusFiles = memories.filter(m => m.startsWith("agent-status-"));
 ```
 
 ### 3. Share Findings Between Agents
 
-```typescript
-async function shareFindings(
-  sourceAgent: string,
-  findings: any,
-  topic: string
-): Promise<MCPResponse> {
-  return await mcp.memory_usage({
-    action: "store",
-    key: `swarm/shared/${topic}`,
-    namespace: "coordination",
-    value: JSON.stringify({
-      sourceAgent,
-      timestamp: new Date().toISOString(),
-      findings,
-    }),
-  });
-}
+```javascript
+// Researcher shares findings
+write_memory({
+  memory_file_name: "finding-backend-framework.md",
+  content: `# Research: Backend Framework Selection
 
-// Example: Share research findings
-await shareFindings(
-  "researcher-001",
-  {
-    patterns: ["singleton", "factory", "observer"],
-    libraries: ["express", "fastify"],
-    recommendations: "Use Express for simplicity",
-  },
-  "api-framework-research"
-);
+Source: researcher-001
+Date: ${new Date().toISOString()}
 
-// Example: Share implementation decisions
-await shareFindings(
-  "coder-001",
-  {
-    architecture: "layered",
-    endpoints: ["/auth/login", "/auth/logout", "/auth/refresh"],
-    authentication: "JWT with refresh tokens",
-  },
-  "auth-implementation"
-);
+## Frameworks Evaluated
+- Express - widely adopted, extensive middleware
+- Fastify - high performance, schema validation
+- Koa - minimal, modern async
+
+## Recommendation
+**Express** for this project due to team familiarity and ecosystem.
+
+## Considerations
+- Use Fastify if performance becomes critical
+- Consider Koa for new microservices`
+});
+
+// Another agent reads findings
+const research = await read_memory({
+  memory_file_name: "finding-backend-framework.md"
+});
 ```
 
-### 4. Broadcast to All Agents
+### 4. Store Architecture Decisions
 
-```typescript
-async function broadcastToSwarm(
-  sourceAgent: string,
-  message: string,
-  messageType: "info" | "warning" | "error" | "decision"
-): Promise<MCPResponse> {
-  return await mcp.memory_usage({
-    action: "store",
-    key: `swarm/broadcast/${Date.now()}`,
-    namespace: "coordination",
-    value: JSON.stringify({
-      sourceAgent,
-      messageType,
-      message,
-      timestamp: new Date().toISOString(),
-    }),
-  });
-}
+```javascript
+write_memory({
+  memory_file_name: "decision-auth-implementation.md",
+  content: `# Decision: Authentication Implementation
 
-// Example: Broadcast architecture decision
-await broadcastToSwarm(
-  "architect-001",
-  "Using layered architecture: Controller -> Service -> Repository",
-  "decision"
-);
+Date: ${new Date().toISOString()}
+Author: architect-001
+Status: Approved
+
+## Context
+Need stateless auth for microservices architecture.
+
+## Decision
+JWT with refresh tokens stored in httpOnly cookies.
+
+## Rationale
+- Stateless: no session storage needed
+- Scalable: any service can verify tokens
+- Secure: httpOnly prevents XSS
+
+## Implementation
+- Access token TTL: 15 minutes
+- Refresh token TTL: 7 days
+- Redis for refresh token blacklist
+
+## Consequences
+- Need Redis infrastructure
+- Token size adds to request payload`
+});
 ```
 
 ### 5. Coordinate Task Handoff
 
-```typescript
-async function handoffTask(
-  fromAgent: string,
-  toAgent: string,
-  taskDetails: any
-): Promise<MCPResponse> {
-  // Update source agent status
-  await storeAgentStatus({
-    agentId: fromAgent,
-    status: "completed",
-    currentTask: taskDetails.name,
-    progress: 100,
-    timestamp: new Date().toISOString(),
-  });
+```javascript
+// Coder completes and hands off to tester
+write_memory({
+  memory_file_name: "handoff-coder001-to-tester001.md",
+  content: `# Task Handoff
 
-  // Store handoff data
-  return await mcp.memory_usage({
-    action: "store",
-    key: `swarm/${toAgent}/inbox`,
-    namespace: "coordination",
-    value: JSON.stringify({
-      fromAgent,
-      taskDetails,
-      timestamp: new Date().toISOString(),
-    }),
-  });
-}
+From: coder-001
+To: tester-001
+Date: ${new Date().toISOString()}
 
-// Example: Coder hands off to tester
-await handoffTask("coder-001", "tester-001", {
-  name: "Test authentication API",
-  files: ["src/auth/auth.service.ts", "src/auth/auth.controller.ts"],
-  endpoints: ["/auth/login", "/auth/logout"],
-  testingNotes: "Focus on JWT validation and refresh token flow",
+## Completed Work
+- Auth service: src/auth/auth.service.ts
+- Auth controller: src/auth/auth.controller.ts
+- JWT middleware: src/middleware/jwt.ts
+
+## Endpoints to Test
+- POST /auth/login
+- POST /auth/logout
+- POST /auth/refresh
+
+## Testing Notes
+- Focus on JWT validation edge cases
+- Test refresh token rotation
+- Verify httpOnly cookie behavior
+
+## Dependencies
+- Redis must be running
+- .env configured with JWT_SECRET`
+});
+
+// Update own status to completed
+edit_memory({
+  memory_file_name: "agent-status-coder-001.md",
+  needle: "Status: working",
+  repl: "Status: completed",
+  mode: "literal"
 });
 ```
 
-## Usage Examples
+### 6. Broadcast Announcements
 
-### Example 1: Researcher to Planner Coordination
+```javascript
+// Critical announcement
+write_memory({
+  memory_file_name: `broadcast-${Date.now()}.md`,
+  content: `# Team Broadcast
 
-```typescript
-// Researcher stores findings
-await shareFindings(
-  "researcher-001",
-  {
-    frameworks: ["Express", "Fastify", "Koa"],
-    recommendation: "Express - widely adopted, extensive middleware",
-    considerations: "Fastify if performance is critical",
-  },
-  "backend-framework"
-);
+Type: decision
+From: architect-001
+Date: ${new Date().toISOString()}
 
-// Planner retrieves findings
-const research = await mcp.memory_usage({
-  action: "retrieve",
-  key: "swarm/shared/backend-framework",
-  namespace: "coordination",
+## Message
+Using layered architecture: Controller -> Service -> Repository
+
+All services must follow this pattern. See decision-architecture.md for details.`
 });
-
-const findings = JSON.parse(research.data);
-console.log("Using framework:", findings.findings.recommendation);
-```
-
-### Example 2: Parallel Coder Coordination
-
-```typescript
-// Coder 1: Working on auth
-await storeAgentStatus({
-  agentId: "coder-auth",
-  status: "working",
-  currentTask: "Implementing authentication",
-  outputs: ["src/auth/auth.service.ts"],
-  timestamp: new Date().toISOString(),
-});
-
-// Coder 2: Check if auth service is ready before starting user service
-const authStatus = await getAgentStatus("coder-auth");
-if (authStatus?.status === "completed") {
-  // Start work on user service that depends on auth
-  await storeAgentStatus({
-    agentId: "coder-user",
-    status: "working",
-    currentTask: "Implementing user management",
-    dependencies: ["coder-auth"],
-    timestamp: new Date().toISOString(),
-  });
-}
-```
-
-### Example 3: Error Coordination
-
-```typescript
-// Agent encounters blocker
-await broadcastToSwarm(
-  "coder-001",
-  "Database connection failing - missing environment variables",
-  "error"
-);
-
-// Update status to blocked
-await storeAgentStatus({
-  agentId: "coder-001",
-  status: "blocked",
-  currentTask: "Setup database connection",
-  progress: 30,
-  timestamp: new Date().toISOString(),
-});
-
-// DevOps agent sees broadcast and resolves
-await shareFindings(
-  "devops-001",
-  {
-    resolution: "Added .env.example with required variables",
-    action: "Please copy .env.example to .env and configure",
-  },
-  "database-config"
-);
-```
-
-## Standard Memory Namespaces
-
-```typescript
-export const MCPNamespaces = {
-  COORDINATION: "coordination", // Agent status and handoffs
-  SHARED: "swarm/shared", // Shared findings and decisions
-  BROADCAST: "swarm/broadcast", // System-wide announcements
-  INBOX: "swarm/{agentId}/inbox", // Agent-specific incoming tasks
-  STATUS: "swarm/{agentId}/status", // Agent current status
-  OUTPUT: "swarm/{agentId}/output", // Agent produced artifacts
-};
-
-export const MCPKeys = {
-  agentStatus: (agentId: string) => `swarm/${agentId}/status`,
-  sharedFinding: (topic: string) => `swarm/shared/${topic}`,
-  agentInbox: (agentId: string) => `swarm/${agentId}/inbox`,
-  broadcast: () => `swarm/broadcast/${Date.now()}`,
-  dependency: (agentId: string, depId: string) =>
-    `swarm/${agentId}/deps/${depId}`,
-};
-```
-
-## Coordination Helpers
-
-```typescript
-export class SwarmCoordinator {
-  constructor(private agentId: string) {}
-
-  async reportProgress(task: string, progress: number, outputs?: string[]) {
-    return storeAgentStatus({
-      agentId: this.agentId,
-      status: "working",
-      currentTask: task,
-      progress,
-      outputs,
-      timestamp: new Date().toISOString(),
-    });
-  }
-
-  async complete(outputs: string[]) {
-    return storeAgentStatus({
-      agentId: this.agentId,
-      status: "completed",
-      progress: 100,
-      outputs,
-      timestamp: new Date().toISOString(),
-    });
-  }
-
-  async block(reason: string) {
-    await broadcastToSwarm(this.agentId, `Blocked: ${reason}`, "error");
-    return storeAgentStatus({
-      agentId: this.agentId,
-      status: "blocked",
-      timestamp: new Date().toISOString(),
-    });
-  }
-
-  async share(topic: string, findings: any) {
-    return shareFindings(this.agentId, findings, topic);
-  }
-
-  async retrieve(topic: string) {
-    const response = await mcp.memory_usage({
-      action: "retrieve",
-      key: `swarm/shared/${topic}`,
-      namespace: "coordination",
-    });
-    return response.success ? JSON.parse(response.data) : null;
-  }
-}
-```
-
-## Integration Pattern
-
-```typescript
-// In any agent implementation
-export async function executeAgentTask(agentId: string, task: string) {
-  const coordinator = new SwarmCoordinator(agentId);
-
-  try {
-    // Report starting
-    await coordinator.reportProgress(task, 0);
-
-    // Check dependencies
-    const dependencies = await coordinator.retrieve("dependencies");
-    if (dependencies) {
-      const ready = await waitForDependencies(dependencies.required);
-      if (!ready) {
-        await coordinator.block("Waiting for dependencies");
-        return;
-      }
-    }
-
-    // Do work
-    await coordinator.reportProgress(task, 50);
-    const output = await performWork();
-
-    // Share findings
-    await coordinator.share("implementation-details", {
-      approach: "layered architecture",
-      files: output.files,
-    });
-
-    // Complete
-    await coordinator.complete(output.files);
-  } catch (error) {
-    await coordinator.block(`Error: ${error.message}`);
-    throw error;
-  }
-}
 ```
 
 ## Multi-MCP Coordination Workflows
 
-### Workflow 1: Feature Implementation with Full MCP Stack
-
-When implementing a complex feature, coordinate multiple MCP tools:
+### Workflow 1: Feature Implementation
 
 ```javascript
 // 1. Context7: Research library
@@ -413,12 +231,13 @@ const jwtDocs = await mcp__Context7__get_library_docs({
   context7CompatibleLibraryID: "/vercel/jsonwebtoken"
 });
 
-// 2. Recall: Check prior patterns
-const authPatterns = await mcp__recall__search_memories({
-  query: "JWT authentication implementation patterns",
-  context_types: ["code_pattern", "decision"],
-  limit: 5
-});
+// 2. Serena: Check existing patterns in memories
+const memories = await list_memories();
+const authPatterns = memories.filter(m => m.includes("auth") || m.includes("jwt"));
+for (const pattern of authPatterns) {
+  const content = await read_memory({ memory_file_name: pattern });
+  // Use existing patterns
+}
 
 // 3. Serena: Find existing auth code
 const existingAuth = await mcp__serena__find_symbol({
@@ -440,44 +259,33 @@ if (complexityScore >= 20) {
 // 5. Vibe Check: Validate approach
 const vibeCheck = await mcp__vibe_check__vibe_check({
   goal: "Implement JWT auth with refresh tokens",
-  plan: "Add JWT middleware + refresh token endpoint + Redis cache",
-  progress: "Researched libraries, found existing patterns",
-  taskContext: "repo: metasaver-com, feature: auth"
+  plan: "Add JWT middleware + refresh token endpoint",
+  progress: "Researched libraries, found existing patterns"
 });
 
-// If over-engineering detected, simplify
-if (vibeCheck.risks.includes("over-engineering")) {
-  // Revise plan based on feedback
-}
+// 6. Store decision in memory
+write_memory({
+  memory_file_name: "decision-jwt-auth.md",
+  content: `# Decision: JWT Authentication
 
-// 6. Coordination: Share decision with team
-await shareFindings("architect-001", {
-  decision: "JWT + refresh tokens with httpOnly cookies",
-  libraries: ["jsonwebtoken", "bcrypt"],
-  architecture: "stateless auth with Redis for refresh tokens",
-  rationale: vibeCheck.feedback
-}, "auth-implementation");
+Date: ${new Date().toISOString()}
+Complexity Score: ${complexityScore}
 
-// 7. Recall: Store architectural decision
-await mcp__recall__store_memory({
-  content: JSON.stringify({
-    decision: "JWT authentication with refresh tokens",
-    rationale: "Stateless, scalable, industry standard",
-    implementation: {
-      accessTokenTTL: "15m",
-      refreshTokenTTL: "7d",
-      storage: "Redis"
-    }
-  }),
-  context_type: "decision",
-  importance: 9,
-  tags: ["auth", "jwt", "architecture"]
+## Approach
+${vibeCheck.feedback}
+
+## Libraries
+- jsonwebtoken
+- bcrypt
+
+## Architecture
+- Stateless auth with Redis for refresh tokens
+- Access token: 15min TTL
+- Refresh token: 7 days TTL`
 });
 ```
 
 ### Workflow 2: Debugging Complex Issue
-
-Combine MCP tools for systematic root cause analysis:
 
 ```javascript
 // 1. Serena: Find bug location
@@ -487,159 +295,63 @@ const symbols = await mcp__serena__find_symbol({
   relative_path: "src/services"
 });
 
-// 2. Sequential Thinking: Analyze issue step-by-step
+// 2. Sequential Thinking: Analyze step-by-step
 await mcp__sequential_thinking__sequentialthinking({
-  thought: "Hypothesis 1: Race condition in payment processing due to async operations...",
+  thought: "Hypothesis 1: Race condition due to missing async...",
   thoughtNumber: 1,
   totalThoughts: 12,
   nextThoughtNeeded: true
 });
 
-await mcp__sequential_thinking__sequentialthinking({
-  thought: "Testing hypothesis: Checking for missing await keywords or Promise.all...",
-  thoughtNumber: 2,
-  totalThoughts: 12,
-  nextThoughtNeeded: true
+// 3. Check prior solutions in memories
+const memories = await list_memories();
+const bugPatterns = memories.filter(m =>
+  m.includes("bug") || m.includes("race") || m.includes("payment")
+);
+
+// 4. Store root cause analysis
+write_memory({
+  memory_file_name: "finding-payment-race-condition.md",
+  content: `# Root Cause Analysis: Payment Race Condition
+
+Analyst: root-cause-analyst-001
+Date: ${new Date().toISOString()}
+
+## Root Cause
+Missing transaction lock in payment flow.
+
+## Evidence
+- Two concurrent payment requests created duplicate charges
+- No Redis lock on payment processing
+- Race condition in database write
+
+## Fix
+Add distributed lock using Redis SETNX.
+
+## Code
+\`\`\`typescript
+await redisClient.set(lockKey, 'locked', 'NX', 'EX', 10);
+\`\`\``
 });
 
-// 3. Chrome DevTools: Reproduce in browser (if UI-related)
-if (isUIBug) {
-  await mcp__chrome_devtools__navigate_page({
-    url: "http://localhost:5173/checkout",
-    type: "url"
-  });
-
-  const networkRequests = await mcp__chrome_devtools__list_network_requests({
-    resourceTypes: ["xhr", "fetch"]
-  });
-}
-
-// 4. Recall: Check similar past issues
-const priorBugs = await mcp__recall__search_memories({
-  query: "payment race condition async bugs",
-  context_types: ["error", "information"],
-  limit: 3
-});
-
-// 5. Coordination: Share findings with team
-await shareFindings("root-cause-analyst-001", {
-  rootCause: "Missing transaction lock in payment flow",
-  evidence: [
-    "Two concurrent payment requests created duplicate charges",
-    "No Redis lock on payment processing",
-    "Race condition in database write"
-  ],
-  fix: "Add distributed lock using Redis SETNX"
-}, "payment-bug-analysis");
-
-// 6. Vibe Learn: Document for future
+// 5. Vibe Learn: Document for future
 await mcp__vibe_check__vibe_learn({
   mistake: "Payment race condition due to missing distributed lock",
   category: "Complex Solution Bias",
-  solution: "Added Redis distributed lock with TTL",
-  type: "mistake"
-});
-
-// 7. Recall: Store solution pattern
-await mcp__recall__store_memory({
-  content: JSON.stringify({
-    pattern: "distributed-lock-for-critical-sections",
-    implementation: "Redis SETNX with TTL",
-    useCase: "Prevent race conditions in payment processing",
-    code: "await redisClient.set(lockKey, 'locked', 'NX', 'EX', 10)"
-  }),
-  context_type: "code_pattern",
-  importance: 8,
-  tags: ["redis", "concurrency", "payment"]
+  solution: "Added Redis distributed lock with TTL"
 });
 ```
 
-### Workflow 3: Performance Optimization
-
-Multi-tool approach for performance analysis:
+### Workflow 3: E2E Test Creation
 
 ```javascript
-// 1. Chrome DevTools: Start performance trace
-await mcp__chrome_devtools__performance_start_trace({
-  reload: true,
-  autoStop: true
-});
-
-await mcp__chrome_devtools__navigate_page({
-  url: "http://localhost:5173/dashboard",
-  type: "url"
-});
-
-// 2. Sequential Thinking: Analyze bottleneck
-await mcp__sequential_thinking__sequentialthinking({
-  thought: "Step 1: APM shows p95 response time of 2.3s (target: 500ms)...",
-  thoughtNumber: 1,
-  totalThoughts: 10,
-  nextThoughtNeeded: true
-});
-
-// 3. Serena: Find performance-critical code
-const hotPath = await mcp__serena__find_symbol({
-  name_path_pattern: "getUserDashboard",
-  include_body: true
-});
-
-// 4. Recall: Check prior optimizations
-const optimizations = await mcp__recall__search_memories({
-  query: "database query optimization N+1",
-  context_types: ["code_pattern"],
-  limit: 5
-});
-
-// 5. Context7: Research optimization library
-const prismaOptimization = await mcp__Context7__get_library_docs({
-  context7CompatibleLibraryID: "/prisma/prisma",
-  topic: "query optimization"
-});
-
-// 6. Coordination: Share optimization plan
-await shareFindings("performance-engineer-001", {
-  bottleneck: "N+1 query in getUserDashboard",
-  currentPerformance: "2.3s p95",
-  targetPerformance: "400ms p95",
-  optimizations: [
-    "Add Prisma select with relations",
-    "Implement Redis cache (5min TTL)",
-    "Add database index on user.email"
-  ],
-  expectedImprovement: "83% reduction"
-}, "dashboard-performance");
-
-// 7. Recall: Store optimization
-await mcp__recall__store_memory({
-  content: JSON.stringify({
-    optimization: "batch-query-with-cache",
-    before: "2.3s p95",
-    after: "380ms p95",
-    technique: "Prisma select + Redis cache + DB index"
-  }),
-  context_type: "code_pattern",
-  importance: 7,
-  tags: ["performance", "optimization", "prisma"]
-});
-```
-
-### Workflow 4: E2E Test Creation
-
-Combine browser automation with memory coordination:
-
-```javascript
-// 1. Recall: Get feature requirements
-const requirements = await mcp__recall__search_memories({
-  query: "user registration feature requirements",
-  context_types: ["requirement", "decision"],
-  limit: 3
-});
+// 1. Check for existing test patterns
+const memories = await list_memories();
+const testPatterns = memories.filter(m => m.includes("test") || m.includes("e2e"));
 
 // 2. Chrome DevTools: Test the flow
 await mcp__chrome_devtools__navigate_page({
-  url: "http://localhost:5173/register",
-  type: "url"
+  url: "http://localhost:5173/register"
 });
 
 await mcp__chrome_devtools__fill_form({
@@ -650,45 +362,57 @@ await mcp__chrome_devtools__fill_form({
 });
 
 await mcp__chrome_devtools__click({ uid: "register-button" });
-
 await mcp__chrome_devtools__wait_for({ text: "Registration successful" });
 
 const screenshot = await mcp__chrome_devtools__take_screenshot({
   filePath: "./e2e-results/registration-success.png"
 });
 
-// 3. Coordination: Share test results
-await shareFindings("e2e-test-agent-001", {
-  test: "user-registration-flow",
-  status: "passed",
-  duration: "2.1s",
-  assertions: ["form validation", "API call", "success message", "redirect"],
-  screenshot: screenshot.filePath
-}, "e2e-test-results");
+// 3. Store test pattern for reuse
+write_memory({
+  memory_file_name: "pattern-e2e-registration.md",
+  content: `# E2E Test Pattern: User Registration
 
-// 4. Recall: Store test pattern
-await mcp__recall__store_memory({
-  content: JSON.stringify({
-    testPattern: "registration-e2e-workflow",
-    steps: ["navigate", "fill form", "submit", "verify success"],
-    tools: ["chrome-devtools", "recall"],
-    reusable: true
-  }),
-  context_type: "code_pattern",
-  importance: 6,
-  tags: ["e2e", "testing", "registration"]
+Created: ${new Date().toISOString()}
+Author: e2e-test-agent-001
+
+## Test Steps
+1. Navigate to /register
+2. Fill email and password fields
+3. Click register button
+4. Verify success message
+
+## Assertions
+- Form validation works
+- API call succeeds
+- Success message appears
+- Redirect to dashboard
+
+## Screenshot
+${screenshot.filePath}
+
+## Duration
+~2.1s`
 });
 ```
 
 ## Key Coordination Principles
 
-1. **Layer Tools Appropriately**: Use Context7 for docs, Serena for code, Sequential Thinking for analysis
-2. **Share Decisions**: Always broadcast architectural decisions to the team
-3. **Learn from Errors**: Use vibe_learn to capture mistakes
-4. **Cache Knowledge**: Store patterns in recall for reuse
-5. **Validate Plans**: Use vibe_check before complex implementations
-6. **Coordinate Status**: Update agent status for parallel work
-7. **Capture Evidence**: Use chrome-devtools screenshots for debugging
+1. **Use Named Files**: Consistent naming enables "search" via list + filter
+2. **Git-Tracked**: Memories persist across sessions and are version controlled
+3. **Per-Project Scope**: Each repo has its own `.serena/memories/`
+4. **Efficient Updates**: Use `edit_memory` for status changes instead of full rewrites
+5. **Layer Tools**: Context7 for docs, Serena for code, memories for coordination
+6. **Validate Plans**: Use vibe_check before complex implementations
+7. **Learn from Errors**: Use vibe_learn to capture mistakes
+
+## Token Savings
+
+| Solution | Token Cost |
+|----------|-----------|
+| External Memory MCP (Recall) | ~27k tokens |
+| Serena Memories | ~3.5k tokens |
+| **Savings** | **~23.5k tokens (87%)** |
 
 ## Used By
 
@@ -696,4 +420,4 @@ await mcp__recall__store_memory({
 - Swarm coordinator/orchestrator
 - Task scheduler
 - Dependency manager
-- Progress monitoring dashboard
+- Progress monitoring

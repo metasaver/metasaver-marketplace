@@ -509,37 +509,38 @@ Total: 1,000 tokens, 30 minutes, 100% coverage
 
 ---
 
-## Recall Memory Integration
+## Serena Memory Integration
 
-Store security findings for trend analysis:
+Store security findings for trend analysis using Serena memories:
 
 ```typescript
 // Store security scan results
-mcp__recall__store_memory({
-  content: JSON.stringify({
-    skill: "security-scan-workflow",
-    timestamp: new Date().toISOString(),
-    scanType: scanScope.type,
-    filesScanned: scanScope.files.length,
-    findings: {
-      critical: classified.critical.length,
-      high: classified.high.length,
-      medium: classified.medium.length,
-      low: classified.low.length
-    },
-    topVulnerabilities: classified.critical.slice(0, 5)
-  }),
-  context_type: "information",
-  importance: classified.critical.length > 0 ? 10 : 7,
-  tags: ["security", "semgrep", "audit", "vulnerabilities"]
+write_memory({
+  memory_file_name: `security-scan-${new Date().toISOString().split('T')[0]}.md`,
+  content: `# Security Scan Results
+
+Date: ${new Date().toISOString()}
+Scan Type: ${scanScope.type}
+Files Scanned: ${scanScope.files.length}
+
+## Findings Summary
+- Critical: ${classified.critical.length}
+- High: ${classified.high.length}
+- Medium: ${classified.medium.length}
+- Low: ${classified.low.length}
+
+## Top Vulnerabilities
+${classified.critical.slice(0, 5).map(v => `- ${v.rule_id}: ${v.message}`).join('\n')}
+`
 });
 
 // Query historical security trends
-const pastScans = await mcp__recall__search_memories({
-  query: "security-scan-workflow vulnerabilities",
-  context_types: ["information"],
-  limit: 10
-});
+const memories = await list_memories();
+const securityScans = memories.filter(m => m.startsWith("security-scan-"));
+for (const scan of securityScans.slice(-10)) {
+  const content = await read_memory({ memory_file_name: scan });
+  // Analyze trends
+}
 ```
 
 ---

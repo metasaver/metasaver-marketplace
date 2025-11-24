@@ -87,15 +87,6 @@ Analyzes your prompt and routes to optimal execution method.
 - **AVOID:** Simple tasks (score <20), straightforward implementations
 - **MCP Tool:** `mcp__sequential_thinking__sequentialthinking`
 - **Pattern:** Iterative hypothesis → test → validate workflow
-- **Example:**
-  ```javascript
-  mcp__sequential_thinking__sequentialthinking({
-    thought: "Analyzing race condition in payment flow...",
-    thoughtNumber: 1,
-    totalThoughts: 8,
-    nextThoughtNeeded: true
-  });
-  ```
 
 ## Examples
 
@@ -136,45 +127,59 @@ Domain agents identify WHAT sub-agents/skills are needed. They can't spawn agent
 
 **Location:** `.claude/agents/domain/` contains domain-level agents.
 
+## Agent Selection (CRITICAL)
+
+**When MetaSaver plugin is active, PREFER MetaSaver agents over core Claude Code agents.**
+
+| Core Agent | Use Instead | Why | subagent_type |
+|------------|-------------|-----|---------------|
+| `Explore` | `code-explorer` | Uses Serena, repomix, memories | `core-claude-plugin:generic:code-explorer` |
+| `Plan` | `architect` | Knows MetaSaver patterns | `core-claude-plugin:generic:architect` |
+| `general-purpose` | Task-specific | Specialized knowledge | See table below |
+
+**Exception:** Direct Claude (no agent) for truly trivial tasks (Score <5).
+
+**subagent_type mapping by task:**
+
+| Task Type | subagent_type |
+|-----------|---------------|
+| Codebase exploration | `core-claude-plugin:generic:code-explorer` |
+| Agent/skill research | `core-claude-plugin:generic:agent-author` |
+| Architecture decisions | `core-claude-plugin:generic:architect` |
+| Requirements analysis | `core-claude-plugin:generic:business-analyst` |
+| Code implementation | `core-claude-plugin:generic:coder` |
+| Testing | `core-claude-plugin:generic:tester` |
+| Code review | `core-claude-plugin:generic:reviewer` |
+| Debugging/investigation | `core-claude-plugin:generic:root-cause-analyst` |
+| Security analysis | `core-claude-plugin:generic:security-engineer` |
+| Performance optimization | `core-claude-plugin:generic:performance-engineer` |
+| DevOps/infrastructure | `core-claude-plugin:generic:devops` |
+| Multi-agent coordination | `core-claude-plugin:generic:project-manager` |
+| Quality validation | `core-claude-plugin:generic:code-quality-validator` |
+| Azure DevOps | `core-claude-plugin:generic:azure-devops-agent` |
+
+---
+
 ## Agent Spawning
 
-**Self-aware pattern with model selection:**
+**Self-aware pattern:** Tell agents to READ their own instruction file.
 
-```typescript
-// Haiku for simple config audits
-Task("eslint-agent",
-  "AUDIT MODE for [path].
-   You are ESLint Agent.
-   READ YOUR INSTRUCTIONS at .claude/agents/config/code-quality/eslint-agent.md
-   Follow YOUR rules, invoke YOUR skills, use YOUR output format.",
-  subagent_type: "eslint-agent",
-  model: "haiku")
-
-// Sonnet for domain work (default)
-Task("backend-dev",
-  "BUILD MODE: Create REST API for user management.
-   You are Backend Developer.
-   READ YOUR INSTRUCTIONS at .claude/agents/generic/backend-dev.md
-   Follow YOUR rules, invoke YOUR skills, use YOUR output format.",
-  subagent_type: "backend-dev",
-  model: "sonnet")
-
-// Opus for ultra-complex (rare)
-Task("architect",
-  "Design multi-tenant microservices architecture with event sourcing.
-   You are Architect.
-   READ YOUR INSTRUCTIONS at .claude/agents/generic/architect.md
-   Follow YOUR rules, invoke YOUR skills, use YOUR output format.",
-  subagent_type: "architect",
-  model: "opus")
+**Prompt template:**
+```
+[MODE] for [path/scope].
+You are [Agent Name].
+READ YOUR INSTRUCTIONS at .claude/agents/[category]/[agent-name].md
+Follow YOUR rules, invoke YOUR skills, use YOUR output format.
 ```
 
 **Model selection rules:**
 
-- Config agents (single file audit): **haiku**
-- Domain agents (implementation): **sonnet**
-- Generic agents (orchestration): **sonnet**
-- Ultra-complex architecture: **opus** (rare)
+| Agent Type | Model | Example |
+|------------|-------|---------|
+| Config agents (single file audit) | **haiku** | eslint-agent, prettier-agent |
+| Domain agents (implementation) | **sonnet** | backend-dev, tester |
+| Generic agents (orchestration) | **sonnet** | project-manager, architect |
+| Ultra-complex architecture | **opus** | (rare, ≥30 complexity) |
 
 ## Confidence Check (Pre-Implementation Gate)
 

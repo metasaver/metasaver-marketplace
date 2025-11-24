@@ -22,13 +22,13 @@ claude-marketplace/
 │       ├── .claude-plugin/
 │       │   └── plugin.json     # REQUIRED: Plugin manifest
 │       ├── agents/             # At plugin root (NOT in .claude/)
-│       │   ├── generic/        # 13 generic agents
-│       │   ├── domain/         # 9 domain agents (organized by domain)
-│       │   └── config/         # 26 config agents (organized by category)
+│       │   ├── generic/        # 15 generic agents
+│       │   ├── domain/         # 11 domain agents (organized by domain)
+│       │   └── config/         # 28 config agents (organized by category)
 │       ├── skills/             # At plugin root (NOT in .claude/)
-│       │   ├── cross-cutting/  # 6 cross-cutting skills
-│       │   ├── domain/         # 6 domain skills
-│       │   └── config/         # 17 config skills with templates
+│       │   ├── cross-cutting/  # 9 cross-cutting skills
+│       │   ├── domain/         # 5 domain skills
+│       │   └── config/         # 14 config skills with templates
 │       ├── commands/           # At plugin root (NOT in .claude/)
 │       │   ├── audit.md
 │       │   ├── build.md
@@ -130,27 +130,28 @@ The plugin supports **producer-consumer monorepo** patterns:
 
 ### Agent Categories & Responsibilities
 
-**Generic Agents (13):**
+**Generic Agents (15):**
 - High-level workers (architect, business-analyst, project-manager)
 - Implementation specialists (coder, backend-dev, devops)
 - Quality gatekeepers (reviewer, tester, code-quality-validator)
 - Meta-level (agent-author for creating/modifying agents)
 - Analysis specialists (security-engineer, performance-engineer, root-cause-analyst)
+- Infrastructure (azure-devops-agent, code-explorer)
 
-**Domain Agents (9):**
+**Domain Agents (11):**
 - All support **Build** and **Audit** modes
 - Backend: data-service-agent, integration-service-agent
 - Database: prisma-database-agent
-- Frontend: react-component-agent, mfe-host-agent, mfe-remote-agent
-- Testing: unit-test-agent, integration-test-agent
+- Frontend: react-component-agent, mfe-host-agent, mfe-remote-agent, shadcn-component-agent
+- Testing: unit-test-agent, integration-test-agent, e2e-test-agent
 - Monorepo: monorepo-setup-agent
 
-**Config Agents (26):**
+**Config Agents (28):**
 - All support **Build** and **Audit** modes
-- Build Tools (8): docker-compose, vite, vitest, turbo, pnpm-workspace, etc.
+- Build Tools (8): docker-compose, dockerignore, vite, vitest, turbo, pnpm-workspace, postcss, tailwind
 - Code Quality (3): eslint, prettier, editorconfig
 - Version Control (5): gitignore, gitattributes, husky, commitlint, github-workflow
-- Workspace (10): typescript, vscode, readme, package.json, .nvmrc, etc.
+- Workspace (12): typescript, vscode, readme, package.json, .nvmrc, claude-md, env-example, nodemon, npmrc-template, repomix-config, scripts, monorepo-root-structure
 
 ### Skills vs Agents
 

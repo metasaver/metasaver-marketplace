@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/metasaver/claude-marketplace)
-[![Agents](https://img.shields.io/badge/Agents-49-green)](https://github.com/metasaver/claude-marketplace)
-[![Skills](https://img.shields.io/badge/Skills-30-green)](https://github.com/metasaver/claude-marketplace)
+[![Agents](https://img.shields.io/badge/Agents-54-green)](https://github.com/metasaver/claude-marketplace)
+[![Skills](https://img.shields.io/badge/Skills-28-green)](https://github.com/metasaver/claude-marketplace)
 
 Official marketplace for MetaSaver plugins - Professional development tools, agents, and skills for Claude Code.
 
@@ -13,13 +13,13 @@ MetaSaver is a comprehensive system of specialized agents, reusable skills, and 
 
 ## Available Plugins
 
-### @metasaver/core-claude-plugin (v1.0.0)
+### @metasaver/core-claude-plugin (v1.4.0)
 
 Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture.
 
 **Includes:**
-- 49 specialized agents (13 generic, 10 domain, 26 config)
-- 30 reusable skills with templates
+- 54 specialized agents (15 generic, 11 domain, 28 config)
+- 28 reusable skills with templates
 - Intelligent routing commands (/ms, /audit)
 - Complete template libraries
 - Cross-platform compatibility (Windows WSL + Linux)
@@ -69,7 +69,7 @@ All agents, skills, and commands are immediately available:
 
 ## Complete Agent & Skill Inventory
 
-### Generic Agents (13)
+### Generic Agents (15)
 **Development & Architecture:**
 - `architect` - Architecture design specialist with SPARC methodology
 - `backend-dev` - Backend development with Express, Prisma, and MetaSaver API patterns
@@ -93,8 +93,10 @@ All agents, skills, and commands are immediately available:
 - `security-engineer` - Security assessment specialist with automated Semgrep scanning, OWASP expertise, and threat modeling
 - `performance-engineer` - Performance optimization specialist using data-driven profiling
 - `root-cause-analyst` - Systematic debugging specialist using evidence-based investigation
+- `azure-devops-agent` - Azure DevOps specialist for CI/CD pipelines, Azure Repos, and infrastructure automation
+- `code-explorer` - Codebase exploration specialist using Serena, repomix, and MCP ecosystem for token-efficient research
 
-### Domain Agents (10)
+### Domain Agents (11)
 All domain agents support both **Build** and **Audit** modes.
 
 **Backend Services:**
@@ -113,11 +115,12 @@ All domain agents support both **Build** and **Audit** modes.
 **Testing:**
 - `unit-test-agent` - Jest unit tests, AAA pattern, mocking strategies, coverage requirements
 - `integration-test-agent` - API integration tests, Supertest, database fixtures, end-to-end flows
+- `e2e-test-agent` - End-to-end testing specialist using Chrome DevTools for browser automation and visual testing
 
 **Monorepo:**
 - `monorepo-setup-agent` - Monorepo creation and auditing, Turborepo setup, pnpm workspaces, root structure validation
 
-### Config Agents (26)
+### Config Agents (28)
 **Build Tools (8):**
 - `docker-compose-agent` - Docker Compose configuration (build & audit modes)
 - `dockerignore-agent` - Docker ignore patterns (build & audit modes)
@@ -140,7 +143,7 @@ All domain agents support both **Build** and **Audit** modes.
 - `gitignore-agent` - Git ignore patterns (build & audit modes)
 - `husky-agent` - Husky git hooks (build & audit modes)
 
-**Workspace Configuration (10):**
+**Workspace Configuration (12):**
 - `claude-md-agent` - CLAUDE.md configuration with multi-mono architecture awareness (build & audit modes)
 - `env-example-agent` - Environment example (.env.example) configuration (build & audit modes)
 - `monorepo-root-structure-agent` - Detects unexpected files and validates directory organization
@@ -152,8 +155,9 @@ All domain agents support both **Build** and **Audit** modes.
 - `scripts-agent` - Scripts directory management (build & audit modes)
 - `typescript-agent` - TypeScript configuration (build & audit modes)
 - `vscode-agent` - VS Code settings (build, audit, and file cleanup modes)
+- `repomix-config-agent` - Repomix configuration for AI-friendly codebase compression (build & audit modes)
 
-### Cross-Cutting Skills (7)
+### Cross-Cutting Skills (9)
 - `building-blocks-advisor` - Pattern and building block recommendations
 - `mcp-coordination` - Agent-to-agent coordination via MCP memory (status sharing, task handoffs, swarm communication)
 - `mcp-tool-selection` - Determines WHICH external MCP tools to use based on task type (Context7, Sequential Thinking, Serena, Recall, etc.)
@@ -161,18 +165,19 @@ All domain agents support both **Build** and **Audit** modes.
 - `security-scan-workflow` - Automated security scanning workflow using Semgrep (OWASP Top 10, CWE patterns, hardcoded secrets)
 - `monorepo-navigation` - Workspace navigation patterns
 - `repository-detection` - Repository type detection and analysis
+- `repomix-cache-refresh` - Repomix cache management for 70% token savings
+- `serena-code-reading` - Serena progressive disclosure patterns for 93% token savings
 
 > **Note:** `mcp-coordination` and `mcp-tool-selection` serve different purposes:
 > - **mcp-coordination**: Agent swarm communication patterns (how agents talk to each other via MCP memory)
 > - **mcp-tool-selection**: External tool selection logic (which MCP servers to invoke for a task)
 
-### Domain Skills (6)
+### Domain Skills (5)
 - `audit-workflow` - Comprehensive audit orchestration across files and domains
 - `config-validation` - Configuration file validation and standards compliance
 - `monorepo-audit` - Monorepo-wide auditing with agent coordination
 - `remediation-options` - Issue remediation strategies and recommendations
 - `workflow-orchestration` - Complex workflow coordination for multi-step tasks
-- `repository-detection` - Identifies monorepo structure and architecture patterns
 
 ## Understanding Skills vs Agents
 
@@ -197,16 +202,17 @@ All domain agents support both **Build** and **Audit** modes.
 
 Example: The `eslint-agent` (config agent) uses the `audit-workflow` skill (domain skill) to perform its audit.
 
-### Config Skills (17)
-Complete template libraries for all configuration agents:
+### Config Skills (14)
+Complete template libraries for configuration agents:
 - **Build Tools:** pnpm-workspace, postcss, turbo, vite, vitest configs with templates
 - **Version Control:** commitlint, gitattributes, gitignore, husky hooks with templates
 - **Workspace:** dockerignore, nodemon, npmrc, tailwind, vscode with templates
 
-### Commands (3)
+### Commands (4)
 - `/audit` - Natural language audit command (validates configs, code quality, standards compliance)
 - `/build` - Build new features with architecture validation and technical documentation
 - `/ms` - MetaSaver intelligent command router (complexity scoring, automatic agent spawning)
+- `/ss` - Screenshot command for processing saved screenshots with instructions
 
 ## Intelligent Model Selection
 
@@ -236,11 +242,11 @@ MetaSaver commands automatically select the optimal Claude model based on task c
 ```
 
 **Cost Optimization:**
-- Config agents (26 total): Always haiku (score ≤4) - 10-20x cheaper than opus
-- Domain agents (9 total): Always sonnet (score 5+) - all implementation work
-- Generic agents (13 total): Sonnet (default) or Opus (ultra-complex only)
+- Config agents (28 total): Always haiku (score ≤4) - 10-20x cheaper than opus
+- Domain agents (11 total): Always sonnet (score 5+) - all implementation work
+- Generic agents (15 total): Sonnet (default) or Opus (ultra-complex only)
 
-Full monorepo audit (26 config agents):
+Full monorepo audit (28 config agents):
 - ❌ All Opus: 390x cost
 - ❌ All Sonnet: 78x cost
 - ✅ Haiku configs + Sonnet orchestration: 35x cost (91% savings vs opus)

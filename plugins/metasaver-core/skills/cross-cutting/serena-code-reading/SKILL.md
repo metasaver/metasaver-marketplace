@@ -397,14 +397,15 @@ const schema = await mcp__serena__get_symbols_overview({
 });
 ```
 
-### Serena + Recall (Pattern Memory)
+### Serena + Memories (Pattern Storage)
 
 ```javascript
-// 1. Check for prior patterns
-const patterns = await mcp__recall__search_memories({
-  query: "authentication implementation patterns",
-  context_types: ["code_pattern"]
-});
+// 1. Check for prior patterns in Serena memories
+const memories = await list_memories();
+const authPatterns = memories.filter(m => m.includes("auth") || m.includes("pattern"));
+for (const pattern of authPatterns) {
+  const content = await read_memory({ memory_file_name: pattern });
+}
 
 // 2. Find existing auth code
 const authService = await mcp__serena__find_symbol({
@@ -412,11 +413,18 @@ const authService = await mcp__serena__find_symbol({
   include_body: true
 });
 
-// 3. Store new pattern
-await mcp__recall__store_memory({
-  content: "JWT auth pattern with refresh tokens",
-  context_type: "code_pattern",
-  tags: ["auth", "jwt"]
+// 3. Store new pattern in memory
+write_memory({
+  memory_file_name: "pattern-jwt-auth.md",
+  content: `# Pattern: JWT Auth with Refresh Tokens
+
+## Implementation
+- Access token: 15min TTL
+- Refresh token: 7 days in httpOnly cookie
+- Refresh rotation on each use
+
+## Tags
+auth, jwt, security`
 });
 ```
 

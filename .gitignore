@@ -1,4 +1,4 @@
-.serena/
+.serena/cache/
 cleanup-agents.js
 node_modules/
 .DS_Store
