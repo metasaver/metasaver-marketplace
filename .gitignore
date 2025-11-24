@@ -66,3 +66,4 @@ REMEDIATION_*.md
 
 # Repomix outputs
 .repomix-output.*
+repomix-output.*
