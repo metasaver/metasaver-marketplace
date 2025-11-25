@@ -18,6 +18,21 @@ The `/build` command is optimized for **creating new code** (not auditing existi
 3. **Pattern adherence** - Follows MetaSaver building blocks and standards
 4. **Quality validation** - Code review and testing integration
 
+## Agent Selection (CRITICAL)
+
+**See `/skill agent-selection` for complete agent mapping and `subagent_type` reference.**
+
+**In MetaSaver repos, prefer MetaSaver agents:**
+- `Explore` → use `core-claude-plugin:generic:code-explorer`
+- `Plan` → use `core-claude-plugin:generic:architect`
+- `general-purpose` → use task-specific MetaSaver agent
+
+**Model selection:**
+- Domain agents use **sonnet** model
+- Generic agents use **sonnet** model (opus for score >=30)
+
+---
+
 ## Workflow
 
 ### Phase 1: Analysis & Architecture

@@ -27,6 +27,21 @@ Intelligent audit routing with NLP parsing and automated workflow orchestration.
 /audit everything
 ```
 
+## Agent Selection (CRITICAL)
+
+**See `/skill agent-selection` for complete agent mapping and `subagent_type` reference.**
+
+**In MetaSaver repos, prefer MetaSaver agents:**
+- `Explore` → use `core-claude-plugin:generic:code-explorer`
+- `Plan` → use `core-claude-plugin:generic:architect`
+- `general-purpose` → use task-specific MetaSaver agent
+
+**Model selection:**
+- Config agents use **haiku** model
+- Generic/domain agents use **sonnet** model
+
+---
+
 ## How It Works
 
 ### Step 1: Parse Natural Language

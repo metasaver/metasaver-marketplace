@@ -129,34 +129,14 @@ Domain agents identify WHAT sub-agents/skills are needed. They can't spawn agent
 
 ## Agent Selection (CRITICAL)
 
-**When MetaSaver plugin is active, PREFER MetaSaver agents over core Claude Code agents.**
+**See `/skill agent-selection` for complete agent mapping and `subagent_type` reference.**
 
-| Core Agent | Use Instead | Why | subagent_type |
-|------------|-------------|-----|---------------|
-| `Explore` | `code-explorer` | Uses Serena, repomix, memories | `core-claude-plugin:generic:code-explorer` |
-| `Plan` | `architect` | Knows MetaSaver patterns | `core-claude-plugin:generic:architect` |
-| `general-purpose` | Task-specific | Specialized knowledge | See table below |
+**In MetaSaver repos, prefer MetaSaver agents:**
+- `Explore` → use `core-claude-plugin:generic:code-explorer`
+- `Plan` → use `core-claude-plugin:generic:architect`
+- `general-purpose` → use task-specific MetaSaver agent
 
-**Exception:** Direct Claude (no agent) for truly trivial tasks (Score <5).
-
-**subagent_type mapping by task:**
-
-| Task Type | subagent_type |
-|-----------|---------------|
-| Codebase exploration | `core-claude-plugin:generic:code-explorer` |
-| Agent/skill research | `core-claude-plugin:generic:agent-author` |
-| Architecture decisions | `core-claude-plugin:generic:architect` |
-| Requirements analysis | `core-claude-plugin:generic:business-analyst` |
-| Code implementation | `core-claude-plugin:generic:coder` |
-| Testing | `core-claude-plugin:generic:tester` |
-| Code review | `core-claude-plugin:generic:reviewer` |
-| Debugging/investigation | `core-claude-plugin:generic:root-cause-analyst` |
-| Security analysis | `core-claude-plugin:generic:security-engineer` |
-| Performance optimization | `core-claude-plugin:generic:performance-engineer` |
-| DevOps/infrastructure | `core-claude-plugin:generic:devops` |
-| Multi-agent coordination | `core-claude-plugin:generic:project-manager` |
-| Quality validation | `core-claude-plugin:generic:code-quality-validator` |
-| Azure DevOps | `core-claude-plugin:generic:azure-devops-agent` |
+**Exception:** Direct Claude (no agent) for trivial tasks (Score <5)
 
 ---
 
