@@ -6,7 +6,40 @@
   "plugins": [
     {
       "name": "core-claude-plugin",
-      "source": "./plugins/metasaver-core"
+      "source": "./plugins/metasaver-core",
+      "skills": [
+        "./skills/config/build-tools/pnpm-workspace-config",
+        "./skills/config/build-tools/postcss-config",
+        "./skills/config/build-tools/turbo-config",
+        "./skills/config/build-tools/vite-config",
+        "./skills/config/build-tools/vitest-config",
+        "./skills/config/version-control/commitlint-config",
+        "./skills/config/version-control/gitattributes-config",
+        "./skills/config/version-control/gitignore-config",
+        "./skills/config/version-control/husky-hooks-config",
+        "./skills/config/workspace/dockerignore-config",
+        "./skills/config/workspace/nodemon-config",
+        "./skills/config/workspace/npmrc-config",
+        "./skills/config/workspace/tailwind-config",
+        "./skills/config/workspace/vscode-config",
+        "./skills/cross-cutting/agent-selection",
+        "./skills/cross-cutting/building-blocks-advisor",
+        "./skills/cross-cutting/chrome-devtools-testing",
+        "./skills/cross-cutting/complexity-check",
+        "./skills/cross-cutting/confidence-check",
+        "./skills/cross-cutting/mcp-coordination",
+        "./skills/cross-cutting/monorepo-navigation",
+        "./skills/cross-cutting/repomix-cache-refresh",
+        "./skills/cross-cutting/scope-check",
+        "./skills/cross-cutting/security-scan-workflow",
+        "./skills/cross-cutting/serena-code-reading",
+        "./skills/cross-cutting/tool-check",
+        "./skills/domain/audit-workflow",
+        "./skills/domain/config-validation",
+        "./skills/domain/monorepo-audit",
+        "./skills/domain/remediation-options",
+        "./skills/domain/workflow-orchestration"
+      ]
     }
   ]
 }
