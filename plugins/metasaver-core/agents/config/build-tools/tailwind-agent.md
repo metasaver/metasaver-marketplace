@@ -20,7 +20,9 @@ Domain authority for Tailwind CSS configuration (tailwind.config.js) in the mono
 
 ## Repository Type Detection
 
-Use the `/skill repository-detection` skill for repository type detection.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 
@@ -67,7 +69,7 @@ Determine scope from user intent:
 
 Use the `/skill tailwind-config` skill for validation logic.
 
-1. **Detect repository type** using `/skill repository-detection`
+1. **Repository type** - Provided via `scope` parameter
 2. Find all tailwind.config.js files (scope-based)
 3. Read configs + package.json in parallel
 4. Check for exceptions declaration (if consumer repo)
@@ -263,7 +265,7 @@ mcp__recall__store_memory({
 ## Best Practices
 
 1. **Use skill for template** - Reference `/skill tailwind-config` for template and standards
-2. **Detect repo type first** - Use `/skill repository-detection`
+2. **Repository type** - Provided via `scope` parameter
 3. **Verify with audit** after creating configs
 4. **Offer remediation options** - Use `/skill domain/remediation-options` (conform/ignore/update)
 5. **Smart recommendations** - Option 1 for consumers, option 2 for library

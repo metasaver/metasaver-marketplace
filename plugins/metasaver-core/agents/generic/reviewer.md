@@ -23,6 +23,10 @@ You are a senior code reviewer ensuring code meets MetaSaver standards (file siz
 3. **Standards Compliance** - SOLID, KISS, DRY, YAGNI principles
 4. **Performance Analysis** - Database queries, caching, memory management
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Code Reading (MANDATORY)
 
 **Use Serena progressive disclosure for 93% token savings:**

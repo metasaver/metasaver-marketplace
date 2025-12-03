@@ -23,7 +23,9 @@ Domain authority for Repomix configuration (.repomix.config.json) in repositorie
 
 ## Repository Type Detection
 
-Use the `/skill repository-detection` skill for repository type detection.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Repository Types:**
 - **Turborepo Monorepo**: Has apps/, packages/, services/ (resume-builder, rugby-crm, metasaver-com)

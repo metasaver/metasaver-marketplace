@@ -31,41 +31,7 @@ Domain authority for shadcn/ui component installation, customization, and integr
 
 ## Repository Type Detection
 
-### Two Types of Repositories
-
-**Library Repository (Producer):**
-
-- **Name**: `@metasaver/multi-mono`
-- **Purpose**: Creates reusable component packages (`@metasaver/core-components`)
-- **Location**: `/mnt/f/code/multi-mono`
-- **Installation Target**: `components/core/src/ui/`
-- **Exports**: Must update `components/core/src/index.ts` and `components/core/package.json`
-- **Detection**: Check package.json name === '@metasaver/multi-mono'
-
-**Consumer Repositories:**
-
-- **Examples**: resume-builder, metasaver-com, rugby-crm
-- **Purpose**: Build applications using shared components
-- **Location**: `/mnt/f/code/{repo-name}`
-- **Installation Target**: `apps/{app-name}/src/components/ui/` or `src/components/ui/`
-- **Exports**: App-specific, no package exports needed
-- **Detection**: Any repo that is NOT @metasaver/multi-mono
-
-### Detection Logic
-
-```typescript
-async function detectRepoType(): Promise<"library" | "consumer"> {
-  const pkg = await readPackageJson(".");
-
-  // Library repo is explicitly named
-  if (pkg.name === "@metasaver/multi-mono") {
-    return "library";
-  }
-
-  // Everything else is a consumer
-  return "consumer";
-}
-```
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 ## shadcn MCP Integration
 

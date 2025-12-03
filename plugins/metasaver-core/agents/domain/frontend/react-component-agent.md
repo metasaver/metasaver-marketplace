@@ -33,37 +33,7 @@ Domain authority for React component development in the monorepo. Handles functi
 
 ## Repository Type Detection
 
-### Two Types of Repositories
-
-**Library Repository (Source):**
-
-- **Name**: `@metasaver/multi-mono`
-- **Purpose**: Contains shared React components and utilities
-- **Standards**: May differ from consumers (this is expected and allowed)
-- **Detection**: Check package.json name === '@metasaver/multi-mono'
-
-**Consumer Repositories:**
-
-- **Examples**: metasaver-com, resume-builder, rugby-crm
-- **Purpose**: Use shared components from @metasaver/multi-mono
-- **Standards**: Component patterns follow React best practices
-- **Detection**: Any repo that is NOT @metasaver/multi-mono
-
-### Detection Logic
-
-```typescript
-function detectRepoType(): "library" | "consumer" {
-  const pkg = readPackageJson(".");
-
-  // Library repo is explicitly named
-  if (pkg.name === "@metasaver/multi-mono") {
-    return "library";
-  }
-
-  // Everything else is a consumer
-  return "consumer";
-}
-```
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 ## Component Architecture
 

@@ -44,76 +44,19 @@ Intelligent audit routing with NLP parsing and automated workflow orchestration.
 
 ## How It Works
 
-### Step 1: Parse Natural Language
+**Phase 1 - Analysis (PARALLEL):**
+- `/skill complexity-check` → score (int)
+- `/skill tool-check` → tools (string[])
+- `/skill scope-check` → scope (string[])
 
-Detect audit scope from user's request:
+**Phase 2+ - Route by complexity:**
+- ≤4: Direct → single config agent (haiku) → Report
+- 5-24: BA (sonnet) → PM → Workers (haiku) → Reviewer → PM consolidation
+- ≥25: BA (opus) → Vibe Check → PM → Workers in waves → Reviewer → PM consolidation
 
-**Single File Patterns:**
-- "audit turbo.json"
-- "validate eslint"
-- "check prettier config"
-- "audit the typescript config"
+### Workflow Execution
 
-**Domain Patterns:**
-- "audit code quality"
-- "audit build tools"
-- "audit version control"
-- "audit workspace configs"
-
-**Composite Patterns:**
-- "audit monorepo root"
-- "audit all configs"
-- "audit root configuration"
-
-**Full Monorepo Patterns:**
-- "audit entire monorepo"
-- "audit everything"
-- "full monorepo audit"
-
-### Step 2: Calculate Complexity
-
-Based on scope detected:
-
-```typescript
-// Single file
-complexity = 5 (one agent)
-
-// Domain (3-8 files)
-complexity = 10-15 (multiple agents, same category)
-
-// Composite (20-30 files)
-complexity = 25 (all config agents, parallel)
-
-// Full monorepo (50+ files)
-complexity = 40 (all configs + workspace packages)
-```
-
-### Step 3: Select Workflow & Model
-
-**Simple (Complexity ≤=5):**
-```
-Direct → Single config agent (haiku model) → Report
-```
-
-**Medium (Complexity 6-25):**
-```
-Business Analyst (sonnet) → PM (sonnet) → Domain agents (haiku for config, sonnet for domain) → Reviewer (sonnet) → PM consolidation
-```
-
-**Complex (Complexity ≥25):**
-```
-Business Analyst (opus) → Confidence Check → PM (sonnet) → Config agents (haiku, waves of 10) → Reviewer (sonnet) → PM consolidation (sonnet)
-```
-
-**Model Selection Rules:**
-- **Config agents** (single file audits): haiku - Fast, efficient for standards checking (always score ≤4)
-- **Domain agents** (implementation audits): sonnet - Standard validation work
-- **BA/Architect** (complex scope): opus for ≥25 complexity, sonnet otherwise
-- **PM/Reviewer**: sonnet - Coordination and validation work
-
-### Step 4: Execute Workflow
-
-Follow the standard AUDIT workflow from `/skill workflow-orchestration`:
+Follow `/skill workflow-orchestration` for standard AUDIT pipeline:
 
 ```
 BA (define scope + criteria) →
@@ -356,38 +299,11 @@ Task("turbo-config-agent", `
 
 ## MCP Tool Integration
 
-Use `/skill mcp-tool-selection` to determine tool usage:
-
-**For audit tasks:**
-- **Serena:** Code navigation and symbol search (if needed)
-- **Recall:** Check for established patterns and prior decisions
-- **Context7:** Research latest config standards (if uncertainty)
-- **Sequential Thinking:** Complex multi-config analysis (complexity ≥20)
+**Run `/skill tool-check` to determine tool usage.**
 
 ## Complexity Scoring
 
-```typescript
-function calculateAuditComplexity(request: string): number {
-  let score = 0;
-
-  // Keyword matching
-  if (request.includes("entire") || request.includes("everything")) score += 15;
-  if (request.includes("monorepo") || request.includes("all")) score += 10;
-  if (request.includes("audit")) score += 4;
-
-  // Scope detection
-  const singleFilePatterns = /audit (the )?([\w.-]+\.(json|js|ts|yaml|md))/i;
-  if (singleFilePatterns.test(request)) score += 5; // Single file
-
-  const domainPatterns = /(code quality|build tools|version control|workspace)/i;
-  if (domainPatterns.test(request)) score += 12; // Domain audit
-
-  const compositePatterns = /(root|all configs)/i;
-  if (compositePatterns.test(request)) score += 25; // Composite
-
-  return score;
-}
-```
+**Run `/skill complexity-check` to calculate score.**
 
 **Thresholds:**
 - ≤4: Simple (direct execution, haiku)
@@ -521,17 +437,4 @@ This command integrates with:
 - `/skill monorepo-audit` - File-to-agent mapping and discovery
 - `/skill confidence-check` - Pre-execution validation
 - `/skill remediation-options` - Post-audit next steps
-- `/skill mcp-tool-selection` - External tool determination
-
----
-
-## Post-Workflow: Repomix Cache Refresh
-
-**At workflow completion, invoke the `repomix-cache-refresh` skill if config files were modified.**
-
-**Skill:** `skills/cross-cutting/repomix-cache-refresh/SKILL.md`
-
-**Quick reference:**
-- Triggers when config files are fixed/updated during audit
-- Critical because audits often auto-fix violations
-- ~2.4s overhead, ensures next command sees fixed configs
+- `/skill repomix-cache-refresh` - Post-workflow cache update if files modified

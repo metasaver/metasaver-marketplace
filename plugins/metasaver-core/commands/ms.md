@@ -9,6 +9,16 @@ Analyzes your prompt and routes to optimal execution method.
 
 **IMPORTANT:** Never do git operations without user approval.
 
+---
+
+## Scope Discovery
+
+**For ANY request mentioning repos/monorepos, use `/skill scope-check` to discover repositories.**
+
+The skill scans `/mnt/f/code/`, reads `package.json` files, and returns matching repository paths based on prompt keywords.
+
+---
+
 ## Automatic Routing Logic
 
 ### 🔴 Ultra-Complex → Multi-Agent Orchestration (Score ≥30)
@@ -31,19 +41,7 @@ Analyzes your prompt and routes to optimal execution method.
 
 ## Complexity Scoring
 
-**Keywords (points per match):**
-
-- Complex: +8 (enterprise, architecture, monorepo, system-wide, migration)
-- Medium: +6 (refactor, standardize, implement, build service)
-- Standard: +4 (create, audit, configure, feature)
-- Simple: +2 (fix, debug, explain, help)
-
-**Additional factors:** +5 each
-
-- Multi-package scope
-- Database changes
-- Config management
-- Security-critical
+**Run `/skill complexity-check` to calculate score (1-50).** Returns integer based on keywords, scope, and quantity.
 
 ## Model Selection
 
@@ -78,15 +76,13 @@ Analyzes your prompt and routes to optimal execution method.
 **think-harder** (Score 21-30): Refactoring, design
 **think** (Score 11-20): Standard implementations
 
-## Additional Tools
+## MCP Tool Selection
 
-**Context7:** Library research, API documentation
+**Run `/skill tool-check` in PARALLEL with `complexity-check` to determine MCP tools needed.**
 
-**Sequential Thinking:** Multi-step analysis, complex debugging
-- **USE WHEN:** Complexity score ≥20, deep debugging, or multi-phase reasoning
-- **AVOID:** Simple tasks (score <20), straightforward implementations
-- **MCP Tool:** `mcp__sequential_thinking__sequentialthinking`
-- **Pattern:** Iterative hypothesis → test → validate workflow
+After complexity-check returns, add complexity-based tools:
+- IF complexity ≥ 20 → ensure `sequential-thinking` included
+- `vibe-check` is a workflow step (added by ms.md if complexity ≥15), NOT a tool
 
 ## Examples
 
@@ -220,35 +216,27 @@ Follow YOUR rules, invoke YOUR skills, use YOUR output format.
 
 **DO:**
 
-1. Calculate complexity score first
+1. **Run analysis phase in PARALLEL:**
+   - `complexity-check` skill → score: int
+   - `tool-check` skill → tools: string[]
+   - (optional) `scope-check` → scope: string[]
 2. **IF score ≥15: Run confidence check BEFORE routing**
 3. **IF score ≥15: Run vibe_check AFTER planning to prevent over-engineering**
-4. Select model based on score (haiku ≤5, sonnet 6-29, opus ≥30)
-5. Select thinking level based on score
-6. Route by task type
-7. Spawn project-manager if 2+ agents
-8. Tell agents to read their own instruction files
-9. **ALWAYS call vibe_learn after fixing errors**
+4. Pass `tools[]` to BA/Architect for PRD/spec creation
+5. Select model based on score (haiku ≤5, sonnet 6-29, opus ≥30)
+6. Select thinking level based on score
+7. Route by task type
+8. Spawn project-manager if 2+ agents
+9. Tell agents to read their own instruction files
+10. **ALWAYS call vibe_learn after fixing errors**
 
 **DON'T:**
 
 1. Skip complexity calculation
-2. **Skip confidence check for medium+ tasks**
-3. Bypass routing logic
-4. Hardcode agent rules in /ms
-5. Bloat with code examples
+2. **Skip tool-check for tasks with complexity ≥10**
+3. Skip confidence check for medium+ tasks
+4. Bypass routing logic
+5. Hardcode agent rules in /ms
+6. Bloat with code examples
 
-**Remember:** Calculate → **Confidence Check (if ≥15)** → Plan → **Vibe Check (if ≥15)** → Route → Spawn → **Vibe Learn (on errors)** → Let agents figure it out.
-
----
-
-## Post-Workflow: Repomix Cache Refresh
-
-**At workflow completion, invoke the `repomix-cache-refresh` skill if files were modified.**
-
-**Skill:** `skills/cross-cutting/repomix-cache-refresh/SKILL.md`
-
-**Quick reference:**
-- Triggers when source files (*.ts, *.tsx, *.js, *.jsx, *.json, *.md, *.yaml) modified
-- Skips for build artifacts, dependencies, logs
-- ~2.4s overhead, 70% token savings on next command
+**Remember:** Analyze (complexity + tools + scope) → **Confidence Check (if ≥15)** → Plan → **Vibe Check (if ≥15)** → Route → Spawn → **Vibe Learn (on errors)** → `/skill repomix-cache-refresh` if files modified.

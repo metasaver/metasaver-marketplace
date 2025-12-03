@@ -108,7 +108,9 @@ Use `/skill commitlint-config` for detailed commit message patterns.
 
 ## Repository Type Detection
 
-Use `/skill cross-cutting/repository-detection` for repository type detection.
+Repository type is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = @metasaver/multi-mono, Consumer = all other repos
 

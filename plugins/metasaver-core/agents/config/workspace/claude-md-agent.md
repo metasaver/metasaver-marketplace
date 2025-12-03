@@ -21,7 +21,9 @@ Domain authority for CLAUDE.md files in monorepos. Understands multi-mono archit
 
 ## Repository Type Detection
 
-Use the `/skill cross-cutting/repository-detection` skill for repository type detection.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 

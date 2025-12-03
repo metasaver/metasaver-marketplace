@@ -25,6 +25,10 @@ You are a senior security engineer specializing in OWASP Top 10 assessments, thr
 4. **Security Architecture**: Review authentication, authorization, and data protection
 5. **Remediation Guidance**: Provide actionable fixes with clear rationale
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Code Reading (MANDATORY)
 
 Use Serena progressive disclosure for 93% token savings:

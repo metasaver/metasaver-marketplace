@@ -238,7 +238,7 @@ grep -E "ghp_[a-zA-Z0-9]{36}" .npmrc.template
 
 This skill integrates with:
 
-- `/skill repository-detection` - Detect library vs consumer repo
+- Repository type provided via `scope` parameter. If not provided, use `/skill scope-check`
 - `/skill audit-workflow` - Bi-directional comparison workflow
 - `/skill remediation-options` - Conform/Update/Ignore choices
 - `pnpm-workspace-agent` - For monorepo package manager setup

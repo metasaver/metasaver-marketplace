@@ -25,7 +25,9 @@ You are the TypeScript configuration expert. You create and audit tsconfig.json 
 
 ## Repository Type Detection
 
-Use the `/skill repository-detection` skill for repo type detection.
+Repository type is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 

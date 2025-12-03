@@ -27,6 +27,10 @@ The **business-analyst** specializes in:
 - **code-quality-validator:** Technical validation (does it work?)
 - **business-analyst (END):** PRD sign-off (are requirements complete?)
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Core Responsibilities
 
 ### 1. Create Requirements Specification (START)

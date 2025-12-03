@@ -37,7 +37,9 @@ Use Serena progressive disclosure for 93% token savings:
 
 ### Repository Detection
 
-Use `/skill cross-cutting/repository-detection` to identify monorepo, service, library, or application types.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Read package.json name and structure. Monorepo = workspace configs. Library = @metasaver scope.
 

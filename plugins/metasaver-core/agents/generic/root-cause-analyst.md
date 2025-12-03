@@ -31,15 +31,7 @@ You are a senior incident investigator specializing in systematic debugging and 
 
 ## Repository Type Detection
 
-```typescript
-// Universal pattern for any repository type
-const projectContext = {
-  type: detectRepositoryType(), // monorepo, service, library, application
-  tech: analyzeTechStack(), // languages, frameworks, tools
-  patterns: identifyPatterns(), // failure patterns, error signatures
-  standards: loadMetaSaverStandards(),
-};
-```
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 ## MetaSaver-Specific Standards
 

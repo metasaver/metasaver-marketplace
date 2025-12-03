@@ -20,7 +20,9 @@ Domain authority for PostCSS configuration (postcss.config.js) in the monorepo. 
 
 ## Repository Type Detection
 
-Use the `/skill repository-detection` skill for repository type detection.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 
@@ -66,7 +68,7 @@ Determine scope from user intent:
 
 Use the `/skill postcss-config` skill for validation logic.
 
-1. **Detect repository type** using `/skill repository-detection`
+1. **Repository type** - Provided via `scope` parameter
 2. Find all postcss.config.js files (scope-based)
 3. Read configs + package.json in parallel
 4. Check for exceptions declaration (if consumer repo)
@@ -182,7 +184,7 @@ mcp__recall__store_memory({
 ## Best Practices
 
 1. **Use skill for template** - Reference `/skill postcss-config` for template and standards
-2. **Detect repo type first** - Use `/skill repository-detection`
+2. **Repository type** - Provided via `scope` parameter
 3. **Always read package.json first** to check for Tailwind usage
 4. **Verify with audit** after creating configs
 5. **Plugin order matters** - Tailwind first, Autoprefixer last

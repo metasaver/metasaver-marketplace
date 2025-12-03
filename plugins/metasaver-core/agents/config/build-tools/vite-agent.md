@@ -20,7 +20,9 @@ Domain authority for Vite configuration (vite.config.ts) in the monorepo. Handle
 
 ## Repository Type Detection
 
-Use the `/skill repository-detection` skill for repository type detection.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 
@@ -42,7 +44,7 @@ Use the `/skill vite-config` skill for template and creation logic.
 
 ### Approach
 
-1. Detect repository type using `/skill repository-detection`
+1. Repository type is provided via the `scope` parameter
 2. Read package.json → extract `metasaver.projectType`
 3. Determine Vite config type (MFE Host, MFE Remote, or Standalone)
 4. Use template from `/skill vite-config` (templates for each project type)
@@ -70,7 +72,7 @@ Determine scope from user intent:
 
 Use the `/skill vite-config` skill for validation logic.
 
-1. **Detect repository type** using `/skill repository-detection`
+1. **Repository type** - Provided via `scope` parameter
 2. Find all vite.config.ts files (scope-based glob)
 3. For each config:
    - Read vite.config.ts + package.json in parallel
@@ -256,7 +258,7 @@ mcp__recall__store_memory({
 ## Best Practices
 
 1. **Use skill for templates** - Reference `/skill vite-config` for templates and standards
-2. **Detect repo type first** - Use `/skill repository-detection`
+2. **Repository type** - Provided via `scope` parameter
 3. **Read package.json first** to get `metasaver.projectType`
 4. **Check port registry** for assigned port numbers
 5. **Verify with audit** after creating configs

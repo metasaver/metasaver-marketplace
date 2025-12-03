@@ -24,7 +24,9 @@ Domain authority for NPM registry configuration template (.npmrc.template) in th
 
 ## Repository Type Detection
 
-Use the `/skill repository-detection` skill for repository type detection.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 

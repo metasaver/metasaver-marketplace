@@ -1,0 +1,47 @@
+# Semgrep Security Scanning
+# Docs: https://semgrep.dev/docs/semgrep-ci/sample-ci-configs/
+
+name: Semgrep
+
+on:
+  # Scan changed files in PRs (diff-aware scanning):
+  pull_request: {}
+  # Scan on-demand through GitHub Actions interface:
+  workflow_dispatch: {}
+  # Scan mainline branches:
+  push:
+    branches:
+      - main
+      - master
+  # Weekly scheduled scan:
+  schedule:
+    - cron: "0 9 * * 1" # Monday 9:00 UTC
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  security-events: write # For SARIF upload
+
+jobs:
+  semgrep:
+    name: Semgrep Scan
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    # Skip Dependabot PRs to avoid permission issues
+    if: github.actor != 'dependabot[bot]'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        run: semgrep ci
+        env:
+          # Add SEMGREP_APP_TOKEN to your GitHub secrets
+          # Get token from: https://semgrep.dev/orgs/-/settings/tokens
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}

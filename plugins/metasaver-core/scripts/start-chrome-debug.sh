@@ -25,13 +25,13 @@ else
     exit 1
 fi
 
-# Start Chrome with remote debugging
+# Start Chrome with remote debugging (GUI mode - headless has known issues)
 $CHROME_BIN \
   --remote-debugging-port=9222 \
   --user-data-dir="/tmp/chrome-debug-mcp" \
   --no-first-run \
   --no-default-browser-check \
-  > /dev/null 2>&1 &
+  "about:blank" &
 
 # Wait for Chrome to start
 sleep 2

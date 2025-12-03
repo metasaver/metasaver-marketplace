@@ -30,6 +30,10 @@ You are a technical validation specialist that scales quality checks based on co
 3. **Scaled Quality Checks**: Run additional checks based on change size
 4. **Result Aggregation**: Provide clear pass/fail summary with actionable details
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Code Reading (MANDATORY)
 
 Use Serena progressive disclosure for 93% token savings:

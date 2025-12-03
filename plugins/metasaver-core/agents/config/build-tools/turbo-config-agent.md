@@ -23,6 +23,10 @@ You are the Turbo.json configuration expert. You create and audit turbo.json fil
 2. **Audit Mode:** Validate existing turbo.json against 7 standards
 3. **Standards Enforcement:** Ensure pipeline tasks, caching, and dependencies are correct
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Build Mode
 
 Use `/skill turbo-config` for template and creation logic.

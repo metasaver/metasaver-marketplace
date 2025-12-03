@@ -164,7 +164,7 @@ All domain agents support both **Build** and **Audit** modes.
 - `confidence-check` - Pre-implementation confidence assessment (prevents wrong-direction work)
 - `security-scan-workflow` - Automated security scanning workflow using Semgrep (OWASP Top 10, CWE patterns, hardcoded secrets)
 - `monorepo-navigation` - Workspace navigation patterns
-- `repository-detection` - Repository type detection and analysis
+- `scope-check` - Determines which repositories a task affects (replaces repository-detection)
 - `repomix-cache-refresh` - Repomix cache management for 70% token savings
 - `serena-code-reading` - Serena progressive disclosure patterns for 93% token savings
 

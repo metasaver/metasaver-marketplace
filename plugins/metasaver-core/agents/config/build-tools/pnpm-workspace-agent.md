@@ -20,7 +20,9 @@ Domain authority for `pnpm-workspace.yaml` files in the monorepo. Handles both c
 
 ## Repository Type Detection
 
-Use the `/skill repository-detection` skill for repository type detection.
+Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 
@@ -46,7 +48,7 @@ Use the `/skill config/build-tools/pnpm-workspace-config` skill for templates an
 
 ### Approach
 
-1. Detect repo type from package.json name using `/skill repository-detection`
+1. Repository type is provided via `scope` parameter
 2. Detect MFE architecture if present (check for grouped apps)
 3. Select appropriate template:
    - `consumer-standard.yaml` - Standard consumer repos
@@ -117,7 +119,7 @@ Determine scope from user intent:
 
 Use the `/skill config/build-tools/pnpm-workspace-config` skill for validation logic.
 
-1. **Detect repository type** using `/skill repository-detection`
+1. **Repository type** - Provided via `scope` parameter
 2. Read pnpm-workspace.yaml
 3. Check filesystem for actual directories
 4. Validate against 5 standards based on repo type
@@ -250,7 +252,7 @@ mcp__recall__store_memory({
 ## Best Practices
 
 1. **Use skill for templates** - Reference `/skill config/build-tools/pnpm-workspace-config` for templates and standards
-2. **Detect repo type first** - Use `/skill repository-detection`
+2. **Repository type** - Provided via `scope` parameter
 3. **Detect MFE architecture** - Check for grouped app patterns
 4. **NEVER use generic patterns in consumer repos** - Always specific paths
 5. **Verify with audit** after creating configs

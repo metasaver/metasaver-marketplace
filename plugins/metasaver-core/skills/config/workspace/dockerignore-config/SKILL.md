@@ -106,6 +106,6 @@ grep -q "*.log" .dockerignore && grep -q "*.tmp" .dockerignore
 
 This skill integrates with:
 
-- `/skill repository-detection` - Detect library vs consumer repo
+- Repository type provided via `scope` parameter. If not provided, use `/skill scope-check`
 - `/skill audit-workflow` - Bi-directional comparison workflow
 - `/skill remediation-options` - Conform/Update/Ignore choices

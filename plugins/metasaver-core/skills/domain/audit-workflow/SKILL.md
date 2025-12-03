@@ -31,7 +31,8 @@ Provides standardized bi-directional comparison logic for config agents auditing
 ### Step 1: Detect Repository Type
 
 ```typescript
-// Use repository-detection skill
+// Repository type is provided via scope parameter
+// If not provided, use /skill scope-check to determine
 const repoType = await detectRepoType(); // "library" | "consumer"
 ```
 

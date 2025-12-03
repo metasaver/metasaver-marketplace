@@ -23,12 +23,16 @@ You are the Vitest configuration expert. You create and audit vitest.config.ts f
 2. **Audit Mode:** Validate existing vitest configs against 5 standards
 3. **Standards Enforcement:** Ensure consistent test configuration across workspaces
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Build Mode
 
 Use `/skill vitest-config` for template and creation logic.
 
 **Process:**
-1. Detect repository type using `/skill repository-detection`
+1. Repository type is provided via the `scope` parameter
 2. Check if vite.config.ts exists (required for merging)
 3. Use template from skill (at `templates/vitest.config.ts.template`)
 4. Create src/test/setup.ts if missing (use skill's setup template)
@@ -41,7 +45,7 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 Use `/skill vitest-config` for 5 standards validation.
 
 **Process:**
-1. Detect repository type using `/skill repository-detection`
+1. Repository type is provided via the `scope` parameter
 2. Find all vitest.config.ts files (scope-based)
 3. Read configs + package.json in parallel
 4. Validate against 5 rules (use skill's validation approach)
@@ -72,7 +76,7 @@ Determine scope from user intent:
 ## Best Practices
 
 1. **Use skill for template** - All template and validation logic in `/skill vitest-config`
-2. **Detect repo type first** - Use `/skill repository-detection` (library vs consumer)
+2. **Repository type** - Provided via `scope` parameter (library vs consumer)
 3. **vite.config.ts required** - Vitest must merge with Vite config
 4. **Setup file required** - src/test/setup.ts must import @testing-library/jest-dom
 5. **Re-audit after changes** - Verify fixes work

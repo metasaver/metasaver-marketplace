@@ -16,6 +16,14 @@ Enable monorepo-setup-agent to perform **composite audits** that:
 3. Generate exact spawn instructions for /ms
 4. Consolidate results from all audit agents
 
+---
+
+## Repository Detection
+
+**Use `/skill scope-check` to discover repositories.** The skill scans `/mnt/f/code/`, reads `package.json` files, and classifies repos as library or consumer based on `metasaver.applicationType`.
+
+---
+
 ## Core Concept: Agent Manifest
 
 The skill outputs a **structured manifest** that tells /ms exactly which agents to spawn:
@@ -392,6 +400,6 @@ This skill integrates with:
 
 - `/skill audit-workflow` - Uses bi-directional comparison
 - `/skill remediation-options` - Offers conform/update/ignore for violations
-- `/skill repository-detection` - Detects library vs consumer
+- Repository type provided via `scope` parameter. If not provided, use `/skill scope-check`
 
 The monorepo-audit skill is the **orchestration layer** that coordinates all other audit skills.

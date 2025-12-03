@@ -37,6 +37,10 @@ Use `/skill cross-cutting/serena-code-reading` for progressive disclosure.
 3. **Refactor agents** - Remove duplication, delegate to skills
 4. **Audit agents/skills** - Validate YAML, structure, examples
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Build Mode
 
 ### Create New Agent

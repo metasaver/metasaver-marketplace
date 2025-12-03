@@ -27,7 +27,7 @@ You are the Husky git hooks expert. You create and audit `.husky/pre-commit` and
 Use `/skill husky-hooks` for template and creation logic.
 
 **Process:**
-1. Detect repository type (library vs consumer) using `/skill cross-cutting/repository-detection`
+1. Repository type (library/consumer) is provided via the `scope` parameter
 2. Install husky if needed
 3. Create pre-commit and pre-push hooks from templates
 4. Make hooks executable (`chmod +x`)
@@ -74,7 +74,9 @@ Your choice (1-3):
 
 ## Repository Type Detection
 
-Use `/skill cross-cutting/repository-detection` for type detection.
+Repository type is provided via the `scope` parameter from the workflow.
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 - Library: May have intentional differences or additional hooks (use base validation)

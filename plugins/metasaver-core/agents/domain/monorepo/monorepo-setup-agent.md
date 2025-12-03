@@ -33,12 +33,9 @@ Use `/skill cross-cutting/serena-code-reading` for code analysis patterns.
 2. `find_symbol(name, include_body=false)` → signatures
 3. `find_symbol(name, include_body=true)` → only what you need
 
-## Repository Types
+## Repository Type Detection
 
-**Library Repo:** `@metasaver/multi-mono` - Shared configs, utils, components (different standards allowed)
-**Consumer Repos:** Everything else - Use shared configs from library
-
-**Detection:** Check `package.json` name === '@metasaver/multi-mono'
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 ## Standard Monorepo Structure
 

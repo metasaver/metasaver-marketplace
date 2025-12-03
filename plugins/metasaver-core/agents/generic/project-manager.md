@@ -34,6 +34,10 @@ Project Manager is a **PURE RESOURCE SCHEDULER**. It receives execution plans fr
 4. **Spawn Instructions** - Output precise Task() calls for main conversation
 5. **Result Consolidation** - Merge findings from all executed agents into unified summary
 
+## Repository Type Detection
+
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
 ## Input/Output Contracts
 
 Use `/skill domain/project-manager-contracts` for contract specifications.
