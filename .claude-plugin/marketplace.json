@@ -31,6 +31,7 @@
         "./skills/cross-cutting/mcp-coordination",
         "./skills/cross-cutting/monorepo-navigation",
         "./skills/cross-cutting/repomix-cache-refresh",
+        "./skills/workflow-steps/requirements-phase",
         "./skills/cross-cutting/scope-check",
         "./skills/cross-cutting/security-scan-workflow",
         "./skills/cross-cutting/serena-code-reading",
