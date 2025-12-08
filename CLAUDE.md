@@ -123,16 +123,12 @@ find plugins/metasaver-core/{agents,skills} -name "*.md"
 
 ## Version Management
 
-**Current Versions:**
+Versions are **auto-bumped** by GitHub Actions on every push to `master`.
 
-- Marketplace: `1.7.1`
-- Plugin: `1.7.1`
+- **Patch versions**: Automatic (on any change to `plugins/`, `commands/`, or `marketplace.json`)
+- **Major/Minor versions**: Manual update to `plugin.json` and `marketplace.json`
 
-**When updating versions:**
+**Version files:**
 
-1. Update `plugins/metasaver-core/.claude-plugin/plugin.json`
-2. Update `.claude-plugin/marketplace.json` (both metadata.version AND plugin version)
-3. Update this file (CLAUDE.md)
-4. Update README.md if needed
-
-**Bump versions on EVERY change** - even small config updates.
+- `plugins/metasaver-core/.claude-plugin/plugin.json`
+- `.claude-plugin/marketplace.json` (plugin version field)

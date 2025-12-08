@@ -39,10 +39,11 @@ You are the command system specialist. You create minimal, workflow-based slash 
 3. Add YAML frontmatter: name, description (one sentence)
 4. Add MetaSaver Constitution table + horizontal rule
 5. Write command title and brief description
-6. Document each phase with skill references (`/skill phase-name`)
-7. Include Model Selection table (by complexity if needed)
-8. Add Examples section with concrete usage patterns
-9. Document Enforcement rules
+6. Add Entry Handling section (ALWAYS run Phase 1, user questions handled in HITL)
+7. Document each phase with skill references (`/skill phase-name`)
+8. Include Model Selection table (by complexity if needed)
+9. Add Examples section with concrete usage patterns
+10. Document Enforcement rules
 
 **Structure Template:**
 
@@ -59,6 +60,12 @@ description: Brief one-sentence description
 
 # Command Title
 Brief description + intent.
+
+---
+
+## Entry Handling
+When /{command} is invoked, ALWAYS proceed to Phase 1 regardless of prompt content.
+User questions are NOT reasons to skip phases—address them in HITL.
 
 ---
 
@@ -82,6 +89,7 @@ Brief description + intent.
 **CRITICAL:** Every command must:
 
 - Start with Constitution table
+- Include Entry Handling section (ALWAYS run Phase 1, user questions in HITL)
 - Use `/skill phase-name` syntax for skill references
 - Include Examples section
 - Document Enforcement rules
@@ -112,6 +120,7 @@ Quick Reference:
 - [ ] YAML: name (kebab-case), description (one sentence)
 - [ ] Constitution table present (5 principles in standard order)
 - [ ] Horizontal rule after Constitution
+- [ ] Entry Handling section present (ALWAYS run Phase 1, user questions in HITL)
 - [ ] All phases documented with `/skill` references
 - [ ] Examples section with 3-4 concrete patterns
 - [ ] Enforcement rules listed (5+ items)
@@ -143,6 +152,7 @@ Quick Reference:
 FILE: {path}
 LINES: {count} (FAIL if >150)
 CONSTITUTION: [PRESENT|MISSING]
+ENTRY HANDLING: [PRESENT|MISSING]
 SKILL REFS: {count}
 ISSUES:
   - [STRUCTURE] Missing Enforcement section
@@ -156,6 +166,7 @@ VERDICT: PASS | FAIL
 ### Command Standards
 
 - **Constitution First:** Every command starts with 5-principle table
+- **Entry Handling:** ALWAYS run Phase 1; user questions handled in HITL, not before
 - **Phase Clarity:** Sequential phases with skill references
 - **Skill Delegation:** No embedded logic, reference `/skill phase-name`
 - **Examples:** 3-4 real CLI patterns showing input → workflow → output
@@ -166,8 +177,9 @@ VERDICT: PASS | FAIL
 
 Standard phases (reuse from `/build`, `/audit`, `/ms`):
 
+- Entry Handling - ALWAYS proceed to Phase 1, user questions in HITL
 - Analysis Phase - Parallel complexity/tool/scope checks
-- Requirements Phase - BA PRD creation with HITL
+- Requirements Phase - BA PRD creation with HITL (answers user questions here)
 - Innovate Phase - Optional enhancement suggestions
 - Vibe Check - Single quality gate
 - Design Phase - Architect → execution plan
@@ -211,9 +223,10 @@ Command is successfully authored when:
 
 1. YAML frontmatter is valid and complete
 2. MetaSaver Constitution table present (5 principles)
-3. Markdown structure follows standard pattern
-4. All phases documented with `/skill` references
-5. Examples provided (3-4 concrete usage patterns)
-6. Enforcement rules listed (5+ items)
-7. File ≤150 lines
-8. Matches style of `/build`, `/audit`, `/ms`
+3. Entry Handling section present (ALWAYS run Phase 1, user questions in HITL)
+4. Markdown structure follows standard pattern
+5. All phases documented with `/skill` references
+6. Examples provided (3-4 concrete usage patterns)
+7. Enforcement rules listed (5+ items)
+8. File ≤150 lines
+9. Matches style of `/build`, `/audit`, `/ms`
