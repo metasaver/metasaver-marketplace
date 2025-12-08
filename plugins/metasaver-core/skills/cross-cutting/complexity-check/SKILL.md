@@ -13,20 +13,40 @@ description: Calculates a complexity score (1-50) from a user prompt. Analyzes k
 
 ---
 
+## How to Execute
+
+This is a TEXT ANALYSIS task - parse keywords from the user's prompt as your sole input:
+
+1. Scan the prompt text (case-insensitive) for keywords in the algorithm below
+2. Apply each step of the scoring algorithm sequentially
+3. Return ONLY: `score: <int>`
+4. Complete in under 200 tokens
+
+**Expected output format:**
+
+```
+score: 15
+```
+
+Focus on the prompt text as your only input. Work directly with prompt content for keyword-based analysis and scoring.
+
+---
+
 ## Scoring Algorithm
 
 ### Step 1: Keyword Detection
 
 Scan prompt (case-insensitive) for keywords and add points:
 
-| Category | Points | Keywords |
-|----------|--------|----------|
-| Ultra-Complex | +8 | `enterprise`, `architecture`, `monorepo`, `system-wide`, `migration`, `standardize across` |
-| Complex | +6 | `refactor`, `standardize`, `implement`, `build service`, `integrate` |
-| Standard | +4 | `create`, `audit`, `configure`, `feature`, `add`, `update` |
-| Simple | +2 | `fix`, `debug`, `explain`, `help`, `check`, `what is` |
+| Category      | Points | Keywords                                                                                   |
+| ------------- | ------ | ------------------------------------------------------------------------------------------ |
+| Ultra-Complex | +8     | `enterprise`, `architecture`, `monorepo`, `system-wide`, `migration`, `standardize across` |
+| Complex       | +6     | `refactor`, `standardize`, `implement`, `build service`, `integrate`                       |
+| Standard      | +4     | `create`, `audit`, `configure`, `feature`, `add`, `update`                                 |
+| Simple        | +2     | `fix`, `debug`, `explain`, `help`, `check`, `what is`                                      |
 
 **Rules:**
+
 - Each keyword matched adds its points
 - Multiple matches in same category still add (e.g., "audit and configure" = +8)
 
@@ -36,14 +56,14 @@ Scan prompt (case-insensitive) for keywords and add points:
 
 Add points for scope indicators:
 
-| Indicator | Points | Detection Patterns |
-|-----------|--------|-------------------|
-| Multi-package | +5 | `all packages`, `across`, `every`, `monorepo`, plural nouns |
-| Database | +5 | `database`, `schema`, `migration`, `prisma`, `sql` |
-| Config management | +5 | `config`, `configuration`, `settings`, `.json`, `.yaml` |
-| Security-critical | +5 | `auth`, `security`, `credential`, `token`, `password`, `encrypt` |
-| API surface | +5 | `api`, `endpoint`, `rest`, `graphql`, `service` |
-| Testing scope | +3 | `test`, `coverage`, `e2e`, `integration test` |
+| Indicator         | Points | Detection Patterns                                               |
+| ----------------- | ------ | ---------------------------------------------------------------- |
+| Multi-package     | +5     | `all packages`, `across`, `every`, `monorepo`, plural nouns      |
+| Database          | +5     | `database`, `schema`, `migration`, `prisma`, `sql`               |
+| Config management | +5     | `config`, `configuration`, `settings`, `.json`, `.yaml`          |
+| Security-critical | +5     | `auth`, `security`, `credential`, `token`, `password`, `encrypt` |
+| API surface       | +5     | `api`, `endpoint`, `rest`, `graphql`, `service`                  |
+| Testing scope     | +3     | `test`, `coverage`, `e2e`, `integration test`                    |
 
 ---
 
@@ -51,12 +71,12 @@ Add points for scope indicators:
 
 Add points for explicit quantities:
 
-| Pattern | Points |
-|---------|--------|
-| `all` / `every` / `entire` | +10 |
-| Number > 5 (e.g., "10 files") | +5 |
-| Number 2-5 | +3 |
-| Single/specific file mentioned | +0 |
+| Pattern                        | Points |
+| ------------------------------ | ------ |
+| `all` / `every` / `entire`     | +10    |
+| Number > 5 (e.g., "10 files")  | +5     |
+| Number 2-5                     | +3     |
+| Single/specific file mentioned | +0     |
 
 ---
 
@@ -64,11 +84,11 @@ Add points for explicit quantities:
 
 Reduce score for simplifying words:
 
-| Pattern | Points |
-|---------|--------|
-| `just` / `only` / `simple` | -3 |
-| `quick` / `small` | -2 |
-| Single file path mentioned | -2 |
+| Pattern                    | Points |
+| -------------------------- | ------ |
+| `just` / `only` / `simple` | -3     |
+| `quick` / `small`          | -2     |
+| Single file path mentioned | -2     |
 
 ---
 

@@ -14,6 +14,24 @@ description: Parallel execution of complexity-check, tool-check, and scope-check
 
 ---
 
+## How to Execute
+
+This is a PARALLEL text analysis phase. Spawn 3 independent agents simultaneously:
+
+1. **complexity-check agent** - Analyzes keywords, scopes, and quantities in the prompt only
+2. **tool-check agent** - Matches prompt keywords to MCP tool requirements
+3. **scope-check agent** - Discovers repositories and matches keywords to affected paths
+
+**Key Points:**
+
+- Parse the prompt text directly (keyword scanning, like regex)
+- Complete in ~200 tokens per agent
+- Focus exclusively on text analysis tasks - parse the prompt as a self-contained string
+- Each agent operates independently (true parallel execution)
+- Return structured output format exactly as specified
+
+---
+
 ## Workflow
 
 **Spawn 3 agents in PARALLEL to execute skills:**

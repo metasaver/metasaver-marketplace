@@ -15,16 +15,36 @@ description: Use when selecting MCP servers, choosing which tools to use, or map
 
 ---
 
+## How to Execute
+
+This is a TEXT ANALYSIS task - match keywords from the prompt to MCP tools:
+
+1. Scan the prompt text (case-insensitive) for trigger keywords in the table below
+2. Add matching tools to the output array
+3. Remove duplicates
+4. Return ONLY: `tools: [...]`
+5. Complete in under 200 tokens
+
+**Expected output format:**
+
+```
+tools: ["serena", "sequential-thinking"]
+```
+
+Work directly with the prompt text as your sole input. Use keyword-based matching to determine required tools.
+
+---
+
 ## Available MCP Tools
 
-| Tool | Purpose | Trigger Keywords |
-|------|---------|-----------------|
-| `serena` | Semantic code search, symbol navigation | **ALWAYS for code tasks** |
-| `Context7` | Library docs, API research | Library names, "docs", "latest" |
-| `sequential-thinking` | Multi-step analysis, debugging | "debug", "step by step", "trace" |
-| `semgrep` | Security scanning, SAST | "security", "vulnerability", "OWASP" |
-| `shadcn` | UI components, React components | Component names, "shadcn", "UI" |
-| `chrome-devtools` | Browser automation, E2E testing | "e2e", "browser", "screenshot" |
+| Tool                  | Purpose                                 | Trigger Keywords                     |
+| --------------------- | --------------------------------------- | ------------------------------------ |
+| `serena`              | Semantic code search, symbol navigation | **ALWAYS for code tasks**            |
+| `Context7`            | Library docs, API research              | Library names, "docs", "latest"      |
+| `sequential-thinking` | Multi-step analysis, debugging          | "debug", "step by step", "trace"     |
+| `semgrep`             | Security scanning, SAST                 | "security", "vulnerability", "OWASP" |
+| `shadcn`              | UI components, React components         | Component names, "shadcn", "UI"      |
+| `chrome-devtools`     | Browser automation, E2E testing         | "e2e", "browser", "screenshot"       |
 
 ---
 
@@ -40,6 +60,7 @@ IF prompt involves code (reading, writing, fixing, understanding, file path ment
 ```
 
 **Why always serena?** 94% token savings:
+
 - Traditional: Read file → ~5,000 tokens
 - Serena: get_symbols_overview + find_symbol → ~300 tokens
 
@@ -50,20 +71,25 @@ IF prompt involves code (reading, writing, fixing, understanding, file path ment
 Scan prompt (case-insensitive) and add tools:
 
 **Context7** - Include when:
+
 - Library/package names: "react", "prisma", "express", "zod", "stripe", "auth0"
 - Keywords: `library`, `package`, `npm`, `docs`, `documentation`, `API`, `latest`, `version`, `upgrade`, `migrate`, `example`, `usage`
 
 **sequential-thinking** - Include when:
+
 - Keywords: `debug`, `diagnose`, `root cause`, `investigate`, `step by step`, `analyze`, `multi-phase`, `hypothesis`, `validate`, `trace`, `think through`
 
 **semgrep** - Include when:
+
 - Keywords: `security`, `vulnerability`, `CVE`, `OWASP`, `audit` (security context), `scan`, `SAST`, `injection`, `XSS`, `CSRF`, `hardening`, `secure`, `penetration`
 
 **shadcn** - Include when:
+
 - Keywords: `shadcn`, `radix`, `component`, `UI`, `button`, `form`, `dialog`, `modal`, `design system`
 - Component names: `accordion`, `alert`, `avatar`, `badge`, `card`, `checkbox`, `dropdown`, `input`, `menu`, `popover`, `select`, `sheet`, `sidebar`, `table`, `tabs`, `toast`, `tooltip`
 
 **chrome-devtools** - Include when:
+
 - Keywords: `e2e`, `end-to-end`, `browser`, `visual`, `screenshot`, `ui test`, `interaction test`, `click`, `navigate`, `page`, `responsive`, `viewport`
 - **IMPORTANT:** When triggered, also load the `chrome-devtools-testing` skill for setup instructions
 
@@ -139,17 +165,21 @@ Output: ["Context7"]
 ## Integration with Workflow
 
 This skill runs in **Phase 1 (Analysis)** in **PARALLEL** with:
+
 - `complexity-check` (returns int)
 - `scope-check` (returns string[])
 
 **Complexity-based additions happen AFTER Phase 1 in ms.md:**
+
 - IF complexity ≥ 20 → ensure `sequential-thinking` included
 - `vibe-check` is a workflow step (not returned by this skill)
 
 The output `tools[]` is passed to:
+
 - Business Analyst (for PRD creation)
 - Architect (for technical spec)
 
 **Tool availability checks happen at runtime:**
+
 - If an agent tries to use `chrome-devtools` and it's not running, the agent should stop and ask user to enable it
 - This will be handled by a future sanity-check step in the workflow

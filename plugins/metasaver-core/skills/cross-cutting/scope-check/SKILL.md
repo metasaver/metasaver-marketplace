@@ -13,6 +13,26 @@ description: Use when determining which repositories a task affects. Scans /mnt/
 
 ---
 
+## How to Execute
+
+This is a TEXT ANALYSIS task - match keywords from the prompt to repository paths:
+
+1. Scan the prompt text (case-insensitive) for repository keywords in the matching table below
+2. Discover repositories once by scanning `/mnt/f/code/` for `package.json` files (categorize by type)
+3. Match prompt keywords to repository names and return paths
+4. Return ONLY: `repos: [...]`
+5. Complete in under 200 tokens
+
+**Expected output format:**
+
+```
+repos: ["/mnt/f/code/resume-builder", "/mnt/f/code/metasaver-com"]
+```
+
+Use the repository discovery and keyword matching tables as your reference. Treat the prompt as a self-contained string for keyword matching.
+
+---
+
 ## Step 1: Discover Repositories
 
 Scan `/mnt/f/code/` and classify each directory by reading `package.json`:
@@ -23,7 +43,7 @@ Scan `/mnt/f/code/` and classify each directory by reading `package.json`:
 | `name` starts with `@metasaver` AND `metasaver.applicationType` = `"consumer"`  | Consumer |
 | Directory is `claude-marketplace`                                               | Plugin   |
 
-**CRITICAL:** Never hardcode repository names. Always discover dynamically.
+**CRITICAL:** Discover repository names dynamically from `/mnt/f/code/` by scanning `package.json` files.
 
 ---
 
