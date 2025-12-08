@@ -1,16 +1,16 @@
 ---
 name: design-phase
-description: Architecture design and execution planning workflow. Spawns architect agent for technical design, then project-manager agent to create execution plan with parallel waves. Outputs architecture docs and task assignments.
+description: Lightweight architecture annotation and execution planning workflow. Spawns architect agent to add brief inline annotations to PRD user stories (50-100 lines, ~30 seconds), then project-manager agent to create execution plan with parallel waves. Outputs annotated PRD and task assignments.
 ---
 
 # Design Phase Skill
 
 > **ROOT AGENT ONLY** - Spawns agents, runs only from root Claude Code agent.
 
-**Purpose:** Create architecture design and execution plan
+**Purpose:** Add lightweight architecture annotations to PRD and create execution plan
 **Trigger:** After Human Validation (prd-approval phase)
 **Input:** `prdPath`, `complexity` (int), `tools` (string[]), `scope` (string[])
-**Output:** `{architecture, executionPlan}`
+**Output:** `{annotatedPrdPath, executionPlan}`
 
 ---
 
@@ -18,15 +18,16 @@ description: Architecture design and execution planning workflow. Spawns archite
 
 **1. Spawn architect agent**
 
-- Analyze PRD requirements
-- Design architecture following MetaSaver patterns
-- Create architecture documentation
-- Identify components, services, interfaces
+- Read PRD user stories
+- Add brief "Architecture:" subsections inline to each user story
+- Annotate with: API endpoints, key files, database models, component names
+- Total output: 50-100 lines max (30 seconds of work)
 - Model selection: complexity ≥30 → Opus, else Sonnet
+- **NOT:** Separate architecture documents, ADRs, detailed code, or component diagrams
 
 **2. Spawn project-manager agent**
 
-- Read architecture docs
+- Read annotated PRD (with inline architecture notes)
 - Break down into implementable tasks
 - Assign each task to domain agent
 - Organize into parallel waves (max 10 agents/wave)
@@ -44,25 +45,26 @@ description: Architecture design and execution planning workflow. Spawns archite
 
 ---
 
-## Architecture Output Example
+## Architecture Annotation Example
 
-```json
-{
-  "overview": "JWT auth service with microservices",
-  "components": [
-    {
-      "name": "UserService",
-      "type": "backend-service",
-      "responsibilities": ["User CRUD", "Auth"],
-      "interfaces": ["REST API /api/users"],
-      "dependencies": ["PrismaClient", "JWT"]
-    }
-  ],
-  "dataFlow": "Request → Controller → Service → DB",
-  "techDecisions": [
-    { "decision": "JWT for auth", "rationale": "Stateless, scalable" }
-  ]
-}
+**PRD User Story (before):**
+
+```
+### User Story 3: User Registration
+As a new user, I want to register an account so I can access the platform.
+```
+
+**PRD User Story (after architect annotation):**
+
+```
+### User Story 3: User Registration
+As a new user, I want to register an account so I can access the platform.
+
+**Architecture:**
+- API: `POST /api/auth/register`
+- Files: `services/auth/routes/auth.routes.ts`, `services/auth/controllers/auth.controller.ts`
+- Database: Add User model with email, password, createdAt
+- Component: `RegisterForm.tsx`
 ```
 
 ---
