@@ -23,6 +23,12 @@ Analyzes prompt complexity and routes to optimal execution method.
 
 ---
 
+## Entry Handling
+
+When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. User prompts may contain questions, clarifications, or confirmation requests—these are NOT reasons to skip phases. Analysis runs first to determine complexity and routing, then user questions are addressed in the appropriate phase (HITL for score ≥15, or by the routed agent for score ≤14).
+
+---
+
 ## Phase 1: Analysis (PARALLEL)
 
 **See:** `/skill analysis-phase`
@@ -150,10 +156,12 @@ Single vibe check on PRD. If fails, return to BA.
 
 ## Enforcement
 
-1. Run analysis skills in PARALLEL (single message, 3 Task calls)
-2. Score ≤4: Spawn agent for `/skill agent-check`, then route accordingly
-3. Score 5-14: Skip PRD, go direct to Architect
-4. Score ≥15: Full workflow with HITL Requirements, Vibe Check, PRD Approval
-5. Score ≥30: Include Innovate phase (ask user, hard stop)
-6. Select model by complexity
-7. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+1. ALWAYS run Analysis phase first—never skip to answer user questions
+2. Run analysis skills in PARALLEL (single message, 3 Task calls)
+3. User questions addressed by routed agent (≤14) or BA in HITL (≥15)
+4. Score ≤4: Spawn agent for `/skill agent-check`, then route accordingly
+5. Score 5-14: Skip PRD, go direct to Architect
+6. Score ≥15: Full workflow with HITL Requirements, Vibe Check, PRD Approval
+7. Score ≥30: Include Innovate phase (ask user, hard stop)
+8. Select model by complexity
+9. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

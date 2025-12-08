@@ -23,6 +23,12 @@ Creates new features with architecture validation. Includes optional Innovate ph
 
 ---
 
+## Entry Handling
+
+When /build is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. User prompts may contain questions, clarifications, or confirmation requests—these are NOT reasons to skip phases. Analysis runs first to understand scope, then the BA addresses user questions during Requirements HITL while investigating the codebase.
+
+---
+
 ## Phase 1: Analysis (PARALLEL)
 
 **See:** `/skill analysis-phase`
@@ -36,7 +42,7 @@ Collect: `complexity_score`, `tools`, `repos`
 
 **See:** `/skill requirements-phase`
 
-BA drafts PRD with HITL clarification loop until complete.
+BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then drafts PRD with HITL clarification loop until complete.
 
 ---
 
@@ -126,10 +132,12 @@ BA (sign-off) + PM (consolidation) → Final report
 
 ## Enforcement
 
-1. Run analysis skills in PARALLEL (single message, 3 Task calls)
-2. BA creates PRD with HITL clarification loop
-3. Write PRD file and link before asking about Innovate
-4. Innovate is OPTIONAL (ask user, hard stop)
-5. Single Vibe Check after PRD finalized
-6. Human Validation required before Design
-7. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+1. ALWAYS run Analysis phase first—never skip to answer user questions
+2. Run analysis skills in PARALLEL (single message, 3 Task calls)
+3. BA addresses user questions in Requirements HITL, not before Phase 1
+4. BA creates PRD with HITL clarification loop
+5. Write PRD file and link before asking about Innovate
+6. Innovate is OPTIONAL (ask user, hard stop)
+7. Single Vibe Check after PRD finalized
+8. Human Validation required before Design
+9. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

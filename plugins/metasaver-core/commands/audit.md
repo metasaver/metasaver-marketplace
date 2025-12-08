@@ -23,6 +23,12 @@ Validates configurations and standards compliance. Audit-only workflow (validati
 
 ---
 
+## Entry Handling
+
+When /audit is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. User prompts may contain questions, clarifications, or confirmation requests—these are NOT reasons to skip phases. Analysis runs first to understand scope, then the BA addresses user questions during Requirements HITL while investigating the codebase.
+
+---
+
 ## Phase 1: Analysis (PARALLEL)
 
 **See:** `/skill analysis-phase`
@@ -36,7 +42,7 @@ Collect: `complexity_score`, `tools`, `repos`
 
 **See:** `/skill requirements-phase`
 
-BA drafts PRD with HITL clarification loop until complete.
+BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then drafts PRD with HITL clarification loop until complete.
 
 ---
 
@@ -132,11 +138,13 @@ Config agents always use **haiku** (fast, efficient for standards checking).
 
 ## Enforcement
 
-1. Run analysis skills in PARALLEL (single message, 3 Task calls)
-2. BA creates PRD with HITL clarification loop
-3. Write PRD file and link to user
-4. Audit-only workflow (Innovate excluded)
-5. Single Vibe Check after PRD complete
-6. PRD Approval only for complexity ≥15
-7. Config agents use haiku
-8. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+1. ALWAYS run Analysis phase first—never skip to answer user questions
+2. Run analysis skills in PARALLEL (single message, 3 Task calls)
+3. BA addresses user questions in Requirements HITL, not before Phase 1
+4. BA creates PRD with HITL clarification loop
+5. Write PRD file and link to user
+6. Audit-only workflow (Innovate excluded)
+7. Single Vibe Check after PRD complete
+8. PRD Approval only for complexity ≥15
+9. Config agents use haiku
+10. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
