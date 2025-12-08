@@ -23,41 +23,47 @@ flowchart TB
         D["Scope Check<br/>(prompt) → string[]"]
     end
 
-    subgraph Requirements["5-6. Requirements Phase"]
-        E["Business Analyst<br/>(prompt, complexity, tools, scope) → PRD"]
-        F{"Vibe Check<br/>(prd) → bool"}
+    subgraph Requirements["5-6. Requirements Phase (HITL)"]
+        E["Business Analyst<br/>Drafts PRD"]
+        E2{"BA has questions?"}
         G["Ask User for Clarification"]
+        E3["BA completes PRD"]
     end
 
-    subgraph HumanVal["7. PRD Approval (if complexity ≥15)"]
+    VC{"7. Vibe Check<br/>(prd) → bool"}
+
+    subgraph HumanVal["8. PRD Approval (if complexity ≥15)"]
         H0["Present PRD Summary"]
         H1{"User Approves?"}
         H2["User Requests Changes"]
         H3["BA Revises PRD"]
     end
 
-    subgraph Design["8-9. Design Phase"]
+    subgraph Design["9-10. Design Phase"]
         H["Architect<br/>(prd, complexity, tools, scope) → arch_docs"]
         I["Project Manager<br/>(prd, arch_docs) → execution_plan"]
     end
 
-    subgraph Execution["10-12. Execution Phase"]
+    subgraph Execution["11-13. Execution Phase"]
         J["Parallel Workers<br/>(instructions) → new_code"]
         K{"Production Check<br/>build, lint, test"}
         L{"Validate<br/>(prompt, new_code)"}
     end
 
-    subgraph Output["13. Output"]
+    subgraph Output["14. Output"]
         M["Business Analyst<br/>Final Report to User"]
     end
 
     A --> B & C & D
     B & C & D --> E
-    E --> F
-    F -->|"❌ Fails"| G
-    G -->|"Clarification"| E
-    F -->|"✅ Pass (complexity ≥15)"| H0
-    F -->|"✅ Pass (complexity <15)"| H
+    E --> E2
+    E2 -->|"Yes"| G
+    G -->|"User answers"| E
+    E2 -->|"No"| E3
+    E3 --> VC
+    VC -->|"❌ Fails"| E3
+    VC -->|"✅ Pass (complexity ≥15)"| H0
+    VC -->|"✅ Pass (complexity <15)"| H
     H0 --> H1
     H1 -->|"❌ No"| H2
     H2 --> H3
@@ -113,12 +119,21 @@ sequenceDiagram
     rect rgb(250, 240, 230)
         Note over BA,VC: Phase 2: Requirements
         CMD->>BA: prompt, complexity, tools, scope
-        BA->>BA: Create PRD
+        BA->>BA: Draft PRD
+
+        loop BA Clarification Loop (HITL)
+            alt BA has questions
+                BA->>U: Clarification questions
+                U->>BA: Answers
+                BA->>BA: Update draft
+            end
+        end
+
+        BA->>BA: Complete PRD
         BA-->>VC: prd: string
 
         alt Vibe Check Fails
-            VC->>U: Clarification questions
-            U->>BA: Additional context
+            VC->>BA: Issues found
             BA->>BA: Revise PRD
             BA-->>VC: revised_prd
         end

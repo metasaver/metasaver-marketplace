@@ -8,7 +8,7 @@ description: Architecture design and execution planning workflow. Spawns archite
 > **ROOT AGENT ONLY** - Spawns agents, runs only from root Claude Code agent.
 
 **Purpose:** Create architecture design and execution plan
-**Trigger:** After PRD approval (prd-approval or innovate-phase)
+**Trigger:** After Human Validation (prd-approval phase)
 **Input:** `prdPath`, `complexity` (int), `tools` (string[]), `scope` (string[])
 **Output:** `{architecture, executionPlan}`
 
@@ -119,8 +119,8 @@ description: Architecture design and execution planning workflow. Spawns archite
 **Called by:**
 
 - `/audit` command (after prd-approval)
-- `/build` command (after innovate-phase)
-- `/ms` command (for complexity ≥15)
+- `/build` command (after prd-approval / human validation)
+- `/ms` command (for complexity ≥15, after prd-approval)
 
 **Calls:**
 

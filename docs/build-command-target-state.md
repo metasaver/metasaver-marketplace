@@ -20,56 +20,62 @@ flowchart TB
         D["Scope Check<br/>(prompt) → string[]"]
     end
 
-    subgraph Requirements["5-7. Requirements Phase"]
+    subgraph Requirements["5-6. Requirements Phase (HITL)"]
         E["Business Analyst<br/>Drafts PRD"]
         E2{"BA has questions?"}
         G["Ask User for Clarification"]
         E3["BA completes PRD"]
-        F{"Vibe Check<br/>(prd) → bool"}
     end
 
-    subgraph Innovate["7-8. Innovate Phase (OPTIONAL)"]
-        H["User Reviews PRD"]
+    subgraph PRDComplete["7. PRD Complete (HITL STOP)"]
+        H["Write PRD file"]
+        H2["Link PRD to user"]
         I{"Want to Innovate?"}
-        J["Innovation Advisor<br/>Suggests improvements"]
+    end
+
+    subgraph Innovate["8. Innovate Phase (if yes)"]
+        J["Innovation Advisor<br/>Numbered suggestions"]
         K["User Selects<br/>(1:yes, 2:explain, rest:no)"]
         L["BA Updates PRD"]
-        M{"Vibe Check<br/>(updated prd)"}
     end
 
-    subgraph Validate["9. Human Validation"]
-        N["User Validates<br/>Final PRD"]
+    VC{"9. Vibe Check<br/>(prd) → bool"}
+
+    subgraph Validate["10. Human Validation"]
+        N["User Approves PRD"]
     end
 
-    subgraph Design["10-11. Design Phase"]
+    subgraph Design["11-12. Design Phase"]
         O["Architect<br/>(prd, complexity, tools, scope) → arch_docs"]
         P["Project Manager<br/>(prd, arch_docs) → execution_plan"]
     end
 
-    subgraph Execution["12-14. Execution Phase"]
+    subgraph Execution["13-15. Execution Phase"]
         Q["Parallel Workers<br/>(instructions) → new_code"]
         R{"Production Check<br/>build, lint, test"}
         S{"Validate<br/>(prompt, new_code)"}
     end
 
-    subgraph Output["15. Output"]
+    subgraph Output["16. Output"]
         T["Business Analyst<br/>Final Report to User"]
     end
 
     A --> B & C & D
     B & C & D --> E
-    E --> F
-    F -->|"❌ Fails"| G
-    G -->|"Clarification"| E
-    F -->|"✅ Pass"| H
-    H --> I
-    I -->|"No"| N
+    E --> E2
+    E2 -->|"Yes"| G
+    G -->|"User answers"| E
+    E2 -->|"No"| E3
+    E3 --> H
+    H --> H2
+    H2 --> I
+    I -->|"No"| VC
     I -->|"Yes"| J
     J --> K
     K --> L
-    L --> M
-    M -->|"❌ Fails"| L
-    M -->|"✅ Pass"| N
+    L --> VC
+    VC -->|"❌ Fails"| E3
+    VC -->|"✅ Pass"| N
     N --> O
     O --> P
     P --> Q
@@ -108,10 +114,9 @@ flowchart TB
         I5{"Explain Request?"}
         I6["Provide detailed explanation"]
         I7["BA Updates PRD<br/>with selected innovations"]
-        I8{"Vibe Check<br/>Updated PRD"}
     end
 
-    subgraph Output["To Human Validation"]
+    subgraph Output["To Vibe Check → Human Validation"]
         OUT["Final PRD<br/>(original or enhanced)"]
     end
 
@@ -128,9 +133,7 @@ flowchart TB
     I5 -->|"Yes"| I6
     I6 --> I4
     I5 -->|"No"| I7
-    I7 --> I8
-    I8 -->|"❌ Fails"| I7
-    I8 -->|"✅ Pass"| OUT
+    I7 --> OUT
 ```
 
 ---
@@ -256,12 +259,22 @@ sequenceDiagram
     rect rgb(250, 240, 230)
         Note over BA,VC: Phase 2: Requirements
         CMD->>BA: prompt, complexity, tools, scope
-        BA->>BA: Create PRD
+        BA->>BA: Draft PRD
+
+        loop BA Clarification Loop (HITL)
+            alt BA has questions
+                BA->>U: Clarification questions
+                U->>BA: Answers
+                BA->>BA: Update draft
+            end
+        end
+
+        BA->>BA: Complete PRD
         BA-->>VC: prd: string
 
         alt Vibe Check Fails
-            VC->>U: Clarification questions
-            U->>BA: Additional context
+            VC->>BA: Issues found
+            BA->>BA: Revise PRD
             BA-->>VC: revised_prd
         end
         VC-->>CMD: ✅ PRD validated
@@ -331,26 +344,26 @@ sequenceDiagram
 
 ## 6. Quick Reference
 
-| Step | Function           | Input                            | Output           | Model        | Parallel |
-| ---- | ------------------ | -------------------------------- | ---------------- | ------------ | -------- |
-| 1    | Entry              | prompt                           | -                | -            | -        |
-| 2    | Complexity Check   | prompt                           | int              | haiku        | ✅ 2-4   |
-| 3    | Tool Check         | prompt                           | string[]         | haiku        | ✅ 2-4   |
-| 4    | Scope Check        | prompt                           | string[]         | haiku        | ✅ 2-4   |
-| 5    | Business Analyst   | prompt, complexity, tools, scope | PRD              | sonnet       | -        |
-| 6    | Vibe Check         | prd                              | bool \| string[] | MCP Tool     | -        |
-| 7    | User Review        | prd                              | approval         | Human        | -        |
-| 8    | Innovation Advisor | prd                              | suggestions[]    | sonnet       | -        |
-| 9    | User Selection     | suggestions                      | selections       | Human        | -        |
-| 10   | BA Update PRD      | prd, selections                  | enhanced_prd     | sonnet       | -        |
-| 11   | Vibe Check         | enhanced_prd                     | bool             | MCP Tool     | -        |
-| 12   | Human Validation   | final_prd                        | approval         | Human        | -        |
-| 13   | Architect          | prd, complexity, tools, scope    | arch_docs        | sonnet       | -        |
-| 14   | Project Manager    | prd, arch_docs                   | execution_plan   | sonnet       | -        |
-| 15   | Workers            | instructions                     | new_code         | haiku/sonnet | ✅ waves |
-| 16   | Production Check   | new_code                         | bool             | Bash         | -        |
-| 17   | Validate           | prompt, new_code                 | bool             | sonnet       | -        |
-| 18   | Business Analyst   | results                          | report           | sonnet       | -        |
+| Step | Function           | Input                            | Output         | Model        | Parallel |
+| ---- | ------------------ | -------------------------------- | -------------- | ------------ | -------- |
+| 1    | Entry              | prompt                           | -              | -            | -        |
+| 2    | Complexity Check   | prompt                           | int            | haiku        | ✅ 2-4   |
+| 3    | Tool Check         | prompt                           | string[]       | haiku        | ✅ 2-4   |
+| 4    | Scope Check        | prompt                           | string[]       | haiku        | ✅ 2-4   |
+| 5    | BA Draft PRD       | prompt, complexity, tools, scope | draft_prd      | sonnet       | -        |
+| 6    | BA Clarifications  | draft_prd                        | questions      | sonnet       | HITL     |
+| 7    | User Review PRD    | prd                              | approval       | Human        | -        |
+| 8    | Innovation Advisor | prd                              | numbered list  | sonnet       | Optional |
+| 9    | User Selection     | suggestions                      | selections     | Human        | Optional |
+| 10   | BA Update PRD      | prd, selections                  | enhanced_prd   | sonnet       | Optional |
+| 11   | Vibe Check         | final_prd                        | bool \| issues | MCP Tool     | -        |
+| 12   | Human Validation   | final_prd                        | approval       | Human        | -        |
+| 13   | Architect          | prd, complexity, tools, scope    | arch_docs      | sonnet       | -        |
+| 14   | Project Manager    | prd, arch_docs                   | execution_plan | sonnet       | -        |
+| 15   | Workers            | instructions                     | new_code       | haiku/sonnet | ✅ waves |
+| 16   | Production Check   | new_code                         | bool           | Bash         | -        |
+| 17   | Validate           | prompt, new_code                 | bool           | sonnet       | -        |
+| 18   | Business Analyst   | results                          | report         | sonnet       | -        |
 
 ---
 
@@ -359,12 +372,13 @@ sequenceDiagram
 | Phase               | /audit              | /build              |
 | ------------------- | ------------------- | ------------------- |
 | 1. Analysis         | ✅ Same             | ✅ Same             |
-| 2. Requirements     | ✅ BA + Vibe Check  | ✅ BA + Vibe Check  |
+| 2. Requirements     | ✅ BA (HITL)        | ✅ BA (HITL)        |
 | 3. Innovate         | ❌ Skip             | ✅ Optional         |
-| 4. Human Validation | ❌ Skip             | ✅ Required         |
-| 5. Design           | ✅ Architect + PM   | ✅ Architect + PM   |
-| 6. Execution        | ✅ Workers + Checks | ✅ Workers + Checks |
-| 7. Report           | ✅ BA Report        | ✅ BA Report        |
+| 4. Vibe Check       | ✅ Single           | ✅ Single           |
+| 5. Human Validation | If complexity ≥15   | ✅ Required         |
+| 6. Design           | ✅ Architect + PM   | ✅ Architect + PM   |
+| 7. Execution        | ✅ Workers + Checks | ✅ Workers + Checks |
+| 8. Report           | ✅ BA Report        | ✅ BA Report        |
 
 **Why /audit skips Innovate:**
 

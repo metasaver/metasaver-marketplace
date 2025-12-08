@@ -13,69 +13,83 @@ Analyzes prompt complexity and routes to optimal execution method.
 
 ## Phase 1: Analysis (PARALLEL)
 
-Spawn 3 agents in parallel using the Task tool. Each agent receives the user prompt and executes a skill:
+**See:** `/skill analysis-phase`
 
-**IMPORTANT:** You MUST spawn all 3 agents in a SINGLE message with 3 Task tool calls.
-
-```
-Task 1: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill complexity-check on this prompt: {USER_PROMPT}
-           Return ONLY: score: <integer 1-50>"
-
-Task 2: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill tool-check on this prompt: {USER_PROMPT}
-           Return ONLY: tools: [<tool1>, <tool2>, ...]"
-
-Task 3: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill scope-check on this prompt: {USER_PROMPT}
-           Return ONLY: repos: [<path1>, <path2>, ...]"
-```
-
-Wait for all 3 agents to complete. Collect results:
-
-- `complexity_score` (int)
-- `tools` (string[])
-- `repos` (string[])
-
-Pass these to Phase 2.
+Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
+Collect: `complexity_score`, `tools`, `repos`
 
 ---
 
-## Phase 2: Requirements (ALL tasks)
+## Phase 2: Route by Complexity
+
+### Score ≤4: Agent Check (Direct)
 
 ```
-Business Analyst → PRD → Vibe Check
+Spawn agent: subagent_type="general-purpose", model="haiku"
+  Prompt: "Execute /skill agent-check on: {USER_PROMPT}. Return ONLY: agent: <name> or agent: none"
 ```
 
-BA creates PRD for ALL complexity levels. Vibe Check validates.
+- If agent matched → Spawn that agent directly (skip PRD)
+- If no match → Direct Claude response (skip PRD)
+
+### Score 5-14: Quick Workflow
+
+```
+Architect → PM → Workers → Validation
+```
+
+No PRD. No Approval. No Innovate.
+
+### Score 15-29: Full Workflow (same as /build, no Innovate)
+
+```
+Requirements (HITL) → PRD Complete → Vibe Check → PRD Approval → Design → Execution → Report
+```
+
+### Score ≥30: Enterprise Workflow (same as /build, with Innovate)
+
+```
+Requirements (HITL) → PRD Complete → [Innovate?] → Vibe Check → PRD Approval → Design → Execution → Report
+```
 
 ---
 
-## Phase 3: Route by Complexity
+## Shared Phases (align with /build and /audit)
 
-### Complexity <15
+### Requirements Phase (HITL) - Score ≥15
 
-```
-PRD → Architect → PM → Workers → Validation
-```
+**See:** `/skill requirements-phase`
 
-No PRD Approval gate. No Innovate.
+### PRD Complete + Innovate - Score ≥15
 
-### Complexity 15-29
+**See:** `/skill innovate-phase`
 
-```
-PRD → PRD Approval → Architect → PM → Workers → Validation → Report
-```
+- Score ≥30: Ask "Want to Innovate?" (HARD STOP)
+- Score 15-29: Write PRD, skip innovate
 
-PRD Approval required. No Innovate.
+### Vibe Check - Score ≥15
 
-### Complexity ≥30
+Single vibe check on PRD. If fails, return to BA.
 
-```
-PRD → Innovate Phase → PRD Approval → Architect (opus) → PM (Gantt) → Workers (waves) → Validation → Report
-```
+### PRD Approval - Score ≥15
 
-Innovate phase included. Full enterprise workflow.
+**See:** `/skill prd-approval`
+
+### Design Phase
+
+**See:** `/skill design-phase`
+
+### Execution Phase
+
+**See:** `/skill execution-phase`
+
+### Validation Phase
+
+**See:** `/skill validation-phase`
+
+### Report Phase - Score ≥15
+
+**See:** `/skill report-phase`
 
 ---
 
@@ -83,7 +97,8 @@ Innovate phase included. Full enterprise workflow.
 
 | Complexity | BA/Architect | Workers | Thinking   |
 | ---------- | ------------ | ------- | ---------- |
-| <15        | sonnet       | sonnet  | none       |
+| ≤4         | -            | haiku   | none       |
+| 5-14       | sonnet       | sonnet  | none       |
 | 15-29      | sonnet       | sonnet  | think      |
 | ≥30        | opus         | sonnet  | ultrathink |
 
@@ -93,65 +108,40 @@ Innovate phase included. Full enterprise workflow.
 
 **Use `/skill agent-selection` for full agent reference.**
 
-**Self-aware spawning:**
-
-```
-[MODE] for [path/scope].
-You are [Agent Name].
-READ YOUR INSTRUCTIONS at .claude/agents/[category]/[agent-name].md
-```
-
----
-
-## Workflow Details
-
-### Requirements Phase (ALL tasks)
-
-Spawn `business-analyst` → Creates PRD → Vibe check validates
-
-### Innovate Phase (≥30 only)
-
-Spawn `innovation-advisor` → Suggests industry best practices → User picks options → BA updates PRD
-
-### PRD Approval (15+)
-
-Present PRD to user → User approves → Continue
-
-### Execution Phase
-
-PM spawns workers from plan. Max 10 agents per wave.
-
-### Report Phase
-
-`business-analyst` (sign-off) + `project-manager` (consolidation)
-
 ---
 
 ## Examples
 
 ```bash
-# <15: Quick workflow
-/ms "add logging to service"
-→ BA → PRD → Architect → PM → backend-dev
+# ≤4: Agent check
+/ms "security scan"
+→ agent-check → security-engineer agent
 
-# 15-29: Full workflow with PRD approval
+# ≤4: No match
+/ms "what does this code do?"
+→ agent-check → no match → Direct Claude
+
+# 5-14: Quick workflow
+/ms "add logging to service"
+→ Architect → PM → backend-dev
+
+# 15-29: Full workflow
 /ms "build JWT auth API"
-→ BA → PRD → Approval → Architect → PM → workers → Report
+→ BA → PRD → Vibe Check → Approval → Architect → PM → workers → Report
 
 # ≥30: Enterprise with Innovate
 /ms "standardize error handling across microservices"
-→ BA → PRD → Innovate → Approval → Architect (opus) → PM (Gantt) → waves → Report
+→ BA → PRD → [Innovate?] → Vibe Check → Approval → Architect (opus) → PM → waves → Report
 ```
 
 ---
 
 ## Enforcement
 
-1. Run analysis skills in PARALLEL
-2. BA creates PRD for ALL tasks
-3. Route by complexity (<15 / 15-29 / ≥30)
-4. Score ≥15: Require PRD approval
-5. Score ≥30: Include Innovate phase
+1. Run analysis skills in PARALLEL (single message, 3 Task calls)
+2. Score ≤4: Spawn agent for `/skill agent-check`, then route accordingly
+3. Score 5-14: Skip PRD, go direct to Architect
+4. Score ≥15: Full workflow with HITL Requirements, Vibe Check, PRD Approval
+5. Score ≥30: Include Innovate phase (ask user, hard stop)
 6. Select model by complexity
-7. Call `vibe_learn` after fixing errors
-8. Call `/skill repomix-cache-refresh` if files modified
+7. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

@@ -29,7 +29,12 @@ description: Final reporting and sign-off workflow. Spawns business-analyst for 
    - Compile prioritized recommendations
    - Return: markdown-formatted report
 
-3. **If files were modified:** Invoke `repomix-cache-refresh` skill
+3. **If files were modified:** Spawn agent to execute `repomix-cache-refresh` skill:
+
+   ```
+   subagent_type="general-purpose", model="haiku"
+   Prompt: "Execute /skill repomix-cache-refresh"
+   ```
 
 4. **Output:** Executive report formatted for /audit or /build
 

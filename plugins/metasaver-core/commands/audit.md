@@ -13,74 +13,67 @@ Validates configurations and standards compliance. No Innovate phase (audit chec
 
 ## Phase 1: Analysis (PARALLEL)
 
-Spawn 3 agents in parallel using the Task tool. Each agent receives the user prompt and executes a skill:
+**See:** `/skill analysis-phase`
 
-**IMPORTANT:** You MUST spawn all 3 agents in a SINGLE message with 3 Task tool calls.
-
-```
-Task 1: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill complexity-check on this prompt: {USER_PROMPT}
-           Return ONLY: score: <integer 1-50>"
-
-Task 2: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill tool-check on this prompt: {USER_PROMPT}
-           Return ONLY: tools: [<tool1>, <tool2>, ...]"
-
-Task 3: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill scope-check on this prompt: {USER_PROMPT}
-           Return ONLY: repos: [<path1>, <path2>, ...]"
-```
-
-Wait for all 3 agents to complete. Collect results:
-
-- `complexity_score` (int)
-- `tools` (string[])
-- `repos` (string[])
-
-Pass these to Phase 2.
+Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
+Collect: `complexity_score`, `tools`, `repos`
 
 ---
 
-## Phase 2: Requirements (ALL tasks)
+## Phase 2: Requirements (HITL)
 
-```
-Business Analyst → PRD → Vibe Check
-```
+**See:** `/skill requirements-phase`
 
-BA creates PRD for ALL complexity levels. Vibe Check validates.
+BA drafts PRD with HITL clarification loop until complete.
 
 ---
 
-## Phase 3: PRD Approval (complexity ≥15 only)
+## Phase 3: Vibe Check
 
-```
-IF complexity ≥15: Present PRD → User Approves → Continue
-IF complexity <15: Skip to Design Phase
-```
+Single vibe check on PRD. If fails, return to BA to revise.
 
 ---
 
-## Phase 4: Design
+## Phase 4: PRD Complete & Approval (complexity ≥15 only)
 
-```
-Architect (scope + approach) → Project Manager (execution plan)
-```
+**See:** `/skill prd-approval`
 
----
+- **complexity ≥15:** Write PRD file → Link to user → User approves
+- **complexity <15:** Skip to Design Phase (PRD stays internal)
 
-## Phase 5: Execution
-
-```
-PM spawns config agents (waves, max 10 parallel) → Production Check → Validation
-```
+**No Innovate phase for audit** (audit validates, doesn't enhance).
 
 ---
 
-## Phase 6: Report
+## Phase 5: Design
 
-```
-Business Analyst → Final Report to User
-```
+**See:** `/skill design-phase`
+
+Architect → arch_docs → Project Manager → execution_plan
+
+---
+
+## Phase 6: Execution
+
+**See:** `/skill execution-phase`
+
+PM spawns config agents (waves, max 10 parallel) → Validation
+
+---
+
+## Phase 7: Validation
+
+**See:** `/skill validation-phase`
+
+Code quality checks scaled by change size.
+
+---
+
+## Phase 8: Report
+
+**See:** `/skill report-phase`
+
+BA (sign-off) + PM (consolidation) → Final audit report
 
 ---
 
@@ -99,14 +92,6 @@ Config agents always use **haiku** (fast, efficient for standards checking).
 ## Agent Selection
 
 **Use `/skill agent-selection` for full agent reference.**
-
-**Self-aware spawning:**
-
-```
-AUDIT MODE for {file_path}.
-You are {Agent Name}.
-READ YOUR INSTRUCTIONS at .claude/agents/config/{category}/{agent}.md
-```
 
 ---
 
@@ -135,9 +120,11 @@ READ YOUR INSTRUCTIONS at .claude/agents/config/{category}/{agent}.md
 
 ## Enforcement
 
-1. Run analysis skills in PARALLEL
-2. BA creates PRD for ALL tasks
-3. PRD Approval only for complexity ≥15
+1. Run analysis skills in PARALLEL (single message, 3 Task calls)
+2. BA creates PRD with HITL clarification loop
+3. Write PRD file and link to user
 4. NO Innovate phase (audit only)
-5. Config agents use haiku
-6. Call `/skill repomix-cache-refresh` if files modified
+5. Single Vibe Check after PRD complete
+6. PRD Approval only for complexity ≥15
+7. Config agents use haiku
+8. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

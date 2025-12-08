@@ -47,24 +47,26 @@ flowchart TB
     end
 
     subgraph MedComplex["🟠 Full Workflow (Score 15-29)"]
-        MC1["Requirements Phase<br/>(BA + Vibe Check)"]
-        MC2["PRD Approval<br/>(Human Validation)"]
-        MC3["Architect<br/>(designs WHAT to build)"]
-        MC4["PM picks agents<br/>(assigns tasks to agents)"]
-        MC5["Execution Phase<br/>(spawn agents from PM list)"]
-        MC6["Report Phase"]
-        MC1 --> MC2 --> MC3 --> MC4 --> MC5 --> MC6
+        MC1["Requirements Phase<br/>(BA drafts → HITL clarify → complete)"]
+        MC2["Vibe Check"]
+        MC3["PRD Approval<br/>(Human Validation)"]
+        MC4["Architect<br/>(designs WHAT to build)"]
+        MC5["PM picks agents<br/>(assigns tasks to agents)"]
+        MC6["Execution Phase<br/>(spawn agents from PM list)"]
+        MC7["Report Phase"]
+        MC1 --> MC2 --> MC3 --> MC4 --> MC5 --> MC6 --> MC7
     end
 
     subgraph UltraComplex["🔴 Enterprise + Innovate (Score ≥30)"]
-        UC1["Requirements Phase<br/>(BA + Vibe Check)"]
-        UC2["Innovate Phase<br/>(Industry Best Practices)"]
-        UC3["PRD Approval<br/>(Human Validation)"]
-        UC4["Architect (opus)<br/>(designs WHAT to build)"]
-        UC5["PM picks agents<br/>(assigns tasks, multi-wave Gantt)"]
-        UC6["Execution Phase<br/>(spawn agents from PM list)"]
-        UC7["Validation + Report"]
-        UC1 --> UC2 --> UC3 --> UC4 --> UC5 --> UC6 --> UC7
+        UC1["Requirements Phase<br/>(BA drafts → HITL clarify → complete)"]
+        UC2["Innovate Phase<br/>(Numbered suggestions list)"]
+        UC3["Vibe Check"]
+        UC4["PRD Approval<br/>(Human Validation)"]
+        UC5["Architect (opus)<br/>(designs WHAT to build)"]
+        UC6["PM picks agents<br/>(assigns tasks, multi-wave Gantt)"]
+        UC7["Execution Phase<br/>(spawn agents from PM list)"]
+        UC8["Validation + Report"]
+        UC1 --> UC2 --> UC3 --> UC4 --> UC5 --> UC6 --> UC7 --> UC8
     end
 
     A --> B & C & D
@@ -156,21 +158,30 @@ sequenceDiagram
     MS->>MS: Route: Full Workflow
 
     rect rgb(250, 240, 230)
-        Note over BA,VC: Requirements Phase
-        MS->>BA: Create PRD
-        BA-->>VC: PRD
-        VC-->>MS: ✅ Validated
+        Note over BA,VC: Requirements Phase (HITL)
+        MS->>BA: Draft PRD
+        loop Clarification Loop
+            alt BA has questions
+                BA->>U: Questions
+                U->>BA: Answers
+            end
+        end
+        BA->>BA: Complete PRD
     end
 
     rect rgb(255, 250, 230)
-        Note over U,IA: Innovate Phase (Optional)
+        Note over U,IA: Innovate Phase (Score ≥30 only)
         MS->>U: Want to innovate?
         U->>MS: Yes
         MS->>IA: Suggest improvements
-        IA-->>U: Numbered list
+        IA-->>U: Numbered list:<br/>1. Add caching (High/Low)<br/>2. Add rate limiting (Med/Med)<br/>3. Add observability (High/Med)
         U->>MS: 1:yes, 2:no, 3:yes
-        MS->>BA: Update PRD
-        BA-->>VC: Enhanced PRD
+        MS->>BA: Update PRD with selections
+    end
+
+    rect rgb(240, 255, 240)
+        Note over VC: Vibe Check
+        BA-->>VC: PRD
         VC-->>MS: ✅ Validated
     end
 

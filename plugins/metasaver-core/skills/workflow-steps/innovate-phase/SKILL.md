@@ -1,89 +1,79 @@
 ---
 name: innovate-phase
-description: Optional PRD enhancement with industry best practices. Spawns innovation-advisor for suggestions (max 5-7), user selects improvements, BA updates PRD, vibe_check validates. Use when enhancing requirements before architecture design.
+description: Optional PRD enhancement with industry best practices. Writes PRD file, links to user, asks "Want to Innovate?" (HITL STOP). If yes, spawns innovation-advisor for numbered suggestions. Use for /build only.
 ---
 
-# Innovate Phase - PRD Enhancement Workflow
+# Innovate Phase - PRD Complete & Optional Enhancement
 
 > **ROOT AGENT ONLY** - Called by commands only, never by subagents.
 
-**Purpose:** Enhance validated PRD with industry best practices
-**Trigger:** After requirements-phase (used by /build and /ms, NOT /audit)
-**Input:** PRD path from requirements-phase, complexity, scope
-**Output:** Final PRD path + human validation
+**Purpose:** Write PRD file, ask user about innovation, optionally enhance
+**Trigger:** After requirements-phase (/build only, NOT /audit)
+**Input:** PRD content from requirements-phase, complexity, scope
+**Output:** Final PRD path
 
 ---
 
 ## Workflow Steps
 
-1. **Present PRD to user** for review (full content)
+1. **Write PRD file:**
+   - Path: `{scope[0]}/docs/prd/prd-{YYYYMMDD-HHmmss}-{slug}.md`
+   - Write PRD content to file
 
-2. **Ask:** "Would you like improvement suggestions based on industry standards?"
-   - NO → Skip to Human Validation
-   - YES → Continue
+2. **Link PRD to user:**
+   - Show file path
+   - Brief summary of what's in the PRD
 
-3. **Spawn innovation-advisor agent:**
-   - Analyze PRD, suggest 5-7 improvements
-   - Prioritize by impact-to-effort ratio
-   - Include category, impact, effort, rationale for each
+3. **Ask: "Do you want to innovate with industry best practices?" (HARD STOP)**
+   - Wait for user response
+   - NO → Return PRD path (skip to vibe-check)
+   - YES → Continue to step 4
 
-4. **Present suggestions to user:**
-   - Format: "1. [Title] (Category, Impact/Effort)"
-   - Ask: "For each, respond with: yes | no | explain"
-   - Example: "1:yes, 2:explain, 3:no, 4:yes, 5:no"
+4. **Spawn innovation-advisor agent:**
+   - Analyze PRD
+   - Return numbered list of suggestions (max 5-7)
+   - Format: `1. [Title] - Impact: High/Med/Low, Effort: High/Med/Low`
 
-5. **Handle "explain more" requests:**
-   - Show detailed rationale, implementation hints, industry examples
-   - Re-ask for approval of that suggestion
+5. **Present numbered suggestions to user:**
+   - User responds: `1:yes, 2:explain, 3:no, 4:yes`
+   - Handle "explain" requests inline
 
 6. **If user selected improvements:**
-   - Spawn BA agent (revise-prd mode) with selected items
+   - Spawn BA agent to update PRD with selections
    - Update PRD file
 
-7. **Vibe check updated PRD** (no clarification loop, log warning if fail)
-
-8. **Human validates final PRD:**
-   - Present summary: requirements, success criteria, deliverables
-   - Ask: "Approve to proceed to Architecture?"
-   - NO → Ask what changes needed, loop back to BA
-   - YES → Return PRD path (done)
+7. **Return PRD path**
 
 ---
 
-## Innovation Advisor Output
+## Innovation Advisor Output Format
 
 ```
-1. OpenAPI Documentation
-   Category: DX, Impact: High, Effort: Low
-   Rationale: Enables client generation, improves adoption
+1. Add OpenAPI Documentation
+   Impact: High, Effort: Low
+   Enables client generation and improves API discoverability
 
-2. Rate Limiting
-   Category: Security, Impact: High, Effort: Medium
-   Rationale: Prevents abuse, ensures stability
+2. Implement Rate Limiting
+   Impact: High, Effort: Medium
+   Prevents abuse and ensures service stability
+
+3. Add Structured Logging
+   Impact: Medium, Effort: Low
+   Improves debugging and observability
 ```
 
----
-
-## Configuration
-
-| Setting          | Value            | Rationale                |
-| ---------------- | ---------------- | ------------------------ |
-| Max suggestions  | 7                | Prevent decision fatigue |
-| Innovation model | sonnet           | Needs research           |
-| Human validation | Required         | Must approve before arch |
-| Explain loops    | 1 per suggestion | Not unlimited            |
+User responds: `1:yes, 2:yes, 3:no`
 
 ---
 
 ## Output Format
 
-```
+```json
 {
-  status: "success",
-  prdPath: "/docs/prd/prd-20241204-feature.md",
-  innovated: true,
-  innovationsApplied: ["OpenAPI docs", "Rate limiting"],
-  humanValidated: true
+  "status": "complete",
+  "prdPath": "/docs/prd/prd-20241208-feature.md",
+  "innovated": true,
+  "innovationsApplied": ["OpenAPI Documentation", "Rate Limiting"]
 }
 ```
 
@@ -91,32 +81,7 @@ description: Optional PRD enhancement with industry best practices. Spawns innov
 
 ## Integration
 
-**Called by:** /build, /ms (complexity ≥15)
+**Called by:** /build, /ms (complexity ≥30)
 **NOT called by:** /audit
-**Calls:** innovation-advisor agent, business-analyst agent, vibe_check MCP, AskUserQuestion
-**Next phase:** design-phase
-
----
-
-## Example
-
-```
-/build JWT authentication API
-
-After Requirements Phase:
-  PRD: /docs/prd/prd-20241204-jwt-auth-api.md
-
-Innovate Phase:
-  → Present PRD to user
-  → User: "Yes, suggest improvements"
-  → innovation-advisor returns 5 suggestions
-  → User: "1:yes, 2:yes, 3:explain, 4:yes, 5:no"
-  → Explain refresh token rotation
-  → User: "3:yes"
-  → BA updates PRD (4 improvements applied)
-  → vibe_check: PASS
-  → Human validates: "Yes, proceed"
-  → Return: {innovated: true, innovationsApplied: [1,2,3,4]}
-
-Next: Design Phase
-```
+**Calls:** innovation-advisor agent, business-analyst agent, AskUserQuestion
+**Next phase:** vibe-check

@@ -13,86 +13,74 @@ Creates new features with architecture validation. Includes optional Innovate ph
 
 ## Phase 1: Analysis (PARALLEL)
 
-Spawn 3 agents in parallel using the Task tool. Each agent receives the user prompt and executes a skill:
+**See:** `/skill analysis-phase`
 
-**IMPORTANT:** You MUST spawn all 3 agents in a SINGLE message with 3 Task tool calls.
-
-```
-Task 1: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill complexity-check on this prompt: {USER_PROMPT}
-           Return ONLY: score: <integer 1-50>"
-
-Task 2: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill tool-check on this prompt: {USER_PROMPT}
-           Return ONLY: tools: [<tool1>, <tool2>, ...]"
-
-Task 3: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill scope-check on this prompt: {USER_PROMPT}
-           Return ONLY: repos: [<path1>, <path2>, ...]"
-```
-
-Wait for all 3 agents to complete. Collect results:
-
-- `complexity_score` (int)
-- `tools` (string[])
-- `repos` (string[])
-
-Pass these to Phase 2.
+Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
+Collect: `complexity_score`, `tools`, `repos`
 
 ---
 
-## Phase 2: Requirements (ALL tasks)
+## Phase 2: Requirements (HITL)
 
-```
-Business Analyst → PRD → Vibe Check
-```
+**See:** `/skill requirements-phase`
 
-BA creates PRD for ALL complexity levels. Vibe Check validates.
+BA drafts PRD with HITL clarification loop until complete.
 
 ---
 
-## Phase 3: Innovate (OPTIONAL)
+## Phase 3: PRD Complete + Innovate (HITL STOP)
 
-```
-Present PRD → "Want to innovate with best practices?"
-IF yes: Innovation Advisor → Numbered suggestions (impact/effort)
-        User responds: 1:yes, 2:explain, 3:no
-        BA updates PRD with selections
-        Vibe Check validates enhanced PRD
-IF no: Continue with original PRD
-```
+**See:** `/skill innovate-phase`
+
+1. Write PRD file, link to user
+2. Ask: "Want to Innovate?" (HARD STOP)
+3. If yes: innovation-advisor → user selects → BA updates PRD
 
 ---
 
-## Phase 4: Human Validation
+## Phase 4: Vibe Check
 
-```
+Single vibe check on final PRD. If fails, return to BA to revise.
+
+---
+
+## Phase 5: Human Validation
+
+**See:** `/skill prd-approval`
+
 Present final PRD → User approves → Continue
-```
 
 ---
 
-## Phase 5: Design
+## Phase 6: Design
 
-```
-Architect (design) → Project Manager (execution plan)
-```
+**See:** `/skill design-phase`
 
----
-
-## Phase 6: Execution
-
-```
-PM spawns domain agents (waves, max 10 parallel) → Production Check → Validation
-```
+Architect → arch_docs → Project Manager → execution_plan
 
 ---
 
-## Phase 7: Report
+## Phase 7: Execution
 
-```
-Business Analyst (sign-off) + Project Manager (consolidation)
-```
+**See:** `/skill execution-phase`
+
+PM spawns workers (waves, max 10 parallel) → Validation
+
+---
+
+## Phase 8: Validation
+
+**See:** `/skill validation-phase`
+
+Code quality checks scaled by change size.
+
+---
+
+## Phase 9: Report
+
+**See:** `/skill report-phase`
+
+BA (sign-off) + PM (consolidation) → Final report
 
 ---
 
@@ -110,40 +98,26 @@ Business Analyst (sign-off) + Project Manager (consolidation)
 
 **Use `/skill agent-selection` for full agent reference.**
 
-**Self-aware spawning:**
-
-```
-BUILD MODE for {path/scope}.
-You are {Agent Name}.
-READ YOUR INSTRUCTIONS at .claude/agents/{category}/{agent}.md
-```
-
 ---
 
 ## Examples
 
 ```bash
-# Simple feature
 /build "add logging to service"
-→ BA → PRD → [Innovate?] → Approval → Architect → PM → backend-dev → Report
+→ BA → PRD → [Innovate?] → Vibe Check → Approval → Architect → PM → workers
 
-# Complex feature
-/build "JWT auth API"
-→ BA → PRD → [Innovate?] → Approval → Architect → PM → workers → Report
-
-# Enterprise feature
 /build "multi-tenant SaaS"
-→ BA (opus) → PRD → Innovate → Approval → Architect (opus) → PM → waves → Report
+→ BA (opus) → PRD → Innovate → Vibe Check → Approval → Architect (opus) → PM → waves
 ```
 
 ---
 
 ## Enforcement
 
-1. Run analysis skills in PARALLEL
-2. BA creates PRD for ALL tasks
-3. Innovate phase is OPTIONAL (ask user)
-4. Human Validation required
-5. Use Context7 for library research
-6. Domain agents use sonnet
-7. Call `/skill repomix-cache-refresh` if files modified
+1. Run analysis skills in PARALLEL (single message, 3 Task calls)
+2. BA creates PRD with HITL clarification loop
+3. Write PRD file and link before asking about Innovate
+4. Innovate is OPTIONAL (ask user, hard stop)
+5. Single Vibe Check after PRD finalized
+6. Human Validation required before Design
+7. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

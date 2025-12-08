@@ -16,11 +16,20 @@ description: Parallel execution of complexity-check, tool-check, and scope-check
 
 ## Workflow
 
-**Execute all THREE skills in PARALLEL:**
+**Spawn 3 agents in PARALLEL to execute skills:**
 
-1. `complexity-check` → Returns int (1-50)
-2. `tool-check` → Returns string[] (MCP tools)
-3. `scope-check` → Returns string[] (repo paths)
+```
+Task 1: subagent_type="general-purpose", model="haiku"
+  Prompt: "Execute /skill complexity-check on: {USER_PROMPT}. Return ONLY: score: <int>"
+
+Task 2: subagent_type="general-purpose", model="haiku"
+  Prompt: "Execute /skill tool-check on: {USER_PROMPT}. Return ONLY: tools: [...]"
+
+Task 3: subagent_type="general-purpose", model="haiku"
+  Prompt: "Execute /skill scope-check on: {USER_PROMPT}. Return ONLY: repos: [...]"
+```
+
+Collect results: `complexity_score`, `tools`, `repos`
 
 ---
 
