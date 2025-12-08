@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "core-claude-plugin",
-      "version": "1.7.0",
+      "version": "1.7.1",
       "source": "./plugins/metasaver-core",
       "skills": [
         "./skills/config/build-tools/pnpm-workspace-config",
@@ -28,7 +28,6 @@
         "./skills/cross-cutting/chrome-devtools-testing",
         "./skills/cross-cutting/complexity-check",
         "./skills/cross-cutting/confidence-check",
-        "./skills/cross-cutting/constitution",
         "./skills/cross-cutting/mcp-coordination",
         "./skills/cross-cutting/monorepo-navigation",
         "./skills/cross-cutting/repomix-cache-refresh",
@@ -48,7 +47,8 @@
         "./skills/domain/config-validation",
         "./skills/domain/monorepo-audit",
         "./skills/domain/remediation-options",
-        "./skills/domain/workflow-orchestration"
+        "./skills/domain/workflow-orchestration",
+        "./skills/domain/react-app-structure"
       ]
     }
   ]

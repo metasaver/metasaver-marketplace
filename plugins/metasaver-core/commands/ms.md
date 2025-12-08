@@ -3,11 +3,23 @@ name: ms
 description: Intelligent MetaSaver command that analyzes complexity and routes optimally
 ---
 
+# MetaSaver Constitution
+
+| #   | Principle       | Rule                                        |
+| --- | --------------- | ------------------------------------------- |
+| 1   | **Minimal**     | Change only what must change                |
+| 2   | **Root Cause**  | Fix the source (address symptoms at origin) |
+| 3   | **Read First**  | Understand existing code before modifying   |
+| 4   | **Verify**      | Confirm it works before marking done        |
+| 5   | **Exact Scope** | Do precisely what was asked                 |
+
+---
+
 # MetaSaver Intelligent Router
 
 Analyzes prompt complexity and routes to optimal execution method.
 
-**IMPORTANT:** Never do git operations without user approval.
+**IMPORTANT:** ALWAYS get user approval before git operations.
 
 ---
 
@@ -30,7 +42,7 @@ Spawn agent: subagent_type="general-purpose", model="haiku"
 ```
 
 - If agent matched → Spawn that agent directly (skip PRD)
-- If no match → Direct Claude response (skip PRD)
+- If direct response → Claude handles directly (PRD skipped)
 
 ### Score 5-14: Quick Workflow
 
@@ -38,9 +50,9 @@ Spawn agent: subagent_type="general-purpose", model="haiku"
 Architect → PM → Workers → Validation
 ```
 
-No PRD. No Approval. No Innovate.
+Direct to design (PRD, Approval, Innovate skipped).
 
-### Score 15-29: Full Workflow (same as /build, no Innovate)
+### Score 15-29: Full Workflow (same as /build, Innovate skipped)
 
 ```
 Requirements (HITL) → PRD Complete → Vibe Check → PRD Approval → Design → Execution → Report
@@ -65,7 +77,7 @@ Requirements (HITL) → PRD Complete → [Innovate?] → Vibe Check → PRD Appr
 **See:** `/skill innovate-phase`
 
 - Score ≥30: Ask "Want to Innovate?" (HARD STOP)
-- Score 15-29: Write PRD, skip innovate
+- Score 15-29: Write PRD (Innovate skipped)
 
 ### Vibe Check - Score ≥15
 
@@ -117,9 +129,9 @@ Single vibe check on PRD. If fails, return to BA.
 /ms "security scan"
 → agent-check → security-engineer agent
 
-# ≤4: No match
+# ≤4: Direct response
 /ms "what does this code do?"
-→ agent-check → no match → Direct Claude
+→ agent-check → direct → Claude handles
 
 # 5-14: Quick workflow
 /ms "add logging to service"

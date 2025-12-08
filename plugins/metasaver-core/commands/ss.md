@@ -5,13 +5,13 @@ description: Screenshot command - acknowledges screenshot saved to ~/.screenshot
 
 # MetaSaver Constitution
 
-| #   | Principle       | Rule                                      |
-| --- | --------------- | ----------------------------------------- |
-| 1   | **Minimal**     | Change only what must change              |
-| 2   | **Root Cause**  | Fix the source, not symptoms              |
-| 3   | **Read First**  | Understand existing code before modifying |
-| 4   | **Verify**      | Confirm it works before marking done      |
-| 5   | **Exact Scope** | Do what was asked—no more, no less        |
+| #   | Principle       | Rule                                        |
+| --- | --------------- | ------------------------------------------- |
+| 1   | **Minimal**     | Change only what must change                |
+| 2   | **Root Cause**  | Fix the source (address symptoms at origin) |
+| 3   | **Read First**  | Understand existing code before modifying   |
+| 4   | **Verify**      | Confirm it works before marking done        |
+| 5   | **Exact Scope** | Do precisely what was asked                 |
 
 ---
 
@@ -138,9 +138,9 @@ User: /ss does this follow our Tailwind design system?
 
 ## Best Practices
 
-1. **Always read the image first** - Don't assume content, actually view the screenshot
+1. **Always read the image first** - View the screenshot before making assumptions
 2. **Be specific** - Reference exact visual elements, colors, positions
-3. **Provide context** - Explain why something is a problem, not just that it is
+3. **Provide context** - Explain why something is a problem (include root cause)
 4. **Offer solutions** - Give actionable fixes with code examples when applicable
 5. **Consider accessibility** - Check color contrast, font sizes, touch targets
 6. **Think mobile-first** - If responsive design is relevant, mention it

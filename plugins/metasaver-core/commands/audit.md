@@ -3,11 +3,23 @@ name: audit
 description: Natural language audit command that validates configurations, code quality, and standards compliance
 ---
 
+# MetaSaver Constitution
+
+| #   | Principle       | Rule                                        |
+| --- | --------------- | ------------------------------------------- |
+| 1   | **Minimal**     | Change only what must change                |
+| 2   | **Root Cause**  | Fix the source (address symptoms at origin) |
+| 3   | **Read First**  | Understand existing code before modifying   |
+| 4   | **Verify**      | Confirm it works before marking done        |
+| 5   | **Exact Scope** | Do precisely what was asked                 |
+
+---
+
 # Audit Command
 
-Validates configurations and standards compliance. No Innovate phase (audit checks, doesn't build).
+Validates configurations and standards compliance. Audit-only workflow (validation focus, Innovate excluded).
 
-**IMPORTANT:** Never do git operations without user approval.
+**IMPORTANT:** ALWAYS get user approval before git operations.
 
 ---
 
@@ -41,7 +53,7 @@ Single vibe check on PRD. If fails, return to BA to revise.
 - **complexity ≥15:** Write PRD file → Link to user → User approves
 - **complexity <15:** Skip to Design Phase (PRD stays internal)
 
-**No Innovate phase for audit** (audit validates, doesn't enhance).
+**Audit-only workflow** (validation focus, Innovate excluded).
 
 ---
 
@@ -123,7 +135,7 @@ Config agents always use **haiku** (fast, efficient for standards checking).
 1. Run analysis skills in PARALLEL (single message, 3 Task calls)
 2. BA creates PRD with HITL clarification loop
 3. Write PRD file and link to user
-4. NO Innovate phase (audit only)
+4. Audit-only workflow (Innovate excluded)
 5. Single Vibe Check after PRD complete
 6. PRD Approval only for complexity ≥15
 7. Config agents use haiku

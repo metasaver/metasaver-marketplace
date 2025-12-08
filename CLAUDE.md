@@ -50,7 +50,9 @@ claude-marketplace/
 name: agent-name
 description: Brief description
 ---
+
 # Agent Title
+
 [Prompt content]
 ```
 
@@ -65,19 +67,22 @@ Skills MUST be explicitly listed in marketplace.json for discovery:
 
 ```json
 {
-  "plugins": [{
-    "name": "core-claude-plugin",
-    "source": "./plugins/metasaver-core",
-    "strict": false,
-    "skills": [
-      "./skills/cross-cutting/tool-check",
-      "./skills/domain/monorepo-audit"
-    ]
-  }]
+  "plugins": [
+    {
+      "name": "core-claude-plugin",
+      "source": "./plugins/metasaver-core",
+      "strict": false,
+      "skills": [
+        "./skills/cross-cutting/tool-check",
+        "./skills/domain/monorepo-audit"
+      ]
+    }
+  ]
 }
 ```
 
 **Key rules:**
+
 - `skills[]` array is REQUIRED for skill discovery (no auto-discovery)
 - Skill paths are RELATIVE to `source` directory
 - `strict: false` recommended for flexibility
@@ -100,6 +105,7 @@ Skills MUST be explicitly listed in marketplace.json for discovery:
 **No build process** - this is a documentation/configuration repository.
 
 **Validation:**
+
 ```bash
 # Validate JSON
 cat .claude-plugin/marketplace.json | jq
@@ -118,10 +124,12 @@ find plugins/metasaver-core/{agents,skills} -name "*.md"
 ## Version Management
 
 **Current Versions:**
-- Marketplace: `1.5.2`
-- Plugin: `1.6.2`
+
+- Marketplace: `1.7.1`
+- Plugin: `1.7.1`
 
 **When updating versions:**
+
 1. Update `plugins/metasaver-core/.claude-plugin/plugin.json`
 2. Update `.claude-plugin/marketplace.json` (both metadata.version AND plugin version)
 3. Update this file (CLAUDE.md)

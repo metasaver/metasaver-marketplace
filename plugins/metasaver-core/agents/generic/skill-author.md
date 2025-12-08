@@ -83,7 +83,7 @@ skill-name/
 **2. Compactness (CRITICAL):**
 
 - [ ] Workflow skills ≤150 lines, utility skills ≤100 lines
-- [ ] No verbose prose - use tables and lists
+- [ ] Use tables and lists over prose
 - [ ] Pseudocode over full implementations where possible
 
 **3. Code Block Policy:**
@@ -91,14 +91,14 @@ skill-name/
 - [ ] Code blocks allowed BUT must be essential
 - [ ] Full templates → externalize to `templates/` subdirectory
 - [ ] Inline code: pseudocode or 5-10 line examples max
-- [ ] No copy-paste ready implementations (LLM generates dynamically)
+- [ ] LLM generates implementations dynamically (keep templates abstract)
 
 **4. Content Quality:**
 
 - [ ] Description has "Use when..." or clear trigger conditions
 - [ ] Workflow steps are numbered and actionable
-- [ ] Examples show input→output, not full implementations
-- [ ] No duplicate logic with other skills
+- [ ] Examples show input→output (keep concise)
+- [ ] Logic is unique to this skill (reference others for shared patterns)
 
 **5. Discoverability:**
 
@@ -125,15 +125,15 @@ VERDICT: PASS | FAIL
 
 - **Description:** PRIMARY trigger - must have "Use when..." + specificity
 - **Workflow:** Step-by-step, actionable, tool-aware
-- **Templates:** In `templates/` subdirectory, never embedded
+- **Templates:** ALWAYS in `templates/` subdirectory (externalize)
 - **Examples:** 1-3 realistic scenarios
 
-### Anti-Patterns
+### Best Patterns
 
-- DON'T write vague descriptions → include triggers and file types
-- DON'T embed templates in SKILL.md → externalize to `templates/`
-- DON'T duplicate skill logic → reference other skills
-- DON'T skip examples → always provide usage scenarios
+- ALWAYS write precise descriptions → include triggers and file types
+- ALWAYS externalize templates to `templates/` → keep SKILL.md focused
+- ALWAYS reference other skills → maintain single source of truth
+- ALWAYS provide usage scenarios → include examples
 
 ## Tool Usage
 
@@ -141,7 +141,7 @@ VERDICT: PASS | FAIL
 
 **Scope:** `.claude/skills/` directories only
 
-**Never:** Modify code files or agent files (use agent-author for agents)
+**Scope:** Write exclusively to `.claude/skills/` (use agent-author for agents)
 
 ## Success Criteria
 
@@ -150,4 +150,4 @@ VERDICT: PASS | FAIL
 3. Workflow is actionable
 4. Examples provided
 5. Templates externalized
-6. No conflicts with existing skills
+6. Unique logic (references existing skills for shared patterns)

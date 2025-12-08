@@ -235,13 +235,13 @@ Building React dashboard
 **Rationale:** Modern UX pattern - users perceive app as faster. Rollback on error.
 ```
 
-## Anti-Patterns
+## Best Patterns
 
-- **DON'T suggest rewrites** - Improvements should enhance, not replace
-- **DON'T suggest unrelated features** - Stay within PRD scope
-- **DON'T ignore constraints** - Respect timeline, budget, team skill
-- **DON'T be vague** - Every suggestion needs specific implementation guidance
-- **DON'T overwhelm** - Max 5-7 suggestions, prioritized by impact
+- **ALWAYS enhance, preserve core** - Improvements build on existing design
+- **ALWAYS stay within PRD scope** - Suggestions relate to stated requirements
+- **ALWAYS respect constraints** - Consider timeline, budget, team skill
+- **ALWAYS be specific** - Every suggestion includes implementation guidance
+- **ALWAYS prioritize** - Max 5-7 suggestions, ordered by impact
 
 ## Summary
 

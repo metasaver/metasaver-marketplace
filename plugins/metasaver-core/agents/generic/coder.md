@@ -48,8 +48,9 @@ Repository type (library/consumer) is provided via the `scope` parameter from th
 Use `/skill solid-principles` for detailed implementation patterns.
 
 **Quick Reference:**
+
 - Single Responsibility: One class, one reason to change
-- Open/Closed: Extend via interfaces, don't modify existing
+- Open/Closed: Extend via interfaces (preserve existing code)
 - Liskov Substitution: Subtypes must be substitutable
 - Interface Segregation: Specific interfaces over general ones
 - Dependency Inversion: Depend on abstractions, not concrete classes
@@ -104,12 +105,12 @@ search_for_pattern "repository-pattern" --scope implementation
 3. **Keep Files Focused** - Max 500 lines; split when needed
 4. **Use TypeScript Strictly** - Strict mode, no `any` types
 5. **Validate All Inputs** - Use Zod schemas for runtime validation
-6. **Handle Errors Gracefully** - Never swallow errors; log and propagate
+6. **Handle Errors Gracefully** - ALWAYS log and propagate errors
 7. **Inject Dependencies** - Constructor injection for testability
-8. **Avoid Magic Numbers** - Use named constants or enums
-9. **Comment Complex Logic** - Explain why, not what
-10. **Use Async/Await** - Avoid callback hell; prefer promises
-11. **Avoid Nested Ifs** - Use early returns and guard clauses
+8. **Use Named Constants** - Replace magic numbers with enums or constants
+9. **Comment Complex Logic** - Explain WHY (the WHAT is in the code)
+10. **Use Async/Await** - Prefer promises over callbacks
+11. **Use Early Returns** - Flatten control flow with guard clauses
 12. **Name Things Clearly** - Self-documenting variables and functions
 13. **Follow DRY** - Extract common patterns to utilities
 14. **Refactor Continuously** - Leave code better than you found it

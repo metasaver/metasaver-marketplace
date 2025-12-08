@@ -36,6 +36,7 @@ Use `/skill azure-devops-pipeline-builder` for pipeline creation and pattern tem
 **Quick Reference:** Multi-stage YAML with triggers, variables, jobs, and deployment tasks. Handles Node.js, Docker, and Bicep IaC patterns.
 
 **Process:**
+
 1. Analyze repository type (monorepo, service, application)
 2. Determine deployment targets (dev/staging/production)
 3. Create azure-pipelines.yml with appropriate stages
@@ -49,6 +50,7 @@ Use `/skill domain/audit-workflow` for pipeline validation and compliance checki
 **Quick Reference:** Compare pipeline YAML against best practices, security standards, and deployment patterns. Report violations with remediation paths.
 
 **Process:**
+
 1. Read azure-pipelines.yml and related configuration files
 2. Validate against Azure DevOps best practices
 3. Check for security violations (hardcoded secrets, missing Key Vault usage)
@@ -60,6 +62,7 @@ Use `/skill domain/audit-workflow` for pipeline validation and compliance checki
 Use `/skill cross-cutting/serena-code-reading` for analyzing pipeline structures and configurations.
 
 **Quick Reference:**
+
 1. `get_symbols_overview(file)` → understand YAML structure and stages
 2. `find_symbol(name, include_body=false)` → check stage definitions
 3. `find_symbol(name, include_body=true)` → inspect specific tasks only when needed
@@ -69,6 +72,7 @@ Use `/skill cross-cutting/serena-code-reading` for analyzing pipeline structures
 Use `/skill cross-cutting/serena-memory` for storing pipeline configurations and deployment results.
 
 **Quick Reference:**
+
 - Store pipeline configuration: `edit_memory("azure-devops-pipeline", {...})`
 - Store deployment results: `edit_memory("deployment-result", {...})`
 - Retrieve patterns: `search_for_pattern("pipeline-config-*")`
@@ -76,7 +80,7 @@ Use `/skill cross-cutting/serena-memory` for storing pipeline configurations and
 ## Standards & Best Practices
 
 1. **YAML Pipelines** - Always use azure-pipelines.yml (infrastructure as code)
-2. **Secrets Management** - Never hardcode secrets; use variable groups or Key Vault
+2. **Secrets Management** - ALWAYS use variable groups or Key Vault for secrets
 3. **Service Connections** - One per environment (dev, staging, production)
 4. **Caching** - Cache pnpm store and node_modules for speed
 5. **Artifacts** - Publish build artifacts between stages
@@ -91,7 +95,7 @@ Use `/skill cross-cutting/serena-memory` for storing pipeline configurations and
 ### Multi-Mono Producer/Consumer Architecture
 
 - **Producer repos** - Build, version, and publish packages to private registry
-- **Consumer repos** - Depend on producer packages via workspace:* protocol
+- **Consumer repos** - Depend on producer packages via workspace:\* protocol
 - **Coordinated pipelines** - Producer publishes, consumers update dependencies
 
 **Key Coordination:** Store deployment targets in memory to track versioning across monorepos.
@@ -108,6 +112,7 @@ Use `/skill cross-cutting/serena-memory` for storing pipeline configurations and
 ## Examples
 
 Consult `/skill azure-devops-pipeline-builder` for:
+
 - Basic Node.js pipeline with build, test, and deploy
 - Multi-stage deployments with approval gates
 - Docker container builds and Azure Container Registry pushes
@@ -118,6 +123,7 @@ Consult `/skill azure-devops-pipeline-builder` for:
 ## Collaboration Guidelines
 
 **Coordinate with:**
+
 - **devops-agent** - Cross-platform CI/CD patterns and orchestration
 - **security-engineer** - Secrets management, Key Vault configuration, compliance
 - **architect** - Infrastructure design (AKS, App Service scaling, disaster recovery)
