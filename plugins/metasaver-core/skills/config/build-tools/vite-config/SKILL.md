@@ -1,6 +1,6 @@
 ---
 name: vite-config
-description: Vite configuration templates and validation logic for MFE Host, MFE Remote, and Standalone web apps. Includes 5 required standards (correct plugins for package type, required path alias @ to ./src, build configuration with sourcemaps and manual chunks, server configuration with strictPort, required dependencies). Supports Module Federation architecture for micro-frontend apps. Use when creating or auditing vite.config.ts files.
+description: Vite configuration templates and validation logic for React web apps. Includes 5 required standards (correct plugins for React, required path alias @ to ./src, build configuration with sourcemaps and manual chunks, server configuration with strictPort, required dependencies). Use when creating or auditing vite.config.ts files.
 ---
 
 # Vite Configuration Skill
@@ -11,10 +11,9 @@ This skill provides vite.config.ts templates and validation logic for Vite build
 
 Manage vite.config.ts configuration to:
 
-- Configure correct plugins for package type (MFE Host, MFE Remote, Standalone)
+- Configure correct plugins for React projects
 - Set up path aliases and build options
 - Configure development server settings
-- Support Module Federation architecture
 
 ## Usage
 
@@ -29,26 +28,14 @@ This skill is invoked by the `vite-agent` when:
 Standard templates are located at:
 
 ```
-templates/vite-mfe-host.template.ts        # MFE Host apps
-templates/vite-mfe-remote.template.ts      # MFE Remote apps
-templates/vite-standalone.template.ts      # Standalone web apps
+templates/vite-standalone.template.ts      # React web apps
 ```
 
 ## The 5 Vite Standards
 
-### Rule 1: Correct Plugins for Package Type
+### Rule 1: Correct Plugins for React Projects
 
-**MFE Host** must have:
-
-- `@vitejs/plugin-react`
-- `@originjs/vite-plugin-federation` (as host)
-
-**MFE Remote** must have:
-
-- `@vitejs/plugin-react`
-- `@originjs/vite-plugin-federation` (as remote)
-
-**Standalone** must have:
+All React projects must have:
 
 - `@vitejs/plugin-react`
 
@@ -100,7 +87,6 @@ Must have in package.json devDependencies:
 
 - `vite`
 - `@vitejs/plugin-react`
-- `@originjs/vite-plugin-federation` (if MFE)
 
 ## Validation
 
@@ -117,15 +103,10 @@ To validate a vite.config.ts file:
 ### Validation Approach
 
 ```typescript
-// Rule 1: Check plugins for project type
-const projectType = packageJson.metasaver?.projectType;
+// Rule 1: Check plugins for React
 const hasReact = plugins.some((p) => p.name.includes("vite:react"));
-const hasFederation = plugins.some((p) => p.name.includes("federation"));
-
-if (projectType === "mfe-host" || projectType === "mfe") {
-  if (!hasFederation) {
-    errors.push("Rule 1: MFE apps must have @originjs/vite-plugin-federation");
-  }
+if (!hasReact) {
+  errors.push("Rule 1: Missing @vitejs/plugin-react");
 }
 
 // Rule 2: Check path alias
@@ -164,7 +145,7 @@ Extract from package.json:
 ```json
 {
   "metasaver": {
-    "projectType": "web-standalone" | "mfe-host" | "mfe"
+    "projectType": "web-standalone"
   }
 }
 ```
@@ -206,11 +187,10 @@ Consumer repos may declare exceptions in package.json:
 ## Best Practices
 
 1. Place vite.config.ts at workspace root (where package.json is)
-2. Use appropriate template for project type
+2. Use standalone template for React projects
 3. Path alias must match tsconfig.json paths
-4. MFE projects need federation plugin configuration
-5. Port must be unique across monorepo
-6. Re-audit after making changes
+4. Port must be unique across monorepo
+5. Re-audit after making changes
 
 ## Integration
 

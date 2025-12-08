@@ -1,0 +1,61 @@
+/**
+ * Site configuration and navigation menu
+ *
+ * This file exports:
+ * - siteConfig: Application metadata and configuration
+ * - menuItems: Navigation structure for the app
+ */
+
+export const siteConfig = {
+  name: "Admin Portal",
+  description: "MetaSaver admin portal for service and data management",
+  url: import.meta.env.VITE_APP_URL || "http://localhost:5173",
+};
+
+export const menuItems = [
+  {
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: "LayoutDashboard",
+  },
+  {
+    title: "Service Catalog",
+    icon: "Package",
+    submenu: [
+      {
+        title: "Microservices",
+        href: "/service-catalog/microservices",
+      },
+      {
+        title: "Endpoints",
+        href: "/service-catalog/endpoints",
+      },
+      {
+        title: "Schedule",
+        href: "/service-catalog/schedule",
+      },
+    ],
+  },
+  {
+    title: "DataFeedr",
+    icon: "Database",
+    submenu: [
+      {
+        title: "Merchants",
+        href: "/datafeedr/merchants",
+      },
+      {
+        title: "Networks",
+        href: "/datafeedr/networks",
+      },
+      {
+        title: "Products",
+        href: "/datafeedr/products",
+      },
+      {
+        title: "Status",
+        href: "/datafeedr/status",
+      },
+    ],
+  },
+];

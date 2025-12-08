@@ -46,6 +46,7 @@ You create, refactor, and validate Claude Code skills. Skills are reusable knowl
 6. Externalize templates to `templates/` subdirectory
 
 **CRITICAL:** Description is the PRIMARY discovery mechanism. Must include:
+
 - "Use when..." conditions
 - Specific file types (`.tsx`, `package.json`)
 - Action verbs ("validate", "generate", "audit")
@@ -69,28 +70,54 @@ skill-name/
 
 ## Audit Mode
 
-Rule-based validation (no template comparison - skills are dynamic).
+**COMPREHENSIVE AUDIT** - Check ALL quality dimensions, not just structure.
 
-### Validation Checklist
+### Audit Checklist (ALL Required)
 
-**YAML Frontmatter:**
-- [ ] `name`: kebab-case, matches directory name
-- [ ] `description`: includes "Use when..." + file types + action verbs
-- [ ] `allowed-tools`: optional, comma-separated if present
+**1. Structure Validation:**
 
-**Structure:**
-- [ ] Purpose section present
-- [ ] Workflow documented with steps
-- [ ] Examples provided (1-3)
-- [ ] Templates externalized (not embedded)
+- [ ] YAML: name (kebab-case), description with triggers
+- [ ] Name matches directory name
+- [ ] Sections: Purpose, Workflow, Examples
+
+**2. Compactness (CRITICAL):**
+
+- [ ] Workflow skills ≤150 lines, utility skills ≤100 lines
+- [ ] No verbose prose - use tables and lists
+- [ ] Pseudocode over full implementations where possible
+
+**3. Code Block Policy:**
+
+- [ ] Code blocks allowed BUT must be essential
+- [ ] Full templates → externalize to `templates/` subdirectory
+- [ ] Inline code: pseudocode or 5-10 line examples max
+- [ ] No copy-paste ready implementations (LLM generates dynamically)
+
+**4. Content Quality:**
+
+- [ ] Description has "Use when..." or clear trigger conditions
+- [ ] Workflow steps are numbered and actionable
+- [ ] Examples show input→output, not full implementations
 - [ ] No duplicate logic with other skills
 
-**Process:**
-1. Read SKILL.md
-2. Validate YAML syntax (spaces, not tabs)
-3. Check required sections exist
-4. Verify description has trigger conditions
-5. Report violations with specific issues
+**5. Discoverability:**
+
+- [ ] Description contains action verbs
+- [ ] File types mentioned if applicable
+- [ ] Purpose clear in first 2 lines
+
+### Audit Output Format
+
+```
+FILE: {path}
+LINES: {count} (FAIL if workflow >150, utility >100)
+CODE BLOCKS: {count} lines total
+ISSUES:
+  - [COMPACTNESS] Lines 45-80: Full template should be in templates/
+  - [TRIGGER] Description missing "Use when..." pattern
+  - [WORKFLOW] Steps not numbered
+VERDICT: PASS | FAIL
+```
 
 ## Standards
 

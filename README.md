@@ -18,18 +18,19 @@ MetaSaver is a comprehensive system of specialized agents, reusable skills, and 
 Complete agent and skill system for multi-mono (producer-consumer monorepo) architecture.
 
 **Includes:**
-- 54 specialized agents (15 generic, 11 domain, 28 config)
+
+- 52 specialized agents (15 generic, 9 domain, 28 config)
 - 28 reusable skills with templates
 - Intelligent routing commands (/ms, /audit)
 - Complete template libraries
 - Cross-platform compatibility (Windows WSL + Linux)
 
 **Best for:**
+
 - Turborepo monorepos with pnpm workspaces
 - TypeScript/JavaScript projects
 - Node.js microservices
 - React/Next.js applications
-- Micro-frontend architectures
 - Full-stack applications with Prisma/PostgreSQL
 
 [View Plugin Details →](https://github.com/metasaver/metasaver-core)
@@ -70,7 +71,9 @@ All agents, skills, and commands are immediately available:
 ## Complete Agent & Skill Inventory
 
 ### Generic Agents (15)
+
 **Development & Architecture:**
+
 - `architect` - Architecture design specialist with SPARC methodology
 - `backend-dev` - Backend development with Express, Prisma, and MetaSaver API patterns
 - `coder` - Implementation specialist enforcing MetaSaver coding standards and SOLID principles
@@ -80,14 +83,17 @@ All agents, skills, and commands are immediately available:
 > **Roadmap:** Additional agents planned - `frontend-dev` (general frontend development) and `ux-ui-agent` (UX/UI design and patterns)
 
 **Quality & Validation:**
+
 - `tester` - Testing specialist with Jest expertise and MetaSaver test patterns
 - `code-quality-validator` - Technical validation with scaled quality checks (build/security/lint/prettier/test based on change size)
 
 > **Note:** Final workflow validation has two phases:
+>
 > 1. **code-quality-validator** - Technical validation (does code build/compile?)
 > 2. **business-analyst** - PRD sign-off (are all requirements complete?)
 
 **Analysis & Planning:**
+
 - `business-analyst` - Requirements analysis and audit planning specialist
 - `project-manager` - Resource scheduler that transforms plans into Gantt charts and consolidates execution results
 - `security-engineer` - Security assessment specialist with automated Semgrep scanning, OWASP expertise, and threat modeling
@@ -96,32 +102,38 @@ All agents, skills, and commands are immediately available:
 - `azure-devops-agent` - Azure DevOps specialist for CI/CD pipelines, Azure Repos, and infrastructure automation
 - `code-explorer` - Codebase exploration specialist using Serena, repomix, and MCP ecosystem for token-efficient research
 
-### Domain Agents (11)
+### Domain Agents (9)
+
 All domain agents support both **Build** and **Audit** modes.
 
 **Backend Services:**
+
 - `data-service-agent` - REST APIs, CRUD operations, validation, authentication, database integration
 - `integration-service-agent` - External API integration, webhooks, HTTP clients, retry logic, circuit breakers
 
 **Database:**
+
 - `prisma-database-agent` - Prisma schema design, migrations, seeding, and query optimization
 
 **Frontend:**
+
 - `react-component-agent` - Functional components, hooks, TypeScript props, Tailwind styling, accessibility
 - `shadcn-component-agent` - shadcn/ui component installation, customization, and integration for MetaSaver libraries
-- `mfe-host-agent` - Micro-frontend host setup, module federation, remote loading, shared dependencies
-- `mfe-remote-agent` - Micro-frontend remote setup, exposed components, Vite federation plugin configuration
 
 **Testing:**
+
 - `unit-test-agent` - Jest unit tests, AAA pattern, mocking strategies, coverage requirements
 - `integration-test-agent` - API integration tests, Supertest, database fixtures, end-to-end flows
 - `e2e-test-agent` - End-to-end testing specialist using Chrome DevTools for browser automation and visual testing
 
 **Monorepo:**
+
 - `monorepo-setup-agent` - Monorepo creation and auditing, Turborepo setup, pnpm workspaces, root structure validation
 
 ### Config Agents (28)
+
 **Build Tools (8):**
+
 - `docker-compose-agent` - Docker Compose configuration (build & audit modes)
 - `dockerignore-agent` - Docker ignore patterns (build & audit modes)
 - `pnpm-workspace-agent` - pnpm workspace configuration (build & audit modes)
@@ -132,11 +144,13 @@ All domain agents support both **Build** and **Audit** modes.
 - `vitest-agent` - Vitest configuration (build & audit modes)
 
 **Code Quality (3):**
+
 - `editorconfig-agent` - EditorConfig settings (build & audit modes)
 - `eslint-agent` - ESLint flat config (build & audit modes)
 - `prettier-agent` - Prettier configuration (build & audit modes)
 
 **Version Control (5):**
+
 - `commitlint-agent` - Commitlint and GitHub Copilot commit messages (build & audit modes)
 - `gitattributes-agent` - Git attributes configuration (build & audit modes)
 - `github-workflow-agent` - GitHub Actions workflows (build & audit modes)
@@ -144,6 +158,7 @@ All domain agents support both **Build** and **Audit** modes.
 - `husky-agent` - Husky git hooks (build & audit modes)
 
 **Workspace Configuration (12):**
+
 - `claude-md-agent` - CLAUDE.md configuration with multi-mono architecture awareness (build & audit modes)
 - `env-example-agent` - Environment example (.env.example) configuration (build & audit modes)
 - `monorepo-root-structure-agent` - Detects unexpected files and validates directory organization
@@ -158,6 +173,7 @@ All domain agents support both **Build** and **Audit** modes.
 - `repomix-config-agent` - Repomix configuration for AI-friendly codebase compression (build & audit modes)
 
 ### Cross-Cutting Skills (9)
+
 - `building-blocks-advisor` - Pattern and building block recommendations
 - `mcp-coordination` - Agent-to-agent coordination via MCP memory (status sharing, task handoffs, swarm communication)
 - `mcp-tool-selection` - Determines WHICH external MCP tools to use based on task type (Context7, Sequential Thinking, Serena, Recall, etc.)
@@ -169,10 +185,12 @@ All domain agents support both **Build** and **Audit** modes.
 - `serena-code-reading` - Serena progressive disclosure patterns for 93% token savings
 
 > **Note:** `mcp-coordination` and `mcp-tool-selection` serve different purposes:
+>
 > - **mcp-coordination**: Agent swarm communication patterns (how agents talk to each other via MCP memory)
 > - **mcp-tool-selection**: External tool selection logic (which MCP servers to invoke for a task)
 
 ### Domain Skills (5)
+
 - `audit-workflow` - Comprehensive audit orchestration across files and domains
 - `config-validation` - Configuration file validation and standards compliance
 - `monorepo-audit` - Monorepo-wide auditing with agent coordination
@@ -203,12 +221,15 @@ All domain agents support both **Build** and **Audit** modes.
 Example: The `eslint-agent` (config agent) uses the `audit-workflow` skill (domain skill) to perform its audit.
 
 ### Config Skills (14)
+
 Complete template libraries for configuration agents:
+
 - **Build Tools:** pnpm-workspace, postcss, turbo, vite, vitest configs with templates
 - **Version Control:** commitlint, gitattributes, gitignore, husky hooks with templates
 - **Workspace:** dockerignore, nodemon, npmrc, tailwind, vscode with templates
 
 ### Commands (4)
+
 - `/audit` - Natural language audit command (validates configs, code quality, standards compliance)
 - `/build` - Build new features with architecture validation and technical documentation
 - `/ms` - MetaSaver intelligent command router (complexity scoring, automatic agent spawning)
@@ -219,11 +240,13 @@ Complete template libraries for configuration agents:
 MetaSaver commands automatically select the optimal Claude model based on task complexity, delivering 60-90% cost savings while maintaining quality.
 
 **Model Selection Strategy:**
+
 - **Haiku** (Score ≤4): Simple fixes/explanations only (fix, debug, explain, config audits)
 - **Sonnet** (Score 5-29): All implementation work - create, build, implement, refactor (default)
 - **Opus** (Score ≥30): Ultra-complex architecture, system-wide changes (rare, <5% usage)
 
 **Examples:**
+
 ```bash
 # Haiku - Simple fixes/audits only
 /ms fix TypeScript error in service
@@ -242,11 +265,13 @@ MetaSaver commands automatically select the optimal Claude model based on task c
 ```
 
 **Cost Optimization:**
+
 - Config agents (28 total): Always haiku (score ≤4) - 10-20x cheaper than opus
 - Domain agents (11 total): Always sonnet (score 5+) - all implementation work
 - Generic agents (15 total): Sonnet (default) or Opus (ultra-complex only)
 
 Full monorepo audit (28 config agents):
+
 - ❌ All Opus: 390x cost
 - ❌ All Sonnet: 78x cost
 - ✅ Haiku configs + Sonnet orchestration: 35x cost (91% savings vs opus)
@@ -262,13 +287,41 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 ```json
 {
   "mcpServers": {
-    "Context7": { "command": "npx", "args": ["-y", "@upstash/context7-mcp@latest"] },
-    "chrome-devtools": { "command": "npx", "args": ["-y", "chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"] },
-    "recall": { "command": "npx", "args": ["-y", "@joseairosa/recall"], "env": { "REDIS_URL": "redis://localhost:6379" } },
+    "Context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browserUrl=http://127.0.0.1:9222"
+      ]
+    },
+    "recall": {
+      "command": "npx",
+      "args": ["-y", "@joseairosa/recall"],
+      "env": { "REDIS_URL": "redis://localhost:6379" }
+    },
     "semgrep": { "command": "uvx", "args": ["semgrep-mcp"] },
-    "sequential-thinking": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"] },
-    "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"] },
-    "vibe-check": { "command": "npx", "args": ["-y", "@pv-bhat/vibe-check-mcp", "start", "--stdio"] }
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server"
+      ]
+    },
+    "vibe-check": {
+      "command": "npx",
+      "args": ["-y", "@pv-bhat/vibe-check-mcp", "start", "--stdio"]
+    }
   }
 }
 ```
@@ -314,6 +367,7 @@ claude-marketplace/
 ```
 
 **Official Standards:**
+
 - `.claude-plugin/` directory is **required** by Claude Code
 - `marketplace.json` must be in `.claude-plugin/` (not at root)
 - Plugin components (`agents/`, `skills/`, `commands/`) must be at plugin root
@@ -338,12 +392,14 @@ Individual plugins: See respective plugin repositories for license information.
 ## Version History
 
 ### v1.1.0 (2025-01-19)
+
 - Added intelligent model selection (haiku/sonnet/opus)
 - 60-90% cost savings through automatic model routing
 - Updated all commands (/ms, /build, /audit) with model selection logic
 - Added MODEL-SELECTION.md comprehensive guide
 
 ### v1.0.0 (2025-01-18)
+
 - Initial marketplace release
 - Added @metasaver/core-claude-plugin v1.0.0
 - Multi-mono (producer-consumer monorepo) architecture support

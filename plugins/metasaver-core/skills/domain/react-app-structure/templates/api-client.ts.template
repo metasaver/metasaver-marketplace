@@ -1,0 +1,74 @@
+/**
+ * Axios API client with Auth0 token injection
+ *
+ * Features:
+ * - Automatically injects Auth0 access token in Authorization header
+ * - Configures base URL from environment
+ * - Sets common headers (Content-Type, Accept)
+ * - Handles error responses consistently
+ */
+
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
+
+// Create axios instance without interceptors (for static exports)
+export const createApiClient = (accessToken?: string) => {
+  const client = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  // Add request interceptor for auth token
+  if (accessToken) {
+    client.interceptors.request.use((config) => {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+      return config;
+    });
+  }
+
+  // Add response error handler
+  client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        // Handle unauthorized - redirect to login
+        console.error("Unauthorized - redirecting to login");
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  return client;
+};
+
+// Hook for use in React components
+export const useApiClient = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const apiClient = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  // Add request interceptor to inject token
+  apiClient.interceptors.request.use(async (config) => {
+    try {
+      const token = await getAccessTokenSilently();
+      config.headers.Authorization = `Bearer ${token}`;
+    } catch (error) {
+      console.error("Failed to get access token", error);
+    }
+    return config;
+  });
+
+  return apiClient;
+};
+
+// Default export for static usage
+export default createApiClient();

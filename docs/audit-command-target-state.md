@@ -1,6 +1,11 @@
-# Target Architecture Workflow Visualization
+# Audit Command Target State
 
-Visual representation of the target 10-step architecture workflow using Mermaid diagrams.
+Target workflow architecture for the `/audit` command using Mermaid diagrams.
+
+**Key differences from /build:**
+
+- No Innovate phase - Audit is for compliance checking, not feature improvement
+- Human validation (prd-approval) for complexity ≥15 before Architecture
 
 ---
 
@@ -24,18 +29,25 @@ flowchart TB
         G["Ask User for Clarification"]
     end
 
-    subgraph Design["7-8. Design Phase"]
+    subgraph HumanVal["7. PRD Approval (if complexity ≥15)"]
+        H0["Present PRD Summary"]
+        H1{"User Approves?"}
+        H2["User Requests Changes"]
+        H3["BA Revises PRD"]
+    end
+
+    subgraph Design["8-9. Design Phase"]
         H["Architect<br/>(prd, complexity, tools, scope) → arch_docs"]
         I["Project Manager<br/>(prd, arch_docs) → execution_plan"]
     end
 
-    subgraph Execution["9-11. Execution Phase"]
+    subgraph Execution["10-12. Execution Phase"]
         J["Parallel Workers<br/>(instructions) → new_code"]
         K{"Production Check<br/>build, lint, test"}
         L{"Validate<br/>(prompt, new_code)"}
     end
 
-    subgraph Output["12. Output"]
+    subgraph Output["13. Output"]
         M["Business Analyst<br/>Final Report to User"]
     end
 
@@ -44,7 +56,13 @@ flowchart TB
     E --> F
     F -->|"❌ Fails"| G
     G -->|"Clarification"| E
-    F -->|"✅ Pass"| H
+    F -->|"✅ Pass (complexity ≥15)"| H0
+    F -->|"✅ Pass (complexity <15)"| H
+    H0 --> H1
+    H1 -->|"❌ No"| H2
+    H2 --> H3
+    H3 --> H0
+    H1 -->|"✅ Yes"| H
     H --> I
     I --> J
     J --> K
@@ -107,8 +125,20 @@ sequenceDiagram
         VC-->>CMD: ✅ PRD validated
     end
 
+    rect rgb(230, 255, 230)
+        Note over U: Phase 3: PRD Approval (complexity ≥15)
+        CMD->>U: Approve PRD?
+        alt User Requests Changes
+            U->>CMD: Needs changes
+            CMD->>BA: Revise PRD
+            BA-->>CMD: Revised PRD
+            CMD->>U: Approve revised PRD?
+        end
+        U->>CMD: ✅ Approved
+    end
+
     rect rgb(240, 250, 230)
-        Note over AR,PM: Phase 3: Design
+        Note over AR,PM: Phase 4: Design
         CMD->>AR: prd, complexity, tools, scope
         AR->>AR: Create architecture docs
         AR-->>PM: arch_docs: string
@@ -655,23 +685,25 @@ stateDiagram-v2
 
 ## Quick Reference
 
-| Step | Function | Input | Output | Model | Parallel |
-|------|----------|-------|--------|-------|----------|
-| 1 | Entry | prompt | - | - | - |
-| 2 | Complexity Check | prompt | int | haiku | ✅ 2-4 |
-| 3 | Tool Check | prompt | string[] | haiku | ✅ 2-4 |
-| 4 | Scope Check | prompt | string[] | haiku | ✅ 2-4 |
-| 5 | Business Analyst | prompt, complexity, tools, scope | PRD | sonnet/opus | - |
-| 6 | Vibe Check | prd | bool \| string[] | MCP Tool | - |
-| 7 | Architect | prd, complexity, tools, scope | arch_docs | sonnet | - |
-| 8 | Project Manager | prd, arch_docs | execution_plan | sonnet | - |
-| 9 | Workers | instructions | new_code | haiku | ✅ waves |
-| 10 | Production Check | new_code | bool | Bash | - |
-| 11 | Validate | prompt, new_code | bool | sonnet | - |
-| 12 | Business Analyst | results | report | sonnet | - |
+| Step | Function         | Input                            | Output           | Model       | Parallel | Condition     |
+| ---- | ---------------- | -------------------------------- | ---------------- | ----------- | -------- | ------------- |
+| 1    | Entry            | prompt                           | -                | -           | -        | -             |
+| 2    | Complexity Check | prompt                           | int              | haiku       | ✅ 2-4   | -             |
+| 3    | Tool Check       | prompt                           | string[]         | haiku       | ✅ 2-4   | -             |
+| 4    | Scope Check      | prompt                           | string[]         | haiku       | ✅ 2-4   | -             |
+| 5    | Business Analyst | prompt, complexity, tools, scope | PRD              | sonnet/opus | -        | -             |
+| 6    | Vibe Check       | prd                              | bool \| string[] | MCP Tool    | -        | -             |
+| 7    | PRD Approval     | prd                              | approval         | Human       | -        | complexity≥15 |
+| 8    | Architect        | prd, complexity, tools, scope    | arch_docs        | sonnet      | -        | -             |
+| 9    | Project Manager  | prd, arch_docs                   | execution_plan   | sonnet      | -        | -             |
+| 10   | Workers          | instructions                     | new_code         | haiku       | ✅ waves | -             |
+| 11   | Production Check | new_code                         | bool             | Bash        | -        | -             |
+| 12   | Validate         | prompt, new_code                 | bool             | sonnet      | -        | -             |
+| 13   | Business Analyst | results                          | report           | sonnet      | -        | -             |
 
-| Feedback Loop | Trigger | Target | Resolution |
-|---------------|---------|--------|------------|
-| Vibe Check → BA | PRD validation fails | Business Analyst | User clarifies, BA revises |
-| Production → Worker | Build/lint/test fails | Originating worker | Fix code, re-run checks |
-| Validate → Worker | Requirements mismatch | Originating worker | Adjust implementation |
+| Feedback Loop       | Trigger               | Target             | Resolution                 |
+| ------------------- | --------------------- | ------------------ | -------------------------- |
+| Vibe Check → BA     | PRD validation fails  | Business Analyst   | User clarifies, BA revises |
+| PRD Approval → BA   | User requests changes | Business Analyst   | BA revises PRD             |
+| Production → Worker | Build/lint/test fails | Originating worker | Fix code, re-run checks    |
+| Validate → Worker   | Requirements mismatch | Originating worker | Adjust implementation      |

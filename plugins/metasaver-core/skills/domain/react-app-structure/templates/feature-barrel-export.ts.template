@@ -1,0 +1,24 @@
+/**
+ * Feature barrel export
+ *
+ * File: src/features/{domain}/{feature}/index.ts
+ *
+ * Purpose: Export all components, hooks, and config from this feature
+ * Enables clean imports: import { FeatureName } from "@/features/{feature}"
+ */
+
+export * from "./{feature}";
+export * from "./hooks";
+export * from "./components";
+export * from "./config";
+
+/**
+ * RULES:
+ * 1. Each feature must have index.ts
+ * 2. Export from all subfolders that exist
+ * 3. No empty folders
+ * 4. Use consistent naming:
+ *    - Folder: kebab-case (e.g., microservices-feature)
+ *    - File: kebab-case match (e.g., microservices.tsx)
+ *    - Export: PascalCase (e.g., MicroservicesFeature)
+ */

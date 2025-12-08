@@ -1,0 +1,68 @@
+/**
+ * Feature component template
+ *
+ * File: src/features/{domain}/{feature}/{feature}.tsx
+ *
+ * Purpose: Main feature component with business logic
+ * Contains:
+ * - State management
+ * - Data fetching (useEffect)
+ * - Event handlers
+ * - Sub-component composition
+ */
+
+import { useState, useEffect } from "react";
+import { useApiClient } from "@/lib/api-client";
+
+export interface MicroservicesFeatureProps {
+  // Optional props if needed
+}
+
+export function MicroservicesFeature(props: MicroservicesFeatureProps) {
+  const {} = props;
+  const apiClient = useApiClient();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // const response = await apiClient.get("/microservices");
+        // setData(response.data);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [apiClient]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Microservices</h1>
+      {/* Render data here */}
+    </div>
+  );
+}
+
+/**
+ * PATTERN:
+ * 1. Import hooks: useState, useEffect, custom hooks
+ * 2. Define component props interface
+ * 3. Implement business logic (fetch, state)
+ * 4. Render with Tailwind classes
+ * 5. Export default and named exports
+ *
+ * DON'T:
+ * - Put this logic in pages
+ * - Create deeply nested components here
+ * - Put styles in separate CSS files
+ */

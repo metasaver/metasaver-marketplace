@@ -1,0 +1,26 @@
+/**
+ * Global stylesheet
+ *
+ * Imports:
+ * - Tailwind CSS directives
+ * - Theme overrides
+ * - Global font definitions
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import theme overrides */
+@import "./styles/theme-overrides.css";
+
+/* Global font definitions */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

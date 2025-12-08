@@ -1,0 +1,17 @@
+/**
+ * Auth0 configuration
+ *
+ * Environment variables required:
+ * - VITE_AUTH0_DOMAIN: Auth0 tenant domain
+ * - VITE_AUTH0_CLIENT_ID: Auth0 application client ID
+ * - VITE_AUTH0_REDIRECT_URI: Redirect URI after login
+ */
+
+export const auth0Config = {
+  domain: import.meta.env.VITE_AUTH0_DOMAIN || "",
+  clientId: import.meta.env.VITE_AUTH0_CLIENT_ID || "",
+  redirectUri: import.meta.env.VITE_AUTH0_REDIRECT_URI || "http://localhost:5173",
+  audience: import.meta.env.VITE_AUTH0_AUDIENCE || "",
+};
+
+export type Auth0Config = typeof auth0Config;

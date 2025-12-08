@@ -1,8 +1,0 @@
-packages:
-  - "apps/admin/*"
-  - "apps/consumer/*"
-  - "apps/mobile/*"
-  - "packages/contracts/*"
-  - "packages/database/*"
-  - "services/data/*"
-  - "services/integrations/*"

@@ -26,6 +26,7 @@ curl -s http://127.0.0.1:9222/json/version
 ```
 
 **MANDATORY FLAGS:**
+
 - `--user-data-dir=/tmp/chrome-debug-profile` - Remote debugging REQUIRES a non-default profile
 - `--remote-debugging-port=9222` - Standard CDP port
 
@@ -82,6 +83,7 @@ sleep 5
 ### MCP Connection
 
 If chrome-devtools MCP shows "Not connected":
+
 1. Ask user to run `/mcp` to reconnect
 2. Wait for confirmation
 3. Retry
@@ -90,13 +92,13 @@ If chrome-devtools MCP shows "Not connected":
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---------|-----|
+| Symptom                               | Fix                                             |
+| ------------------------------------- | ----------------------------------------------- |
 | "requires non-default data directory" | Add `--user-data-dir=/tmp/chrome-debug-profile` |
-| "Not connected" from MCP | User runs `/mcp` to reconnect |
-| `ERR_CONNECTION_REFUSED` | Start dev server with `--host 0.0.0.0` |
-| Chrome won't start | `pkill -f "chrome.*remote-debugging"` |
-| Stale UIDs | Take fresh snapshot |
+| "Not connected" from MCP              | User runs `/mcp` to reconnect                   |
+| `ERR_CONNECTION_REFUSED`              | Start dev server with `--host 0.0.0.0`          |
+| Chrome won't start                    | `pkill -f "chrome.*remote-debugging"`           |
+| Stale UIDs                            | Take fresh snapshot                             |
 
 ---
 
@@ -104,30 +106,30 @@ If chrome-devtools MCP shows "Not connected":
 
 ### Navigation
 
-| Tool | Purpose |
-|------|---------|
-| `list_pages` | List open tabs |
-| `select_page` | Switch active tab |
-| `new_page` | Open new tab |
-| `navigate_page` | Navigate URL |
-| `close_page` | Close tab |
+| Tool            | Purpose           |
+| --------------- | ----------------- |
+| `list_pages`    | List open tabs    |
+| `select_page`   | Switch active tab |
+| `new_page`      | Open new tab      |
+| `navigate_page` | Navigate URL      |
+| `close_page`    | Close tab         |
 
 ### Inspection
 
-| Tool | Purpose |
-|------|---------|
-| `take_snapshot` | Get DOM with UIDs |
-| `take_screenshot` | Capture visual |
-| `list_console_messages` | Get console logs |
+| Tool                    | Purpose              |
+| ----------------------- | -------------------- |
+| `take_snapshot`         | Get DOM with UIDs    |
+| `take_screenshot`       | Capture visual       |
+| `list_console_messages` | Get console logs     |
 | `list_network_requests` | Get network activity |
 
 ### Interaction
 
-| Tool | Purpose |
-|------|---------|
-| `click` | Click element |
-| `fill` | Enter text |
-| `hover` | Hover element |
+| Tool        | Purpose        |
+| ----------- | -------------- |
+| `click`     | Click element  |
+| `fill`      | Enter text     |
+| `hover`     | Hover element  |
 | `press_key` | Keyboard input |
 
 ---
@@ -156,6 +158,7 @@ If chrome-devtools MCP shows "Not connected":
 ### Problem: Chrome Starts But MCP Tools Fail
 
 **Symptoms:**
+
 - `curl http://127.0.0.1:9222/json/version` returns valid JSON
 - MCP chrome-devtools tools return "Not connected"
 - Chrome window never appears visually for user
@@ -166,6 +169,7 @@ If chrome-devtools MCP shows "Not connected":
 **What To Do:**
 
 1. **Acknowledge the failure immediately:**
+
    ```
    Chrome DevTools automation failed. You can restart manually.
    ```
@@ -188,8 +192,8 @@ If MCP tools fail after Chrome appears to start:
 Chrome DevTools automation failed.
 HTTP verification shows servers are responding.
 Please verify manually in your browser:
-- http://localhost:3002 (host app)
-- http://localhost:3503/remoteEntry.js (MFE remote)
+- http://localhost:3000 (main app)
+- http://localhost:5173 (dev server)
 ```
 
 Then stop attempting browser automation.

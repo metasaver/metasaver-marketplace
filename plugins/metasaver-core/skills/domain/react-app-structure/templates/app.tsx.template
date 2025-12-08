@@ -1,0 +1,31 @@
+/**
+ * Root application component
+ *
+ * Provides:
+ * - Auth0Provider wrapper for authentication
+ * - Router setup
+ * - Global theme/styling context
+ */
+
+import { Auth0Provider } from "@auth0/auth0-react";
+import { RouterProvider } from "react-router-dom";
+import { router } from "@/routes/routes";
+import { auth0Config } from "@/config/auth-config";
+import "./index.css";
+
+export function App() {
+  return (
+    <Auth0Provider
+      domain={auth0Config.domain}
+      clientId={auth0Config.clientId}
+      authorizationParams={{
+        redirect_uri: auth0Config.redirectUri,
+        audience: auth0Config.audience,
+      }}
+    >
+      <RouterProvider router={router} />
+    </Auth0Provider>
+  );
+}
+
+export default App;

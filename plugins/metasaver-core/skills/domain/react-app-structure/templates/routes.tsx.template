@@ -1,0 +1,153 @@
+/**
+ * React Router configuration
+ *
+ * Features:
+ * - Lazy-loaded pages for code splitting
+ * - Type-safe route definitions
+ * - Auth guards (optional)
+ * - Error boundary
+ */
+
+import { lazy, Suspense } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { ROUTES } from "./route-types";
+
+// Lazy load page components
+const HomePage = lazy(() =>
+  import("@/pages/home/home").then((m) => ({
+    default: m.HomePage,
+  }))
+);
+
+const DashboardPage = lazy(() =>
+  import("@/pages/dashboard/dashboard").then((m) => ({
+    default: m.DashboardPage,
+  }))
+);
+
+const MicroServicesPage = lazy(() =>
+  import("@/pages/service-catalog/micro-services").then((m) => ({
+    default: m.MicroServicesPage,
+  }))
+);
+
+const EndpointsPage = lazy(() =>
+  import("@/pages/service-catalog/endpoints").then((m) => ({
+    default: m.EndpointsPage,
+  }))
+);
+
+const SchedulePage = lazy(() =>
+  import("@/pages/service-catalog/schedule").then((m) => ({
+    default: m.SchedulePage,
+  }))
+);
+
+const MerchantsPage = lazy(() =>
+  import("@/pages/datafeedr/merchants").then((m) => ({
+    default: m.MerchantsPage,
+  }))
+);
+
+const NetworksPage = lazy(() =>
+  import("@/pages/datafeedr/networks").then((m) => ({
+    default: m.NetworksPage,
+  }))
+);
+
+const ProductsPage = lazy(() =>
+  import("@/pages/datafeedr/products").then((m) => ({
+    default: m.ProductsPage,
+  }))
+);
+
+const StatusPage = lazy(() =>
+  import("@/pages/datafeedr/status").then((m) => ({
+    default: m.StatusPage,
+  }))
+);
+
+// Loading fallback component
+function LoadingFallback() {
+  return <div className="flex items-center justify-center h-screen">Loading...</div>;
+}
+
+export const router = createBrowserRouter([
+  {
+    path: ROUTES.HOME,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <HomePage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.DASHBOARD,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <DashboardPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.MICROSERVICES,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <MicroServicesPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.ENDPOINTS,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <EndpointsPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.SCHEDULE,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <SchedulePage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.MERCHANTS,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <MerchantsPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.NETWORKS,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <NetworksPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.PRODUCTS,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <ProductsPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: ROUTES.STATUS,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <StatusPage />
+      </Suspense>
+    ),
+  },
+  // Catch-all redirect
+  {
+    path: "*",
+    element: <Navigate to={ROUTES.HOME} replace />,
+  },
+]);

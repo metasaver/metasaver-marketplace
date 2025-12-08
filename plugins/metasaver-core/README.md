@@ -4,26 +4,30 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 
 ## What's Included
 
-### 43+ Specialized Agents
+### 54 Specialized Agents
 
-**Generic Agents (13):**
-- architect, backend-dev, coder, tester, reviewer, business-analyst, project-manager, devops, code-quality-validator, agent-author, security-engineer, performance-engineer, root-cause-analyst
+**Generic Agents (17):**
+
+- architect, backend-dev, coder, tester, reviewer, business-analyst, project-manager, devops, code-quality-validator, agent-author, skill-author, security-engineer, performance-engineer, root-cause-analyst, code-explorer, azure-devops-agent, innovation-advisor
 
 **Domain Agents (9):**
-- data-service-agent, integration-service-agent, prisma-database-agent, react-component-agent, mfe-host-agent, mfe-remote-agent, unit-test-agent, integration-test-agent, monorepo-setup-agent
 
-**Config Agents (26):**
+- data-service-agent, integration-service-agent, prisma-database-agent, react-component-agent, shadcn-component-agent, unit-test-agent, integration-test-agent, e2e-test-agent, monorepo-setup-agent
+
+**Config Agents (28):**
+
 - Build Tools, Code Quality, Version Control, Workspace configuration
 
-### 20+ Reusable Skills
+### 39 Reusable Skills
 
-Cross-cutting skills, domain skills, and complete config skill libraries with templates.
+Cross-cutting skills, domain skills, workflow steps, and complete config skill libraries with templates.
 
 ### Intelligent Routing Commands
 
 - `/audit` - Natural language audit command
 - `/build` - Build new features with architecture validation
 - `/ms` - MetaSaver intelligent command router
+- `/ss` - Screenshot processing command
 
 ## Installation
 

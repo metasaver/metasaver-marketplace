@@ -12,7 +12,6 @@ This skill provides pnpm-workspace.yaml templates and validation logic for monor
 Manage pnpm-workspace.yaml configuration to:
 
 - Define correct workspace patterns for library vs consumer repos
-- Support standard and MFE-grouped app patterns
 - Ensure exact path matching and alphabetical ordering
 - Prevent missing directories and extra patterns
 
@@ -30,7 +29,6 @@ Standard templates are located at:
 
 ```
 templates/consumer-standard.yaml     # Consumer repos with standard app pattern
-templates/consumer-mfe.yaml          # Consumer repos with MFE grouped pattern
 templates/library.yaml               # Library repos with broad patterns
 ```
 
@@ -38,22 +36,13 @@ templates/library.yaml               # Library repos with broad patterns
 
 ### Rule 1: Architecture-Specific Patterns (CRITICAL)
 
-**Consumer Repos - Standard Pattern:**
+**Consumer Repos:**
 
-- `apps/*` (NOT `apps/admin/*` unless MFE)
+- `apps/*` (standard pattern)
 - `packages/contracts/*` (specific)
 - `packages/database/*` (specific)
 - `services/data/*` (specific)
 - Optional: `packages/agents/*`, `packages/mcps/*`, `packages/workflows/*`
-
-**Consumer Repos - MFE Grouped Pattern:**
-
-- `apps/admin/*` (MFE group)
-- `apps/consumer/*` (MFE group)
-- `apps/mobile/*` (optional MFE group)
-- `packages/contracts/*` (specific)
-- `packages/database/*` (specific)
-- `services/data/*` (specific)
 
 **Library Repos:**
 
@@ -80,21 +69,6 @@ Only include patterns that match actual directories (except during BUILD mode)
 ### Rule 5: Alphabetical Ordering
 
 Workspace patterns must be alphabetically ordered
-
-## MFE Architecture Detection
-
-Detect MFE architecture by checking if:
-
-1. `apps/` directory exists
-2. Contains subdirectories (admin, consumer, mobile)
-3. Each subdirectory contains multiple apps (host + remotes)
-
-```bash
-# Check if MFE pattern
-if [ -d "apps/admin" ] && [ $(find apps/admin -mindepth 1 -maxdepth 1 -type d | wc -l) -gt 1 ]; then
-  echo "MFE pattern detected"
-fi
-```
 
 ## Validation
 
@@ -134,16 +108,14 @@ sorted=$(echo "$original" | sort)
 
 - **Consumer Repos**: Strict specific patterns enforced
 - **Library Repos**: Broad patterns allowed and expected
-- **MFE Repos**: Grouped app patterns (`apps/admin/*`) allowed
 
 ## Best Practices
 
 1. Detect repo type first using package.json name
-2. Use appropriate template (consumer-standard, consumer-mfe, or library)
-3. Detect MFE architecture if present
-4. Always verify workspace directories exist
-5. Keep patterns alphabetically ordered
-6. Re-audit after making changes
+2. Use appropriate template (consumer-standard or library)
+3. Always verify workspace directories exist
+4. Keep patterns alphabetically ordered
+5. Re-audit after making changes
 
 ## Integration
 

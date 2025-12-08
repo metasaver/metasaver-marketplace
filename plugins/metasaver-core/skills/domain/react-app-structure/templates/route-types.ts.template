@@ -1,0 +1,27 @@
+/**
+ * Type-safe route definitions
+ *
+ * Usage in components:
+ *   import { ROUTES } from "@/routes/route-types";
+ *   <Link to={ROUTES.DASHBOARD} />
+ *
+ * Add new routes here first, then add to routes.tsx
+ */
+
+export const ROUTES = {
+  HOME: "/",
+  DASHBOARD: "/dashboard",
+
+  // Service Catalog
+  MICROSERVICES: "/service-catalog/microservices",
+  ENDPOINTS: "/service-catalog/endpoints",
+  SCHEDULE: "/service-catalog/schedule",
+
+  // DataFeedr
+  MERCHANTS: "/datafeedr/merchants",
+  NETWORKS: "/datafeedr/networks",
+  PRODUCTS: "/datafeedr/products",
+  STATUS: "/datafeedr/status",
+} as const;
+
+export type Route = (typeof ROUTES)[keyof typeof ROUTES];
