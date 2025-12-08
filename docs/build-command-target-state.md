@@ -20,10 +20,12 @@ flowchart TB
         D["Scope Check<br/>(prompt) → string[]"]
     end
 
-    subgraph Requirements["5-6. Requirements Phase"]
-        E["Business Analyst<br/>(prompt, complexity, tools, scope) → PRD"]
-        F{"Vibe Check<br/>(prd) → bool"}
+    subgraph Requirements["5-7. Requirements Phase"]
+        E["Business Analyst<br/>Drafts PRD"]
+        E2{"BA has questions?"}
         G["Ask User for Clarification"]
+        E3["BA completes PRD"]
+        F{"Vibe Check<br/>(prd) → bool"}
     end
 
     subgraph Innovate["7-8. Innovate Phase (OPTIONAL)"]

@@ -13,11 +13,31 @@ Creates new features with architecture validation. Includes optional Innovate ph
 
 ## Phase 1: Analysis (PARALLEL)
 
+Spawn 3 agents in parallel using the Task tool. Each agent receives the user prompt and executes a skill:
+
+**IMPORTANT:** You MUST spawn all 3 agents in a SINGLE message with 3 Task tool calls.
+
 ```
-/skill complexity-check → score: int (1-50)
-/skill tool-check → tools: string[]
-/skill scope-check → repos/files: string[]
+Task 1: subagent_type="general-purpose", model="haiku"
+  Prompt: "Execute /skill complexity-check on this prompt: {USER_PROMPT}
+           Return ONLY: score: <integer 1-50>"
+
+Task 2: subagent_type="general-purpose", model="haiku"
+  Prompt: "Execute /skill tool-check on this prompt: {USER_PROMPT}
+           Return ONLY: tools: [<tool1>, <tool2>, ...]"
+
+Task 3: subagent_type="general-purpose", model="haiku"
+  Prompt: "Execute /skill scope-check on this prompt: {USER_PROMPT}
+           Return ONLY: repos: [<path1>, <path2>, ...]"
 ```
+
+Wait for all 3 agents to complete. Collect results:
+
+- `complexity_score` (int)
+- `tools` (string[])
+- `repos` (string[])
+
+Pass these to Phase 2.
 
 ---
 
