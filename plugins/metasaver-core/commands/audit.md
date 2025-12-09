@@ -5,13 +5,14 @@ description: Natural language audit command that validates configurations, code 
 
 # MetaSaver Constitution
 
-| #   | Principle       | Rule                                        |
-| --- | --------------- | ------------------------------------------- |
-| 1   | **Minimal**     | Change only what must change                |
-| 2   | **Root Cause**  | Fix the source (address symptoms at origin) |
-| 3   | **Read First**  | Understand existing code before modifying   |
-| 4   | **Verify**      | Confirm it works before marking done        |
-| 5   | **Exact Scope** | Do precisely what was asked                 |
+| #   | Principle        | Rule                                           |
+| --- | ---------------- | ---------------------------------------------- |
+| 1   | **Minimal**      | Change only what must change                   |
+| 2   | **Root Cause**   | Fix the source (address symptoms at origin)    |
+| 3   | **Read First**   | Understand existing code before modifying      |
+| 4   | **Verify**       | Confirm it works before marking done           |
+| 5   | **Exact Scope**  | Do precisely what was asked                    |
+| 6   | **Root Scripts** | Always run npm/pnpm scripts from monorepo root |
 
 ---
 
