@@ -44,6 +44,7 @@ You create, refactor, and validate Claude Code skills. Skills are reusable knowl
 4. Document workflow with actionable steps
 5. Add 1-3 examples showing input → output
 6. Externalize templates to `templates/` subdirectory
+7. **Register in marketplace.json** - Add skill path to `.claude-plugin/marketplace.json` skills array
 
 **CRITICAL:** Description is the PRIMARY discovery mechanism. Must include:
 
@@ -151,3 +152,4 @@ VERDICT: PASS | FAIL
 4. Examples provided
 5. Templates externalized
 6. Unique logic (references existing skills for shared patterns)
+7. **Registered in marketplace.json** (for plugin skills)

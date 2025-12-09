@@ -16,12 +16,17 @@ description: PRD creation with HITL clarification loop. BA drafts PRD, asks user
 
 ## Workflow Steps
 
-1. **Spawn BA agent (draft mode):**
+1. **Create project folder:**
+   - Format: `docs/projects/{yyyymmdd}-{descriptive-name}/`
+   - Example: `docs/projects/20251208-applications-feature/`
+   - BA creates this folder before drafting PRD
+
+2. **Spawn BA agent (draft mode):**
    - Analyze prompt and context
    - Draft initial PRD
    - Identify questions/uncertainties
 
-2. **HITL Clarification Loop:**
+3. **HITL Clarification Loop:**
 
    ```
    WHILE BA has questions:
@@ -30,9 +35,10 @@ description: PRD creation with HITL clarification loop. BA drafts PRD, asks user
      → BA incorporates answers, may have follow-up questions
    ```
 
-3. **BA completes PRD:**
+4. **BA completes PRD:**
    - All questions resolved
-   - Return completed PRD content
+   - Save to `{projectFolder}/prd.md`
+   - Return completed PRD content and project folder path
 
 ---
 
@@ -49,6 +55,8 @@ description: PRD creation with HITL clarification loop. BA drafts PRD, asks user
 ```json
 {
   "status": "complete",
+  "projectFolder": "docs/projects/20251208-applications-feature",
+  "prdPath": "docs/projects/20251208-applications-feature/prd.md",
   "prdContent": "# PRD...",
   "clarificationsProvided": 2
 }

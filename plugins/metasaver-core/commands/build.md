@@ -44,6 +44,8 @@ Collect: `complexity_score`, `tools`, `repos`
 
 BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then drafts PRD with HITL clarification loop until complete.
 
+Creates project folder: `docs/projects/{yyyymmdd}-{name}/prd.md`
+
 ---
 
 ## Phase 3: PRD Complete + Innovate (HITL STOP)
@@ -66,7 +68,7 @@ Single vibe check on final PRD. If fails, return to BA to revise.
 
 **See:** `/skill prd-approval`
 
-Present final PRD → User approves → Continue
+Present final PRD → User approves → **BA extracts user stories to `user-stories/` folder** → Continue
 
 ---
 
@@ -74,7 +76,7 @@ Present final PRD → User approves → Continue
 
 **See:** `/skill design-phase`
 
-Architect → arch_docs → Project Manager → execution_plan
+Architect annotates story files → PM creates execution plan from stories
 
 ---
 
@@ -82,7 +84,7 @@ Architect → arch_docs → Project Manager → execution_plan
 
 **See:** `/skill execution-phase`
 
-PM spawns workers (waves, max 10 parallel) → Validation
+PM spawns workers → Workers read story files → PM updates story status → Validation
 
 ---
 
@@ -99,6 +101,23 @@ Code quality checks scaled by change size.
 **See:** `/skill report-phase`
 
 BA (sign-off) + PM (consolidation) → Final report
+
+---
+
+## Project Folder Structure
+
+After /build completes:
+
+```
+docs/projects/{yyyymmdd}-{name}/
+├── prd.md                    # Reference document
+├── user-stories/
+│   ├── US-001-{slug}.md      # Individual stories (annotated)
+│   ├── US-002-{slug}.md
+│   └── ...
+├── execution-plan.md         # PM's Gantt chart
+└── architecture-notes.md     # Optional (complex items)
+```
 
 ---
 

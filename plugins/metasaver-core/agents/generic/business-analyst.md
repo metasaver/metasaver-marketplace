@@ -23,13 +23,15 @@ The **business-analyst** is an SME who knows how to:
 
 BA receives these inputs from the command:
 
-| Input        | Type       | Description                 |
-| ------------ | ---------- | --------------------------- |
-| `prompt`     | string     | Original user request       |
-| `complexity` | int (1-50) | From complexity-check skill |
-| `tools`      | string[]   | From tool-check skill       |
-| `scope`      | string[]   | From scope-check skill      |
-| `mode`       | string     | "create-prd" or "sign-off"  |
+| Input           | Type       | Description                                    |
+| --------------- | ---------- | ---------------------------------------------- |
+| `prompt`        | string     | Original user request                          |
+| `complexity`    | int (1-50) | From complexity-check skill                    |
+| `tools`         | string[]   | From tool-check skill                          |
+| `scope`         | string[]   | From scope-check skill                         |
+| `mode`          | string     | "create-prd", "sign-off", or "extract-stories" |
+| `prdPath`       | string     | Path to approved PRD (extract-stories mode)    |
+| `projectFolder` | string     | Project folder path (extract-stories mode)     |
 
 ## Outputs
 
@@ -117,6 +119,16 @@ Reference `/skill monorepo-audit` for mappings. Quick reference:
 | Full monorepo | 90%+             | 0                   |
 | Domain audit  | 95%+             | 0                   |
 | Single file   | 100%             | 0                   |
+
+### User Story Template
+
+Reference `/skill user-story-template` for the standard user story markdown format.
+
+**Quick Reference:**
+
+- Filename: `US-{number}-{slug}.md`
+- Status: 🔵 Pending (initial), 🟢 In Progress, ✅ Complete
+- Sections: Title, Story, Acceptance Criteria, Dependencies, Technical Notes
 
 ## PRD Storage
 
@@ -256,6 +268,36 @@ Example: `/mnt/f/code/resume-builder/docs/prd/prd-20241203-143022-monorepo-audit
 **Decision:** APPROVED
 
 **Rationale:** All PRD requirements fulfilled. All domains audited, violations documented with remediation options.
+```
+
+### Mode: extract-stories
+
+BA reads approved PRD and extracts user stories into individual files.
+
+**Process:**
+
+1. Read the approved PRD
+2. Identify all user stories (US-1, US-2, etc.)
+3. Create `user-stories/` folder in project folder
+4. For each user story:
+   a. Create file: `US-{number}-{slug}.md`
+   b. Use template from /skill user-story-template
+   c. Extract: title, story text, acceptance criteria
+   d. Set Status to 🔵 Pending
+   e. Identify dependencies (if US-2 needs data from US-1)
+5. Return list of created story files
+
+**Output:**
+
+```json
+{
+  "storiesFolder": "docs/projects/20251208-feature/user-stories/",
+  "storyFiles": ["US-001-view-list.md", "US-002-add-item.md"],
+  "dependencies": {
+    "US-002": ["US-001"],
+    "US-003": ["US-001"]
+  }
+}
 ```
 
 ## Anti-Patterns

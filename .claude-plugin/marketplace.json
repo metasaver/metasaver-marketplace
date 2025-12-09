@@ -39,6 +39,7 @@
         "./skills/workflow-steps/execution-phase",
         "./skills/workflow-steps/validation-phase",
         "./skills/workflow-steps/report-phase",
+        "./skills/workflow-steps/user-story-template",
         "./skills/cross-cutting/scope-check",
         "./skills/cross-cutting/security-scan-workflow",
         "./skills/cross-cutting/serena-code-reading",

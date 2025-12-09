@@ -16,15 +16,22 @@ description: Gantt-style parallel execution of domain worker agents with depende
 
 ## Workflow Steps
 
-1. **Load execution plan** from design-phase (tasks + dependencies)
+1. **Load execution plan** from design-phase (tasks + dependencies + story files)
 2. **Initialize state:** pending tasks, running tasks (max 10), completed set
 3. **Loop:** While pending or running tasks exist:
-   - Start all ready tasks (dependencies met, under limit)
+   - **Start ready tasks** (dependencies met, under limit):
+     - Update story file: Status → 🔄 In Progress
+     - Update story file: Assignee → {agent-name}
+     - Spawn worker agent with story file path
    - Wait for ANY task to complete (not all)
-   - Record result, add to completed set
+   - **On task completion:**
+     - Update story file: Status → ✅ Complete
+     - Update story file: Completion section with files modified
+     - Update story file: Verified → yes (if validation passes)
+     - Record result, add to completed set
    - Immediately start next ready task
-4. **On task failure:** Log error, continue (validation phase handles retries)
-5. **Return:** All results with status, files modified, errors
+4. **On task failure:** Log error, update story status to ❌ Failed, continue (validation phase handles retries)
+5. **Return:** All results with status, files modified, errors, story completion tracking
 
 ---
 
@@ -59,11 +66,21 @@ while (pending.length || running.size > 0):
 CONSTITUTION: 1) Change only what must change 2) Fix root cause, not symptoms 3) Read existing code first 4) Verify before done 5) Do exactly what asked
 
 TASK: {task.description}
-CONTEXT: PRD at {prdPath}, Architecture: {relevant section}, Scope: {scope}
+STORY: Read your story file at {storyFilePath}
+PRD: Reference {prdPath} only if you need more context
+
+UPDATE: After completion, report files modified so PM can update story.
 READ YOUR INSTRUCTIONS at .claude/agents/{category}/{agent}.md
 ```
 
 Model: `sonnet` (balanced cost/capability)
+
+**Key Changes:**
+
+- Workers read story files (not PRD) for task context
+- Story file contains acceptance criteria, dependencies, implementation details
+- PRD is referenced only when workers need broader context
+- Workers report files modified for PM to track in story
 
 ---
 
@@ -91,12 +108,23 @@ Model: `sonnet` (balanced cost/capability)
 
 ## Output Format
 
-```
+```json
 {
-  totalTasks: 8,
-  completedTasks: 7,
-  failedTasks: 1,
-  results: [{taskId, agent, status, output, filesModified}, ...]
+  "totalTasks": 8,
+  "completedTasks": 7,
+  "failedTasks": 1,
+  "results": [
+    {
+      "taskId": "task-1",
+      "agent": "prisma-database",
+      "status": "success",
+      "output": "...",
+      "filesModified": ["schema.prisma", "migration.sql"],
+      "storyFile": ".claude/stories/US-001.md"
+    }
+  ],
+  "storiesCompleted": ["US-001", "US-002", "US-005"],
+  "storiesRemaining": ["US-003", "US-004"]
 }
 ```
 

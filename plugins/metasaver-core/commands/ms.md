@@ -61,13 +61,13 @@ Direct to design (PRD, Approval, Innovate skipped).
 ### Score 15-29: Full Workflow (same as /build, Innovate skipped)
 
 ```
-Requirements (HITL) → PRD Complete → Vibe Check → PRD Approval → Design → Execution → Report
+Requirements (HITL) → PRD → Vibe Check → Approval + Story Extraction → Design (annotate stories) → Execution → Report
 ```
 
 ### Score ≥30: Enterprise Workflow (same as /build, with Innovate)
 
 ```
-Requirements (HITL) → PRD Complete → [Innovate?] → Vibe Check → PRD Approval → Design → Execution → Report
+Requirements (HITL) → PRD → [Innovate?] → Vibe Check → Approval + Story Extraction → Design (annotate stories) → Execution → Report
 ```
 
 ---
@@ -93,13 +93,19 @@ Single vibe check on PRD. If fails, return to BA.
 
 **See:** `/skill prd-approval`
 
+After approval, BA extracts user stories to individual files. Architect then annotates story files (not PRD).
+
 ### Design Phase
 
 **See:** `/skill design-phase`
 
+Architect annotates `user-stories/*.md` files. PM creates execution plan from stories.
+
 ### Execution Phase
 
 **See:** `/skill execution-phase`
+
+Workers read their assigned story file. PM tracks status in story files.
 
 ### Validation Phase
 
@@ -143,9 +149,9 @@ Single vibe check on PRD. If fails, return to BA.
 /ms "add logging to service"
 → Architect → PM → backend-dev
 
-# 15-29: Full workflow
+# 15-29: Full workflow with stories
 /ms "build JWT auth API"
-→ BA → PRD → Vibe Check → Approval → Architect → PM → workers → Report
+→ BA → PRD → Vibe Check → Approval → Stories extracted → Architect annotates → PM → workers → Report
 
 # ≥30: Enterprise with Innovate
 /ms "standardize error handling across microservices"
