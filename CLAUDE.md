@@ -2,6 +2,41 @@
 
 This file provides guidance to Claude Code when working with this repository.
 
+## MetaSaver Constitution
+
+| #   | Principle        | Rule                                           |
+| --- | ---------------- | ---------------------------------------------- |
+| 1   | **Minimal**      | Change only what must change                   |
+| 2   | **Root Cause**   | Fix the source (address symptoms at origin)    |
+| 3   | **Read First**   | Understand existing code before modifying      |
+| 4   | **Verify**       | Confirm it works before marking done           |
+| 5   | **Exact Scope**  | Do precisely what was asked                    |
+| 6   | **Root Scripts** | Always run npm/pnpm scripts from monorepo root |
+
+## Always-On Behavior
+
+Use MetaSaver agents instead of core Claude Code agents:
+
+| Core Agent        | Use Instead                                        |
+| ----------------- | -------------------------------------------------- |
+| `Explore`         | `core-claude-plugin:generic:code-explorer`         |
+| `Plan`            | `core-claude-plugin:generic:architect`             |
+| `general-purpose` | Task-specific agent (see `/skill agent-selection`) |
+
+**Routing:**
+
+- Simple questions → Answer directly
+- Code tasks → Spawn appropriate agent (coder, tester, reviewer, backend-dev, etc.)
+- Config files → Spawn config agent (eslint-agent, vite-agent, etc.)
+- Complex work → Suggest `/ms`, `/build`, or `/audit`
+
+**Auto-invoke skills:**
+
+- Before reading code: `serena-code-reading`
+- After modifying files: `repomix-cache-refresh`
+
+---
+
 ## Repository Overview
 
 **MetaSaver Official Marketplace** - A Claude Code marketplace containing plugins with agents, skills, and commands.
