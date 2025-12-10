@@ -15,35 +15,38 @@ description: Use when determining which repositories a task affects. Scans /mnt/
 
 ## How to Execute
 
-This is a TEXT ANALYSIS task - match keywords from the prompt to repository paths:
+This is a TEXT ANALYSIS task - analyze the prompt text as your sole input:
 
-1. Scan the prompt text (case-insensitive) for repository keywords in the matching table below
-2. Discover repositories once by scanning `/mnt/f/code/` for `package.json` files (categorize by type)
-3. Match prompt keywords to repository names and return paths
-4. Return ONLY: `repos: [...]`
-5. Complete in under 200 tokens
+1. Scan the prompt text (case-insensitive) for repository keywords in the matching tables below
+2. Match prompt keywords to repository names using the reference tables
+3. Return ONLY: `repos: [...]`
+4. Complete in under 200 tokens
 
 **Expected output format:**
 
 ```
-repos: ["/mnt/f/code/resume-builder", "/mnt/f/code/metasaver-com"]
+repos: ["{CODE_ROOT}/resume-builder", "{CODE_ROOT}/metasaver-com"]
 ```
 
-Use the repository discovery and keyword matching tables as your reference. Treat the prompt as a self-contained string for keyword matching.
+Work exclusively with the prompt text and keyword tables as your sole input. Use pattern matching and return your answer immediately.
+
+**Path Resolution:** Replace `{CODE_ROOT}` with the actual code directory (e.g., `/home/user/code/` or `/mnt/f/code/`). The calling agent provides the resolved paths.
 
 ---
 
-## Step 1: Discover Repositories
+## Step 1: Known Repositories Reference
 
-Scan `/mnt/f/code/` and classify each directory by reading `package.json`:
+Use this table to identify repositories:
 
-| Condition                                                                       | Type     |
-| ------------------------------------------------------------------------------- | -------- |
-| `name` starts with `@metasaver` AND `metasaver.applicationType` = `"libraries"` | Producer |
-| `name` starts with `@metasaver` AND `metasaver.applicationType` = `"consumer"`  | Consumer |
-| Directory is `claude-marketplace`                                               | Plugin   |
+| Repository Name      | Type     | Keywords                                    |
+| -------------------- | -------- | ------------------------------------------- |
+| `multi-mono`         | Producer | multi-mono, shared, library, config package |
+| `metasaver-com`      | Consumer | metasaver-com, metasaver.com, main site     |
+| `resume-builder`     | Consumer | resume, resume-builder                      |
+| `rugby-crm`          | Consumer | rugby, rugby-crm, commithub                 |
+| `claude-marketplace` | Plugin   | agent, skill, command, plugin, mcp, claude  |
 
-**CRITICAL:** Discover repository names dynamically from `/mnt/f/code/` by scanning `package.json` files.
+**Note:** This is a static reference. New repositories must be added to this table manually.
 
 ---
 
@@ -61,9 +64,9 @@ Scan prompt for keywords and return matching repositories:
 
 | Keywords                                                           | Repository                   |
 | ------------------------------------------------------------------ | ---------------------------- |
-| `resume`, `resume-builder`                                         | `/mnt/f/code/resume-builder` |
-| `metasaver-com`, `metasaver.com`, `main site`                      | `/mnt/f/code/metasaver-com`  |
-| `rugby`, `rugby-crm`, `commithub`                                  | `/mnt/f/code/rugby-crm`      |
+| `resume`, `resume-builder`                                         | `{CODE_ROOT}/resume-builder` |
+| `metasaver-com`, `metasaver.com`, `main site`                      | `{CODE_ROOT}/metasaver-com`  |
+| `rugby`, `rugby-crm`, `commithub`                                  | `{CODE_ROOT}/rugby-crm`      |
 | `service`, `backend service`, `api endpoint`, `database`, `prisma` | All consumer repos           |
 | `workflow`, `custom mcp`, `consumer agent`                         | All consumer repos           |
 
@@ -89,7 +92,7 @@ Scan prompt for keywords and return matching repositories:
 | `all repos` / `every repo` / `across all` / `entire codebase` | All discovered repositories |
 | `all consumer` / `all applications`                           | All consumer-type repos     |
 | `standardize` / `migrate` + `across`                          | Producer + all consumers    |
-| File path mentioned (e.g., `/mnt/f/code/resume-builder/`)     | That specific repo          |
+| File path mentioned (e.g., `{CODE_ROOT}/resume-builder/`)     | That specific repo          |
 | No matches found                                              | Current working directory   |
 
 ---
@@ -101,7 +104,7 @@ Scan prompt for keywords and return matching repositories:
 ```
 Prompt: "Create a shared Button component"
 → Matches: "shared"
-→ Output: ["/mnt/f/code/multi-mono"]
+→ Output: repos: ["{CODE_ROOT}/multi-mono"]
 ```
 
 ### Example 2
@@ -109,7 +112,7 @@ Prompt: "Create a shared Button component"
 ```
 Prompt: "Fix the login bug in resume-builder"
 → Matches: "resume-builder"
-→ Output: ["/mnt/f/code/resume-builder"]
+→ Output: repos: ["{CODE_ROOT}/resume-builder"]
 ```
 
 ### Example 3
@@ -117,7 +120,7 @@ Prompt: "Fix the login bug in resume-builder"
 ```
 Prompt: "Create a new agent for validation"
 → Matches: "agent"
-→ Output: ["/mnt/f/code/claude-marketplace"]
+→ Output: repos: ["{CODE_ROOT}/claude-marketplace"]
 ```
 
 ### Example 4
@@ -125,7 +128,7 @@ Prompt: "Create a new agent for validation"
 ```
 Prompt: "Add a new service to commithub"
 → Matches: "service", "commithub"
-→ Output: ["/mnt/f/code/rugby-crm"]
+→ Output: repos: ["{CODE_ROOT}/rugby-crm"]
 ```
 
 ### Example 5
@@ -134,7 +137,7 @@ Prompt: "Add a new service to commithub"
 Prompt: "Create a custom workflow agent for resume-builder"
 → Matches: "workflow", "agent", "resume-builder"
 → Context: specific app mentioned
-→ Output: ["/mnt/f/code/resume-builder"]
+→ Output: repos: ["{CODE_ROOT}/resume-builder"]
 ```
 
 ---

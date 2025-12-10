@@ -17,7 +17,7 @@ description: Use when selecting MCP servers, choosing which tools to use, or map
 
 ## How to Execute
 
-This is a TEXT ANALYSIS task - match keywords from the prompt to MCP tools:
+This is a TEXT ANALYSIS task - analyze the prompt text as your sole input:
 
 1. Scan the prompt text (case-insensitive) for trigger keywords in the table below
 2. Add matching tools to the output array
@@ -31,7 +31,7 @@ This is a TEXT ANALYSIS task - match keywords from the prompt to MCP tools:
 tools: ["serena", "sequential-thinking"]
 ```
 
-Work directly with the prompt text as your sole input. Use keyword-based matching to determine required tools.
+Work exclusively with the prompt text as your sole input. Use keyword-based pattern matching and return your answer immediately.
 
 ---
 
