@@ -35,7 +35,7 @@ When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. Use
 **See:** `/skill analysis-phase`
 
 Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
-Collect: `complexity_score`, `tools`, `repos`
+Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
 
 ---
 

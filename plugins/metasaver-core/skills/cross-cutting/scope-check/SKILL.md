@@ -1,15 +1,15 @@
 ---
 name: scope-check
-description: Use when determining which repositories a task affects. Scans /mnt/f/code/ to discover MetaSaver repositories and matches prompt keywords to identify where work should happen. Returns array of repository paths.
+description: Use when determining which repositories a task affects. Distinguishes between target repos (where changes happen) and reference repos (for learning patterns). Returns structured object with targets and references arrays.
 ---
 
 # Scope Check Skill
 
-**Purpose:** Analyze a prompt and return an array of repository paths where the work should happen.
+**Purpose:** Analyze a prompt and return target repositories (where changes happen) vs reference repositories (for learning patterns).
 
 **Input:** `prompt` (string) - The user's request
 
-**Output:** `repositories` (string[]) - Array of absolute repository paths
+**Output:** `{ targets: string[], references: string[] }` - Structured object with repo paths
 
 ---
 
@@ -17,26 +17,57 @@ description: Use when determining which repositories a task affects. Scans /mnt/
 
 This is a TEXT ANALYSIS task - analyze the prompt text as your sole input:
 
-1. Scan the prompt text (case-insensitive) for repository keywords in the matching tables below
-2. Match prompt keywords to repository names using the reference tables
-3. Return ONLY: `repos: [...]`
-4. Complete in under 200 tokens
+1. Scan the prompt for **reference indicators** (repos mentioned for pattern learning)
+2. Scan the prompt for **target indicators** (repos where changes should happen)
+3. Apply default: CWD is target if no explicit target mentioned
+4. Return ONLY: `scope: { targets: [...], references: [...] }`
+5. Complete in under 200 tokens
 
 **Expected output format:**
 
 ```
-repos: ["{CODE_ROOT}/resume-builder", "{CODE_ROOT}/metasaver-com"]
+scope: { targets: ["{CODE_ROOT}/metasaver-com"], references: ["{CODE_ROOT}/rugby-crm"] }
 ```
 
-Work exclusively with the prompt text and keyword tables as your sole input. Use pattern matching and return your answer immediately.
-
-**Path Resolution:** Replace `{CODE_ROOT}` with the actual code directory (e.g., `/home/user/code/` or `/mnt/f/code/`). The calling agent provides the resolved paths.
+**Path Resolution:** Replace `{CODE_ROOT}` with the actual code directory (e.g., `/home/user/code/`). The calling agent provides the resolved paths.
 
 ---
 
-## Step 1: Known Repositories Reference
+## Step 1: Detect Reference Repositories
 
-Use this table to identify repositories:
+**Reference indicators** - repos mentioned for learning/copying, NOT for changes:
+
+| Pattern                                   | Example                                  |
+| ----------------------------------------- | ---------------------------------------- |
+| `look at {repo}`, `check {repo}`          | "look at rugby-crm for patterns"         |
+| `similar to {repo}`, `like in {repo}`     | "similar to how resume-builder does it"  |
+| `follow pattern from {repo}`              | "follow the pattern from multi-mono"     |
+| `reference {repo}`, `based on {repo}`     | "reference the rugby-crm implementation" |
+| `how {repo} does it`, `copy from {repo}`  | "see how metasaver-com handles this"     |
+| `{repo} has examples`, `{repo} shows how` | "rugby-crm has several pages like this"  |
+
+**Key distinction:** Reference repos are mentioned WITH context clues indicating they're for learning, not changing.
+
+---
+
+## Step 2: Detect Target Repositories
+
+**Target indicators** - repos where changes WILL be made:
+
+| Pattern                                            | Example                                  |
+| -------------------------------------------------- | ---------------------------------------- |
+| `in {repo}`, `to {repo}`, `for {repo}`             | "add feature to metasaver-com"           |
+| `update {repo}`, `fix {repo}`, `change {repo}`     | "fix the bug in resume-builder"          |
+| `create in {repo}`, `build for {repo}`             | "create new component in rugby-crm"      |
+| `{repo}'s {thing}`, `the {repo} {thing}`           | "the metasaver-com database"             |
+| Direct path mentioned                              | "/home/user/code/resume-builder/src/..." |
+| Explicit: `make changes in`, `modify`, `implement` | "implement auth in metasaver-com"        |
+
+**Default target:** If no explicit target mentioned, use current working directory (CWD).
+
+---
+
+## Step 3: Known Repositories Reference
 
 | Repository Name      | Type     | Keywords                                    |
 | -------------------- | -------- | ------------------------------------------- |
@@ -46,98 +77,74 @@ Use this table to identify repositories:
 | `rugby-crm`          | Consumer | rugby, rugby-crm, commithub                 |
 | `claude-marketplace` | Plugin   | agent, skill, command, plugin, mcp, claude  |
 
-**Note:** This is a static reference. New repositories must be added to this table manually.
-
 ---
 
-## Step 2: Match Prompt to Repositories
+## Step 4: Handle Special Cases
 
-Scan prompt for keywords and return matching repositories:
-
-### Producer Repository (multi-mono)
-
-| Keywords                                                                                 |
-| ---------------------------------------------------------------------------------------- |
-| `multi-mono`, `shared`, `library`, `config package`, `shared component`, `shared config` |
-
-### Consumer Repositories
-
-| Keywords                                                           | Repository                   |
-| ------------------------------------------------------------------ | ---------------------------- |
-| `resume`, `resume-builder`                                         | `{CODE_ROOT}/resume-builder` |
-| `metasaver-com`, `metasaver.com`, `main site`                      | `{CODE_ROOT}/metasaver-com`  |
-| `rugby`, `rugby-crm`, `commithub`                                  | `{CODE_ROOT}/rugby-crm`      |
-| `service`, `backend service`, `api endpoint`, `database`, `prisma` | All consumer repos           |
-| `workflow`, `custom mcp`, `consumer agent`                         | All consumer repos           |
-
-### Plugin Repository (claude-marketplace)
-
-| Keywords                                                                     |
-| ---------------------------------------------------------------------------- |
-| `agent`, `skill`, `command`, `plugin`, `mcp server`, `claude`, `marketplace` |
-
-### Ambiguous Keywords (need context)
-
-| Keywords            | Default            | Context Override                              |
-| ------------------- | ------------------ | --------------------------------------------- |
-| `agent`, `workflow` | claude-marketplace | If mentions specific app name → that consumer |
-| `mcp`               | claude-marketplace | If "custom mcp" → consumer repos              |
-
----
-
-## Step 3: Handle Special Cases
-
-| Pattern                                                       | Return                      |
-| ------------------------------------------------------------- | --------------------------- |
-| `all repos` / `every repo` / `across all` / `entire codebase` | All discovered repositories |
-| `all consumer` / `all applications`                           | All consumer-type repos     |
-| `standardize` / `migrate` + `across`                          | Producer + all consumers    |
-| File path mentioned (e.g., `{CODE_ROOT}/resume-builder/`)     | That specific repo          |
-| No matches found                                              | Current working directory   |
+| Pattern                                       | Targets          | References |
+| --------------------------------------------- | ---------------- | ---------- |
+| No repo mentioned at all                      | [CWD]            | []         |
+| Only reference indicators found               | [CWD]            | [matched]  |
+| `sync between X and Y`, `update both X and Y` | [X, Y]           | []         |
+| `all repos`, `across all`                     | [all discovered] | []         |
+| `standardize X based on Y`                    | [X]              | [Y]        |
 
 ---
 
 ## Examples
 
-### Example 1
+### Example 1: Clear reference vs target
+
+```
+Prompt: "Add Applications screen to metasaver-com, look at rugby-crm for the pattern"
+→ Target: "metasaver-com" (explicit target)
+→ Reference: "rugby-crm" (look at = reference indicator)
+→ Output: scope: { targets: ["{CODE_ROOT}/metasaver-com"], references: ["{CODE_ROOT}/rugby-crm"] }
+```
+
+### Example 2: No repo mentioned (use CWD)
+
+```
+Prompt: "Fix the login bug"
+→ Target: CWD (no explicit target)
+→ Reference: none
+→ Output: scope: { targets: ["{CWD}"], references: [] }
+```
+
+### Example 3: Only reference mentioned
+
+```
+Prompt: "Check how rugby-crm handles authentication"
+→ Target: CWD (no explicit target for changes)
+→ Reference: "rugby-crm" (check how = reference indicator)
+→ Output: scope: { targets: ["{CWD}"], references: ["{CODE_ROOT}/rugby-crm"] }
+```
+
+### Example 4: Multiple targets
+
+```
+Prompt: "Update scope-check skill in claude-marketplace and multi-mono"
+→ Target: both repos (explicit update targets)
+→ Reference: none
+→ Output: scope: { targets: ["{CODE_ROOT}/claude-marketplace", "{CODE_ROOT}/multi-mono"], references: [] }
+```
+
+### Example 5: Target implicit from context
 
 ```
 Prompt: "Create a shared Button component"
-→ Matches: "shared"
-→ Output: repos: ["{CODE_ROOT}/multi-mono"]
+→ Target: multi-mono (shared = producer repo keyword)
+→ Reference: none
+→ Output: scope: { targets: ["{CODE_ROOT}/multi-mono"], references: [] }
 ```
 
-### Example 2
+### Example 6: Standardize pattern
 
 ```
-Prompt: "Fix the login bug in resume-builder"
-→ Matches: "resume-builder"
-→ Output: repos: ["{CODE_ROOT}/resume-builder"]
-```
-
-### Example 3
-
-```
-Prompt: "Create a new agent for validation"
-→ Matches: "agent"
-→ Output: repos: ["{CODE_ROOT}/claude-marketplace"]
-```
-
-### Example 4
-
-```
-Prompt: "Add a new service to commithub"
-→ Matches: "service", "commithub"
-→ Output: repos: ["{CODE_ROOT}/rugby-crm"]
-```
-
-### Example 5
-
-```
-Prompt: "Create a custom workflow agent for resume-builder"
-→ Matches: "workflow", "agent", "resume-builder"
-→ Context: specific app mentioned
-→ Output: repos: ["{CODE_ROOT}/resume-builder"]
+Prompt: "Standardize error handling in resume-builder based on metasaver-com patterns"
+→ Target: resume-builder (standardize in)
+→ Reference: metasaver-com (based on = reference indicator)
+→ Output: scope: { targets: ["{CODE_ROOT}/resume-builder"], references: ["{CODE_ROOT}/metasaver-com"] }
 ```
 
 ---
@@ -146,4 +153,7 @@ Prompt: "Create a custom workflow agent for resume-builder"
 
 Runs in Phase 1 (Analysis) parallel with complexity-check and tool-check.
 
-Output passed to agents for workspace context.
+Output passed to agents:
+
+- `targets` - Repos where workers will make changes
+- `references` - Repos for pattern research (read-only exploration)

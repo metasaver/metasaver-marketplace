@@ -1,6 +1,6 @@
 ---
 name: analysis-phase
-description: Parallel execution of complexity-check, tool-check, and scope-check skills. Returns complexity score (1-50), required MCP tools array, and affected repository paths. First phase of all workflows.
+description: Parallel execution of complexity-check, tool-check, and scope-check skills. Returns complexity score (1-50), required MCP tools array, and scope object with targets and references arrays. First phase of all workflows.
 ---
 
 # Analysis Phase Skill
@@ -10,7 +10,7 @@ description: Parallel execution of complexity-check, tool-check, and scope-check
 **Purpose:** Gather context for routing and planning decisions
 **Trigger:** First phase of any workflow command
 **Input:** `prompt` (string) - Original user request
-**Output:** `{complexity: int, tools: string[], scope: string[]}`
+**Output:** `{complexity: int, tools: string[], scope: {targets: string[], references: string[]}}`
 
 ---
 
@@ -20,7 +20,7 @@ This is a PARALLEL text analysis phase. Spawn 3 independent agents simultaneousl
 
 1. **complexity-check agent** - Analyzes keywords, scopes, and quantities in the prompt only
 2. **tool-check agent** - Matches prompt keywords to MCP tool requirements
-3. **scope-check agent** - Discovers repositories and matches keywords to affected paths
+3. **scope-check agent** - Identifies target repos (for changes) vs reference repos (for patterns)
 
 **Key Points:**
 
@@ -44,10 +44,10 @@ Task 2: subagent_type="general-purpose", model="haiku"
   Prompt: "Execute /skill tool-check on: {USER_PROMPT}. Return ONLY: tools: [...]"
 
 Task 3: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill scope-check on: {USER_PROMPT}. Return ONLY: repos: [...]"
+  Prompt: "Execute /skill scope-check on: {USER_PROMPT}. Return ONLY: scope: { targets: [...], references: [...] }"
 ```
 
-Collect results: `complexity_score`, `tools`, `repos`
+Collect results: `complexity_score`, `tools`, `scope` (with targets and references)
 
 ---
 
@@ -75,11 +75,16 @@ Returns MCP tools needed:
 
 ### scope-check
 
-Returns repository paths affected:
+Returns structured scope object:
 
-- Scans `/mnt/f/code/` for MetaSaver repositories
-- Matches prompt keywords to repository names
-- Returns absolute paths
+- `targets` - Repos where changes will be made (workers operate here)
+- `references` - Repos for pattern learning (read-only research)
+
+**Detection logic:**
+
+- Reference indicators: "look at", "similar to", "follow pattern from", "based on", "check how"
+- Target indicators: "in {repo}", "update {repo}", "fix {repo}", explicit paths
+- Default: CWD is target if no explicit target mentioned
 
 ---
 
@@ -89,7 +94,10 @@ Returns repository paths affected:
 {
   "complexity": 28,
   "tools": ["serena", "Context7", "sequential-thinking"],
-  "scope": ["/mnt/f/code/resume-builder", "/mnt/f/code/saver-connect"]
+  "scope": {
+    "targets": ["/home/user/code/metasaver-com"],
+    "references": ["/home/user/code/rugby-crm"]
+  }
 }
 ```
 
@@ -128,7 +136,7 @@ Returns repository paths affected:
 
 - `complexity-check` skill (returns int)
 - `tool-check` skill (returns string[])
-- `scope-check` skill (returns string[])
+- `scope-check` skill (returns {targets: string[], references: string[]})
 
 **Next step:** requirements-phase (for complexity ≥5) or direct execution (≤4)
 
@@ -137,15 +145,22 @@ Returns repository paths affected:
 ## Example
 
 ```
-Command: /audit monorepo root
+Command: /build "Add Applications screen to metasaver-com, look at rugby-crm for patterns"
 
 Analysis Phase:
-  → complexity-check: 28
-  → tool-check: ["serena", "semgrep"]
-  → scope-check: ["/mnt/f/code/resume-builder"]
+  → complexity-check: 26
+  → tool-check: ["serena"]
+  → scope-check: { targets: ["/home/user/code/metasaver-com"], references: ["/home/user/code/rugby-crm"] }
 
 Output:
-  {complexity: 28, tools: ["serena", "semgrep"], scope: [...]}
+  {
+    complexity: 26,
+    tools: ["serena"],
+    scope: {
+      targets: ["/home/user/code/metasaver-com"],
+      references: ["/home/user/code/rugby-crm"]
+    }
+  }
 
 Next: requirements-phase (complexity ≥15)
 ```
