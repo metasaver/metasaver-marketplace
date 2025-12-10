@@ -1,12 +1,12 @@
 {
-  "name": "claude-marketplace",
+  "name": "metasaver-marketplace",
   "owner": {
     "name": "MetaSaver Team"
   },
   "plugins": [
     {
       "name": "core-claude-plugin",
-      "version": "1.7.8",
+      "version": "1.8.0",
       "source": "./plugins/metasaver-core",
       "skills": [
         "./skills/config/build-tools/pnpm-workspace-config",

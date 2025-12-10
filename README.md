@@ -1,9 +1,9 @@
-# MetaSaver Official Marketplace
+# MetaSaver Marketplace
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/metasaver/claude-marketplace)
-[![Agents](https://img.shields.io/badge/Agents-54-green)](https://github.com/metasaver/claude-marketplace)
-[![Skills](https://img.shields.io/badge/Skills-28-green)](https://github.com/metasaver/claude-marketplace)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/metasaver/metasaver-marketplace)
+[![Agents](https://img.shields.io/badge/Agents-54-green)](https://github.com/metasaver/metasaver-marketplace)
+[![Skills](https://img.shields.io/badge/Skills-28-green)](https://github.com/metasaver/metasaver-marketplace)
 
 Official marketplace for MetaSaver plugins - Professional development tools, agents, and skills for Claude Code.
 
@@ -40,7 +40,7 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 ### Step 1: Add the Marketplace
 
 ```bash
-/plugin marketplace add https://github.com/metasaver/claude-marketplace
+/plugin marketplace add https://github.com/metasaver/metasaver-marketplace
 ```
 
 ### Step 2: Install a Plugin
@@ -348,7 +348,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 This repository follows the **official Claude Code marketplace standard**:
 
 ```
-claude-marketplace/
+metasaver-marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json        # Required: Marketplace manifest
 ├── plugins/
@@ -375,7 +375,7 @@ claude-marketplace/
 
 ## Support & Documentation
 
-- Repository: https://github.com/metasaver/claude-marketplace
+- Repository: https://github.com/metasaver/metasaver-marketplace
 - Plugin Documentation: See `plugins/metasaver-core/README.md`
 - Issues & Feature Requests: Create issues in this repository
 

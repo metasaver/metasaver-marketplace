@@ -47,7 +47,7 @@ Use MetaSaver agents instead of core Claude Code agents:
 ## Repository Structure
 
 ```
-claude-marketplace/
+metasaver-marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json        # Marketplace manifest
 ├── plugins/

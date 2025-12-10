@@ -7,6 +7,7 @@ This directory contains scripts for starting Chrome with remote debugging enable
 **Purpose:** Start Chrome in Linux/WSL with remote debugging on port 9222 for E2E testing and browser automation.
 
 **Features:**
+
 - Checks if Chrome is already running on port 9222
 - Auto-detects Chrome installation (google-chrome, chromium, etc.)
 - Uses isolated profile directory (`/tmp/chrome-debug-mcp`)
@@ -21,7 +22,7 @@ This directory contains scripts for starting Chrome with remote debugging enable
 ```bash
 # From your project root
 mkdir -p scripts
-cp /path/to/claude-marketplace/plugins/metasaver-core/scripts/start-chrome-debug.sh scripts/
+cp /path/to/metasaver-marketplace/plugins/metasaver-core/scripts/start-chrome-debug.sh scripts/
 chmod +x scripts/start-chrome-debug.sh
 ```
 
@@ -39,12 +40,14 @@ Add to your `package.json`:
 ```
 
 **Pattern:**
+
 - `predev` - npm lifecycle hook that runs **automatically** before `dev`
 - Chrome starts every time you run `npm run dev`
 
 ### 3. Usage
 
 **Normal workflow:**
+
 ```bash
 npm run dev
 # 1. predev runs automatically (starts Chrome)
@@ -103,6 +106,7 @@ pkill -f "remote-debugging-port=9222"
 ⚠️ **When Chrome runs with remote debugging enabled, ANY application on your machine can control the browser.**
 
 **Best practices:**
+
 - Only enable when actively testing
 - Don't browse sensitive sites (banking, passwords, etc.)
 - Use isolated profile (already configured)
@@ -113,6 +117,7 @@ pkill -f "remote-debugging-port=9222"
 ## Troubleshooting
 
 ### Chrome not found
+
 ```bash
 # Install Chrome (Ubuntu/Debian)
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -123,6 +128,7 @@ sudo apt install chromium-browser
 ```
 
 ### Port already in use
+
 ```bash
 # Check what's using port 9222
 lsof -i :9222
@@ -132,6 +138,7 @@ pkill chrome
 ```
 
 ### Script doesn't start Chrome
+
 ```bash
 # Run script with debug output
 bash -x scripts/start-chrome-debug.sh
@@ -157,6 +164,7 @@ From `/mnt/f/code/resume-builder/package.json`:
 ```
 
 **Workflow:**
+
 ```bash
 npm run dev
 # ✓ Brave starts automatically via predev
@@ -176,6 +184,7 @@ For monorepos with multiple apps, you can:
 3. **Package-level**: Copy to each package that needs E2E testing
 
 **Example (monorepo app package.json):**
+
 ```json
 {
   "scripts": {
@@ -186,6 +195,7 @@ For monorepos with multiple apps, you can:
 ```
 
 **Root level (optional - for testing):**
+
 ```json
 {
   "scripts": {

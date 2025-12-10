@@ -34,7 +34,7 @@ Cross-cutting skills, domain skills, workflow steps, and complete config skill l
 Install via the MetaSaver marketplace:
 
 ```bash
-/plugin marketplace add https://github.com/metasaver/claude-marketplace
+/plugin marketplace add https://github.com/metasaver/metasaver-marketplace
 /plugin install @metasaver/core-claude-plugin
 ```
 
