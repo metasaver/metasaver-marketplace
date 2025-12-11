@@ -34,18 +34,20 @@ This is a PARALLEL text analysis phase. Spawn 3 independent agents simultaneousl
 
 ## Workflow
 
-**Spawn 3 agents in PARALLEL to execute skills:**
+**Spawn 3 agents in PARALLEL using dedicated analysis agents (zero tool access):**
 
 ```
-Task 1: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill complexity-check on: {USER_PROMPT}. Return ONLY: score: <int>"
+Task 1: subagent_type="core-claude-plugin:generic:complexity-check-agent"
+  Prompt: "Analyze this prompt and return complexity score: {USER_PROMPT}"
 
-Task 2: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill tool-check on: {USER_PROMPT}. Return ONLY: tools: [...]"
+Task 2: subagent_type="core-claude-plugin:generic:tool-check-agent"
+  Prompt: "Analyze this prompt and return required MCP tools: {USER_PROMPT}"
 
-Task 3: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill scope-check on: {USER_PROMPT}. Return ONLY: scope: { targets: [...], references: [...] }"
+Task 3: subagent_type="core-claude-plugin:generic:scope-check-agent"
+  Prompt: "Analyze this prompt and return scope (CWD: {CWD}): {USER_PROMPT}"
 ```
+
+**Why dedicated agents?** These agents specify `tools: TodoWrite` (a minimal core tool) instead of inheriting all tools, which eliminates ~37k tokens of MCP tool schemas per agent. Total savings: ~111k input tokens per analysis phase.
 
 Collect results: `complexity_score`, `tools`, `scope` (with targets and references)
 
@@ -53,38 +55,15 @@ Collect results: `complexity_score`, `tools`, `scope` (with targets and referenc
 
 ## Skill Outputs
 
-### complexity-check
+Each agent invokes its corresponding skill for the detailed algorithm:
 
-Returns integer score (1-50) based on keywords:
+| Agent                  | Skill                     | Output                                         |
+| ---------------------- | ------------------------- | ---------------------------------------------- |
+| complexity-check-agent | `/skill complexity-check` | `score: <int 1-50>`                            |
+| tool-check-agent       | `/skill tool-check`       | `tools: [...]`                                 |
+| scope-check-agent      | `/skill scope-check`      | `scope: { targets: [...], references: [...] }` |
 
-- Enterprise keywords: "enterprise", "migrate", "refactor", "rewrite"
-- Scope indicators: "all", "every", "across", "entire"
-- Quantity modifiers: "multiple", "several"
-- Negation patterns
-
-### tool-check
-
-Returns MCP tools needed:
-
-- `serena` - Semantic code analysis (auto-included for code tasks)
-- `Context7` - Library documentation (package names, "docs", "API")
-- `sequential-thinking` - Complex reasoning ("debug", "trace", "step by step")
-- `semgrep` - Security scanning ("security", "vulnerability", "audit")
-- `shadcn` - UI components ("shadcn", "component", "UI")
-- `chrome-devtools` - Browser automation ("e2e", "browser", "screenshot")
-
-### scope-check
-
-Returns structured scope object:
-
-- `targets` - Repos where changes will be made (workers operate here)
-- `references` - Repos for pattern learning (read-only research)
-
-**Detection logic:**
-
-- Reference indicators: "look at", "similar to", "follow pattern from", "based on", "check how"
-- Target indicators: "in {repo}", "update {repo}", "fix {repo}", explicit paths
-- Default: CWD is target if no explicit target mentioned
+See individual skill files for detailed algorithms and examples.
 
 ---
 

@@ -29,6 +29,20 @@ Complete reference for selecting the correct MetaSaver agents and their `subagen
 
 ---
 
+## Analysis Agents (3)
+
+**Minimal-tool agents** for prompt classification. These specify `tools: TodoWrite` to avoid inheriting MCP tools (~37k tokens each).
+
+| Task Type            | Agent Name             | subagent_type                                       |
+| -------------------- | ---------------------- | --------------------------------------------------- |
+| Complexity scoring   | complexity-check-agent | `core-claude-plugin:generic:complexity-check-agent` |
+| MCP tool detection   | tool-check-agent       | `core-claude-plugin:generic:tool-check-agent`       |
+| Scope identification | scope-check-agent      | `core-claude-plugin:generic:scope-check-agent`      |
+
+**Used by:** analysis-phase skill (first phase of /ms, /audit, /build commands)
+
+---
+
 ## Generic Agents (15)
 
 High-level workers for orchestration, implementation, and quality.

@@ -3,18 +3,6 @@ name: ss
 description: Screenshot command - acknowledges screenshot saved to ~/.screenshots/latest.png and processes instructions about the image
 ---
 
-# MetaSaver Constitution
-
-| #   | Principle       | Rule                                        |
-| --- | --------------- | ------------------------------------------- |
-| 1   | **Minimal**     | Change only what must change                |
-| 2   | **Root Cause**  | Fix the source (address symptoms at origin) |
-| 3   | **Read First**  | Understand existing code before modifying   |
-| 4   | **Verify**      | Confirm it works before marking done        |
-| 5   | **Exact Scope** | Do precisely what was asked                 |
-
----
-
 # Screenshot Command
 
 Quick command for working with screenshots saved to the standard location.
