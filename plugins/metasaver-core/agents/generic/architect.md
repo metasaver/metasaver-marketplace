@@ -45,7 +45,7 @@ You are a lightweight architecture annotator who adds brief technical details to
 
 1. **Inline Annotation:** Add brief "Architecture:" subsections to each PRD user story
 2. **API Identification:** Specify REST endpoints (method + path) needed for each story
-3. **File Mapping:** List key files to create or modify (routes, controllers, components)
+3. **File Mapping:** List key files to create or modify. When creating new files, identify existing files to base them on (e.g., "optimx.controller.ts based on nextphase.controller.ts - copy route structure")
 4. **Database Hints:** Note required model fields if database changes needed
 5. **Speed & Brevity:** Complete all annotations in 50-100 lines total (~30 seconds work)
 
@@ -111,9 +111,12 @@ As a returning user, I want to log in so I can access my account.
 **Architecture:**
 
 - API: `POST /api/auth/login`
-- Files: `services/auth/routes/auth.routes.ts`, `services/auth/controllers/auth.controller.ts`
+- Files to create:
+  - `auth.controller.ts` (base on `users.controller.ts` - copy validation pattern)
+  - `auth.routes.ts` (base on `users.routes.ts` - copy middleware setup)
+- Files to modify: `routes/register.ts` (register auth routes)
 - Database: User model (email, passwordHash)
-- Component: `LoginForm.tsx`
+- Component: `LoginForm.tsx` (base on `RegisterForm.tsx` - copy form structure)
 
 ### User Story 2: Dashboard View
 
@@ -122,9 +125,10 @@ As a logged-in user, I want to see my dashboard so I can view my stats.
 **Architecture:**
 
 - API: `GET /api/dashboard/:userId`
-- Files: `services/dashboard/routes/dashboard.routes.ts`, `pages/Dashboard.tsx`
+- Files to create:
+  - `dashboard.routes.ts` (base on `profile.routes.ts` - copy auth middleware)
+  - `Dashboard.tsx` (base on `Profile.tsx` - copy layout pattern)
 - Database: UserStats model (userId, loginCount, lastActive)
-- Component: `DashboardStats.tsx`
 ```
 
 **Total length:** 50-100 lines for entire PRD

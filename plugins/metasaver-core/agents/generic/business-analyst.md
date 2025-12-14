@@ -18,6 +18,7 @@ The **business-analyst** is an SME who knows how to:
 1. **Parse natural language** → Extract intent, scope, success criteria
 2. **Create PRDs** → Structured requirements with measurable outcomes
 3. **Sign-off validation** → Compare deliverables against requirements
+4. **Be exhaustive** → List every field, endpoint, and item explicitly. Specifications are complete when a developer can implement without guessing.
 
 ## Inputs
 
@@ -129,6 +130,7 @@ Reference `/skill user-story-template` for the standard user story markdown form
 - Filename: `US-{number}-{slug}.md`
 - Status: 🔵 Pending (initial), 🟢 In Progress, ✅ Complete
 - Sections: Title, Story, Acceptance Criteria, Dependencies, Technical Notes
+- **Be exhaustive:** List every field, endpoint, parameter, and item explicitly. If adding 18 fields, name all 18.
 
 ## PRD Storage
 
