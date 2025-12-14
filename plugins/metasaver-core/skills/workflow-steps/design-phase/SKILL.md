@@ -1,22 +1,31 @@
 ---
 name: design-phase
-description: Lightweight architecture annotation and execution planning workflow. Spawns architect agent to add brief inline annotations to story files from user-stories/ folder (50-100 lines, ~30 seconds), then project-manager agent to create execution plan with parallel waves. Outputs annotated story files and task assignments.
+description: Extracts user stories from PRD, adds architecture annotations, and creates execution plan. Spawns BA to extract stories, architect to annotate, PM to plan parallel waves. Approval happens AFTER this phase so user sees full picture.
 ---
 
 # Design Phase Skill
 
 > **ROOT AGENT ONLY** - Spawns agents, runs only from root Claude Code agent.
 
-**Purpose:** Add lightweight architecture annotations to story files and create execution plan
-**Trigger:** After Human Validation (prd-approval phase)
-**Input:** `storiesFolder`, `storyFiles` (string[]), `complexity` (int), `tools` (string[]), `scope` (string[])
-**Output:** `{annotatedStories, architectureNotes, executionPlan}`
+**Purpose:** Extract stories from PRD, add architecture annotations, create execution plan
+**Trigger:** After vibe-check passes (PRD is written)
+**Input:** `prdPath` (string), `projectFolder` (string), `complexity` (int), `tools` (string[]), `scope` (string[])
+**Output:** `{storiesFolder, storyFiles, annotatedStories, architectureNotes, executionPlan}`
 
 ---
 
 ## Workflow
 
-**1. Spawn architect agent**
+**1. Spawn BA agent (extract-stories mode)**
+
+- Read approved PRD from `prdPath`
+- Create `user-stories/` folder in project folder
+- Extract individual stories using `/skill user-story-template`
+- **CRITICAL: Follow Story Granularity Guidelines** (see below)
+- Create files: `US-001-{slug}.md`, `US-002-{slug}.md`, etc.
+- Return paths to all story files
+
+**2. Spawn architect agent**
 
 - Read all story files from `storiesFolder`
 - For each story file:
@@ -29,7 +38,7 @@ description: Lightweight architecture annotation and execution planning workflow
 - Model selection: complexity ≥30 → Opus, else Sonnet
 - **NOT:** Separate architecture documents, ADRs, detailed code, or component diagrams
 
-**2. Spawn project-manager agent**
+**3. Spawn project-manager agent**
 
 - Read annotated story files (with inline architecture notes)
 - Break down into implementable tasks
@@ -38,6 +47,44 @@ description: Lightweight architecture annotation and execution planning workflow
 - Identify dependencies between tasks based on story dependencies
 - Output to `execution-plan.md` in project folder
 - Model: Sonnet
+
+---
+
+## Story Granularity Guidelines (CRITICAL)
+
+**DO NOT create 1 story per package/layer.** This causes bottlenecks.
+
+**BAD (package-based):**
+
+```
+US-001: Database changes      → 1 agent, 20 min
+US-002: Contracts package     → 1 agent, 10 min
+US-003: Workflow package      → 1 agent, 30 min (BOTTLENECK - too large!)
+US-004: API layer             → 1 agent, 10 min
+US-005: Frontend              → 1 agent, 15 min
+```
+
+**GOOD (functional capability-based):**
+
+```
+US-001: Database schema       → 1 agent
+US-002: Contracts types       → 1 agent (parallel with US-001)
+US-003a: Workflow scaffolding → 1 agent
+US-003b: Height/weight parser → 1 agent (parallel)
+US-003c: Team fuzzy matching  → 1 agent (parallel)
+US-003d: Major entity parser  → 1 agent (parallel)
+US-003e: Validation + upsert  → 1 agent (after US-003b-d)
+US-004: API layer             → 1 agent
+US-005: Frontend              → 1 agent
+```
+
+**Rules for Story Granularity:**
+
+1. **Stories = Testable Units**: Each story should be independently testable
+2. **Max 15-20 min per story**: If larger, break it down
+3. **Parallel by default**: Stories in same layer should be parallelizable
+4. **Dependency-aware**: Use `Depends On` field to show execution order
+5. **Add `parallelizable_with` field**: Show which stories can run together
 
 ---
 
@@ -96,14 +143,26 @@ description: Lightweight architecture annotation and execution planning workflow
 
 ## Output Format
 
-**Annotated Stories:**
+**Full Design Output (ready for plan-approval):**
 
 ```json
 {
+  "storiesFolder": "docs/projects/20251208-feature/user-stories/",
+  "storyFiles": [
+    "US-001-database-schema.md",
+    "US-002-contracts-types.md",
+    "US-003a-workflow-scaffolding.md",
+    "US-003b-height-weight-parser.md",
+    "US-003c-team-fuzzy-matching.md",
+    "US-003d-major-entity-parser.md",
+    "US-003e-validation-upsert.md",
+    "US-004-api-layer.md",
+    "US-005-frontend.md"
+  ],
   "annotatedStories": [
-    "user-stories/US-001-view-list.md",
-    "user-stories/US-002-add-item.md",
-    "user-stories/US-003-user-registration.md"
+    "user-stories/US-001-database-schema.md",
+    "user-stories/US-002-contracts-types.md",
+    "user-stories/US-003a-workflow-scaffolding.md"
   ],
   "architectureNotes": "architecture-notes.md",
   "executionPlan": "execution-plan.md"
@@ -163,13 +222,14 @@ description: Lightweight architecture annotation and execution planning workflow
 
 **Called by:**
 
-- `/audit` command (after prd-approval)
-- `/build` command (after prd-approval / human validation)
-- `/ms` command (for complexity ≥15, after prd-approval)
+- `/audit` command (after vibe-check)
+- `/build` command (after vibe-check / innovate)
+- `/ms` command (for complexity ≥15, after vibe-check)
 
 **Calls:**
 
+- `business-analyst` agent (extract-stories mode)
 - `architect` agent (SME for architecture design)
 - `project-manager` agent (SME for planning)
 
-**Next step:** execution-phase (spawn domain workers)
+**Next step:** plan-approval (user sees PRD + stories + plan, then approves)

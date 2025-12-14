@@ -38,7 +38,9 @@ docs/projects/{yyyymmdd}-{name}/
 **Status:** 🔵 Pending | 🔄 In Progress | ✅ Complete | ❌ Blocked
 **Assignee:** {agent-name or "unassigned"}
 **Depends On:** {US-XXX, US-YYY} or "none"
+**Parallelizable With:** {US-XXX, US-YYY} or "none"
 **Priority:** High | Medium | Low
+**Estimated Size:** Small (≤10 min) | Medium (10-20 min) | Large (break it down!)
 **PRD Reference:** ../prd.md
 
 ---
@@ -93,7 +95,9 @@ As a {role}, I want to {action} so that {benefit}.
 | Status               | Current state (Pending/In Progress/Complete/Blocked) | PM        | Throughout   |
 | Assignee             | Agent or worker responsible                          | PM        | Assignment   |
 | Depends On           | Other stories that must complete first               | BA        | Extraction   |
+| Parallelizable With  | Stories that can run concurrently with this one      | BA        | Extraction   |
 | Priority             | Urgency level (High/Medium/Low)                      | BA        | Extraction   |
+| Estimated Size       | Time estimate (Small ≤10min, Medium 10-20min, Large) | BA        | Extraction   |
 | PRD Reference        | Link to parent PRD file                              | BA        | Extraction   |
 | User Story           | Standard "As a... I want... so that..." format       | BA        | Extraction   |
 | Acceptance Criteria  | Checkboxes for completion verification               | BA        | Extraction   |
@@ -248,11 +252,67 @@ As a user, I want to see a loading spinner while dashboard data loads so that I 
 - `/skill architecture-phase` - Story annotation workflow
 - `/skill execution-phase` - Story implementation workflow
 
+## Story Granularity Guidelines (CRITICAL)
+
+**DO NOT create 1 story per package/layer.** This causes execution bottlenecks.
+
+### Why Granularity Matters
+
+| Approach       | Stories | Max Parallel | Bottleneck Risk             |
+| -------------- | ------- | ------------ | --------------------------- |
+| Per-package    | 5       | 2            | HIGH (US-003 = 30min alone) |
+| Per-capability | 9       | 4            | LOW (max 15-20min each)     |
+
+### Rules for Story Size
+
+1. **Max 15-20 minutes per story** - If larger, break it down
+2. **Independently testable** - Each story should be verifiable alone
+3. **Single responsibility** - One functional capability per story
+4. **Parallel by default** - Same-layer stories should run together
+
+### Breaking Down Large Stories
+
+**BAD: One story for entire workflow package (30+ min)**
+
+```markdown
+US-003: Workflow Package
+
+- Create package scaffolding
+- Implement 11 parsing nodes
+- Write unit tests
+- Wire workflow.ts
+```
+
+**GOOD: Multiple stories by functional capability**
+
+```markdown
+US-003a: Workflow scaffolding (package.json, schemas, config) [10 min]
+US-003b: Height/weight parser with edge case handling [15 min]
+US-003c: Team fuzzy matching with Levenshtein [15 min]
+US-003d: Major entity parser with comma splitting [10 min]
+US-003e: Validation and upsert logic [15 min]
+```
+
+### Using Parallelizable With Field
+
+```markdown
+# US-003b: Height/Weight Parser
+
+**Depends On:** US-003a (scaffolding must exist)
+**Parallelizable With:** US-003c, US-003d (all parse nodes can run together)
+```
+
+This tells PM to schedule US-003b, US-003c, US-003d in the same wave.
+
+---
+
 ## Best Practices
 
 1. **Naming:** Use descriptive kebab-case names (US-001-auth-api, not US-001)
 2. **Dependencies:** Always specify dependencies to ensure correct execution order
-3. **Architecture Notes:** Be specific about files, patterns, and integration points
-4. **Implementation Notes:** Workers should document decisions and deviations
-5. **Verification:** PM must verify acceptance criteria before marking Complete
-6. **Status Updates:** Update status promptly to avoid stale assignments
+3. **Parallelization:** Always specify which stories can run together
+4. **Size check:** If estimated size is "Large", break it down further
+5. **Architecture Notes:** Be specific about files, patterns, and integration points
+6. **Implementation Notes:** Workers should document decisions and deviations
+7. **Verification:** PM must verify acceptance criteria before marking Complete
+8. **Status Updates:** Update status promptly to avoid stale assignments

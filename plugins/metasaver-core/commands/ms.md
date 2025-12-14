@@ -49,22 +49,24 @@ Direct to design (PRD, Approval, Innovate skipped).
 ### Score 15-29: Full Workflow (same as /build, Innovate skipped)
 
 ```
-Requirements (HITL) → PRD → Vibe Check → Approval + Story Extraction → Design (annotate stories) → Execution → Report
+Requirements (HITL Q&A) → PRD → Vibe Check → Design (extract stories + annotate + plan) → Plan Approval → Execution → Report
 ```
 
 ### Score ≥30: Enterprise Workflow (same as /build, with Innovate)
 
 ```
-Requirements (HITL) → PRD → [Innovate?] → Vibe Check → Approval + Story Extraction → Design (annotate stories) → Execution → Report
+Requirements (HITL Q&A) → PRD → [Innovate?] → Vibe Check → Design (extract stories + annotate + plan) → Plan Approval → Execution → Report
 ```
 
 ---
 
 ## Shared Phases (align with /build and /audit)
 
-### Requirements Phase (HITL) - Score ≥15
+### Requirements Phase (HITL Q&A) - Score ≥15
 
 **See:** `/skill requirements-phase`
+
+BA drafts PRD with clarification loop. No approval here—just Q&A to gather requirements.
 
 ### PRD Complete + Innovate - Score ≥15
 
@@ -77,17 +79,19 @@ Requirements (HITL) → PRD → [Innovate?] → Vibe Check → Approval + Story 
 
 Single vibe check on PRD. If fails, return to BA.
 
-### PRD Approval - Score ≥15
-
-**See:** `/skill prd-approval`
-
-After approval, BA extracts user stories to individual files. Architect then annotates story files (not PRD).
-
-### Design Phase
+### Design Phase - Score ≥15
 
 **See:** `/skill design-phase`
 
-Architect annotates `user-stories/*.md` files. PM creates execution plan from stories.
+1. BA extracts user stories (following granularity guidelines)
+2. Architect annotates story files
+3. PM creates execution plan with parallel waves
+
+### Plan Approval - Score ≥15
+
+**See:** `/skill plan-approval`
+
+User sees complete picture (PRD + stories + plan), then approves. This is the single approval point.
 
 ### Execution Phase
 
@@ -137,13 +141,13 @@ Workers read their assigned story file. PM tracks status in story files.
 /ms "add logging to service"
 → Architect → PM → backend-dev
 
-# 15-29: Full workflow with stories
+# 15-29: Full workflow with plan approval
 /ms "build JWT auth API"
-→ BA → PRD → Vibe Check → Approval → Stories extracted → Architect annotates → PM → workers → Report
+→ BA (Q&A) → PRD → Vibe Check → Design (stories + annotate + plan) → Plan Approval → workers → Report
 
 # ≥30: Enterprise with Innovate
 /ms "standardize error handling across microservices"
-→ BA → PRD → [Innovate?] → Vibe Check → Approval → Architect (opus) → PM → waves → Report
+→ BA (Q&A) → PRD → [Innovate?] → Vibe Check → Design → Plan Approval → waves → Report
 ```
 
 ---
@@ -155,7 +159,8 @@ Workers read their assigned story file. PM tracks status in story files.
 3. User questions addressed by routed agent (≤14) or BA in HITL (≥15)
 4. Score ≤4: Spawn agent for `/skill agent-check`, then route accordingly
 5. Score 5-14: Skip PRD, go direct to Architect
-6. Score ≥15: Full workflow with HITL Requirements, Vibe Check, PRD Approval
+6. Score ≥15: Full workflow with HITL Requirements (Q&A only), Design, Plan Approval
 7. Score ≥30: Include Innovate phase (ask user, hard stop)
-8. Select model by complexity
-9. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+8. Plan Approval happens AFTER design—user sees PRD + stories + plan together
+9. Select model by complexity
+10. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

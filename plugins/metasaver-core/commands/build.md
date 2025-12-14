@@ -26,11 +26,13 @@ Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
 
 ---
 
-## Phase 2: Requirements (HITL)
+## Phase 2: Requirements (HITL Q&A)
 
 **See:** `/skill requirements-phase`
 
 BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then drafts PRD with HITL clarification loop until complete.
+
+**No approval here**—just Q&A to gather requirements. Approval happens after design.
 
 Creates project folder: `docs/projects/{yyyymmdd}-{name}/prd.md`
 
@@ -52,19 +54,28 @@ Single vibe check on final PRD. If fails, return to BA to revise.
 
 ---
 
-## Phase 5: Human Validation
-
-**See:** `/skill prd-approval`
-
-Present final PRD → User approves → **BA extracts user stories to `user-stories/` folder** → Continue
-
----
-
-## Phase 6: Design
+## Phase 5: Design
 
 **See:** `/skill design-phase`
 
-Architect annotates story files → PM creates execution plan from stories
+1. BA extracts user stories (following granularity guidelines—NOT 1 per package!)
+2. Architect annotates story files with implementation details
+3. PM creates execution plan with parallel waves
+
+---
+
+## Phase 6: Plan Approval
+
+**See:** `/skill plan-approval`
+
+User sees the **complete picture**:
+
+- PRD (requirements)
+- User stories (work breakdown)
+- Architecture notes (on each story)
+- Execution plan (waves, parallelization)
+
+Then approves or requests changes. This is the single approval point.
 
 ---
 
@@ -72,7 +83,7 @@ Architect annotates story files → PM creates execution plan from stories
 
 **See:** `/skill execution-phase`
 
-PM spawns workers → Workers read story files → PM updates story status → Validation
+PM spawns workers → Workers read story files → PM updates story status
 
 ---
 
@@ -129,10 +140,10 @@ docs/projects/{yyyymmdd}-{name}/
 
 ```bash
 /build "add logging to service"
-→ BA → PRD → [Innovate?] → Vibe Check → Approval → Architect → PM → workers
+→ BA (Q&A) → PRD → [Innovate?] → Vibe Check → Design (stories + annotate + plan) → Plan Approval → workers
 
 /build "multi-tenant SaaS"
-→ BA (opus) → PRD → Innovate → Vibe Check → Approval → Architect (opus) → PM → waves
+→ BA (opus Q&A) → PRD → Innovate → Vibe Check → Design → Plan Approval → waves → Report
 ```
 
 ---
@@ -141,10 +152,12 @@ docs/projects/{yyyymmdd}-{name}/
 
 1. ALWAYS run Analysis phase first—never skip to answer user questions
 2. Run analysis skills in PARALLEL (single message, 3 Task calls)
-3. BA addresses user questions in Requirements HITL, not before Phase 1
+3. BA addresses user questions in Requirements HITL (Q&A only, no approval)
 4. BA creates PRD with HITL clarification loop
 5. Write PRD file and link before asking about Innovate
 6. Innovate is OPTIONAL (ask user, hard stop)
 7. Single Vibe Check after PRD finalized
-8. Human Validation required before Design
-9. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+8. Design phase extracts stories, adds architecture, creates execution plan
+9. Plan Approval happens AFTER design—user sees PRD + stories + plan together
+10. BA must follow Story Granularity Guidelines (NOT 1 per package!)
+11. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
