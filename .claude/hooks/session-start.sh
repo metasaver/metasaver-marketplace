@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
-# SessionStart: Show project context when session begins
+# SessionStart: Show project context (INLINE WORKAROUND)
+#
+# NOTE: This is an inline hook workaround because plugin hooks are broken.
+# When plugin hooks are fixed, this file can be deleted.
+# The plugin's session-start.sh will show a message when that happens.
 
 set -euo pipefail
-
-echo
-echo "=============================================="
-echo "  PLUGIN HOOKS ARE FIXED!!!!!!"
-echo "  SessionStart hook is working!"
-echo "=============================================="
-echo
 
 # Get project name (works with or without jq)
 PROJECT_NAME="Unknown"
@@ -20,12 +17,8 @@ if [[ -f "package.json" ]]; then
   fi
 fi
 
-echo "Project: $PROJECT_NAME"
-echo
-echo "Key Reminders:"
-echo "  - Root .env for all config (never edit .env/.npmrc directly!)"
-echo "  - Use workspace: protocol for cross-package deps"
-echo "  - Multi-mono pattern - check CLAUDE.md for architecture"
-echo
+# Silent output - goes to Claude context, not terminal
+# Keep it minimal since user won't see it anyway
+echo "Project: $PROJECT_NAME | Hooks: inline workaround (plugin hooks broken)"
 
 exit 0
