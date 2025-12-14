@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "core-claude-plugin",
-      "version": "1.8.7",
+      "version": "1.8.8",
       "source": "./plugins/metasaver-core",
       "skills": [
         "./skills/config/build-tools/pnpm-workspace-config",
