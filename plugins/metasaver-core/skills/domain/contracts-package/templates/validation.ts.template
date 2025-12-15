@@ -1,0 +1,24 @@
+import { z } from "zod";
+
+// Base fields - single source of truth for validation
+export const base{{ENTITY_PASCAL}}Fields = {
+  // Required fields
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name too long"),
+  // Optional/nullable fields
+  description: z.string().nullable().optional(),
+};
+
+// Request validation schemas
+export const Create{{ENTITY_PASCAL}}Request = z.object(base{{ENTITY_PASCAL}}Fields);
+export const Update{{ENTITY_PASCAL}}Request = z.object(base{{ENTITY_PASCAL}}Fields).partial();
+export const Get{{ENTITY_PASCAL}}ParamsRequest = z.object({
+  id: z.string().min(1, "{{ENTITY_PASCAL}} ID is required"),
+});
+
+// Type exports (inferred from schemas)
+export type Create{{ENTITY_PASCAL}}Input = z.infer<typeof Create{{ENTITY_PASCAL}}Request>;
+export type Update{{ENTITY_PASCAL}}Input = z.infer<typeof Update{{ENTITY_PASCAL}}Request>;
+export type Get{{ENTITY_PASCAL}}Params = z.infer<typeof Get{{ENTITY_PASCAL}}ParamsRequest>;

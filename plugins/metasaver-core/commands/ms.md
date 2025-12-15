@@ -3,17 +3,19 @@ name: ms
 description: Intelligent MetaSaver command that analyzes complexity and routes optimally
 ---
 
-# MetaSaver Intelligent Router
+# MetaSaver Command
 
-Analyzes prompt complexity and routes to optimal execution method.
+Semi-freeform task handler with analysis and approval guardrails.
 
-**IMPORTANT:** ALWAYS get user approval before git operations.
+**For structured feature development, use `/build`. For validation, use `/audit`.**
 
 ---
 
-## Entry Handling
+## Workflow
 
-When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. User prompts may contain questions, clarifications, or confirmation requests—these are NOT reasons to skip phases. Analysis runs first to determine complexity and routing, then user questions are addressed in the appropriate phase (HITL for score ≥15, or by the routed agent for score ≤14).
+```
+Analysis → BA Clarification → Approval → Execute → Validate
+```
 
 ---
 
@@ -21,146 +23,117 @@ When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. Use
 
 **See:** `/skill analysis-phase`
 
-Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
-Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
+Spawn 3 agents in parallel:
+
+- `complexity-check` → score (1-50)
+- `tool-check` → required MCP tools
+- `scope-check` → targets and references
 
 ---
 
-## Phase 2: Route by Complexity
+## Phase 2: BA Clarification
 
-### Score ≤4: Agent Check (Direct)
-
-```
-Spawn agent: subagent_type="general-purpose", model="haiku"
-  Prompt: "Execute /skill agent-check on: {USER_PROMPT}. Return ONLY: agent: <name> or agent: none"
-```
-
-- If agent matched → Spawn that agent directly (skip PRD)
-- If direct response → Claude handles directly (PRD skipped)
-
-### Score 5-14: Quick Workflow
+Spawn BA agent to understand requirements:
 
 ```
-Architect → PM → Workers → Validation
+Spawn agent: subagent_type="core-claude-plugin:generic:business-analyst"
 ```
 
-Direct to design (PRD, Approval, Innovate skipped).
+BA responsibilities:
 
-### Score 15-29: Full Workflow (same as /build, Innovate skipped)
+1. Review analysis results (complexity, tools, scope)
+2. Understand what user wants to accomplish
+3. Ask clarifying questions if anything is unclear (HITL loop)
+4. Propose execution plan:
+   - Which MetaSaver agent(s) to use
+   - What files will be affected
+   - Approach summary (2-3 sentences)
 
-```
-Requirements (HITL Q&A) → PRD → Vibe Check → Design (extract stories + annotate + plan) → Plan Approval → Execution → Report
-```
-
-### Score ≥30: Enterprise Workflow (same as /build, with Innovate)
-
-```
-Requirements (HITL Q&A) → PRD → [Innovate?] → Vibe Check → Design (extract stories + annotate + plan) → Plan Approval → Execution → Report
-```
+**Output:** Clear understanding + proposed plan presented to user
 
 ---
 
-## Shared Phases (align with /build and /audit)
+## Phase 3: Approval Gate
 
-### Requirements Phase (HITL Q&A) - Score ≥15
+**HARD STOP** - Present plan and wait for user approval.
 
-**See:** `/skill requirements-phase`
+Show user:
 
-BA drafts PRD with clarification loop. No approval here—just Q&A to gather requirements.
+- Complexity score
+- Proposed agent(s)
+- Files that will be affected
+- Brief approach
 
-### PRD Complete + Innovate - Score ≥15
+**Bypass:** Only skip if user prompt contains "do without approval" or "just do it"
 
-**See:** `/skill innovate-phase`
+---
 
-- Score ≥30: Ask "Want to Innovate?" (HARD STOP)
-- Score 15-29: Write PRD (Innovate skipped)
+## Phase 4: Execute
 
-### Vibe Check - Score ≥15
+Use `/skill agent-selection` to identify the correct MetaSaver agent(s).
 
-Single vibe check on PRD. If fails, return to BA.
+**CRITICAL:** Use MetaSaver agents ONLY. Never use generic agents.
 
-### Design Phase - Score ≥15
+| Task Type        | Agent                                                       |
+| ---------------- | ----------------------------------------------------------- |
+| Code changes     | `core-claude-plugin:generic:coder`                          |
+| Bug fixes        | `core-claude-plugin:generic:root-cause-analyst` → `coder`   |
+| Tests            | `core-claude-plugin:generic:tester`                         |
+| Config files     | Appropriate config agent (eslint-agent, vite-agent, etc.)   |
+| Agent/skill work | `core-claude-plugin:generic:agent-author` or `skill-author` |
+| Questions        | `core-claude-plugin:generic:code-explorer`                  |
 
-**See:** `/skill design-phase`
+Track progress with TodoWrite throughout execution.
 
-1. BA extracts user stories (following granularity guidelines)
-2. Architect annotates story files
-3. PM creates execution plan with parallel waves
+---
 
-### Plan Approval - Score ≥15
+## Phase 5: Validate
 
-**See:** `/skill plan-approval`
+If files were modified:
 
-User sees complete picture (PRD + stories + plan), then approves. This is the single approval point.
-
-### Execution Phase
-
-**See:** `/skill execution-phase`
-
-Workers read their assigned story file. PM tracks status in story files.
-
-### Validation Phase
-
-**See:** `/skill validation-phase`
-
-### Report Phase - Score ≥15
-
-**See:** `/skill report-phase`
+1. Run appropriate validation based on change size
+2. Execute `/skill repomix-cache-refresh`
 
 ---
 
 ## Model Selection
 
-| Complexity | BA/Architect | Workers | Thinking   |
-| ---------- | ------------ | ------- | ---------- |
-| ≤4         | -            | haiku   | none       |
-| 5-14       | sonnet       | sonnet  | none       |
-| 15-29      | sonnet       | sonnet  | think      |
-| ≥30        | opus         | sonnet  | ultrathink |
-
----
-
-## Agent Selection
-
-**Use `/skill agent-selection` for full agent reference.**
+| Complexity | BA     | Workers |
+| ---------- | ------ | ------- |
+| 1-14       | sonnet | sonnet  |
+| 15-29      | sonnet | sonnet  |
+| 30+        | opus   | sonnet  |
 
 ---
 
 ## Examples
 
 ```bash
-# ≤4: Agent check
-/ms "security scan"
-→ agent-check → security-engineer agent
+# Simple question
+/ms "how does the agent-selection skill work?"
+→ Analysis → BA (no questions needed) → Approve → code-explorer answers
 
-# ≤4: Direct response
-/ms "what does this code do?"
-→ agent-check → direct → Claude handles
+# Bug fix
+/ms "the complexity-check skill is returning wrong scores"
+→ Analysis → BA asks clarifying questions → Approve → root-cause-analyst → coder fixes
 
-# 5-14: Quick workflow
-/ms "add logging to service"
-→ Architect → PM → backend-dev
+# Agent modification
+/ms "update the architect agent to include API endpoints"
+→ Analysis → BA proposes changes → Approve → agent-author executes
 
-# 15-29: Full workflow with plan approval
-/ms "build JWT auth API"
-→ BA (Q&A) → PRD → Vibe Check → Design (stories + annotate + plan) → Plan Approval → workers → Report
-
-# ≥30: Enterprise with Innovate
-/ms "standardize error handling across microservices"
-→ BA (Q&A) → PRD → [Innovate?] → Vibe Check → Design → Plan Approval → waves → Report
+# Quick task with bypass
+/ms "fix the typo in build.md, do without approval"
+→ Analysis → BA → (approval skipped) → coder fixes
 ```
 
 ---
 
 ## Enforcement
 
-1. ALWAYS run Analysis phase first—never skip to answer user questions
-2. Run analysis skills in PARALLEL (single message, 3 Task calls)
-3. User questions addressed by routed agent (≤14) or BA in HITL (≥15)
-4. Score ≤4: Spawn agent for `/skill agent-check`, then route accordingly
-5. Score 5-14: Skip PRD, go direct to Architect
-6. Score ≥15: Full workflow with HITL Requirements (Q&A only), Design, Plan Approval
-7. Score ≥30: Include Innovate phase (ask user, hard stop)
-8. Plan Approval happens AFTER design—user sees PRD + stories + plan together
-9. Select model by complexity
-10. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+1. ALWAYS run Analysis phase first (parallel: complexity, tools, scope)
+2. ALWAYS spawn BA to clarify and propose plan
+3. ALWAYS stop for approval (unless bypassed with "do without approval" or "just do it")
+4. ALWAYS use MetaSaver agents via `/skill agent-selection` - NEVER generic agents
+5. ALWAYS validate and refresh cache if files modified
+6. Track all tasks with TodoWrite
+7. Get user approval before any git operations

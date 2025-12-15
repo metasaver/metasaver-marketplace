@@ -1,0 +1,54 @@
+{
+  "name": "@metasaver/{{DOMAIN}}-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "metasaver": {
+    "projectType": "contracts"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist .turbo tsconfig.tsbuildinfo",
+    "clean:node_modules": "rm -rf node_modules",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:tsc": "tsc --noEmit",
+    "prettier": "prettier --check \"./**/*.{ts,tsx,js,jsx,json,md}\"",
+    "prettier:fix": "prettier --write \"./**/*.{ts,tsx,js,jsx,json,md}\"",
+    "test:unit": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@metasaver/{{DOMAIN}}-database": "workspace:*",
+    "zod": "^3.24.1"
+  },
+  "peerDependencies": {
+    "zod": "^3.x"
+  },
+  "devDependencies": {
+    "@metasaver/core-eslint-config": "latest",
+    "@metasaver/core-prettier-config": "latest",
+    "@metasaver/core-typescript-config": "latest",
+    "@metasaver/core-vitest-config": "latest",
+    "@prisma/client": "^6.16.2",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "eslint": "^9.27.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^15.14.0",
+    "typescript": "~5.6.2",
+    "vitest": "^2.1.8"
+  },
+  "prettier": "@metasaver/core-prettier-config"
+}

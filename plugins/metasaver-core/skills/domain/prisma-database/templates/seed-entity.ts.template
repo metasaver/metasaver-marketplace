@@ -1,0 +1,18 @@
+import type { PrismaClient } from "@prisma/client";
+
+export async function seedUsers(prisma: PrismaClient) {
+  const users = [
+    { id: "user-1", email: "alice@example.com", name: "Alice" },
+    { id: "user-2", email: "bob@example.com", name: "Bob" },
+  ];
+
+  for (const user of users) {
+    await prisma.user.upsert({
+      where: { id: user.id },
+      update: { name: user.name },
+      create: user,
+    });
+  }
+
+  console.log(`Seeded ${users.length} users`);
+}

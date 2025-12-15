@@ -1,0 +1,19 @@
+import { prisma } from "../../src/client.js";
+import { seedUsers } from "./user.js";
+
+async function seed() {
+  try {
+    console.log("Starting seed...");
+    await seedUsers(prisma);
+    // Add more seed calls as needed:
+    // await seedTeams(prisma);
+    console.log("Seed completed successfully");
+  } catch (error) {
+    console.error("Seed failed:", error);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+seed();

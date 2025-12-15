@@ -1,0 +1,19 @@
+/**
+ * Shared Enum Definitions
+ *
+ * Enums used across multiple entities in the domain.
+ * Entity-specific enums should be colocated in their entity folder.
+ */
+
+// Example: Status enum used by multiple entities
+export enum Status {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  PENDING = "PENDING",
+}
+
+export const StatusLabels: Record<Status, string> = {
+  [Status.ACTIVE]: "Active",
+  [Status.INACTIVE]: "Inactive",
+  [Status.PENDING]: "Pending",
+};

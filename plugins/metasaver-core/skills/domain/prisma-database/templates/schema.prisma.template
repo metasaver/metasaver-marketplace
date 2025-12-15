@@ -1,0 +1,19 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("{PROJECT_UPPER}_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Example model - replace with your actual models
+model Example {
+  id        String   @id @default(uuid())
+  name      String
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("examples")
+}

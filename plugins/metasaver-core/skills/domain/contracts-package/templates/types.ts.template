@@ -1,0 +1,27 @@
+import type { {{ENTITY_PASCAL}} as Prisma{{ENTITY_PASCAL}} } from "@metasaver/{{DOMAIN}}-database";
+
+// Re-export entity type from database package
+export type {{ENTITY_PASCAL}} = Prisma{{ENTITY_PASCAL}};
+
+// API Response types
+export interface Create{{ENTITY_PASCAL}}Response {
+  success: true;
+  data: {{ENTITY_PASCAL}};
+}
+
+export interface Update{{ENTITY_PASCAL}}Response {
+  success: true;
+  data: {{ENTITY_PASCAL}};
+}
+
+export interface Get{{ENTITY_PASCAL}}Response {
+  success: true;
+  data: {{ENTITY_PASCAL}};
+}
+
+export interface Delete{{ENTITY_PASCAL}}Response {
+  success: true;
+  message: string;
+}
+
+// Note: For ErrorResponse and ApiResponse, import from @metasaver/core-service-utils

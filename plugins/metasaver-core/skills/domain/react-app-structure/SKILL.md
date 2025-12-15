@@ -63,26 +63,34 @@ src/
 │
 ├── config/
 │   ├── index.tsx               # siteConfig, menuItems exports
-│   └── auth-config.ts          # Auth0 configuration object
+│   └── auth-config.ts          # Auth0 configuration (MUST be in config/, NOT lib/)
+│
+├── hooks/                      # (optional) App-wide hooks only (e.g., impersonation)
+│   └── index.ts                # Barrel export
 │
 ├── lib/
-│   └── api-client.ts           # Axios client with auth token injection
+│   └── api-client.ts           # Axios client with auth token injection ONLY
 │
 ├── features/
 │   └── {domain}/               # Grouped by domain (mirrors pages/)
 │       └── {feature}/
-│           ├── index.ts        # Barrel export: export * from "./{feature}"
+│           ├── index.ts        # Barrel export
 │           ├── {feature}.tsx   # Main feature component
 │           ├── components/     # (optional) Reusable sub-components
 │           │   └── index.ts    # Barrel export
-│           ├── hooks/          # (optional) Custom React hooks
+│           ├── hooks/          # (optional) Feature-specific hooks
 │           │   └── index.ts    # Barrel export
-│           └── config/         # (optional) Feature-specific config
+│           ├── config/         # (optional) Feature-specific config
+│           │   └── index.ts    # Barrel export
+│           └── queries/        # (optional) API query functions
 │               └── index.ts    # Barrel export
 │
 ├── pages/
 │   └── {domain}/               # Grouped by domain (mirrors features/)
 │       └── {page}.tsx          # Thin wrapper importing from features/
+│   └── theme/                  # Theme page uses barrel pattern
+│       ├── index.ts            # export { default } from "./theme"
+│       └── theme.tsx           # Theme component
 │
 ├── routes/
 │   ├── route-types.ts          # Type-safe ROUTES constant
@@ -96,6 +104,11 @@ src/
 ├── index.css                   # Tailwind imports (@tailwind directives)
 └── vite-env.d.ts               # Vite type definitions
 ```
+
+**IMPORTANT - What NOT to create:**
+
+- `src/types/` - All types come from `@metasaver/{app}-contracts` packages
+- `src/lib/auth-config.ts` - Auth config goes in `src/config/`, NOT `src/lib/`
 
 ## File Organization Rules
 
@@ -130,10 +143,11 @@ export * from "./config";
 - Sub-components in `components/` subfolder
 
 **Rule 4: Optional Subfolders**
-Only create `components/`, `hooks/`, `config/` if they exist:
+Only create `components/`, `hooks/`, `config/`, `queries/` if needed:
 
 - No empty folders
 - If folder exists, must have `index.ts` barrel export
+- `queries/` contains API query functions (e.g., `{entity}-queries.ts`)
 - Deep nesting (3+ levels) suggests refactoring needed
 
 ### Pages Directory Pattern
@@ -174,6 +188,16 @@ export function MicroServicesPage() {
 - Pages do NOT contain business logic
 - Pages do NOT have their own hooks/components
 - Exception: Page-level wrappers (auth guards, layouts)
+
+**Rule 4: Barrel Exports for Page Folders**
+Pages that are folders (not single files) use barrel exports:
+
+```typescript
+// src/pages/theme/index.ts
+export { default } from "./theme";
+```
+
+This allows lazy imports to work: `lazy(() => import("@/pages/theme"))`
 
 ### Config Directory Pattern
 
@@ -280,6 +304,8 @@ Does NOT contain:
 
 - [ ] `src/` folder exists
 - [ ] All required subdirectories present: `assets`, `config`, `lib`, `features`, `pages`, `routes`, `styles`
+- [ ] Optional subdirectory: `hooks/` (only for app-wide hooks like impersonation)
+- [ ] NO `src/types/` folder - all types come from contracts packages
 - [ ] No `.tsx`/`.ts` files in `src/` root (except `app.tsx`, `main.tsx`, `index.css`, `vite-env.d.ts`)
 - [ ] `public/` contains only `favicon.svg` (no other icons)
 

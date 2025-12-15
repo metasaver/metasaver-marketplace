@@ -1,0 +1,9 @@
+{
+  "extends": "@metasaver/core-typescript-config/base",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}
