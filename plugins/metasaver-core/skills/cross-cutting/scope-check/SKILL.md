@@ -69,25 +69,25 @@ scope: { targets: ["{CODE_ROOT}/metasaver-com"], references: ["{CODE_ROOT}/rugby
 
 ## Step 3: Known Repositories Reference
 
-| Repository Name      | Type     | Keywords                                    |
-| -------------------- | -------- | ------------------------------------------- |
-| `multi-mono`         | Producer | multi-mono, shared, library, config package |
-| `metasaver-com`      | Consumer | metasaver-com, metasaver.com, main site     |
-| `resume-builder`     | Consumer | resume, resume-builder                      |
-| `rugby-crm`          | Consumer | rugby, rugby-crm, commithub                 |
-| `claude-marketplace` | Plugin   | agent, skill, command, plugin, mcp, claude  |
+| Repository Name         | Type     | Keywords                                                |
+| ----------------------- | -------- | ------------------------------------------------------- |
+| `multi-mono`            | Producer | multi-mono, shared, library, config package             |
+| `metasaver-com`         | Consumer | metasaver-com, metasaver.com, main site                 |
+| `resume-builder`        | Consumer | resume, resume-builder                                  |
+| `rugby-crm`             | Consumer | rugby, rugby-crm, commithub                             |
+| `metasaver-marketplace` | Plugin   | agent, skill, command, plugin, mcp, claude, marketplace |
 
 ---
 
 ## Step 4: Handle Special Cases
 
-| Pattern                                       | Targets          | References |
-| --------------------------------------------- | ---------------- | ---------- |
-| No repo mentioned at all                      | [CWD]            | []         |
-| Only reference indicators found               | [CWD]            | [matched]  |
-| `sync between X and Y`, `update both X and Y` | [X, Y]           | []         |
-| `all repos`, `across all`                     | [all discovered] | []         |
-| `standardize X based on Y`                    | [X]              | [Y]        |
+| Pattern                                       | Targets                       | References |
+| --------------------------------------------- | ----------------------------- | ---------- |
+| No repo mentioned at all                      | [CWD]                         | []         |
+| Only reference indicators found               | [CWD]                         | [matched]  |
+| `sync between X and Y`, `update both X and Y` | [X, Y]                        | []         |
+| `all repos`, `across all`, `all my metasaver` | [all known repos from Step 3] | []         |
+| `standardize X based on Y`                    | [X]                           | [Y]        |
 
 ---
 
@@ -123,10 +123,10 @@ Prompt: "Check how rugby-crm handles authentication"
 ### Example 4: Multiple targets
 
 ```
-Prompt: "Update scope-check skill in claude-marketplace and multi-mono"
+Prompt: "Update scope-check skill in metasaver-marketplace and multi-mono"
 → Target: both repos (explicit update targets)
 → Reference: none
-→ Output: scope: { targets: ["{CODE_ROOT}/claude-marketplace", "{CODE_ROOT}/multi-mono"], references: [] }
+→ Output: scope: { targets: ["{CODE_ROOT}/metasaver-marketplace", "{CODE_ROOT}/multi-mono"], references: [] }
 ```
 
 ### Example 5: Target implicit from context
@@ -145,6 +145,24 @@ Prompt: "Standardize error handling in resume-builder based on metasaver-com pat
 → Target: resume-builder (standardize in)
 → Reference: metasaver-com (based on = reference indicator)
 → Output: scope: { targets: ["{CODE_ROOT}/resume-builder"], references: ["{CODE_ROOT}/metasaver-com"] }
+```
+
+### Example 7: All repositories
+
+```
+Prompt: "audit all docker-compose files in all my metasaver repos"
+→ Target: ALL known repos (detected: "all my metasaver repos")
+→ Reference: none
+→ Output: scope: { targets: ["{CODE_ROOT}/multi-mono", "{CODE_ROOT}/metasaver-com", "{CODE_ROOT}/resume-builder", "{CODE_ROOT}/rugby-crm", "{CODE_ROOT}/metasaver-marketplace"], references: [] }
+```
+
+### Example 8: All repos with different phrasing
+
+```
+Prompt: "standardize eslint config across all repos"
+→ Target: ALL known repos (detected: "across all repos")
+→ Reference: none
+→ Output: scope: { targets: ["{CODE_ROOT}/multi-mono", "{CODE_ROOT}/metasaver-com", "{CODE_ROOT}/resume-builder", "{CODE_ROOT}/rugby-crm", "{CODE_ROOT}/metasaver-marketplace"], references: [] }
 ```
 
 ---
