@@ -1,5 +1,4 @@
 {
   "name": "core-claude-plugin",
-  "version": "1.8.9",
-  "hooks": "./hooks/hooks.json"
+  "version": "1.8.9"
 }
