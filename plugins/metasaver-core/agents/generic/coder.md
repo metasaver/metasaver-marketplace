@@ -43,46 +43,42 @@ Repository type (library/consumer) is provided via the `scope` parameter from th
 
 **Quick Reference:** Read package.json name and structure. Monorepo = workspace configs. Library = @metasaver scope.
 
-### SOLID Principles
+### Coding Standards
 
-Use `/skill solid-principles` for detailed implementation patterns.
+Use `/skill cross-cutting/coding-standards` for all patterns including:
+
+- SOLID principles with TypeScript examples
+- DRY, KISS, YAGNI guidelines
+- Error handling (AppError hierarchy)
+- Structured logging (Pino patterns)
+- Code organization rules
 
 **Quick Reference:**
 
-- Single Responsibility: One class, one reason to change
-- Open/Closed: Extend via interfaces (preserve existing code)
-- Liskov Substitution: Subtypes must be substitutable
-- Interface Segregation: Specific interfaces over general ones
-- Dependency Inversion: Depend on abstractions, not concrete classes
-
-### Error Handling
-
-Use `/skill error-handling-patterns` for custom error classes and middleware.
-
-**Quick Reference:** Create AppError base class. Extend for ValidationError, NotFoundError. Use try-catch in services with structured logging.
-
-### Logging Standards
-
-Use `/skill structured-logging` for Winston/Pino patterns.
-
-**Quick Reference:** Child loggers with service context. Include correlationId, action name, relevant metadata. Log at: info (actions), error (exceptions), debug (flow).
+- **SOLID**: Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion
+- **DRY**: Extract shared logic, single source of truth
+- **KISS**: Simplest working solution, no premature abstraction
+- **YAGNI**: Build for current requirements only, delete unused code
+- **Errors**: AppError base → ValidationError, NotFoundError, etc.
+- **Logging**: Child loggers, action + context, correlationId
 
 ### Code Organization
 
-**Standard structure for any workspace:**
+Each package type has its own domain-specific structure defined by dedicated domain skills.
 
-```
-workspace/
-├── src/
-│   ├── controllers/
-│   ├── services/
-│   ├── repositories/
-│   ├── models/
-│   ├── utils/
-│   ├── middleware/
-│   └── types/
-└── tests/
-```
+**To identify and apply the correct structure:**
+
+1. Check package.json for `metasaver.projectType`
+2. Use `/skill agent-selection` to find the right domain agent and skill
+3. Reference the domain skill for structure patterns, OR request domain agent spawn:
+
+| Package Type | Domain Agent          | Domain Skill               |
+| ------------ | --------------------- | -------------------------- |
+| React apps   | react-app-agent       | domain/react-app-structure |
+| Contracts    | contracts-agent       | domain/contracts-package   |
+| Database     | prisma-database-agent | domain/prisma-database     |
+
+Domain skills contain structure templates, file organization rules, and naming conventions specific to each package type. Always defer to these domain-specific patterns rather than applying generic folder structures.
 
 ## Memory Coordination
 

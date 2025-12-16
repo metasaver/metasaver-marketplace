@@ -1,0 +1,126 @@
+// ============================================================================
+// DRY, KISS, YAGNI PATTERNS
+// ============================================================================
+// Reference: /skill cross-cutting/coding-standards
+
+import { z } from "zod";
+
+// ============================================================================
+// DRY - DON'T REPEAT YOURSELF
+// ============================================================================
+
+// GOOD: Single source of truth for validation
+const emailSchema = z.string().email();
+
+function validateEmail(email: unknown): string {
+  return emailSchema.parse(email);
+}
+
+async function createUser(data: CreateUserDto): Promise<User> {
+  const email = validateEmail(data.email); // Reuse validation
+  return db.users.create({ ...data, email });
+}
+
+async function updateUser(id: string, data: UpdateUserDto): Promise<User> {
+  const email = validateEmail(data.email); // Same validation
+  return db.users.update(id, { ...data, email });
+}
+
+// DRY applies to:
+// - Validation logic (extract to functions/schemas)
+// - Business rules (single function, not duplicated)
+// - Configuration values (constants, env vars)
+// - Type definitions (reuse interfaces)
+// - Error messages (define once)
+
+// ============================================================================
+// KISS - KEEP IT SIMPLE, STUPID
+// ============================================================================
+
+// GOOD: Simple and direct, avoid over-engineering
+class UserService {
+  constructor(private db: Database) {}
+
+  async getUser(id: string): Promise<User | null> {
+    return this.db.users.findUnique({ where: { id } });
+  }
+}
+
+const userService = new UserService(prisma);
+
+// KISS Guidelines:
+// - Avoid premature abstraction
+// - Use built-in language features
+// - Prefer composition over inheritance
+// - Don't add layers without clear benefit
+// - Simple solution that works beats complex "elegant" solution
+
+// ============================================================================
+// YAGNI - YOU AREN'T GONNA NEED IT
+// ============================================================================
+
+// GOOD: Only implement what's needed NOW
+interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+// BAD: Speculative fields
+// interface User {
+//   id: string;
+//   email: string;
+//   middleName?: string;
+//   suffix?: string;
+//   preferredLanguage?: string;
+//   timezone?: string;
+//   avatarUrl?: string;
+//   coverPhotoUrl?: string;
+//   bio?: string;
+//   website?: string;
+//   twitterHandle?: string;
+//   linkedinUrl?: string;
+//   githubUsername?: string;
+// }
+
+// YAGNI Guidelines:
+// - Build for current requirements only
+// - Don't add "just in case" code
+// - Delete unused code immediately
+// - Configuration over speculation
+// - Add fields/features when there's an actual requirement
+
+// ============================================================================
+// COMPLETE EXAMPLE: DRY + KISS + YAGNI
+// ============================================================================
+
+// Define schema once (DRY)
+const createUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+});
+
+type CreateUserDto = z.infer<typeof createUserSchema>;
+
+// Simple service, no over-engineering (KISS)
+class UserService {
+  constructor(private db: Database) {}
+
+  async createUser(data: unknown): Promise<User> {
+    // Validate once, use everywhere (DRY)
+    const validated = createUserSchema.parse(data);
+
+    return this.db.users.create(validated);
+  }
+
+  async getUser(id: string): Promise<User | null> {
+    return this.db.users.findUnique({ where: { id } });
+  }
+
+  async listUsers(): Promise<User[]> {
+    return this.db.users.findMany();
+  }
+}
+
+// Only fields we need now (YAGNI)
+// Add more when business requirements demand it

@@ -1,0 +1,81 @@
+// ============================================================================
+// STRUCTURED LOGGING PATTERNS
+// ============================================================================
+// Reference: /skill cross-cutting/coding-standards
+// Pino logger setup and usage patterns
+
+import pino from "pino";
+
+// ============================================================================
+// LOGGER SETUP
+// ============================================================================
+
+export const logger = pino({
+  level: process.env.LOG_LEVEL || "info",
+  transport:
+    process.env.NODE_ENV === "development"
+      ? { target: "pino-pretty", options: { colorize: true } }
+      : undefined,
+  base: {
+    env: process.env.NODE_ENV,
+    service: process.env.SERVICE_NAME,
+  },
+});
+
+export type Logger = typeof logger;
+
+// ============================================================================
+// LOGGING PATTERNS IN SERVICES
+// ============================================================================
+
+// Child logger with context
+const log = logger.child({ service: "UserService", correlationId: req.id });
+
+// Log levels and usage:
+log.debug({ action: "fetchingUser", userId }); // Development flow tracing
+log.info({ action: "userCreated", userId }); // Business events
+log.warn({ action: "retrying", attempt: 3 }); // Recoverable issues
+log.error({ action: "createFailed", error, userId }); // Failures
+
+// ============================================================================
+// LOGGING BEST PRACTICES
+// ============================================================================
+
+/**
+ * Always include in logs:
+ * - action: what happened (string, required)
+ * - relevant IDs: userId, orderId, requestId, etc.
+ * - error object (for error level logs)
+ * - correlationId (for request tracing across services)
+ *
+ * Pattern:
+ * log.info({ action: "userCreated", userId: "123", correlationId: req.id })
+ */
+
+// Example: Complete service with logging
+export class OrderService {
+  private readonly log = logger.child({ service: "OrderService" });
+
+  async processOrder(orderId: string, correlationId: string): Promise<void> {
+    const log = this.log.child({ correlationId });
+
+    log.info({ action: "processOrderStarted", orderId });
+
+    const order = await this.getOrder(orderId);
+    if (!order) {
+      log.warn({ action: "orderNotFound", orderId });
+      throw new NotFoundError("Order", orderId);
+    }
+
+    try {
+      const payment = await this.processPayment(order);
+      log.info({ action: "paymentProcessed", orderId, paymentId: payment.id });
+
+      await this.updateOrderStatus(orderId, "completed");
+      log.info({ action: "orderCompleted", orderId });
+    } catch (error) {
+      log.error({ action: "orderProcessingFailed", orderId, error });
+      throw error;
+    }
+  }
+}

@@ -1,0 +1,139 @@
+// ============================================================================
+// SOLID PRINCIPLES EXAMPLES
+// ============================================================================
+// Reference: /skill cross-cutting/coding-standards
+
+// ============================================================================
+// S - SINGLE RESPONSIBILITY PRINCIPLE
+// ============================================================================
+
+// GOOD: Each class has ONE reason to change
+class UserService {
+  constructor(private userRepository: UserRepository) {}
+
+  async createUser(data: CreateUserDto): Promise<User> {
+    return this.userRepository.create(data);
+  }
+
+  async getUser(id: string): Promise<User | null> {
+    return this.userRepository.findById(id);
+  }
+}
+
+class EmailService {
+  async sendWelcomeEmail(user: User): Promise<void> {
+    // Email logic only
+  }
+}
+
+class UserReportService {
+  async generateReport(users: User[]): Promise<Report> {
+    // Reporting logic only
+  }
+}
+
+// ============================================================================
+// O - OPEN/CLOSED PRINCIPLE
+// ============================================================================
+
+// GOOD: Open for extension (new payment types), closed for modification
+interface PaymentStrategy {
+  process(amount: number): Promise<PaymentResult>;
+}
+
+class CreditCardPayment implements PaymentStrategy {
+  async process(amount: number): Promise<PaymentResult> {
+    /* Credit card processing */
+  }
+}
+
+class CryptoPayment implements PaymentStrategy {
+  async process(amount: number): Promise<PaymentResult> {
+    /* Crypto processing */
+  }
+}
+
+class PaymentProcessor {
+  constructor(private strategy: PaymentStrategy) {}
+
+  async process(amount: number): Promise<PaymentResult> {
+    return this.strategy.process(amount);
+  }
+}
+
+// ============================================================================
+// L - LISKOV SUBSTITUTION PRINCIPLE
+// ============================================================================
+
+// GOOD: Subtypes are properly substitutable for base type
+interface Bird {
+  move(): void;
+}
+
+class Sparrow implements Bird {
+  move(): void {
+    this.fly();
+  }
+  private fly(): void {}
+}
+
+class Penguin implements Bird {
+  move(): void {
+    this.swim();
+  }
+  private swim(): void {}
+}
+
+// Both Sparrow and Penguin can be used where Bird is expected
+function startMovement(bird: Bird): void {
+  bird.move(); // Works for all implementations
+}
+
+// ============================================================================
+// I - INTERFACE SEGREGATION PRINCIPLE
+// ============================================================================
+
+// GOOD: Segregated interfaces - clients only depend on what they use
+interface Workable {
+  work(): void;
+}
+
+interface Eatable {
+  eat(): void;
+}
+
+interface MeetingAttendee {
+  attendMeeting(): void;
+}
+
+class Developer implements Workable, Eatable, MeetingAttendee {
+  work(): void {}
+  eat(): void {}
+  attendMeeting(): void {}
+}
+
+class Robot implements Workable {
+  work(): void {}
+  // No eat() or attendMeeting() - not needed
+}
+
+// ============================================================================
+// D - DEPENDENCY INVERSION PRINCIPLE
+// ============================================================================
+
+// GOOD: Depend on abstractions, not concretions
+interface Database {
+  query<T>(sql: string, params: unknown[]): Promise<T>;
+}
+
+class UserService {
+  constructor(private database: Database) {} // Injected abstraction
+
+  async getUser(id: string): Promise<User> {
+    return this.database.query(`SELECT * FROM users WHERE id = $1`, [id]);
+  }
+}
+
+// Easy to test with mock
+const mockDb: Database = { query: jest.fn() };
+const service = new UserService(mockDb);

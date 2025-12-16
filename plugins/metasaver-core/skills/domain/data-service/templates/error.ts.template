@@ -1,0 +1,38 @@
+import { ApiError } from "@metasaver/core-service-utils";
+import type { Request, Response, NextFunction } from "express";
+
+export function errorMiddleware(
+  error: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  console.error("Error:", error);
+
+  if (error instanceof ApiError) {
+    res.status(error.statusCode).json({
+      error: {
+        message: error.message,
+        code: error.code,
+      },
+    });
+    return;
+  }
+
+  if (error instanceof SyntaxError && "status" in error && error.status === 400) {
+    res.status(400).json({
+      error: {
+        message: "Invalid JSON",
+        code: "INVALID_JSON",
+      },
+    });
+    return;
+  }
+
+  res.status(500).json({
+    error: {
+      message: "Internal server error",
+      code: "INTERNAL_ERROR",
+    },
+  });
+}

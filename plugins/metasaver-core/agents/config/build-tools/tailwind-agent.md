@@ -29,7 +29,7 @@ Domain expert for Tailwind CSS configuration. Ensures correct content paths, the
 
 ## The 5 Tailwind Configuration Standards
 
-Use `/skill config/build-tools/tailwind-config` for templates and validation logic.
+Use `/skill config/workspace/tailwind-config` for templates and validation logic.
 
 | Rule | Standard                                                             |
 | ---- | -------------------------------------------------------------------- |
@@ -41,7 +41,7 @@ Use `/skill config/build-tools/tailwind-config` for templates and validation log
 
 ## Build Mode
 
-Use `/skill config/build-tools/tailwind-config` for template.
+Use `/skill config/workspace/tailwind-config` for template.
 
 **Quick Reference:** Template with content paths, theme.extend, plugins array; creates src/index.css.
 
@@ -80,4 +80,4 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 - Library allowance: @metasaver/multi-mono may have custom Tailwind config
 - Auto re-audit after changes
 
-Remember: Tailwind controls utility class generation. Consumer repos follow standard structure unless exceptions declared. Library may have intentional differences for component library styling. Template and validation logic in `/skill config/build-tools/tailwind-config`.
+Remember: Tailwind controls utility class generation. Consumer repos follow standard structure unless exceptions declared. Library may have intentional differences for component library styling. Template and validation logic in `/skill config/workspace/tailwind-config`.

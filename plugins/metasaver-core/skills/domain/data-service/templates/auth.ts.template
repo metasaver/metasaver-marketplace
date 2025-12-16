@@ -1,0 +1,30 @@
+import { verify } from "jsonwebtoken";
+import { ApiError } from "@metasaver/core-service-utils";
+import { env } from "../env.js";
+import type { Request, Response, NextFunction } from "express";
+
+export function authMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new ApiError.unauthorized("Missing or invalid authorization header");
+    }
+
+    const token = authHeader.slice(7);
+    const decoded = verify(token, env.JWT_SECRET) as { userId: string };
+
+    // Attach user info to request
+    Object.assign(req, { user: { id: decoded.userId } });
+
+    next();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError.unauthorized("Invalid token");
+  }
+}

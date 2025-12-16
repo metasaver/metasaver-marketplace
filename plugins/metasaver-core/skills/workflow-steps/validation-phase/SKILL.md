@@ -23,14 +23,23 @@ description: Quality validation after execution. Runs confidence-check skill (if
 - Score 70-89% → Flag concerns
 - Score <70% → Escalate
 
-**2. Run code-quality-validator agent**
+**2. Verify Acceptance Criteria (AC) completion**
+
+- Scan story files in PRD for AC checkbox format: `- [x]` (completed) or `- [ ]` (incomplete)
+- If any AC marked incomplete (`- [ ]`):
+  - Report list of stories with incomplete AC
+  - CRITICAL block - must complete AC before proceeding
+- If all AC checked (`- [x]`):
+  - Continue to quality checks
+
+**3. Run code-quality-validator agent**
 
 - Scales checks by change size (Small/Medium/Large)
 - Small (1-3 files): `pnpm build`
 - Medium (4-10 files): `pnpm build && lint && prettier`
 - Large (11+ files): `pnpm build && lint && prettier && test`
 
-**3. Run reviewer agent**
+**4. Run reviewer agent**
 
 - Code patterns, SOLID principles, security
 - Error handling, naming consistency, PRD compliance
@@ -52,6 +61,7 @@ description: Quality validation after execution. Runs confidence-check skill (if
 
 | Failure Type           | Action                                         |
 | ---------------------- | ---------------------------------------------- |
+| Incomplete AC          | CRITICAL - must complete before proceeding     |
 | Build failure          | CRITICAL - must fix before proceeding          |
 | Lint/Prettier warnings | Non-blocking, provide recommendations          |
 | Test failures          | Ask user: fix, continue with warnings, or skip |
@@ -64,6 +74,11 @@ description: Quality validation after execution. Runs confidence-check skill (if
 {
   "status": "pass",
   "confidenceScore": 92,
+  "acVerification": {
+    "status": "pass",
+    "checked": 8,
+    "incompleteStories": []
+  },
   "buildChecks": {
     "build": { "status": "pass" },
     "lint": { "status": "pass" },
@@ -78,6 +93,23 @@ description: Quality validation after execution. Runs confidence-check skill (if
     }
   ],
   "recommendations": ["Add integration tests for edge cases"]
+}
+```
+
+**AC Failure Example:**
+
+```json
+{
+  "status": "blocked",
+  "acVerification": {
+    "status": "incomplete",
+    "checked": 8,
+    "incompleteStories": [
+      "US-002: User login - AC 2, 4 incomplete",
+      "US-005: Password reset - AC 1 incomplete"
+    ]
+  },
+  "message": "Cannot proceed: 2 stories have incomplete acceptance criteria"
 }
 ```
 

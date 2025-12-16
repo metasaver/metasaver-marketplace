@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+# ==============================================
+# MetaSaver Environment Setup Script
+# ==============================================
+# This script automates environment setup for MetaSaver monorepos
+#
+# Usage:
+#   chmod +x scripts/setup.sh
+#   ./scripts/setup.sh
+#
+# What it does:
+# 1. Generates .env files from .env.example templates
+# 2. Generates .npmrc from .npmrc.template with GitHub token
+# 3. Installs dependencies
+# 4. Performs initial build
+# ==============================================
+
+set -e  # Exit on error
+
+echo "=========================================="
+echo "MetaSaver Environment Setup"
+echo "=========================================="
+
+# Change to repository root
+cd "$(dirname "$0")/.."
+
+# Step 1: Generate .env files
+echo ""
+echo "[1/4] Generating .env files..."
+if [ -f "scripts/setup-env.js" ]; then
+  node scripts/setup-env.js
+  echo "✓ .env files generated"
+else
+  echo "⚠ Warning: scripts/setup-env.js not found"
+fi
+
+# Step 2: Generate .npmrc
+echo ""
+echo "[2/4] Generating .npmrc..."
+if [ -f "scripts/setup-npmrc.js" ]; then
+  node scripts/setup-npmrc.js
+  echo "✓ .npmrc generated"
+else
+  echo "⚠ Warning: scripts/setup-npmrc.js not found"
+fi
+
+# Step 3: Install dependencies
+echo ""
+echo "[3/4] Installing dependencies..."
+if command -v pnpm &> /dev/null; then
+  pnpm install
+  echo "✓ Dependencies installed"
+else
+  echo "✗ Error: pnpm is not installed. Please install pnpm first."
+  exit 1
+fi
+
+# Step 4: Build
+echo ""
+echo "[4/4] Building project..."
+if command -v pnpm &> /dev/null; then
+  pnpm run build
+  echo "✓ Build completed"
+else
+  echo "⚠ Warning: Could not run build"
+fi
+
+echo ""
+echo "=========================================="
+echo "✓ Setup completed successfully!"
+echo "=========================================="
+echo ""
+echo "Next steps:"
+echo "  - Review your .env files and update any values"
+echo "  - Run 'pnpm dev' to start development server"
+echo ""

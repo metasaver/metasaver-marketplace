@@ -1,0 +1,99 @@
+# @metasaver/{repo-name}
+
+**Architecture:** Multi-mono consumer
+
+Brief description of this consumer repository's purpose and what it does.
+
+## Overview
+
+Key features and capabilities:
+
+- Feature 1: Brief description
+- Feature 2: Brief description
+- Feature 3: Brief description
+
+**Technology Stack:**
+
+- Node.js with TypeScript
+- Express.js REST APIs
+- Prisma + PostgreSQL
+- React + Vite
+- Turborepo monorepo
+- pnpm workspaces
+
+## Quick Start
+
+```bash
+# Install dependencies and set up environment
+pnpm setup:all
+
+# Start infrastructure (PostgreSQL, Redis, etc.)
+pnpm docker:up
+
+# Run database migrations
+pnpm db:migrate
+
+# Start development server
+pnpm dev
+```
+
+The application will be available at `http://localhost:3000`.
+
+## Commands
+
+### Development
+
+```bash
+pnpm dev              # Start all services in development mode
+pnpm build            # Build all packages
+pnpm clean            # Clean build artifacts
+```
+
+### Database
+
+```bash
+pnpm db:migrate       # Run Prisma migrations
+pnpm db:seed          # Seed database with test data
+pnpm db:studio        # Open Prisma Studio
+pnpm db:reset         # Reset database (drop + migrate + seed)
+```
+
+### Quality
+
+```bash
+pnpm lint             # Lint all packages
+pnpm format           # Format code with Prettier
+pnpm type-check       # Run TypeScript type checking
+pnpm test             # Run all tests
+pnpm test:watch       # Run tests in watch mode
+```
+
+### Docker
+
+```bash
+pnpm docker:up        # Start Docker containers
+pnpm docker:down      # Stop Docker containers
+pnpm docker:logs      # View container logs
+```
+
+## Documentation
+
+- [Setup Guide](docs/SETUP.md) - Detailed setup instructions
+- [Development Guide](CLAUDE.md) - Development workflow and standards
+- [API Documentation](docs/API.md) - REST API endpoints and schemas
+
+## Project Structure
+
+```
+apps/
+├── api/              # Express.js REST API
+└── web/              # React frontend
+packages/
+├── database/         # Prisma schema and utilities
+├── shared/           # Shared utilities and types
+└── ui/               # Shared UI components
+```
+
+## License
+
+MIT

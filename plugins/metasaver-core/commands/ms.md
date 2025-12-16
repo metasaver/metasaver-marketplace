@@ -83,7 +83,7 @@ Use `/skill agent-selection` to identify the correct MetaSaver agent(s).
 | Agent/skill work | `core-claude-plugin:generic:agent-author` or `skill-author` |
 | Questions        | `core-claude-plugin:generic:code-explorer`                  |
 
-Track progress with TodoWrite throughout execution.
+Paired TDD structure: tester → impl per story. Compact context between waves. Track progress with TodoWrite throughout execution.
 
 ---
 

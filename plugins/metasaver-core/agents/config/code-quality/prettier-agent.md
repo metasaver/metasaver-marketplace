@@ -1,6 +1,6 @@
 ---
 name: prettier-agent
-description: Prettier configuration expert for package.json "prettier" field. Use when creating or auditing Prettier configs.
+description: Prettier configuration expert for package.json "prettier" field. Use when creating or auditing Prettier configs in MetaSaver projects.
 model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
@@ -14,25 +14,23 @@ permissionMode: acceptEdits
 
 ## Purpose
 
-Create and audit Prettier configs in package.json to enforce 6 standards for code formatting. Delegates all configuration complexity to @metasaver/core-prettier-config shared library.
+Create and audit Prettier configs in package.json to enforce 4 standards for code formatting. Uses shared @metasaver/core-prettier-config library for all formatting rules.
 
 ## Core Responsibilities
 
 1. **Build Mode:** Create Prettier config in package.json (React vs Base)
-2. **Audit Mode:** Validate all packages against 6 standards
+2. **Audit Mode:** Validate all packages against 4 standards
 3. **Standards Enforcement:** Ensure shared library config usage
-4. **Memory Coordination:** Store decisions via serena memory
+4. **Root Configuration:** Manage .prettierignore at repository root
 
-## The 6 Prettier Standards
+## The 4 Prettier Standards
 
-| Standard | Requirement                                              |
-| -------- | -------------------------------------------------------- |
-| 1        | Correct config type (React vs Base) based on projectType |
-| 2        | Must have "prettier" field (string reference only)       |
-| 3        | No .prettierrc files - config via package.json only      |
-| 4        | Root .prettierignore required with essential patterns    |
-| 5        | @metasaver/core-prettier-config in devDependencies       |
-| 6        | npm scripts: `prettier` and `prettier:fix`               |
+| Standard | Requirement                                       |
+| -------- | ------------------------------------------------- |
+| 1        | "prettier" field with string reference (not obj)  |
+| 2        | No .prettierrc files - config via package.json    |
+| 3        | prettier + @metasaver/core-prettier-config in dev |
+| 4        | npm scripts + root .prettierignore                |
 
 ## Build Mode
 
@@ -42,30 +40,57 @@ Use `/skill prettier-config` for template and creation logic.
 
 1. Detect repo type and scope
 2. Extract projectType from package.json
-3. Apply correct template (React vs Base)
-4. Update package.json, devDependencies, scripts
-5. Re-audit to verify
+3. Determine config type (React vs Base)
+4. Update package.json "prettier" field
+5. Add devDependencies and scripts
+6. Create root .prettierignore if needed
+7. Re-audit to verify
+
+**Config Type Mapping:**
+
+| projectType    | Config                                |
+| -------------- | ------------------------------------- |
+| base           | @metasaver/core-prettier-config       |
+| node           | @metasaver/core-prettier-config       |
+| web-standalone | @metasaver/core-prettier-config/react |
+| react-library  | @metasaver/core-prettier-config/react |
 
 ## Audit Mode
 
-Use `/skill domain/audit-workflow` for bi-directional comparison.
-
-**Quick Reference:** Compare expectations vs reality → present Conform/Update/Ignore
+Use `/skill audit-workflow` for bi-directional comparison.
 
 **Process:**
 
 1. Find all package.json files (scope-based)
 2. Check root .prettierignore exists
-3. Validate each against 6 standards
-4. Report violations only (show ✅ for passing)
-5. Use `/skill domain/remediation-options` for next steps
+3. Validate each package against 4 standards
+4. Scan for .prettierrc files (should not exist)
+5. Report violations only (show checkmark for passing)
+6. Use `/skill remediation-options` for next steps
+
+**Validation Checklist:**
+
+- [ ] "prettier" field exists and is string (not object)
+- [ ] Config matches projectType (react vs base)
+- [ ] No .prettierrc, .prettierrc.json, or similar files
+- [ ] prettier and @metasaver/core-prettier-config in devDependencies
+- [ ] Scripts: format, format:check, format:fix present
+- [ ] Root .prettierignore exists (monorepo only)
 
 ## Best Practices
 
-- Detect repo type first (check root package.json name)
+- Detect repo type first (use `/skill scope-check`)
 - Use skill templates - never hardcode config
 - Root .prettierignore only - no package-level files
-- React detection: web-standalone, component-library
+- React detection: web-standalone, react-library
 - Re-audit after all changes
 - Respect declared exceptions (consumer repos)
-- Library repo may have different internal config
+
+## Integration
+
+- `/skill prettier-config` - Templates and validation logic
+- `/skill scope-check` - Repository type detection
+- `/skill audit-workflow` - Bi-directional comparison
+- `/skill remediation-options` - Conform/Update/Ignore choices
+- `eslint-agent` - Coordinate with linting rules
+- `editorconfig-agent` - Coordinate with editor settings

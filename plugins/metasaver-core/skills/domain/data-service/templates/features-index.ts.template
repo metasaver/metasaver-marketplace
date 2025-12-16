@@ -1,0 +1,2 @@
+// Feature exports
+export * from "./{feature}/index.js";

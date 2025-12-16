@@ -1,0 +1,18 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+
+# Build outputs
+dist
+build
+.next
+.turbo
+
+# Coverage
+coverage
+
+# OS
+.DS_Store
+
+# Generated files
+*.generated.*

@@ -1,0 +1,89 @@
+# DRY Check Violation Report Format
+
+## Header
+
+🔍 DRY CHECK: Scanning [N] modified files...
+
+## Violation Entry
+
+❌ VIOLATION: [file-path]:[line-number] [signature]
+   Duplicates: @metasaver/[package]/[module].[export-name]
+   Similarity: [percentage]%
+   FIX: import { [export-name] } from '@metasaver/[package]/[module]'
+
+   [Brief 1-sentence comparison explaining why they match]
+
+## Clean Result
+
+✅ DRY CHECK PASSED
+   Files scanned: [count]
+   Signatures checked: [count]
+   No duplications found
+
+## Summary Footer (if violations exist)
+
+📊 SUMMARY:
+   Files scanned: [count]
+   Signatures checked: [count]
+   Violations: [count]
+   Clean signatures: [count]
+
+## Severity Levels
+
+Use emoji indicators based on similarity:
+
+- ❌ VIOLATION (>= 70% similarity) - Must fix
+- ⚠️  WARNING (50-69% similarity) - Review recommended
+- ℹ️  INFO (30-49% similarity) - Similar pattern exists
+
+## Example Output
+
+🔍 DRY CHECK: Scanning 5 modified files...
+
+❌ VIOLATION: apps/api/src/utils/string-helpers.ts:12 toProperCase()
+   Duplicates: @metasaver/utils/string-helpers.toProperCase()
+   Similarity: 100%
+   FIX: import { toProperCase } from '@metasaver/utils/string-helpers'
+
+   Identical implementation - both split on spaces and capitalize each word.
+
+⚠️  WARNING: apps/web/src/types/user.ts:8 interface UserProfile
+   Duplicates: @metasaver/contracts/types/user.User
+   Similarity: 65%
+   FIX: import type { User } from '@metasaver/contracts/types/user'
+
+   UserProfile has 4/6 fields matching User contract - consider extending it.
+
+ℹ️  INFO: apps/api/src/validation/email.ts:5 validateEmail()
+   Duplicates: @metasaver/utils/validation.isValidEmail()
+   Similarity: 45%
+   FIX: import { isValidEmail } from '@metasaver/utils/validation'
+
+   Similar email validation logic - review if library version meets requirements.
+
+📊 SUMMARY:
+   Files scanned: 5
+   Signatures checked: 23
+   Violations: 1
+   Warnings: 1
+   Info: 1
+   Clean signatures: 20
+
+## Field Descriptions
+
+- [file-path]: Relative path from repository root
+- [line-number]: Starting line of the signature
+- [signature]: Function/type/component name with basic signature
+- [package]: One of: utils, contracts, ui-components
+- [module]: Path within package (e.g., string-helpers, types/user)
+- [export-name]: Name of the exported item to import
+- [percentage]: Similarity score 0-100%
+- [comparison]: Brief explanation of what matches
+
+## Formatting Guidelines
+
+- Use relative paths from repo root for file references
+- Keep comparisons to 1 sentence
+- Show exact import statement to fix violation
+- Group violations by severity (❌ → ⚠️ → ℹ️)
+- Always include summary footer if any findings exist

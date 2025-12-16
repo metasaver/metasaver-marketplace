@@ -28,9 +28,9 @@ Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
 
 ## Phase 2: Requirements (HITL)
 
-**See:** `/skill requirements-phase`
+**Invoke:** `/skill requirements-phase` with mode=audit
 
-BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then drafts PRD with HITL clarification loop until complete.
+BA investigates codebase FIRST using Serena tools to discover scope, answers user questions from investigation, then drafts PRD with HITL clarification loop. Audit scope is typically self-evident from file discovery (package.json, config files, directory structure)—only ask clarification if scope is genuinely ambiguous after investigation.
 
 ---
 

@@ -1,0 +1,55 @@
+import { prisma } from "{project}-database";
+import type {
+  {Entity},
+  Create{Entity}Input,
+  Update{Entity}Input,
+} from "{project}-contracts";
+
+export interface ServiceParams {
+  filters?: Record<string, unknown>;
+  orderBy?: Record<string, "asc" | "desc">;
+}
+
+export class {Feature}Service {
+  async getAll(params: ServiceParams = {}): Promise<{Entity}[]> {
+    return prisma.{entity}.findMany({
+      where: params.filters,
+      orderBy: params.orderBy || { createdAt: "desc" },
+      include: {
+        // Add relations here if needed
+      },
+    });
+  }
+
+  async getById(id: string): Promise<{Entity} | null> {
+    return prisma.{entity}.findUnique({
+      where: { id },
+      include: {
+        // Add relations here if needed
+      },
+    });
+  }
+
+  async create(data: Create{Entity}Input): Promise<{Entity}> {
+    return prisma.{entity}.create({
+      data,
+      include: {
+        // Add relations here if needed
+      },
+    });
+  }
+
+  async update(id: string, data: Update{Entity}Input): Promise<{Entity}> {
+    return prisma.{entity}.update({
+      where: { id },
+      data,
+      include: {
+        // Add relations here if needed
+      },
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    await prisma.{entity}.delete({ where: { id } });
+  }
+}

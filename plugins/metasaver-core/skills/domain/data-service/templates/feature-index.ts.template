@@ -1,0 +1,2 @@
+export { {Feature}Service } from "./{feature}.service.js";
+export { router as {Feature}Routes } from "./{feature}.controller.js";

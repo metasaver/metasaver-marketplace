@@ -1,0 +1,62 @@
+# Extraction Patterns for DRY Check
+# Use with Grep tool to extract signatures from TypeScript/JavaScript files
+
+## Function Signatures
+
+# Named function exports
+export\s+function\s+(\w+)\s*\(
+
+# Arrow function exports
+export\s+const\s+(\w+)\s*=\s*\(
+
+# Async functions
+export\s+async\s+function\s+(\w+)\s*\(
+
+## Type Definitions
+
+# Type aliases
+export\s+type\s+(\w+)(<[^>]+>)?\s*=
+
+# Interfaces
+export\s+interface\s+(\w+)(<[^>]+>)?\s*\{
+
+# Enums
+export\s+enum\s+(\w+)\s*\{
+
+## Zod Schemas
+
+# Schema definitions
+export\s+const\s+(\w+Schema)\s*=\s*z\.
+
+# Inferred types from schemas
+export\s+type\s+(\w+)\s*=\s*z\.infer<
+
+## React Components
+
+# Function components
+export\s+function\s+([A-Z]\w+)\s*\(.*:\s*React\.FC
+
+# Const components with FC type
+export\s+const\s+([A-Z]\w+):\s*React\.FC
+
+# Const components with JSX return
+export\s+const\s+([A-Z]\w+)\s*=\s*\([^)]*\)\s*=>\s*\(?\s*<
+
+## Constants and Utilities
+
+# Exported constants
+export\s+const\s+([A-Z_]+)\s*=
+
+# Class exports
+export\s+class\s+(\w+)
+
+## Usage Examples
+
+# Extract all function names from a file:
+# grep -oP 'export\s+(function|const)\s+\K\w+(?=\s*[=(])' file.ts
+
+# Extract all type names:
+# grep -oP 'export\s+(type|interface)\s+\K\w+' file.ts
+
+# Extract React component names:
+# grep -oP 'export\s+(function|const)\s+\K[A-Z]\w+(?=\s*[:(])' file.tsx

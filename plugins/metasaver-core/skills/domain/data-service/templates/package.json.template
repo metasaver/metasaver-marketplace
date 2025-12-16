@@ -1,0 +1,47 @@
+{
+  "name": "@metasaver/{project}-service",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "{Description} data service package",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:tsc": "tsc --noEmit",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "test:unit": "vitest run"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.1.2",
+    "@metasaver/core-service-utils": "^1.x.x",
+    "{project}-contracts": "workspace:*",
+    "{project}-database": "workspace:*"
+  },
+  "devDependencies": {
+    "@metasaver/core-typescript-config": "^1.x.x",
+    "@metasaver/core-eslint-config": "^1.x.x",
+    "@metasaver/core-prettier-config": "^1.x.x",
+    "@types/express": "^4.17.25",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3",
+    "tsx": "^4.19.2",
+    "vitest": "^3.0.5"
+  },
+  "metasaver": {
+    "projectType": "service"
+  }
+}

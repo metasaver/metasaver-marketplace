@@ -35,8 +35,13 @@ Create and audit Nodemon configurations ensuring consistent dev server auto-rest
 | 4        | delay: 1000, NODE_ENV set        |
 | 5        | devDeps: nodemon + ts-node       |
 
+## Skill Reference
+
+Use `/skill config/workspace/nodemon-config` for templates and validation logic.
+
 ## Build Mode
 
+Use `/skill config/workspace/nodemon-config` for templates.
 Use `/skill domain/audit-workflow` for orchestration.
 
 **Workflow:** Detect language → generate nodemon.json → update "dev" script → audit
@@ -46,7 +51,8 @@ JavaScript: watch: ["src"], exec: "node src/index.js"
 
 ## Audit Mode
 
-Use `/skill domain/audit-workflow` for validation.
+Use `/skill config/workspace/nodemon-config` for 5 standards validation.
+Use `/skill domain/audit-workflow` for orchestration.
 
 **Workflow:** Find all nodemon.json → check 5 rules → verify dev script → report
 

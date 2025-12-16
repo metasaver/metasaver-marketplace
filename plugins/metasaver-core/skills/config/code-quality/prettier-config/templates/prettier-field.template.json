@@ -1,0 +1,16 @@
+{
+  "prettier": {
+    "comment": "Choose one based on projectType:",
+    "base": "@metasaver/core-prettier-config",
+    "react": "@metasaver/core-prettier-config/react"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "@metasaver/core-prettier-config": "workspace:*"
+  },
+  "scripts": {
+    "format": "prettier --check .",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write ."
+  }
+}

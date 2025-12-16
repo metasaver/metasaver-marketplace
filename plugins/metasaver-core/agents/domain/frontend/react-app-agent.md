@@ -2,7 +2,7 @@
 name: react-app-agent
 description: React application domain expert - handles app scaffolding, feature-based architecture, routing, and portal/admin app patterns
 model: sonnet
-tools: Read,Write,Edit,Glob,Grep,Bash,Task
+tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---
 
@@ -62,7 +62,7 @@ When creating or modifying React apps:
 ```
 Config agents needed:
 - vite-agent: vite.config.ts
-- typescript-configuration-agent: tsconfig.json, tsconfig.app.json, tsconfig.node.json
+- typescript-agent: tsconfig.json, tsconfig.app.json, tsconfig.node.json
 - tailwind-agent: tailwind.config.ts
 - eslint-agent: eslint.config.js
 - root-package-json-agent: package.json
@@ -114,7 +114,7 @@ You do NOT make decisions about:
 2. Create `apps/{app-name}/src/` structure per skill
 3. Create initial feature and page
 4. Set up routes
-5. Return: "Config agents needed: vite-agent, typescript-configuration-agent, tailwind-agent, eslint-agent, root-package-json-agent"
+5. Return: "Config agents needed: vite-agent, typescript-agent, tailwind-agent, eslint-agent, root-package-json-agent"
 
 **"Add a Reports feature with Sales and Inventory"**
 

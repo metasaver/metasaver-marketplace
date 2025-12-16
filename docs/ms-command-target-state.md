@@ -173,9 +173,19 @@ sequenceDiagram
         Note over U,IA: Innovate Phase (Score ≥30 only)
         MS->>U: Want to innovate?
         U->>MS: Yes
-        MS->>IA: Suggest improvements
-        IA-->>U: Numbered list:<br/>1. Add caching (High/Low)<br/>2. Add rate limiting (Med/Med)<br/>3. Add observability (High/Med)
-        U->>MS: 1:yes, 2:no, 3:yes
+        MS->>IA: Analyze PRD
+        IA-->>MS: Structured innovations (JSON)
+        loop For each innovation
+            MS->>U: 1-pager summary + AskUserQuestion<br/>(Implement / Skip / More Details)
+            alt Implement
+                Note over MS: Add to selections
+            else Skip
+                Note over MS: Continue to next
+            else More Details
+                MS->>U: Full explanation
+                MS->>U: AskUserQuestion (Implement/Skip)
+            end
+        end
         MS->>BA: Update PRD with selections
     end
 

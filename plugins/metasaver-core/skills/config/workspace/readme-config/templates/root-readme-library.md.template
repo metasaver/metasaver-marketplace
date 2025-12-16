@@ -1,0 +1,199 @@
+# @metasaver/multi-mono
+
+**Architecture:** Multi-mono producer library
+
+Shared packages and utilities for MetaSaver consumer applications. This library provides reusable components, services, and configurations consumed by consumer repositories via pnpm workspace protocol.
+
+## Purpose
+
+This is a **producer library** in the MetaSaver multi-mono architecture:
+
+- **Produces:** Shared packages consumed by consumer repos
+- **Consumes:** Nothing (standalone library)
+- **Integration:** Consumer repos use `workspace:*` protocol to depend on these packages
+
+## Packages
+
+### Core Packages
+
+#### `@metasaver/core`
+
+Core utilities and business logic used across all applications.
+
+**Features:**
+
+- Common types and interfaces
+- Shared business logic
+- Utility functions
+- Constants and enums
+
+#### `@metasaver/api-client`
+
+HTTP client for MetaSaver REST APIs with type-safe request/response handling.
+
+**Features:**
+
+- Type-safe API methods
+- Error handling and retry logic
+- Authentication token management
+- Request/response interceptors
+
+### Shared Packages
+
+#### `@metasaver/ui-components`
+
+Reusable React components with Tailwind CSS styling.
+
+**Features:**
+
+- shadcn/ui based components
+- TypeScript prop types
+- Accessibility compliance
+- Storybook documentation
+
+#### `@metasaver/database`
+
+Shared Prisma schema and database utilities.
+
+**Features:**
+
+- Prisma schema definitions
+- Database connection management
+- Query helpers and utilities
+- Migration tooling
+
+#### `@metasaver/config`
+
+Shared configuration files (ESLint, TypeScript, Prettier, etc.).
+
+**Features:**
+
+- ESLint flat config presets
+- TypeScript configuration bases
+- Prettier configuration
+- Build tool configurations
+
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run all tests
+pnpm test
+
+# Run type checking
+pnpm type-check
+
+# Lint all packages
+pnpm lint
+```
+
+## Integration
+
+Consumer repositories add library packages to their `package.json` using the `workspace:*` protocol:
+
+```json
+{
+  "name": "@metasaver/consumer-app",
+  "dependencies": {
+    "@metasaver/core": "workspace:*",
+    "@metasaver/api-client": "workspace:*",
+    "@metasaver/ui-components": "workspace:*",
+    "@metasaver/database": "workspace:*"
+  }
+}
+```
+
+This ensures consumer repos always use the latest version from the monorepo.
+
+### Multi-Mono Architecture
+
+```
+@metasaver/multi-mono (this repo - producer)
+├── packages/core
+├── packages/api-client
+├── packages/ui-components
+└── packages/database
+
+@metasaver/consumer-app (consumer repo)
+├── apps/api
+├── apps/web
+└── packages/ (workspace:* dependencies to multi-mono)
+```
+
+## Commands
+
+### Build
+
+```bash
+pnpm build            # Build all packages
+pnpm build:packages   # Build only packages (no root)
+pnpm clean            # Clean build artifacts
+```
+
+### Test
+
+```bash
+pnpm test             # Run all tests
+pnpm test:watch       # Run tests in watch mode
+pnpm test:coverage    # Run tests with coverage
+```
+
+### Quality
+
+```bash
+pnpm lint             # Lint all packages
+pnpm format           # Format code with Prettier
+pnpm type-check       # Run TypeScript type checking
+```
+
+### Development
+
+```bash
+pnpm dev              # Watch mode for all packages
+pnpm storybook        # Start Storybook (if applicable)
+```
+
+## Development Workflow
+
+1. Make changes to packages
+2. Run `pnpm build` to build changes
+3. Consumer repos automatically get updates via `workspace:*`
+4. Run tests: `pnpm test`
+5. Commit and push changes
+
+## Documentation
+
+- [Package Development Guide](docs/PACKAGES.md) - How to develop new packages
+- [Testing Guide](docs/TESTING.md) - Testing standards and practices
+- [Publishing Guide](docs/PUBLISHING.md) - How to publish packages
+
+## Package Structure
+
+Each package follows this structure:
+
+```
+packages/{package-name}/
+├── src/
+│   ├── index.ts      # Public API exports
+│   └── ...
+├── tests/
+│   └── ...
+├── package.json
+├── tsconfig.json
+└── README.md         # Package-specific documentation
+```
+
+## Requirements
+
+- Node.js >=20.0.0
+- pnpm >=9.0.0
+- TypeScript >=5.0.0
+
+## License
+
+MIT

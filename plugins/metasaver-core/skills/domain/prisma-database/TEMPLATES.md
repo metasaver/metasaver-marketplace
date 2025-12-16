@@ -290,7 +290,7 @@ cp templates/schema.prisma.template \
 cp templates/client.ts.template \
    packages/database/{project}-database/src/client.ts
 
-cp templates/types-index.ts.template \
+cp templates/types.ts.template \
    packages/database/{project}-database/src/types.ts
 
 cp templates/index.ts.template \

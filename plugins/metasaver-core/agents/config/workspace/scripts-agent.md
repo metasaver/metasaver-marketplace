@@ -24,30 +24,29 @@ Create and audit /scripts directory ensuring setup automation, cross-platform su
 
 ## Repository Type Detection
 
-Use `/skill scope-check` if not provided.
-
-**Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
+Use `/skill scope-check` if not provided. Library = `@metasaver/multi-mono`, Consumer = all other repos.
 
 ## The 4 /scripts Standards
 
-| Rule | Requirement            | Details                                                                                                               |
-| ---- | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| 1    | Setup scripts          | setup-env.js, setup-npmrc.js, clean-and-build.sh (consumer adds: back-to-prod.sh, use-local-packages.sh, killport.sh) |
-| 2    | Cross-platform support | Use `path` module (require("path")), no hardcoded paths or shell-specific syntax                                      |
-| 3    | Error handling         | try-catch, console.log feedback, process.exit(1) on errors                                                            |
-| 4    | Documentation          | Shebang (#!/usr/bin/env node), JSDoc comments, usage examples                                                         |
+Use `/skill scripts-config` for complete standards documentation and templates.
+
+| Rule | Requirement            | Details                                                                    |
+| ---- | ---------------------- | -------------------------------------------------------------------------- |
+| 1    | Setup scripts          | setup-env.js, setup-npmrc.js, clean-and-build.sh (see skill for full list) |
+| 2    | Cross-platform support | Use `path` module, no hardcoded paths or shell-specific syntax             |
+| 3    | Error handling         | try-catch, console.log feedback, process.exit(1) on errors                 |
+| 4    | Documentation          | Shebang, JSDoc comments, usage examples, scripts/README.md                 |
 
 ## Build Mode
-
-Use `/skill scripts-templates` for implementations and best practices.
 
 **Process:**
 
 1. Check if scripts/ directory exists
 2. If not, create directory
-3. Generate standard setup scripts (setup-env.js, setup-npmrc.js)
+3. Use `/skill scripts-config` templates for standard scripts
 4. Create scripts/README.md documenting each script
-5. Re-audit to verify compliance
+5. Set executable permissions (chmod +x for .sh files)
+6. Re-audit to verify compliance
 
 **Key Scripts:**
 
@@ -60,18 +59,15 @@ Use `/skill scripts-templates` for implementations and best practices.
 
 ## Audit Mode
 
-Use `/skill domain/audit-workflow` for bi-directional comparison.
+Use `/skill audit-workflow` for bi-directional comparison.
 
 **Process:**
 
 1. Detect repository type (library vs consumer)
 2. Check /scripts directory exists
-3. Validate required scripts present (Rule 1)
-4. Validate cross-platform support (Rule 2)
-5. Validate error handling (Rule 3)
-6. Validate documentation (Rule 4)
-7. Report violations only
-8. Present remediation options (Conform/Ignore/Update)
+3. Use `/skill scripts-config` to validate against 4 standards
+4. Report violations only
+5. Present remediation options (Conform/Ignore/Update)
 
 ## Best Practices
 
@@ -80,3 +76,4 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 3. Cross-platform CRITICAL - Always use `path` module for files
 4. Error handling mandatory - Every script must handle errors gracefully
 5. Documentation required - JSDoc and README.md are mandatory
+6. Reference `/skill scripts-config` for all template implementations

@@ -20,68 +20,68 @@ Create valid .editorconfig files and audit existing configs against 4 standards.
 
 1. **Build Mode:** Create .editorconfig at root with standard settings
 2. **Audit Mode:** Validate against 4 standards
-3. **Standards Enforcement:** Ensure root-only placement, no package-level overrides
-4. **Coordination:** Share decisions via memory
+3. **Standards Enforcement:** Ensure root-only placement, consistent formatting
+4. **Coordination:** Share decisions with prettier-agent and eslint-agent
 
-## The 4 EditorConfig Standards
+## Repository Type Detection
 
-| Standard | Requirement                                                                          |
-| -------- | ------------------------------------------------------------------------------------ |
-| Rule 1   | `root = true` at file start                                                          |
-| Rule 2   | Universal settings: `[*]` with charset, end_of_line, final_newline, trim_whitespace  |
-| Rule 3   | Language-specific: JS/TS (2 spaces), Markdown (preserve trailing), Python (4 spaces) |
-| Rule 4   | Root location only - NO package-level .editorconfig files                            |
+**Scope:** If not provided, use `/skill scope-check` to determine repository type.
+
+## Skill Reference
+
+| Skill                                            | Purpose                                  |
+| ------------------------------------------------ | ---------------------------------------- |
+| `/skill config/code-quality/editorconfig-config` | Template, 4 standards, validation        |
+| `/skill domain/audit-workflow`                   | Bi-directional comparison workflow       |
+| `/skill domain/remediation-options`              | Conform/Update/Ignore decision framework |
 
 ## Build Mode
 
-Use `/skill editorconfig-config` for template and creation workflow.
-
-**Quick Reference:** Check if exists → generate from template → audit → verify
-
 1. Check if .editorconfig exists at root
-2. If missing, generate from skill template
-3. Run audit mode to verify
-4. Report status via memory
+2. Use template from skill if missing
+3. Write to repository root
+4. Audit to verify
+5. Report completion
 
 ## Audit Mode
 
-Use `/skill domain/audit-workflow` for bi-directional comparison logic.
-
-**Quick Reference:** Check expectations vs reality → present Conform/Update/Ignore options
-
-**Process:**
-
-1. Load standard from template
-2. Discover repository reality (check root + scan package-level)
-3. Compare: missing/extra/matching
-4. Validate against 4 rules
-5. Present remediation options
-6. Re-audit after fixes
-
-**Violations to check:**
-
-- Missing root `= true`
-- Incomplete universal settings `[*]`
-- Wrong language indentation
-- Unauthorized package-level files
-
-## Remediation Options
-
-Use `/skill domain/remediation-options` for standard 3-option workflow.
-
-**Quick Reference:** Conform (fix) | Ignore (skip) | Update (change standard)
-
-- Missing .editorconfig → Conform (create) / Ignore / Update
-- Rule violations → Conform (fix) / Ignore / Update
-- Package-level files → Conform (remove) / Ignore / Update
+1. Load standard from skill
+2. Check root + scan packages
+3. Validate 4 rules (root declaration, universal settings, language rules, root placement)
+4. Present Conform/Update/Ignore options
+5. Apply fixes if requested
+6. Re-audit to confirm
 
 ## Best Practices
 
-- Detect repo type first (library vs consumer)
-- Root only - EditorConfig at repository root only
-- Use templates from skill, never inline
-- Verify with audit after creating
-- Remove package-level files immediately
-- Universal settings first, then language overrides
-- Respect documented exceptions (consumer repos)
-- Library repos may have intentional differences
+1. Detect repository type first (library vs consumer)
+2. Place .editorconfig at repository root only
+3. Use template from skill (single source of truth)
+4. Verify with audit after creating
+5. Respect documented exceptions in package.json
+6. Coordinate with prettier-agent and eslint-agent
+
+## Examples
+
+**Build Mode:**
+
+```
+Input: "Create .editorconfig"
+→ Check root for existing file
+→ Use template from skill
+→ Write .editorconfig
+→ Audit to verify
+Output: "✓ Created .editorconfig at root (passes all 4 standards)"
+```
+
+**Audit Mode:**
+
+```
+Input: "Audit .editorconfig"
+→ Load template standard
+→ Check root file + scan packages
+→ Compare against 4 rules
+→ Found: Missing root declaration, package-level config in packages/app/
+→ Present: Conform (fix) | Ignore | Update
+Output: "2 violations found. Recommend: Conform"
+```

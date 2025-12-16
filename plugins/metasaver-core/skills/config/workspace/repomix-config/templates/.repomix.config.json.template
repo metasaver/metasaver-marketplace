@@ -1,0 +1,29 @@
+{
+  "output": {
+    "filePath": ".repomix-output.txt",
+    "style": "xml",
+    "showLineNumbers": true,
+    "compress": true
+  },
+  "include": [
+    "{{INCLUDE_PATTERNS}}"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "node_modules/**",
+      ".git/**",
+      "dist/**",
+      "build/**",
+      ".turbo/**",
+      ".next/**",
+      "coverage/**",
+      ".repomix-output.*",
+      "*.log"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  }
+}

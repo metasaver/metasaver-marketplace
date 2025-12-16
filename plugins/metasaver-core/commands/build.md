@@ -30,27 +30,35 @@ Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
 
 **See:** `/skill requirements-phase`
 
-BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then drafts PRD with HITL clarification loop until complete.
+BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then completes understanding with HITL clarification loop.
 
-**No approval here**—just Q&A to gather requirements. Approval happens after design.
+**Complexity Routing (after BA completes understanding):**
 
-Creates project folder: `docs/projects/{yyyymmdd}-{name}/prd.md`
+- **< 15**: SKIP PRD, Vibe Check, Innovate → go straight to Design
+- **≥ 15**: Write PRD file to `docs/projects/{yyyymmdd}-{name}/prd.md` → proceed to Vibe Check
 
 ---
 
-## Phase 3: PRD Complete + Innovate (HITL STOP)
+## Phase 3: Vibe Check (≥15 only)
+
+**See:** `/skill vibe-check`
+
+Single vibe check on PRD. If fails, return to BA to revise PRD.
+
+**SKIPPED for complexity < 15.**
+
+---
+
+## Phase 4: Innovate (≥30 only)
 
 **See:** `/skill innovate-phase`
 
-1. Write PRD file, link to user
-2. Ask: "Want to Innovate?" (HARD STOP)
-3. If yes: innovation-advisor → user selects → BA updates PRD
+1. Ask: "Want to Innovate?" (HARD STOP)
+2. If yes: innovation-advisor returns structured innovations
+3. For EACH innovation: show 1-pager, AskUserQuestion (Implement/Skip/More Details)
+4. BA updates PRD with selected innovations
 
----
-
-## Phase 4: Vibe Check
-
-Single vibe check on final PRD. If fails, return to BA to revise.
+**SKIPPED for complexity < 30.**
 
 ---
 
@@ -58,24 +66,28 @@ Single vibe check on final PRD. If fails, return to BA to revise.
 
 **See:** `/skill design-phase`
 
-1. BA extracts user stories (following granularity guidelines—NOT 1 per package!)
-2. Architect annotates story files with implementation details
-3. PM creates execution plan with parallel waves
+1. BA extracts user stories (following granularity guidelines)
+2. Architect discovers libraries/components in multi-mono BEFORE annotations
+3. Architect annotates story files with implementation details
+4. PM creates execution plan with parallel waves
 
 ---
 
-## Phase 6: Plan Approval
+## Phase 6: Human Validation (HITL)
 
-**See:** `/skill plan-approval`
+**ALWAYS happens AFTER PM, BEFORE Execution.**
 
-User sees the **complete picture**:
+**Light Validation (< 15):**
 
-- PRD (requirements)
-- User stories (work breakdown)
-- Architecture notes (on each story)
-- Execution plan (waves, parallelization)
+- BA presents: approach summary, affected files, execution plan overview
+- User responds: "proceed" / "looks good" → Start Execution
+- User responds: "wait" / changes requested → Return to BA
 
-Then approves or requests changes. This is the single approval point.
+**Full Validation (≥ 15):**
+
+- User reviews: PRD, user stories, architecture annotations, execution plan
+- User responds: Approved → Start Execution
+- User responds: Changes requested → Return to BA
 
 ---
 
@@ -83,15 +95,39 @@ Then approves or requests changes. This is the single approval point.
 
 **See:** `/skill execution-phase`
 
-PM spawns workers → Workers read story files → PM updates story status
+Paired TDD structure per story: tester agent runs BEFORE implementation agent. PM spawns workers per wave → persist state to story files → compact context before each wave → PM updates story status.
+
+Includes Production Check (build, lint, test, verify AC checkboxes pass) after each wave.
 
 ---
 
-## Phase 8: Validation
+## Phase 8: Standards Audit
 
-**See:** `/skill validation-phase`
+**ALWAYS happens AFTER Execution passes, BEFORE Report.**
 
-Code quality checks scaled by change size.
+**See:** `/skill agent-selection` for config agent mapping, `/skill structure-check`, `/skill dry-check`
+
+**Three checks:**
+
+1. **Config Agents (PARALLEL)**: Spawn relevant config agents based on files modified
+   - Use `/skill agent-selection` to find correct agent for each config file
+   - All agents run in audit mode
+
+2. **Structure Check**: Validate files in correct locations per domain skills
+   - Use `/skill structure-check`
+   - React: UI in /features, light /pages
+   - API: Routes in /routes, logic in /services
+   - Database: Schema in /prisma, types exported
+
+3. **DRY Check**: Scan new code against multi-mono shared libraries
+   - Use `/skill dry-check`
+   - Check @metasaver/core-utils for duplicate helpers
+   - Check @metasaver/core-components for duplicate components
+   - Check @metasaver/core-service-utils for duplicate patterns
+
+**On Failure:**
+
+- Report violations to workers → Apply fixes → Re-run Production Check → Re-run Standards Audit → Loop until pass
 
 ---
 
@@ -139,11 +175,14 @@ docs/projects/{yyyymmdd}-{name}/
 ## Examples
 
 ```bash
-/build "add logging to service"
-→ BA (Q&A) → PRD → [Innovate?] → Vibe Check → Design (stories + annotate + plan) → Plan Approval → workers
+/build "add logging to service" (complexity: 8)
+→ Analysis → BA (Q&A) → SKIP PRD/Vibe/Innovate → Design → Light Validation → Execution → Standards Audit → Report
 
-/build "multi-tenant SaaS"
-→ BA (opus Q&A) → PRD → Innovate → Vibe Check → Design → Plan Approval → waves → Report
+/build "refactor auth module" (complexity: 22)
+→ Analysis → BA (Q&A) → PRD → Vibe Check → Design → Full Validation → Execution → Standards Audit → Report
+
+/build "multi-tenant SaaS" (complexity: 45)
+→ Analysis → BA (opus Q&A) → PRD → Vibe Check → [Innovate?] → Design → Full Validation → waves → Standards Audit → Report
 ```
 
 ---
@@ -152,12 +191,21 @@ docs/projects/{yyyymmdd}-{name}/
 
 1. ALWAYS run Analysis phase first—never skip to answer user questions
 2. Run analysis skills in PARALLEL (single message, 3 Task calls)
-3. BA addresses user questions in Requirements HITL (Q&A only, no approval)
-4. BA creates PRD with HITL clarification loop
-5. Write PRD file and link before asking about Innovate
-6. Innovate is OPTIONAL (ask user, hard stop)
-7. Single Vibe Check after PRD finalized
-8. Design phase extracts stories, adds architecture, creates execution plan
-9. Plan Approval happens AFTER design—user sees PRD + stories + plan together
-10. BA must follow Story Granularity Guidelines (NOT 1 per package!)
-11. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+3. BA addresses user questions in Requirements HITL (Q&A only)
+4. Complexity routing after Requirements:
+   - < 15: SKIP PRD, Vibe Check, Innovate → go straight to Design
+   - ≥ 15: Write PRD → Vibe Check → Design
+   - ≥ 30: Write PRD → Vibe Check → [Innovate?] → Design
+5. Vibe Check validates PRD (only for ≥15) BEFORE Innovate
+6. Innovate is OPTIONAL (only for ≥30, ask user, hard stop)
+7. Design phase: BA extracts stories, Architect discovers libraries BEFORE annotations, Architect annotates, PM creates plan
+8. Human Validation happens AFTER PM, BEFORE Execution:
+   - < 15: Light validation ("Proceed?")
+   - ≥ 15: Full validation (review PRD + stories + plan)
+9. Execution includes Production Check (build/lint/test) after each wave
+10. Standards Audit happens AFTER Execution passes, BEFORE Report:
+    - Config agents (parallel)
+    - Structure check (files in right places)
+    - DRY check (vs multi-mono libraries)
+11. BA must follow Story Granularity Guidelines
+12. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

@@ -36,7 +36,8 @@ This way the user sees the full picture before approving.
 
 2. **Spawn BA agent (draft mode):**
    - Analyze prompt and context
-   - Draft initial PRD
+   - **For audits:** Investigate codebase first using Serena tools (read package.json, config files, directory structure), discover scope, classify repo type from `metasaver.projectType` in package.json
+   - Draft initial PRD based on discoveries
    - Identify questions/uncertainties
 
 3. **HITL Clarification Loop:**
@@ -47,6 +48,8 @@ This way the user sees the full picture before approving.
      → User provides answers
      → BA incorporates answers, may have follow-up questions
    ```
+
+   **For audits:** Only enter this loop if scope is genuinely ambiguous after codebase investigation. Skip if scope is clear from file discovery.
 
 4. **BA completes PRD:**
    - All questions resolved
@@ -61,6 +64,18 @@ This way the user sees the full picture before approving.
 | Mode  | Input                     | Output                |
 | ----- | ------------------------- | --------------------- |
 | draft | prompt, complexity, scope | PRD draft + questions |
+
+---
+
+## Audit Mode
+
+For audit workflows, BA MUST prioritize codebase investigation before asking clarification questions:
+
+- **Investigation First:** Use Serena tools to read package.json, config files (eslint, prettier, vite, etc.), and directory structure
+- **Discover Scope:** Identify project type, dependencies, build tools, and configuration state
+- **Classify Repos:** Determine if repo is consumer or library using `metasaver.projectType` field in package.json
+- **Minimize Questions:** Only ask clarification questions if scope is genuinely ambiguous after investigation
+- **Assumption:** For audits, scope is often self-evident from file discovery; unnecessary questions waste time
 
 ---
 

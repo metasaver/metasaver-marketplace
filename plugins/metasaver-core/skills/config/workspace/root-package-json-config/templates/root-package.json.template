@@ -1,0 +1,129 @@
+{
+  "name": "@metasaver/{{PROJECT_NAME}}",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "metasaver": {
+    "projectType": "turborepo-monorepo",
+    "applicationType": "consumer"
+  },
+  "description": "{{PROJECT_DESCRIPTION}}",
+  "keywords": [
+    "{{PROJECT_NAME}}",
+    "typescript",
+    "turborepo",
+    "monorepo"
+  ],
+  "homepage": "https://github.com/metasaver/{{PROJECT_NAME}}",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metasaver/{{PROJECT_NAME}}.git"
+  },
+  "license": "UNLICENSED",
+  "author": "Jim Nightingale <info@metasaver.com>",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix --max-warnings=0"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "bash -c 'pnpm lint:tsc'"
+    ]
+  },
+  "prettier": "@metasaver/core-prettier-config",
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "use-sync-external-store": "1.5.0",
+      "tmp": ">=0.2.4",
+      "esbuild": "0.27.1"
+    }
+  },
+  "scripts": {
+    "cbd": "pnpm clean-and-build && pnpm dev",
+    "qbp": "bash scripts/qbp.sh",
+    "clean-and-build": "bash scripts/clean-and-build.sh",
+    "clean": "turbo run clean && turbo run clean:node_modules && rm -rf node_modules pnpm-lock.yaml .turbo/cache",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "-----Docker--------------------------------": "-------------------------------------",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "-----Database--------------------------------": "-------------------------------------",
+    "db:generate": "turbo run db:generate",
+    "db:migrate": "turbo run db:migrate",
+    "db:seed": "turbo run db:seed",
+    "db:studio": "turbo run db:studio",
+    "db:reset": "turbo run db:reset",
+    "-----Lint/Format--------------------------------": "-------------------------------------",
+    "lint": "eslint . && turbo run lint",
+    "lint:fix": "eslint . --fix && turbo run lint:fix",
+    "lint:tsc": "turbo run lint:tsc",
+    "prettier": "prettier . --check && turbo run prettier",
+    "prettier:fix": "prettier . --write && turbo run prettier:fix",
+    "-----Test--------------------------------": "-------------------------------------",
+    "test:unit": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:watch": "turbo run test:watch",
+    "-----Local/Prod Registry--------------------------------": "-------------------------------------",
+    "use:local": "bash scripts/use-local-packages.sh",
+    "use:prod": "bash scripts/back-to-prod.sh",
+    "-----Setup------------------------------": "-------------------------------------",
+    "setup:npmrc": "node scripts/setup-npmrc.js",
+    "setup:env": "node scripts/setup-env.js",
+    "setup:all": "pnpm setup:env && pnpm setup:npmrc",
+    "-----Fixes--------------------------------": "-------------------------------------",
+    "fix:esbuild": "node -e \"const p=require.resolve('esbuild');require(require('path').join(require('path').dirname(require('path').dirname(p)),'install.js'))\""
+  },
+  "dependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.50.0",
+    "@rollup/rollup-win32-x64-msvc": "^4.50.0",
+    "@types/node": "^22.10.5",
+    "graceful-fs": "^4.2.11",
+    "lodash": "^4.17.21",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "turbo-linux-64": "2.6.1",
+    "turbo-windows-64": "2.6.1",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@esbuild/linux-x64": "0.27.1",
+    "@esbuild/win32-x64": "0.27.1",
+    "@metasaver/core-eslint-config": "latest",
+    "@metasaver/core-prettier-config": "latest",
+    "@rollup/rollup-linux-x64-gnu": "^4.50.0",
+    "@rollup/rollup-win32-x64-msvc": "^4.50.0",
+    "@swc/core-linux-x64-gnu": "^1.13.5",
+    "@swc/core-win32-x64-msvc": "^1.13.5",
+    "@types/lodash": "^4.17.13",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^10.0.0",
+    "fta-cli": "^2.0.1",
+    "glob": "^11.0.0",
+    "globals": "^15.14.0",
+    "handlebars": "^4.7.8",
+    "husky": "^9.1.7",
+    "inquirer": "^12.3.1",
+    "inquirer-directory": "^2.2.0",
+    "inquirer-recursive": "^0.0.7",
+    "lint-staged": "^16.1.2",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.4.2",
+    "sort-package-json": "^2.10.0",
+    "turbo": "^2.6.1",
+    "typescript": "~5.6.2"
+  }
+}

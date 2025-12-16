@@ -1,98 +1,158 @@
 ---
 name: execution-phase
-description: Gantt-style parallel execution of domain worker agents with dependency respect. Spawns up to 10 concurrent agents, waits for ANY task completion, immediately starts next ready task. Use when orchestrating parallel implementation workflows.
+description: TDD-paired Gantt-style execution with compact waves. Each story gets tester agent (writes tests) BEFORE implementation agent (passes tests). Compact before each wave to avoid context exhaustion. Respects dependencies, spawns up to 10 concurrent agents. Use when orchestrating parallel implementation workflows with test-first discipline.
 ---
 
-# Execution Phase - Domain Worker Orchestration
+# Execution Phase - TDD-Paired Domain Worker Orchestration
 
 > **ROOT AGENT ONLY** - Called by commands only, never by subagents.
 
-**Purpose:** Execute implementation tasks via domain worker agents
+**Purpose:** Execute implementation tasks via TDD-paired domain worker agents
 **Trigger:** After design-phase completes
-**Input:** Execution plan with task dependencies
-**Output:** Collection of all worker outputs
+**Input:** Execution plan with task dependencies, wave batching
+**Output:** Collection of all worker outputs with test coverage
 
 ---
 
 ## Workflow Steps
 
-1. **Load execution plan** from design-phase (tasks + dependencies + story files)
-2. **Initialize state:** pending tasks, running tasks (max 10), completed set
-3. **Loop:** While pending or running tasks exist:
-   - **Start ready tasks** (dependencies met, under limit):
-     - Update story file: Status → 🔄 In Progress
-     - Update story file: Assignee → {agent-name}
-     - Spawn worker agent with story file path
-   - Wait for ANY task to complete (not all)
-   - **On task completion:**
-     - Update story file: Status → ✅ Complete
-     - Update story file: Completion section with files modified
-     - Update story file: Verified → yes (if validation passes)
-     - Record result, add to completed set
-   - Immediately start next ready task
-4. **On task failure:** Log error, update story status to ❌ Failed, continue (validation phase handles retries)
-5. **Return:** All results with status, files modified, errors, story completion tracking
+### Wave-Based Execution with TDD Pairing
+
+1. **Load execution plan** from design-phase (tasks + dependencies + story files, grouped into waves)
+
+2. **For each wave:**
+
+   a. **Persist progress:** Update all story files with current state (AC checkboxes, completion notes)
+
+   b. **Compact context:** Run `/compact` to free context before spawning new agents
+
+   c. **Spawn paired agents (sequential per story, parallel across stories):**
+   - For each story in wave:
+     1. **Tester phase:** Spawn tester agent (unit-test, integration-test, or e2e-test)
+        - Read story file → extract acceptance criteria
+        - Write test file (mock passing & failing cases)
+        - Update story file: Status → 🧪 Testing
+        - Update story file: Assignee → {tester-agent}
+     2. **Implementation phase:** Spawn implementation agent (coder, backend-dev, react-component, etc.)
+        - Read story file (includes test file path)
+        - Implement features to pass tests
+        - Update story file: Status → 🔄 Implementing
+        - Update story file: Assignee → {implementation-agent}
+
+   d. **Run pairs sequentially:** Tester → Implementation (one story pair at a time within max 10 concurrent limit)
+
+   e. **Wait for ALL stories in wave to complete** before advancing to next wave
+
+3. **On task completion (tester or implementation):**
+   - Update story file: Status → ✅ Complete
+   - Update story file: Completion section with files modified
+   - Update story file: Verified → yes (if validation passes)
+   - Record result, add to completed set
+
+4. **Production verification check:**
+   - Confirm tests still pass (run test file)
+   - Confirm AC checkboxes checked in story file
+   - Mark story ready for validation phase
+
+5. **On task failure:** Log error, update story status to ❌ Failed, continue (validation phase handles retries)
+
+6. **Return:** All results with status, files modified, errors, test coverage, story completion tracking
 
 ---
 
 ## Execution Logic
 
 ```
-pending = [...tasks]
-running = {} // taskId -> Promise
+waves = [[Story US-001], [Story US-002, US-003]]
 completed = new Set()
-MAX_CONCURRENT = 10
 
-while (pending.length || running.size > 0):
-  // Start ready tasks
-  while (running.size < 10):
-    ready = pending.find(t => t.deps all in completed)
-    if !ready: break
-    running[ready.id] = spawnAgent(ready)
+for each wave in waves:
+  updateStoryFiles(wave, current state)
+  runCompact()  // Free context
 
-  // Wait for any task completion
-  finished = await Promise.race(running values)
-  completed.add(finished.id)
-  results.push(finished)
+  for each story in wave:
+    tester_promise = spawnAgent(tester, story)
+    await tester_promise
+
+    impl_promise = spawnAgent(implementation, story)
+    await impl_promise
+
+    runProductionCheck(story)
+
+  // All stories in wave complete before next wave
+  completed += wave
+
+return allResults
 ```
+
+**TDD Pairing Model:**
+
+- Tester writes tests from AC (mocks passing & failing scenarios)
+- Implementation agent reads test file + story AC
+- Implementation runs tests until all pass
+- Production check: tests still pass + AC checkboxes marked
 
 ---
 
 ## Agent Spawning
 
-**Spawn template:**
+**Tester spawn template:**
 
 ```
-CONSTITUTION: 1) Change only what must change 2) Fix root cause, not symptoms 3) Read existing code first 4) Verify before done 5) Do exactly what asked
+CONSTITUTION: 1) Change only what must change 2) Fix root cause 3) Read first 4) Verify before done 5) Do exactly what asked
 
-TASK: {task.description}
-STORY: Read your story file at {storyFilePath}
-PRD: Reference {prdPath} only if you need more context
+ROLE: Tester Agent (TDD Pairing)
+TASK: Write comprehensive tests for story acceptance criteria
 
-UPDATE: After completion, report files modified so PM can update story.
-READ YOUR INSTRUCTIONS at .claude/agents/{category}/{agent}.md
+STORY: Read {storyFilePath}
+  - Extract acceptance criteria
+  - Write test file with passing & failing scenarios
+  - Update story: Status → 🧪 Testing
+
+FILES: Write tests to {testFilePath}
+VERIFY: Tests compile and run (no passing yet - implementation comes next)
+```
+
+**Implementation spawn template:**
+
+```
+CONSTITUTION: 1) Change only what must change 2) Fix root cause 3) Read first 4) Verify before done 5) Do exactly what asked
+
+ROLE: Implementation Agent (TDD Pairing)
+TASK: Implement features to pass all tests
+
+STORY: Read {storyFilePath}
+TESTS: Run {testFilePath} - ALL must pass
+  - Implement code to satisfy acceptance criteria
+  - Update story: Status → 🔄 Implementing
+  - Verify all tests pass before submitting
+
+FILES: Report files modified for PM tracking
+UPDATE: Story status → ✅ Complete (tests passing)
 ```
 
 Model: `sonnet` (balanced cost/capability)
 
 **Key Changes:**
 
-- Workers read story files (not PRD) for task context
-- Story file contains acceptance criteria, dependencies, implementation details
-- PRD is referenced only when workers need broader context
-- Workers report files modified for PM to track in story
+- Tester writes tests from AC (before implementation exists)
+- Implementation reads both story AC AND test file
+- Tests act as contract between tester and implementation
+- Story file persists progress between agent spawns
 
 ---
 
 ## Domain Agent Categories
 
-| Category | Agents                                         |
-| -------- | ---------------------------------------------- |
-| Backend  | backend-dev, data-service, integration-service |
-| Frontend | react-component, shadcn                        |
-| Database | prisma-database                                |
-| Testing  | unit-test, integration-test, e2e-test          |
-| Config   | 26+ config agents (for /audit)                 |
+| Phase  | Category | Agents                                         |
+| ------ | -------- | ---------------------------------------------- |
+| Tester | Testing  | unit-test, integration-test, e2e-test          |
+| Impl   | Backend  | backend-dev, data-service, integration-service |
+| Impl   | Frontend | react-component, shadcn                        |
+| Impl   | Database | prisma-database                                |
+| Impl   | Config   | 26+ config agents (for /audit)                 |
+
+**Tester selection:** Choose by test scope (unit → integration → e2e)
 
 ---
 
@@ -110,21 +170,27 @@ Model: `sonnet` (balanced cost/capability)
 
 ```json
 {
-  "totalTasks": 8,
-  "completedTasks": 7,
-  "failedTasks": 1,
+  "totalWaves": 2,
+  "totalStories": 5,
+  "storiesCompleted": ["US-001", "US-002", "US-003"],
+  "storiesFailed": ["US-004"],
+  "storiesRemaining": ["US-005"],
   "results": [
     {
-      "taskId": "task-1",
-      "agent": "prisma-database",
-      "status": "success",
-      "output": "...",
-      "filesModified": ["schema.prisma", "migration.sql"],
-      "storyFile": ".claude/stories/US-001.md"
+      "storyId": "US-001",
+      "wave": 1,
+      "testerAgent": "unit-test",
+      "testFile": "src/__tests__/auth.test.ts",
+      "testsPassed": true,
+      "implAgent": "backend-dev",
+      "implStatus": "success",
+      "filesModified": ["src/auth.ts", "src/__tests__/auth.test.ts"],
+      "acChecklistComplete": true,
+      "verifiedProduction": true
     }
   ],
-  "storiesCompleted": ["US-001", "US-002", "US-005"],
-  "storiesRemaining": ["US-003", "US-004"]
+  "totalTestsCovered": 45,
+  "totalTestsPassed": 45
 }
 ```
 
@@ -143,18 +209,25 @@ Model: `sonnet` (balanced cost/capability)
 ```
 /build JWT authentication API
 
-Execution Plan:
-  - Task 1: prisma (User model) [no deps]
-  - Task 2: backend-dev (AuthService) [dep: 1]
-  - Task 3: backend-dev (TokenService) [dep: 1]
-  - Task 4: integration-test [dep: 2,3]
+Wave 1: US-001 (Schema + AuthService)
+  1. updateStoryFiles(US-001)
+  2. runCompact()
+  3. T-001 (unit-test): Write auth.test.ts (mocks User model + AuthService)
+  4. I-001 (backend-dev): Implement User model + AuthService (pass T-001)
+  5. productionCheck: tests still pass, AC marked
 
-Gantt execution:
-  t=0: Start task-1 [1 running]
-  t=2: task-1 done → Start 2,3 [2 running]
-  t=4: task-3 done [1 running]
-  t=5: task-2 done → Start 4 [1 running]
-  t=7: task-4 done [0 running]
+Wave 2: US-002 (TokenService) | US-003 (API integration)
+  1. updateStoryFiles(US-002, US-003)
+  2. runCompact()
+  3a. T-002 (unit-test): Write token.test.ts (parallel)
+  3b. T-003 (integration-test): Write api.test.ts (parallel)
+  4a. I-002 (backend-dev): Implement TokenService (pass T-002) (parallel)
+  4b. I-003 (coder): Implement API routes (pass T-003) (parallel)
+  5. productionCheck: all tests pass, AC marked
 
-Output: All 4 tasks completed, 6 files modified
+PM Gantt Format:
+  Wave 1: [T-001]→[I-001] (sequential pair)
+  Wave 2: [T-002]→[I-002] | [T-003]→[I-003] (parallel pairs)
+
+Output: 3 stories completed, 45 tests passed, 12 files modified
 ```

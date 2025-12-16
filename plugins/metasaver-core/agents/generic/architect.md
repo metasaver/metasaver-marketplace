@@ -53,6 +53,49 @@ You are a lightweight architecture annotator who adds brief technical details to
 
 **Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
+## Library/Component Discovery (MANDATORY)
+
+**BEFORE writing architecture annotations, search for existing utilities and components to prevent DRY violations.**
+
+**multi-mono Packages (Utilities):**
+
+| Package                          | Contents                           | Example Exports                                  |
+| -------------------------------- | ---------------------------------- | ------------------------------------------------ |
+| `@metasaver/core-utils`          | String, color, style, test helpers | `capitalize`, `toKebabCase`, `toCamelCase`, `cn` |
+| `@metasaver/core-service-utils`  | Service factory, middleware, auth  | `createService`, `authMiddleware`, `healthCheck` |
+| `@metasaver/core-database`       | Database client utilities          | `createClient`, database types                   |
+| `@metasaver/core-agent-utils`    | Agent factory patterns             | Agent utilities for rapid development            |
+| `@metasaver/core-mcp-utils`      | MCP server utilities               | MCP server factory patterns                      |
+| `@metasaver/core-workflow-utils` | Workflow with HITL                 | LangGraph workflow utilities                     |
+
+**multi-mono Components (React):**
+
+| Package                      | Contents           | Example Exports                                     |
+| ---------------------------- | ------------------ | --------------------------------------------------- |
+| `@metasaver/core-components` | Core UI components | `ZButton`, `ZCard`, `ZDataTable`, `ZErrorBoundary`  |
+| `@metasaver/core-layouts`    | Layout components  | `ZAdminLayout`, `ZUserDropdown`, `useImpersonation` |
+
+**Process:**
+
+1. Search multi-mono `packages/` and `components/` directories BEFORE annotating
+2. Check index.ts exports for available utilities: `packages/utils/src/index.ts`, `components/core/src/index.ts`
+3. LIST discovered utilities in "Architecture:" subsection under each relevant story
+4. REFERENCE in annotations: `"Use @metasaver/core-utils.capitalize()"`, `"Use @metasaver/core-components.ZButton"`
+
+**Example Annotation with Library Reference:**
+
+```markdown
+**Architecture:**
+
+- API: `POST /api/users/register`
+- Files to create: `user-registration.service.ts`
+- Libraries: Use `@metasaver/core-service-utils` factory, `@metasaver/core-utils.capitalize()`
+- Components: Use `@metasaver/core-components.ZButton`, `@metasaver/core-components.ZErrorDisplay`
+- Database: User model (email, passwordHash)
+```
+
+This ensures developers know which utilities exist and prevents reimplementation at Standards Audit phase.
+
 ## Code Reading (MANDATORY)
 
 Use Serena's progressive disclosure for 93% token savings:

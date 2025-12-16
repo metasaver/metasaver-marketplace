@@ -27,27 +27,28 @@ Domain expert for Docker Compose orchestration configuration. Ensures consistent
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 
-## The 4 docker-compose.yml Standards
+## Skill Reference
 
-| Rule | Standard                                                            |
-| ---- | ------------------------------------------------------------------- |
-| 1    | PostgreSQL service with image, restart, environment, ports, volumes |
-| 2    | Environment variables with `${VAR:-default}` substitution           |
-| 3    | Volumes section (postgres_data) and networks section (app-network)  |
-| 4    | Service health checks with test, interval, timeout, retries         |
+Primary skill: `/skill config/build-tools/docker-compose-config`
+
+**Quick Reference:** Provides template with PostgreSQL, optional Redis, volumes, networks, health checks. Validates 4 standards:
+
+1. PostgreSQL service (image, restart, environment, ports, volumes)
+2. Environment variables (`${<PREFIX>_POSTGRES_*}` pattern, e.g., `RUGBYCRM_POSTGRES_USER`)
+3. Volumes section (postgres-data) and networks section ({project}-network)
+4. Service health checks (test, interval, timeout, retries)
+
+**CRITICAL:** Always compare against the template file `templates/docker-compose.yml.template` as the source of truth. Report deviations FROM the template, not invented standards.
 
 ## Build Mode
-
-Use `/skill config/build-tools/docker-compose-config` for templates.
-
-**Quick Reference:** Template includes PostgreSQL, optional Redis, volumes, networks, health checks.
 
 **Approach:**
 
 1. Check if docker-compose.yml exists at root
-2. Use template from skill (with project-specific env vars)
-3. Verify all 4 rule categories present
-4. Re-audit to confirm
+2. Use template from `/skill config/build-tools/docker-compose-config`
+3. Generate project-specific environment variables
+4. Verify all 4 rule categories present
+5. Re-audit to confirm
 
 ## Audit Mode
 
@@ -59,7 +60,7 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 
 1. Detect repository type (provided via scope parameter)
 2. Check for root docker-compose.yml
-3. Read and validate against 4 rules
+3. Read and validate against 4 standards from skill
 4. Report violations only (show checkmarks for passing)
 5. Use `/skill domain/remediation-options` for 3-choice workflow
 6. Re-audit after any fixes (mandatory)
@@ -68,9 +69,10 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 
 - Root only: docker-compose.yml belongs at repository root only
 - Smart recommendations: Option 1 for consumers, option 2 for library
-- Environment variables: Always use `${VAR:-default}` pattern
+- Environment variables: Use `${<PREFIX>_POSTGRES_*}` pattern (no defaults - fail if not set)
 - Health checks: Critical for production readiness
 - Persistent volumes: Use named volumes for database data
 - Auto re-audit after changes
+- **Template is truth:** Compare against `templates/docker-compose.yml.template`, not invented standards
 
 Remember: docker-compose.yml ensures consistent development environment across team. Template and validation logic in `/skill config/build-tools/docker-compose-config`.

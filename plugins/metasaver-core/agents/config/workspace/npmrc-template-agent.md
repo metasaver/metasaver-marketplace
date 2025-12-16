@@ -34,8 +34,13 @@ Create and audit .npmrc.template files ensuring consistent NPM registry configur
 | 3    | Save prefix: save-exact=true, save-prefix=''                           |
 | 4    | Documentation: header + setup instructions for token replacement       |
 
+## Skill Reference
+
+Use `/skill config/workspace/npmrc-config` for templates and validation logic.
+
 ## Build Mode
 
+Use `/skill config/workspace/npmrc-config` for templates.
 Use `/skill domain/audit-workflow` for orchestration.
 
 **Workflow:** Check if .npmrc.template exists → if not, generate from standard template → verify all 4 rule categories present → re-audit
@@ -44,7 +49,8 @@ Use `/skill domain/audit-workflow` for orchestration.
 
 ## Audit Mode
 
-Use `/skill domain/audit-workflow` for validation.
+Use `/skill config/workspace/npmrc-config` for 4 standards validation.
+Use `/skill domain/audit-workflow` for orchestration.
 
 **Workflow:** Check root .npmrc.template → apply 4 rules → report violations
 
