@@ -50,7 +50,7 @@ export default mergeConfig(
     test: {
       /* ... */
     },
-  })
+  }),
 );
 ```
 
@@ -68,8 +68,15 @@ test: {
     reporter: ['text', 'json', 'html'],
     exclude: ['node_modules/', 'src/test/'],
   },
+},
+resolve: {
+  alias: {
+    '#': resolve(__dirname, './src'),
+  },
 }
 ```
+
+**Path Alias Resolution**: The `#` alias enables no-barrel imports (e.g., `import { foo } from '#/module'`) by mapping to the `src` directory.
 
 ### Rule 3: Required Setup File
 
@@ -159,6 +166,11 @@ if (!testConfig) {
   if (!testConfig.coverage) {
     errors.push("Rule 2: Missing test.coverage configuration");
   }
+}
+
+// Rule 2: Check path alias resolution
+if (!config.resolve?.alias?.["#"]) {
+  errors.push("Rule 2: Missing resolve.alias['#'] for no-barrel imports");
 }
 
 // Rule 3: Check setup file exists

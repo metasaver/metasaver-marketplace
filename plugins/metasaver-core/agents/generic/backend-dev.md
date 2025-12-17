@@ -41,9 +41,42 @@ Use `/skill serena-code-reading` for token-efficient file analysis with `get_sym
 - **Logging:** Winston (structured)
 - **Testing:** Jest + Supertest
 
+## No-Barrel Import Standards
+
+**Internal imports (within same package):**
+
+```typescript
+import type { User } from "#/users/types.js";
+import { validateUser } from "#/users/validation.js";
+import { createUserService } from "#/users/service.js";
+```
+
+**External imports (from other packages):**
+
+```typescript
+import type { User } from "@metasaver/contracts/users/types";
+import { POSITION_HIERARCHY } from "@metasaver/contracts/positions/hierarchy";
+import { prisma } from "@metasaver/database/client";
+```
+
+**File naming conventions:**
+
+- `types.ts` - Type definitions
+- `validation.ts` - Zod schemas
+- `constants.ts` - Constants
+- `enums.ts` - Enum definitions
+
+**Export pattern:** Use named exports for all public APIs.
+
+```typescript
+export function createUser() {}
+export type User = { id: string };
+```
+
 ## Build Mode - API Development
 
 Use `/skill backend-api-development` for:
+
 - 3-layer architecture patterns (controllers, services, repositories)
 - CRUD endpoint generation
 - Middleware creation (auth, validation, error handling)
@@ -51,6 +84,7 @@ Use `/skill backend-api-development` for:
 - Zod schema validation setup
 
 **Key Workflow:**
+
 1. Define data model in Prisma schema
 2. Generate Zod schemas for validation
 3. Create repository layer (data access)
@@ -91,8 +125,8 @@ edit_memory("backend:user-api", {
   endpoints: {
     "POST /users": "complete",
     "GET /users/:id": "in-progress",
-    "PATCH /users/:id": "pending"
-  }
+    "PATCH /users/:id": "pending",
+  },
 });
 
 // Share contracts with frontend team
@@ -103,9 +137,9 @@ edit_memory("api-contract:users", {
     {
       method: "POST",
       path: "/users",
-      body: { email: "string", password: "string" }
-    }
-  ]
+      body: { email: "string", password: "string" },
+    },
+  ],
 });
 ```
 
@@ -114,6 +148,7 @@ edit_memory("api-contract:users", {
 **Example 1: Create User Endpoint**
 
 Reference `/skill backend-api-development` for the full pattern. Key steps:
+
 - Define User model in Prisma with email unique index
 - Create CreateUserSchema with Zod (email, password validation)
 - UserRepository.create(data) for data access

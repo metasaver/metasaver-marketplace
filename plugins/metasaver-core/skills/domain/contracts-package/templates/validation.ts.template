@@ -1,4 +1,9 @@
+// Node built-ins (none needed here)
+
+// External imports
 import { z } from "zod";
+
+// Internal imports (none needed here)
 
 // Base fields - single source of truth for validation
 export const base{{ENTITY_PASCAL}}Fields = {

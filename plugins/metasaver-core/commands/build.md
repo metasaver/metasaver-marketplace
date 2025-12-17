@@ -21,8 +21,8 @@ When /build is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. 
 
 **See:** `/skill analysis-phase`
 
-Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
-Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
+Spawn 2 agents in parallel to execute complexity-check and scope-check skills.
+Collect: `complexity_score`, `scope` (with `targets` and `references`)
 
 ---
 
@@ -31,6 +31,8 @@ Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
 **See:** `/skill requirements-phase`
 
 BA reviews original prompt for user questions, investigates codebase using Serena tools to answer them, then completes understanding with HITL clarification loop.
+
+**For complexity > 15:** BA uses `sequential-thinking` MCP tool to structure analysis and ensure thorough requirements capture.
 
 **Complexity Routing (after BA completes understanding):**
 
@@ -64,12 +66,61 @@ Single vibe check on PRD. If fails, return to BA to revise PRD.
 
 ## Phase 5: Design
 
-**See:** `/skill design-phase`
+**INVOKE:** `/skill design-phase` (mandatory)
 
-1. BA extracts user stories (following granularity guidelines)
-2. Architect discovers libraries/components in multi-mono BEFORE annotations
-3. Architect annotates story files with implementation details
-4. PM creates execution plan with parallel waves
+### Step 1: BA Extracts User Stories
+
+**BEFORE writing any stories:**
+
+1. Invoke `/skill agent-selection` to get the full agent mapping
+2. For each file to be created/modified, identify the matching agent
+3. Create ONE story per config file type (each config file = 1 story)
+
+### Story Granularity Guidelines
+
+**Config Files:** Each config file gets its own story with its specialized agent.
+
+| File Type             | Agent                          | Story Scope |
+| --------------------- | ------------------------------ | ----------- |
+| package.json (root)   | root-package-json-agent        | Single file |
+| tsconfig.json         | typescript-configuration-agent | Single file |
+| eslint.config.js      | eslint-agent                   | Single file |
+| nodemon.json          | nodemon-agent                  | Single file |
+| vitest.config.ts      | vitest-agent                   | Single file |
+| vite.config.ts        | vite-agent                     | Single file |
+| .env.example          | env-example-agent              | Single file |
+| README.md             | readme-agent                   | Single file |
+| docker-compose.yml    | docker-compose-agent           | Single file |
+| turbo.json            | turbo-config-agent             | Single file |
+| .gitignore            | gitignore-agent                | Single file |
+| .gitattributes        | gitattributes-agent            | Single file |
+| postcss.config.js     | postcss-agent                  | Single file |
+| tailwind.config.js    | tailwind-agent                 | Single file |
+| pnpm-workspace.yaml   | pnpm-workspace-agent           | Single file |
+| .husky/\*             | husky-git-hooks-agent          | Single file |
+| commitlint.config.js  | commitlint-agent               | Single file |
+| .vscode/settings.json | vscode-agent                   | Single file |
+
+**Domain Code:** Group by feature/module, assign appropriate domain agent.
+
+| Domain         | Agent                 | Story Scope          |
+| -------------- | --------------------- | -------------------- |
+| React features | react-app-agent       | Per feature module   |
+| API endpoints  | data-service-agent    | Per resource/feature |
+| Database       | prisma-database-agent | Schema + migrations  |
+| Contracts      | contracts-agent       | Per entity group     |
+
+**CRITICAL:** Each config file = 1 story = 1 agent. Bundle only related domain code (e.g., one feature module).
+
+### Step 2: Architect Annotations
+
+Architect discovers libraries/components in multi-mono BEFORE annotations, then annotates story files with implementation details.
+
+**Context7 Validation:** For technical changes involving external libraries or frameworks, Architect uses Context7 MCP tools (`resolve-library-id` → `get-library-docs`) to validate implementation approach against latest documentation.
+
+### Step 3: PM Creates Execution Plan
+
+PM creates execution plan with parallel waves based on story dependencies.
 
 ---
 
@@ -189,16 +240,17 @@ docs/projects/{yyyymmdd}-{name}/
 
 ## Enforcement
 
-1. ALWAYS run Analysis phase first—never skip to answer user questions
-2. Run analysis skills in PARALLEL (single message, 3 Task calls)
+1. ALWAYS run Analysis phase first (complexity-check + scope-check only)
+2. Run analysis skills in PARALLEL (single message, 2 Task calls)
 3. BA addresses user questions in Requirements HITL (Q&A only)
+   - For complexity > 15: BA uses `sequential-thinking` MCP tool
 4. Complexity routing after Requirements:
    - < 15: SKIP PRD, Vibe Check, Innovate → go straight to Design
    - ≥ 15: Write PRD → Vibe Check → Design
    - ≥ 30: Write PRD → Vibe Check → [Innovate?] → Design
 5. Vibe Check validates PRD (only for ≥15) BEFORE Innovate
 6. Innovate is OPTIONAL (only for ≥30, ask user, hard stop)
-7. Design phase: BA extracts stories, Architect discovers libraries BEFORE annotations, Architect annotates, PM creates plan
+7. Design phase: BA extracts stories, Architect discovers libraries BEFORE annotations, Architect annotates (using Context7 for external library validation), PM creates plan
 8. Human Validation happens AFTER PM, BEFORE Execution:
    - < 15: Light validation ("Proceed?")
    - ≥ 15: Full validation (review PRD + stories + plan)
@@ -207,5 +259,8 @@ docs/projects/{yyyymmdd}-{name}/
     - Config agents (parallel)
     - Structure check (files in right places)
     - DRY check (vs multi-mono libraries)
-11. BA must follow Story Granularity Guidelines
+11. BA must follow Story Granularity Guidelines:
+    - INVOKE `/skill agent-selection` BEFORE writing any stories
+    - Each config file = 1 story = 1 specialized agent
+    - Bundle only related domain code (one feature module per story)
 12. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

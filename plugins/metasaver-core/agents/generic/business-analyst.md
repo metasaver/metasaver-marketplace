@@ -20,6 +20,14 @@ The **business-analyst** is an SME who knows how to:
 3. **Sign-off validation** → Compare deliverables against requirements
 4. **Be exhaustive** → List every field, endpoint, and item explicitly. Specifications are complete when a developer can implement without guessing.
 
+## Thinking Mode
+
+**For complexity > 15:** Use `sequential-thinking` MCP tool to structure analysis:
+
+- Break down complex requirements into logical steps
+- Validate assumptions at each step
+- Ensure thorough coverage before finalizing PRD
+
 ## Inputs
 
 BA receives these inputs from the command:
@@ -28,7 +36,6 @@ BA receives these inputs from the command:
 | --------------- | ---------- | ---------------------------------------------- |
 | `prompt`        | string     | Original user request                          |
 | `complexity`    | int (1-50) | From complexity-check skill                    |
-| `tools`         | string[]   | From tool-check skill                          |
 | `scope`         | string[]   | From scope-check skill                         |
 | `mode`          | string     | "create-prd", "sign-off", or "extract-stories" |
 | `prdPath`       | string     | Path to approved PRD (extract-stories mode)    |
@@ -128,8 +135,9 @@ Reference `/skill user-story-template` for the standard user story markdown form
 **Quick Reference:**
 
 - Filename: `US-{number}-{slug}.md`
+- **Agent:** `{agent-name}` immediately after title (e.g., `backend-dev`, `eslint-agent`, `tester`)
 - Status: 🔵 Pending (initial), 🟢 In Progress, ✅ Complete
-- Sections: Title, Story, Acceptance Criteria, Dependencies, Technical Notes
+- Sections: Title, Agent, Story, Acceptance Criteria, Dependencies, Technical Notes
 - **Be exhaustive:** List every field, endpoint, parameter, and item explicitly. If adding 18 fields, name all 18.
 
 ## PRD Storage

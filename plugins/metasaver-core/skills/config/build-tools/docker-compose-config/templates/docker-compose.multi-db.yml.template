@@ -1,0 +1,34 @@
+services:
+  # ==================================
+  # {PROJECT} {DBNAME} DATABASE - Port {PORT}
+  # ==================================
+  {dbname}-postgres:
+    image: postgres:17-alpine
+    container_name: {project}-{dbname}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${<PREFIX>_<DBNAME>_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${<PREFIX>_<DBNAME>_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${<PREFIX>_<DBNAME>_POSTGRES_DB}
+    ports:
+      - "${<PREFIX>_<DBNAME>_POSTGRES_PORT}:5432"
+    volumes:
+      - {dbname}-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${<PREFIX>_<DBNAME>_POSTGRES_USER} -d ${<PREFIX>_<DBNAME>_POSTGRES_DB}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - {project}-network
+
+networks:
+  {project}-network:
+    driver: bridge
+
+volumes:
+  {dbname}-postgres-data:

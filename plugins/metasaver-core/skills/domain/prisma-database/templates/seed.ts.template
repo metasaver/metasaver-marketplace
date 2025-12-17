@@ -1,5 +1,6 @@
+// Internal imports - use relative paths for seed scripts
 import { prisma } from "../../src/client.js";
-import { seedUsers } from "./user.js";
+import { seedUsers } from "#/seed/user.js";
 
 async function seed() {
   try {

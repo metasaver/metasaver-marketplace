@@ -20,6 +20,38 @@ You are the **React App SME** (Subject Matter Expert). You understand:
 - Auth0 integration via @metasaver/core-components
 - MetaSaver monorepo conventions
 
+## Import Conventions
+
+**Internal imports (within same app):**
+
+```typescript
+import type { User } from "#/features/users/types";
+import { UserCard } from "#/features/users/components/UserCard";
+import { useAuth } from "#/hooks/useAuth";
+```
+
+**External imports (from other packages):**
+
+```typescript
+import type { User } from "@metasaver/contracts/users/types";
+import { Button } from "@metasaver/core-components/button";
+import { POSITION_HIERARCHY } from "@metasaver/contracts/positions/hierarchy";
+```
+
+**Import order:**
+
+1. React/React Router
+2. External packages (npm)
+3. Workspace packages (direct paths)
+4. Internal components/hooks (`#/`)
+
+**Export pattern:** Use named exports for components and hooks.
+
+```typescript
+export function UserProfile() { return <div />; }
+export function useAuth() { return { user: null }; }
+```
+
 ## Skill Reference
 
 **For all patterns, templates, and detailed structure:**
@@ -32,7 +64,7 @@ The skill contains:
 
 - Complete directory structure specification
 - File organization rules
-- Barrel export patterns
+- No-barrel import/export patterns
 - Audit checklist
 - Templates for all file types
 - Common violations and fixes

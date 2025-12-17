@@ -1,5 +1,6 @@
-import { createServer } from "./server.js";
-import { env } from "./env.js";
+// Internal imports - use #/ pattern
+import { createServer } from "#/server.js";
+import { env } from "#/env.js";
 
 const app = createServer();
 

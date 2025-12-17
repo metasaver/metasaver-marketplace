@@ -7,7 +7,8 @@
  * Must be kept simple (5-15 lines) - no business logic
  */
 
-import { MicroservicesFeature } from "@/features/microservices-feature";
+// Internal imports - use #/ pattern
+import { MicroservicesFeature } from "#/features/microservices-feature/microservices-feature.js";
 
 export function MicroServicesPage() {
   return <MicroservicesFeature />;
@@ -15,7 +16,7 @@ export function MicroServicesPage() {
 
 /**
  * PATTERN:
- * 1. Import feature from @/features/
+ * 1. Import feature from #/features/{feature}/{feature}.js (no barrel files)
  * 2. Wrap feature in page component
  * 3. Export with suffix "Page"
  * 4. No hooks, no state, no logic

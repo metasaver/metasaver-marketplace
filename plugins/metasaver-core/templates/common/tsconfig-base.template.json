@@ -1,9 +1,10 @@
 {
   "extends": "@metasaver/core-typescript-config/{{TYPESCRIPT_CONFIG_TYPE}}",
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "@/*": [
+      "#/*": [
         "./src/*"
       ]
     },

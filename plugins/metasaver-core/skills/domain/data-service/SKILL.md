@@ -57,7 +57,6 @@ src/
 │   └── logging.ts            # Request logging middleware
 └── features/
     └── {feature}/
-        ├── index.ts          # Feature barrel export
         ├── {feature}.service.ts      # Service class (Prisma operations)
         └── {feature}.controller.ts   # Controller (validation + response)
 ```
@@ -84,14 +83,11 @@ packages/services/rugby-crm-service/
 │   │   └── logging.ts
 │   └── features/
 │       ├── users/
-│       │   ├── index.ts
 │       │   ├── users.service.ts
 │       │   └── users.controller.ts
-│       ├── teams/
-│       │   ├── index.ts
-│       │   ├── teams.service.ts
-│       │   └── teams.controller.ts
-│       └── index.ts
+│       └── teams/
+│           ├── teams.service.ts
+│           └── teams.controller.ts
 └── dist/                     # Build output (generated)
 ```
 
@@ -152,6 +148,22 @@ See `templates/tsconfig.json.template` for configuration.
 - No HTTP concerns (pure data layer)
 - Standard methods: `getAll`, `getById`, `create`, `update`, `delete`
 
+**Import pattern:**
+
+```typescript
+// Import order example
+import { prisma } from "@metasaver/rugby-crm-database/client";
+import type {
+  User,
+  CreateUserInput,
+  UpdateUserInput,
+} from "@metasaver/rugby-crm-contracts/users/types";
+
+export class UsersService {
+  // ... methods
+}
+```
+
 See `templates/feature-service.ts.template` for implementation.
 
 ### Controller Pattern
@@ -164,6 +176,24 @@ See `templates/feature-service.ts.template` for implementation.
 - Returns `{ data: {...} }` for consistent response format
 - HTTP status codes follow REST conventions
 
+**Import pattern:**
+
+```typescript
+// Import order example
+import { Router } from "express";
+import { asyncHandler, ApiError } from "@metasaver/core-service-utils";
+import {
+  CreateUserRequest,
+  UpdateUserRequest,
+} from "@metasaver/rugby-crm-contracts/users/validation";
+import { UsersService } from "#/features/users/users.service.js";
+
+export const router = Router();
+const service = new UsersService();
+
+// ... route definitions
+```
+
 See `templates/feature-controller.ts.template` for implementation.
 
 ### Routes Registration Pattern
@@ -174,6 +204,25 @@ See `templates/feature-controller.ts.template` for implementation.
 - All API routes under `/api/v1` with versioning
 - Auth middleware applied to all API routes
 - Feature routers mounted with base paths
+
+**Import pattern:**
+
+```typescript
+// Import order example
+import type { Express } from "express";
+import { authMiddleware } from "#/middleware/auth.js";
+import { router as usersRouter } from "#/features/users/users.controller.js";
+import { router as teamsRouter } from "#/features/teams/teams.controller.js";
+
+export function registerRoutes(app: Express) {
+  // Health check (no auth)
+  app.get("/health", (req, res) => res.json({ status: "ok" }));
+
+  // API routes (with auth)
+  app.use("/api/v1/users", authMiddleware, usersRouter);
+  app.use("/api/v1/teams", authMiddleware, teamsRouter);
+}
+```
 
 See `templates/register.ts.template` for implementation.
 
@@ -187,16 +236,24 @@ See `templates/register.ts.template` for implementation.
 
 See `templates/server.ts.template` and `templates/index.ts.template`.
 
-### Feature Export Pattern
+### Feature Import Pattern
 
-**Rule:** Export service and routes via barrel export.
+**Rule:** Import directly from specific files using `#/` alias for internal imports.
 
 ```typescript
-export { {Feature}Service } from "./{feature}.service.js";
-export { router as {Feature}Routes } from "./{feature}.controller.js";
+// CORRECT - Direct imports with #/ alias
+import { UsersService } from "#/features/users/users.service.js";
+import { router as usersRouter } from "#/features/users/users.controller.js";
+
+// WRONG - No barrel exports (index.ts)
+import { UsersService, UsersRoutes } from "#/features/users/index.js";
 ```
 
-See `templates/feature-index.ts.template`.
+**Key principles:**
+
+- No barrel export files (index.ts) in feature folders
+- Use `#/` alias for internal imports within service package
+- Import workspace packages with full paths: `from "@metasaver/{pkg}/{path}"`
 
 ## Workflow: Scaffolding New Data Service Package
 
@@ -219,14 +276,11 @@ See `templates/feature-index.ts.template`.
    - `src/routes/register.ts`
 
 6. **Create Features** (repeat per feature)
-   - `src/features/{feature}/index.ts`
    - `src/features/{feature}/{feature}.service.ts`
    - `src/features/{feature}/{feature}.controller.ts`
+   - NO index.ts barrel export files
 
-7. **Create Feature Index** (aggregates all features)
-   - `src/features/index.ts`
-
-8. **Test Build and Run**
+7. **Test Build and Run**
 
    ```bash
    pnpm --filter @metasaver/{project}-service build
@@ -236,12 +290,17 @@ See `templates/feature-index.ts.template`.
 ## Workflow: Adding New Feature
 
 1. Create feature directory: `mkdir -p src/features/{feature}`
-2. Create service class (from template)
-3. Create controller (from template)
-4. Create feature barrel export (from template)
-5. Register in `src/routes/register.ts`
-6. Update `src/features/index.ts`
-7. Build and test
+2. Create service class (from template): `{feature}.service.ts`
+3. Create controller (from template): `{feature}.controller.ts`
+4. Register in `src/routes/register.ts` with direct imports
+5. Build and test
+
+**Import example in register.ts:**
+
+```typescript
+import { router as newFeatureRouter } from "#/features/{feature}/{feature}.controller.js";
+app.use("/api/v1/{feature}", authMiddleware, newFeatureRouter);
+```
 
 ## Audit Checklist
 
@@ -292,9 +351,11 @@ See `templates/feature-index.ts.template`.
 - [ ] `/api/v1` versioning prefix
 - [ ] All API routes require authentication
 - [ ] Each feature has: service, controller in own folder
-- [ ] Feature `index.ts` exports service and routes
+- [ ] NO `index.ts` barrel export files in features
 - [ ] Controllers use `asyncHandler` wrapper
 - [ ] Controllers use Zod validation from contracts
+- [ ] All imports use `#/` alias for internal paths
+- [ ] Workspace imports use full paths: `from "@metasaver/{pkg}/{path}"`
 
 ### Service Classes
 

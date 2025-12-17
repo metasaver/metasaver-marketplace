@@ -1,4 +1,5 @@
-import type { {{ENTITY_PASCAL}} as Prisma{{ENTITY_PASCAL}} } from "@metasaver/{{DOMAIN}}-database";
+// External imports - direct path imports from other packages
+import type { {{ENTITY_PASCAL}} as Prisma{{ENTITY_PASCAL}} } from "@metasaver/{{DOMAIN}}-database/entities/{{ENTITY_KEBAB}}";
 
 // Re-export entity type from database package
 export type {{ENTITY_PASCAL}} = Prisma{{ENTITY_PASCAL}};

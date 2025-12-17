@@ -27,17 +27,20 @@ This skill documents the complete structure for MetaSaver contracts packages. Co
 ```
 packages/contracts/{domain}-contracts/
 ├── src/
-│   ├── index.ts                    # Root barrel export
 │   ├── shared/                     # (optional) Shared enums/types used by multiple entities
-│   │   └── index.ts                # Exports all shared types
+│   │   └── types.ts                # Shared types and enums
 │   └── {entity}/                   # One folder per entity
-│       ├── index.ts                # Entity barrel export
 │       ├── types.ts                # TypeScript types and interfaces
 │       └── validation.ts           # Zod schemas and inferred types
 ├── eslint.config.js                # ESLint flat config (required)
 ├── package.json
 └── tsconfig.json
 ```
+
+**CRITICAL: No barrel exports (index.ts files)**
+
+- Export directly from specific files using package.json exports field
+- Consumers import with full path: `from "@metasaver/contracts/users/types"`
 
 **IMPORTANT - Files NOT to create at package level:**
 
@@ -52,9 +55,7 @@ See `TEMPLATES.md` for all available templates. Key templates:
 | --------------------------- | ----------------------- | ---------------------------- |
 | `types.ts.template`         | Entity type definitions | `src/{entity}/types.ts`      |
 | `validation.ts.template`    | Zod validation schemas  | `src/{entity}/validation.ts` |
-| `entity-index.ts.template`  | Entity barrel export    | `src/{entity}/index.ts`      |
-| `root-index.ts.template`    | Root barrel export      | `src/index.ts`               |
-| `shared-index.ts.template`  | Shared enums            | `src/shared/index.ts`        |
+| `shared-types.ts.template`  | Shared enums/types      | `src/shared/types.ts`        |
 | `package.json.template`     | Package configuration   | `package.json`               |
 | `tsconfig.json.template`    | TypeScript config       | `tsconfig.json`              |
 | `eslint.config.js.template` | ESLint flat config      | `eslint.config.js`           |
@@ -77,21 +78,40 @@ See `TEMPLATES.md` for all available templates. Key templates:
 - Export inferred types with `z.infer<>`
 - Add helpful error messages to validators
 
-### Barrel Export Rules
+### Package Export Rules (package.json)
 
-- Use `.js` extension in all imports (ESM)
-- Export from entity `index.ts`, not individual files
-- Alphabetical order preferred
-- Shared exports first, then entities
+- Use wildcard `exports` field in package.json (zero maintenance)
+- Consumers import with full paths: `from "@metasaver/contracts/users/types"`
+- Example exports field:
+  ```json
+  "exports": {
+    "./*": { "types": "./dist/*.d.ts", "import": "./dist/*.js" }
+  }
+  ```
 
 ### Enum Organization Rules (Industry Standard)
 
 | Scenario                         | Location                        |
 | -------------------------------- | ------------------------------- |
 | Enum used by **one entity only** | Colocate in `{entity}/types.ts` |
-| Enum used by **2+ entities**     | Place in `/shared/index.ts`     |
+| Enum used by **2+ entities**     | Place in `/shared/types.ts`     |
 
 All enums should have a corresponding `Labels` object for UI display.
+
+**Export Example:**
+
+```typescript
+// src/shared/types.ts
+export enum UserRole {
+  ADMIN = "admin",
+  USER = "user",
+}
+
+export const UserRoleLabels = {
+  [UserRole.ADMIN]: "Administrator",
+  [UserRole.USER]: "User",
+} as const;
+```
 
 ### tsconfig.json Rules
 
@@ -112,24 +132,28 @@ All enums should have a corresponding `Labels` object for UI display.
 1. Create entity folder: `mkdir -p src/{entity}`
 2. Copy `types.ts.template` → `src/{entity}/types.ts`, replace variables
 3. Copy `validation.ts.template` → `src/{entity}/validation.ts`, replace variables
-4. Copy `entity-index.ts.template` → `src/{entity}/index.ts`
-5. Update `src/index.ts` to export new entity
+4. Verify `package.json` has wildcard exports (already configured):
+   ```json
+   "exports": {
+     "./*": { "types": "./dist/*.d.ts", "import": "./dist/*.js" }
+   }
+   ```
 
 ## Workflow: Adding Shared Enum
 
 1. Verify enum is used by 2+ entities (if not, colocate)
 2. Create `/shared/` if doesn't exist
-3. Add enum with Labels object to `src/shared/index.ts`
-4. Export from root `src/index.ts` (if not already)
+3. Add enum with Labels object to `src/shared/types.ts`
+4. Wildcard exports already cover this path (no package.json change needed)
 
 ## Audit Checklist
 
 ### Directory Structure
 
 - [ ] Package at `packages/contracts/{domain}-contracts/`
-- [ ] `src/index.ts` exists with barrel exports
 - [ ] Each entity has its own folder under `src/`
-- [ ] Each entity folder has `index.ts`, `types.ts`, `validation.ts`
+- [ ] Each entity folder has `types.ts`, `validation.ts` (NO index.ts)
+- [ ] NO `index.ts` barrel export files anywhere
 - [ ] NO `.gitignore` at package level (handled by root)
 - [ ] NO `.eslintrc.cjs` (old format - use `eslint.config.js`)
 - [ ] Has `eslint.config.js` (flat config)
@@ -150,17 +174,19 @@ All enums should have a corresponding `Labels` object for UI display.
 - [ ] Inferred types exported with `z.infer<>`
 - [ ] Error messages included in validators
 
-### Barrel Exports
+### Package Exports
 
-- [ ] Root `index.ts` exports all entities
-- [ ] Entity `index.ts` exports types and validation
-- [ ] Uses `.js` extension in all imports
+- [ ] `package.json` has `exports` field with all public paths
+- [ ] Each entity has separate export paths for types and validation
+- [ ] Shared types have dedicated export path
+- [ ] NO `index.ts` barrel export files
 
 ### Enum Organization
 
-- [ ] Entity-specific enums colocated in entity folder
-- [ ] Shared enums (2+ entities) in `/shared/` folder
+- [ ] Entity-specific enums colocated in entity `types.ts` file
+- [ ] Shared enums (2+ entities) in `/shared/types.ts` file
 - [ ] All enums have corresponding Labels object
+- [ ] Enums use named exports only (no default exports)
 
 ### package.json
 
@@ -179,14 +205,17 @@ All enums should have a corresponding `Labels` object for UI display.
 
 ## Common Violations & Fixes
 
-| Violation                                     | Fix                                 |
-| --------------------------------------------- | ----------------------------------- |
-| Duplicating Prisma model fields               | Re-export from database package     |
-| Using `test` instead of `test:unit`           | Change to `test:unit`               |
-| Missing `.js` extension                       | Add `.js` to all imports            |
-| Duplicate tsconfig settings                   | Remove settings inherited from base |
-| Package-level `.gitignore` or `.eslintrc.cjs` | Delete these files                  |
-| Entity-specific enum in `/shared/`            | Move to entity folder               |
+| Violation                                     | Fix                                         |
+| --------------------------------------------- | ------------------------------------------- |
+| Duplicating Prisma model fields               | Re-export from database package             |
+| Using `test` instead of `test:unit`           | Change to `test:unit`                       |
+| Using barrel exports (index.ts)               | Remove index.ts, use package.json exports   |
+| Missing package.json exports field            | Add exports field with all public paths     |
+| Duplicate tsconfig settings                   | Remove settings inherited from base         |
+| Package-level `.gitignore` or `.eslintrc.cjs` | Delete these files                          |
+| Entity-specific enum in `/shared/`            | Move to entity `types.ts` file              |
+| Using default exports                         | Use named exports only                      |
+| Importing from barrel index                   | Import directly: `from "{pkg}/users/types"` |
 
 ## Related Agents
 

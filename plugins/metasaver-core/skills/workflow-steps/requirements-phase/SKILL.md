@@ -55,7 +55,17 @@ This way the user sees the full picture before approving.
    - All questions resolved
    - Save to `{projectFolder}/prd.md`
    - Return completed PRD content and project folder path
-   - **Continue to next phase** (no approval stop here)
+
+5. **For audit mode: Create user stories:**
+   - **Create folder:** `{projectFolder}/user-stories/`
+   - **Generate story for each (agent, file) pair:**
+     - For each file in scope.files:
+       - Determine agent from agent-check results
+       - Create user-story file: `US-{NNN}-audit-{file-slug}.md`
+       - Use audit-focused template (see below)
+   - **Story numbering:** Sequential (US-001, US-002, etc.)
+
+6. **Continue to next phase** (no approval stop here)
 
 ---
 
@@ -79,17 +89,61 @@ For audit workflows, BA MUST prioritize codebase investigation before asking cla
 
 ---
 
+## User Story Template (Audit Mode)
+
+For each (agent, file) combination, create a user story file following this template:
+
+```markdown
+## Story: Audit {file} in {repo}
+
+**Agent:** {agent-name}
+**Scope:** {repo}/{path/to/file}
+**Template:** {skill-name}
+
+### Acceptance Criteria
+
+- [ ] Agent reads template from skill
+- [ ] Agent reads actual file
+- [ ] Agent compares and identifies discrepancies
+- [ ] Discrepancies reported with line numbers
+- [ ] User decision recorded (apply/update/ignore/custom)
+
+### User Decision
+
+- [ ] Pending investigation
+```
+
+**Example filename:** `US-001-audit-eslint.md` for auditing eslint.config.js
+
+---
+
 ## Output Format
 
 ```json
 {
   "status": "complete",
-  "projectFolder": "docs/projects/20251208-applications-feature",
-  "prdPath": "docs/projects/20251208-applications-feature/prd.md",
+  "projectFolder": "docs/projects/20251217-audit-xyz",
+  "prdPath": "docs/projects/20251217-audit-xyz/prd.md",
   "prdContent": "# PRD...",
-  "clarificationsProvided": 2
+  "stories": [
+    {
+      "id": "US-001",
+      "file": "eslint.config.js",
+      "agent": "eslint-agent",
+      "path": "docs/projects/20251217-audit-xyz/user-stories/US-001-audit-eslint.md"
+    },
+    {
+      "id": "US-002",
+      "file": "package.json",
+      "agent": "package-agent",
+      "path": "docs/projects/20251217-audit-xyz/user-stories/US-002-audit-package.md"
+    }
+  ],
+  "clarificationsProvided": 0
 }
 ```
+
+**Note:** `stories` array is only populated for `/audit` workflows. For `/build` workflows, stories are extracted by Architect in the design-phase.
 
 ---
 
@@ -97,6 +151,11 @@ For audit workflows, BA MUST prioritize codebase investigation before asking cla
 
 **Called by:** /audit, /build, /ms (all complexity levels that need PRD)
 **Calls:** business-analyst agent, AskUserQuestion
+**User Stories:**
+
+- **For /audit:** Stories created automatically from scope.files + agent-check results. Each (agent, file) pair generates one audit-focused user story.
+- **For /build:** Stories extracted by Architect in design-phase from PRD narrative (existing behavior unchanged).
+
 **Next phase:**
 
 - /build → innovate-phase (ask user)

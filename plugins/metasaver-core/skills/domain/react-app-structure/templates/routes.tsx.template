@@ -8,61 +8,64 @@
  * - Error boundary
  */
 
+// External imports
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { ROUTES } from "./route-types";
 
-// Lazy load page components
+// Internal imports - use #/ pattern
+import { ROUTES } from "#/routes/route-types.js";
+
+// Lazy load page components - use #/ pattern and named exports
 const HomePage = lazy(() =>
-  import("@/pages/home/home").then((m) => ({
+  import("#/pages/home/home.js").then((m) => ({
     default: m.HomePage,
   }))
 );
 
 const DashboardPage = lazy(() =>
-  import("@/pages/dashboard/dashboard").then((m) => ({
+  import("#/pages/dashboard/dashboard.js").then((m) => ({
     default: m.DashboardPage,
   }))
 );
 
 const MicroServicesPage = lazy(() =>
-  import("@/pages/service-catalog/micro-services").then((m) => ({
+  import("#/pages/service-catalog/micro-services.js").then((m) => ({
     default: m.MicroServicesPage,
   }))
 );
 
 const EndpointsPage = lazy(() =>
-  import("@/pages/service-catalog/endpoints").then((m) => ({
+  import("#/pages/service-catalog/endpoints.js").then((m) => ({
     default: m.EndpointsPage,
   }))
 );
 
 const SchedulePage = lazy(() =>
-  import("@/pages/service-catalog/schedule").then((m) => ({
+  import("#/pages/service-catalog/schedule.js").then((m) => ({
     default: m.SchedulePage,
   }))
 );
 
 const MerchantsPage = lazy(() =>
-  import("@/pages/datafeedr/merchants").then((m) => ({
+  import("#/pages/datafeedr/merchants.js").then((m) => ({
     default: m.MerchantsPage,
   }))
 );
 
 const NetworksPage = lazy(() =>
-  import("@/pages/datafeedr/networks").then((m) => ({
+  import("#/pages/datafeedr/networks.js").then((m) => ({
     default: m.NetworksPage,
   }))
 );
 
 const ProductsPage = lazy(() =>
-  import("@/pages/datafeedr/products").then((m) => ({
+  import("#/pages/datafeedr/products.js").then((m) => ({
     default: m.ProductsPage,
   }))
 );
 
 const StatusPage = lazy(() =>
-  import("@/pages/datafeedr/status").then((m) => ({
+  import("#/pages/datafeedr/status.js").then((m) => ({
     default: m.StatusPage,
   }))
 );

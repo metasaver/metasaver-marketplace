@@ -29,6 +29,26 @@ Use `/skill scope-check` if not provided.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
 
+## Path Alias Configuration
+
+For no-barrel architecture support, tsconfig.json must include path alias configuration:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#/*": ["./src/*"]
+    }
+  }
+}
+```
+
+**Validation:**
+
+- `baseUrl` REQUIRED when using `paths`
+- `#/*` alias MUST point to `["./src/*"]`
+
 ## The 6 TypeScript Standards
 
 Use `/skill typescript-config` for full definitions, validation, and templates.

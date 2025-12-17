@@ -1,8 +1,0 @@
-// Main contracts package exports
-
-// Export shared types and enums (if exists)
-export * from "./shared/index.js";
-
-// Export entity-specific types
-export * from "./{{ENTITY_KEBAB}}/index.js";
-// ... more entities

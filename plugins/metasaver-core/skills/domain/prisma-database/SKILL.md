@@ -275,7 +275,10 @@ export type * from "@prisma/client";
 File: `prisma/seed/index.ts`
 
 ```typescript
-import { prisma } from "../../src/client.js";
+// Import order example
+import { prisma } from "#/client.js";
+import { seedUsers } from "./users.js";
+import { seedTeams } from "./teams.js";
 
 async function seed() {
   try {
@@ -292,6 +295,8 @@ async function seed() {
 
 seed();
 ```
+
+**Import pattern:** Use `#/` alias for internal imports within database package.
 
 **Rule 2: Entity-Specific Seed Files**
 
@@ -356,20 +361,36 @@ The build and migration scripts use `dotenv-cli` to load environment variables:
 }
 ```
 
-### Index/Export Pattern
+### Export Pattern (package.json)
 
-**src/index.ts** barrel export:
+**Package exports field:**
+
+```json
+"exports": {
+  "./client": "./dist/client.js",
+  "./types": "./dist/types.js"
+}
+```
+
+**Consumer import examples:**
 
 ```typescript
-export { prisma, default } from "./client.js";
-export * from "./types.js";
+// External package imports (from other workspace packages)
+import { prisma } from "@metasaver/rugby-crm-database/client";
+import type { User, Team } from "@metasaver/rugby-crm-database/types";
+
+// Internal imports (within same package) - use #/ alias
+import { prisma } from "#/client.js";
+import type { User } from "#/types.js";
 ```
 
 **Key Points:**
 
-- Single entry point for consumers
-- Exports client and all Prisma types
-- Uses `.js` extension (ESM compatibility)
+- Use package.json `exports` field for public API
+- No barrel exports (index.ts files)
+- Consumers import directly from specific paths
+- Internal imports use `#/` alias
+- External imports use full package path
 
 ## Workflow: Scaffolding New Database Package
 
@@ -394,8 +415,14 @@ export * from "./types.js";
 5. **Create Types** (use template)
    - `src/types.ts`
 
-6. **Create Main Export** (use template)
-   - `src/index.ts`
+6. **Add Exports to package.json**
+
+   ```json
+   "exports": {
+     "./client": "./dist/client.js",
+     "./types": "./dist/types.js"
+   }
+   ```
 
 7. **Create Seed Scripts** (use template)
    - `prisma/seed/index.ts`
@@ -466,10 +493,12 @@ export * from "./types.js";
 
 ### Exports
 
-- [ ] `src/index.ts` barrel export exists
-- [ ] Exports: client and all Prisma types
+- [ ] `package.json` has `exports` field with `/client` and `/types` paths
+- [ ] NO `src/index.ts` barrel export file
 - [ ] All imports use `.js` extension (ESM)
 - [ ] No circular dependencies
+- [ ] Internal imports use `#/` alias
+- [ ] External consumers import from specific paths
 
 ### Seed Scripts
 

@@ -1,6 +1,10 @@
 {
   "extends": "@metasaver/core-typescript-config/base",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#/*": ["./src/*"]
+    },
     "rootDir": "./src",
     "outDir": "./dist"
   },

@@ -33,6 +33,42 @@ Use Serena progressive disclosure for 93% token savings:
 
 **Invoke `/skill serena-code-reading` for detailed analysis.**
 
+## Import/Export Standards
+
+**Internal imports (within same package):**
+
+```typescript
+import type { User } from "#/users/types.js";
+import { validateUser } from "#/utils/validation.js";
+import { USER_ROLES } from "#/constants/roles.js";
+```
+
+**External imports (from other packages):**
+
+```typescript
+import type { User } from "@metasaver/contracts/users/types";
+import { prisma } from "@metasaver/database/client";
+import { POSITION_HIERARCHY } from "@metasaver/contracts/positions/hierarchy";
+```
+
+**Export patterns:**
+
+Use named exports for all public APIs:
+
+```typescript
+// Named exports - the standard pattern
+export function validateUser() {}
+export type User = { id: string };
+export const MAX_USERS = 100;
+```
+
+**File naming:**
+
+- `types.ts` - Type definitions
+- `validation.ts` - Zod schemas
+- `constants.ts` - Constants
+- `enums.ts` - Enum definitions
+
 ## Standards & Patterns
 
 ### Repository Detection

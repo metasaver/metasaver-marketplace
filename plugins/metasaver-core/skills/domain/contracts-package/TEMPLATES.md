@@ -38,45 +38,55 @@ This skill includes the following template files for scaffolding MetaSaver contr
 
 **Use when:** Adding a new entity to contracts package
 
-### entity-index.ts.template
-
-**Purpose:** Barrel export for entity folder
-**Location:** `src/{entity}/index.ts`
-**Exports:**
-
-- All types from `./types.js`
-- All validation from `./validation.js`
-
-**Use when:** Adding a new entity to contracts package
-
----
-
-## Root Templates
-
-### root-index.ts.template
-
-**Purpose:** Root barrel export for the package
-**Location:** `src/index.ts`
-**Exports:**
-
-- Shared types and enums from `./shared/`
-- All entity exports
-
-**Variables:**
-
-- `{{ENTITY_KEBAB}}` - kebab-case entity name
-
-**Use when:** Scaffolding new contracts package or adding entities
-
-### shared-index.ts.template
+### shared-types.ts.template
 
 **Purpose:** Shared enums and types used by multiple entities
-**Location:** `src/shared/index.ts`
+**Location:** `src/shared/types.ts`
 **Exports:**
 
 - Enums with corresponding Labels objects
+- Named exports only (no default exports)
+
+**Pattern:**
+
+```typescript
+export enum UserRole {
+  ADMIN = "admin",
+  USER = "user",
+}
+
+export const UserRoleLabels = {
+  [UserRole.ADMIN]: "Administrator",
+  [UserRole.USER]: "User",
+} as const;
+```
 
 **Use when:** Adding enums that are used by 2+ entities
+
+---
+
+## Package Configuration
+
+**IMPORTANT:** Use package.json `exports` field instead of barrel files.
+
+**Example exports field (wildcard pattern - zero maintenance):**
+
+```json
+"exports": {
+  "./*": { "types": "./dist/*.d.ts", "import": "./dist/*.js" }
+}
+```
+
+**Consumer imports:**
+
+```typescript
+// Correct - direct path imports
+import type { User } from "@metasaver/contracts/users/types";
+import { CreateUserRequest } from "@metasaver/contracts/users/validation";
+
+// Wrong - barrel imports (don't use)
+import { User } from "@metasaver/contracts";
+```
 
 ---
 

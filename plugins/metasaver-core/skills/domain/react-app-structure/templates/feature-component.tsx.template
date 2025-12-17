@@ -11,8 +11,11 @@
  * - Sub-component composition
  */
 
+// External imports
 import { useState, useEffect } from "react";
-import { useApiClient } from "@/lib/api-client";
+
+// Internal imports - use #/ pattern
+import { useApiClient } from "#/lib/api-client.js";
 
 export interface MicroservicesFeatureProps {
   // Optional props if needed

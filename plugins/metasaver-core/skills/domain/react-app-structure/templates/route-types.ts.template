@@ -2,7 +2,7 @@
  * Type-safe route definitions
  *
  * Usage in components:
- *   import { ROUTES } from "@/routes/route-types";
+ *   import { ROUTES } from "#/routes/route-types.js";
  *   <Link to={ROUTES.DASHBOARD} />
  *
  * Add new routes here first, then add to routes.tsx

@@ -7,11 +7,14 @@
  * - Global theme/styling context
  */
 
+// External imports
 import { Auth0Provider } from "@auth0/auth0-react";
 import { RouterProvider } from "react-router-dom";
-import { router } from "@/routes/routes";
-import { auth0Config } from "@/config/auth-config";
-import "./index.css";
+
+// Internal imports - use #/ pattern for internal modules
+import { router } from "#/routes/routes.js";
+import { auth0Config } from "#/config/auth-config.js";
+import "#/index.css";
 
 export function App() {
   return (
@@ -27,5 +30,3 @@ export function App() {
     </Auth0Provider>
   );
 }
-
-export default App;

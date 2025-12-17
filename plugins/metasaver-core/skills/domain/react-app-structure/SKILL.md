@@ -66,7 +66,7 @@ src/
 │   └── auth-config.ts          # Auth0 configuration (MUST be in config/, NOT lib/)
 │
 ├── hooks/                      # (optional) App-wide hooks only (e.g., impersonation)
-│   └── index.ts                # Barrel export
+│   └── use-impersonation.ts    # Named export pattern
 │
 ├── lib/
 │   └── api-client.ts           # Axios client with auth token injection ONLY
@@ -74,23 +74,21 @@ src/
 ├── features/
 │   └── {domain}/               # Grouped by domain (mirrors pages/)
 │       └── {feature}/
-│           ├── index.ts        # Barrel export
-│           ├── {feature}.tsx   # Main feature component
+│           ├── {feature}.tsx   # Main feature component (named export)
 │           ├── components/     # (optional) Reusable sub-components
-│           │   └── index.ts    # Barrel export
+│           │   └── {component}.tsx  # Each component in own file
 │           ├── hooks/          # (optional) Feature-specific hooks
-│           │   └── index.ts    # Barrel export
+│           │   └── use-{hook}.ts    # Each hook in own file
 │           ├── config/         # (optional) Feature-specific config
-│           │   └── index.ts    # Barrel export
+│           │   └── config.ts   # Named exports
 │           └── queries/        # (optional) API query functions
-│               └── index.ts    # Barrel export
+│               └── {entity}-queries.ts  # Query functions
 │
 ├── pages/
 │   └── {domain}/               # Grouped by domain (mirrors features/)
 │       └── {page}.tsx          # Thin wrapper importing from features/
-│   └── theme/                  # Theme page uses barrel pattern
-│       ├── index.ts            # export { default } from "./theme"
-│       └── theme.tsx           # Theme component
+│   └── theme/
+│       └── theme.tsx           # Theme component (named export)
 │
 ├── routes/
 │   ├── route-types.ts          # Type-safe ROUTES constant
@@ -125,28 +123,28 @@ features/
 └── status-feature/             # Maps to pages/datafeedr/status.tsx
 ```
 
-**Rule 2: Barrel Exports**
-Each feature level must have `index.ts` with barrel exports:
+**Rule 2: No Barrel Exports**
+Import directly from specific files using `#/` alias for internal imports:
 
 ```typescript
-// src/features/microservices-feature/index.ts
-export * from "./microservices";
-export * from "./hooks";
-export * from "./components";
-export * from "./config";
+// CORRECT - Import from specific files
+import { MicroservicesFeature } from "#/features/microservices-feature/microservices.tsx";
+import { useGetServices } from "#/features/microservices-feature/hooks/use-get-services.ts";
+import { ServiceCard } from "#/features/microservices-feature/components/service-card.tsx";
 ```
 
 **Rule 3: Component Naming**
 
 - Main component filename matches feature: `microservices.tsx`
 - Main component export: `export function MicroservicesFeature() { ... }`
-- Sub-components in `components/` subfolder
+- Sub-components in `components/` subfolder with descriptive names
+- Use named exports only (no default exports)
 
 **Rule 4: Optional Subfolders**
 Only create `components/`, `hooks/`, `config/`, `queries/` if needed:
 
 - No empty folders
-- If folder exists, must have `index.ts` barrel export
+- Each file has specific purpose and named exports
 - `queries/` contains API query functions (e.g., `{entity}-queries.ts`)
 - Deep nesting (3+ levels) suggests refactoring needed
 
@@ -171,11 +169,11 @@ pages/
 ```
 
 **Rule 2: Thin Wrappers**
-Page files are thin wrappers (5-15 lines):
+Page files are thin wrappers (5-15 lines) with direct imports:
 
 ```typescript
 // src/pages/service-catalog/micro-services.tsx
-import { MicroservicesFeature } from "@/features/microservices-feature";
+import { MicroservicesFeature } from "#/features/microservices-feature/microservices.tsx";
 
 export function MicroServicesPage() {
   return <MicroservicesFeature />;
@@ -184,20 +182,29 @@ export function MicroServicesPage() {
 
 **Rule 3: No Logic in Pages**
 
-- Pages import from features
+- Pages import from features using `#/` alias
 - Pages do NOT contain business logic
 - Pages do NOT have their own hooks/components
 - Exception: Page-level wrappers (auth guards, layouts)
 
-**Rule 4: Barrel Exports for Page Folders**
-Pages that are folders (not single files) use barrel exports:
+**Rule 4: Import Order**
+Follow standard import order in all files:
 
 ```typescript
-// src/pages/theme/index.ts
-export { default } from "./theme";
-```
+// 1. Node.js built-ins (rare in React apps)
+import { resolve } from "path";
 
-This allows lazy imports to work: `lazy(() => import("@/pages/theme"))`
+// 2. External packages
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+// 3. Workspace packages (external imports)
+import type { User } from "@metasaver/contracts/users/types";
+
+// 4. Internal imports (same package)
+import { MicroservicesFeature } from "#/features/microservices-feature/microservices.tsx";
+import { useAuth } from "#/hooks/use-auth.ts";
+```
 
 ### Config Directory Pattern
 
@@ -238,15 +245,21 @@ export const ROUTES = {
 } as const;
 ```
 
-**routes.tsx** uses lazy loading:
+**routes.tsx** uses lazy loading with named exports:
 
 ```typescript
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 const HomePage = lazy(() =>
-  import("@/pages/home/home").then((m) => ({
+  import("#/pages/home/home.tsx").then((m) => ({
     default: m.HomePage,
+  }))
+);
+
+const MicroServicesPage = lazy(() =>
+  import("#/pages/service-catalog/micro-services.tsx").then((m) => ({
+    default: m.MicroServicesPage,
   }))
 );
 
@@ -254,6 +267,10 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.HOME,
     element: <HomePage />,
+  },
+  {
+    path: ROUTES.MICROSERVICES,
+    element: <MicroServicesPage />,
   },
   // ...
 ]);
@@ -284,19 +301,21 @@ Does NOT contain:
    ```
 
 2. **Create Feature Files** (use templates)
-   - `src/features/{domain}/{feature}/{feature}.tsx`
-   - `src/features/{domain}/{feature}/index.ts`
-   - `src/features/{domain}/{feature}/components/index.ts`
-   - `src/features/{domain}/{feature}/hooks/index.ts`
-   - `src/features/{domain}/{feature}/config/index.ts`
+   - `src/features/{domain}/{feature}/{feature}.tsx` - Main feature component with named export
+   - `src/features/{domain}/{feature}/components/{component}.tsx` - Component files as needed
+   - `src/features/{domain}/{feature}/hooks/use-{hook}.ts` - Hook files as needed
+   - `src/features/{domain}/{feature}/config/config.ts` - Config file as needed
 
 3. **Create Page File** (use template)
-   - `src/pages/{domain}/{page}.tsx`
+   - `src/pages/{domain}/{page}.tsx` - Import feature using `#/` alias
 
 4. **Update Routes**
    - Add ROUTES constant in `src/routes/route-types.ts`
-   - Add route config in `src/routes/routes.tsx`
+   - Add route config in `src/routes/routes.tsx` with lazy loading
    - Add to `menuItems` in `src/config/index.tsx`
+
+5. **Ensure Import Order**
+   - Node.js built-ins → External packages → Workspace packages → Internal imports (`#/`)
 
 ## Audit Checklist
 
@@ -312,21 +331,23 @@ Does NOT contain:
 ### Features Directory
 
 - [ ] Features grouped by domain: `features/{domain}/{feature}/`
-- [ ] Each feature has `index.ts` with barrel exports
-- [ ] Main component: `{feature}.tsx` in feature root
-- [ ] Sub-components in `components/` (if exists)
-- [ ] Each subfolder has `index.ts`
+- [ ] Main component: `{feature}.tsx` in feature root with named export
+- [ ] Sub-components in `components/` with descriptive names (if exists)
+- [ ] Hooks in `hooks/` folder with `use-` prefix
+- [ ] NO `index.ts` barrel export files
 - [ ] No empty folders
 - [ ] Feature names use kebab-case: `microservices-feature`
+- [ ] All imports use `#/` alias for internal paths
 
 ### Pages Directory
 
 - [ ] Pages mirror feature structure: `pages/{domain}/{page}.tsx`
 - [ ] Page files are thin wrappers (< 20 lines)
-- [ ] Pages import from `@/features/`
+- [ ] Pages import from features using `#/` alias
 - [ ] No business logic in pages
 - [ ] No sub-components in pages folder
-- [ ] Page export: `export function {Page}Page()`
+- [ ] Page export: `export function {Page}Page()` (named export only)
+- [ ] Imports follow correct order: external packages → workspace packages → internal (`#/`)
 
 ### Config Files
 
@@ -400,26 +421,33 @@ export function MicroservicesFeature() {
 }
 ```
 
-**Violation:** Feature doesn't have barrel export
+**Violation:** Using barrel exports (index.ts files)
 
 ```typescript
-// WRONG - No index.ts
-src/features/microservices-feature/
-├── microservices.tsx
-└── hooks/
-    └── use-get-services.ts
-```
-
-**Fix:** Add barrel exports
-
-```typescript
-// RIGHT
+// WRONG - Barrel export pattern
 src/features/microservices-feature/
 ├── index.ts                    // export * from "./microservices"
 ├── microservices.tsx
 ├── hooks/
 │   ├── index.ts               // export * from "./use-get-services"
 │   └── use-get-services.ts
+
+// WRONG - Import from barrel
+import { MicroservicesFeature } from "#/features/microservices-feature";
+```
+
+**Fix:** Use direct imports with `#/` alias
+
+```typescript
+// RIGHT - No index.ts files
+src/features/microservices-feature/
+├── microservices.tsx
+└── hooks/
+    └── use-get-services.ts
+
+// RIGHT - Direct import with full path
+import { MicroservicesFeature } from "#/features/microservices-feature/microservices.tsx";
+import { useGetServices } from "#/features/microservices-feature/hooks/use-get-services.ts";
 ```
 
 **Violation:** Page structure doesn't mirror feature structure
@@ -492,12 +520,14 @@ Audit checklist:
 ### Example 3: Validate Page-Feature Alignment
 
 ```typescript
-// Check that pages import from matching features
+// Check that pages import from matching features using #/ alias
 // src/pages/service-catalog/micro-services.tsx
-import { MicroservicesFeature } from "@/features/service-catalog/microservices-feature";
+import { MicroservicesFeature } from "#/features/service-catalog/microservices-feature/microservices.tsx";
 
 // Domain must match: service-catalog / service-catalog ✓
 // Feature path must match: microservices-feature / microservices-feature ✓
+// Import uses #/ alias ✓
+// Import includes full file path with extension ✓
 ```
 
 ## Related Skills

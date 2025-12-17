@@ -8,6 +8,7 @@
  * - Handles error responses consistently
  */
 
+// External imports
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -70,5 +71,5 @@ export const useApiClient = () => {
   return apiClient;
 };
 
-// Default export for static usage
-export default createApiClient();
+// Named export for static usage (no default exports)
+export const apiClient = createApiClient();

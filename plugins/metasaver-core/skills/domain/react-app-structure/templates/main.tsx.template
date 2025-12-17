@@ -4,9 +4,12 @@
  * Mounts React app to DOM at root element
  */
 
+// External imports
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./app.tsx";
+
+// Internal imports
+import { App } from "#/app.js";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {

@@ -142,7 +142,7 @@ const ROUTES = {
 **Example Output:**
 
 ```typescript
-import { MicroservicesFeature } from "@/features/microservices-feature";
+import { MicroservicesFeature } from "#/features/microservices-feature/microservices.tsx";
 
 export function MicroServicesPage() {
   return <MicroservicesFeature />;
@@ -151,24 +151,13 @@ export function MicroServicesPage() {
 
 **Use when:** Creating new page file
 
+**Import pattern:** Always use `#/` alias for internal imports with full file paths.
+
 ---
 
 ## Feature Templates
 
-### feature-barrel-export.ts.template
-
-**Purpose:** Barrel export for feature folder
-**Location:** `src/features/{domain}/{feature}/index.ts`
-**Pattern:**
-
-```typescript
-export * from "./{feature}";
-export * from "./hooks";
-export * from "./components";
-export * from "./config";
-```
-
-**Use when:** Creating new feature, adding subfolders
+**IMPORTANT:** No barrel export (index.ts) files are used. Import directly from specific files.
 
 ### feature-component.tsx.template
 
@@ -230,9 +219,6 @@ For a new feature (e.g., Products):
 2. **Create files from templates:**
 
    ```bash
-   cp templates/feature-barrel-export.ts.template \
-      src/features/datafeedr/products-feature/index.ts
-
    cp templates/feature-component.tsx.template \
       src/features/datafeedr/products-feature/products.tsx
 
@@ -242,13 +228,13 @@ For a new feature (e.g., Products):
 
 3. **Update config:**
    - Add PRODUCTS route to `src/routes/route-types.ts`
-   - Add route to `src/routes/routes.tsx`
+   - Add route to `src/routes/routes.tsx` with lazy loading
    - Add menu item to `src/config/index.tsx`
 
 4. **Update imports:**
-   - Rename imports in page wrapper
-   - Rename feature component name
-   - Create hook and component subfolders
+   - Use `#/` alias in page wrapper: `import { ProductsFeature } from "#/features/datafeedr/products-feature/products.tsx"`
+   - Rename feature component name to match
+   - Create hook and component files as needed (no index.ts)
 
 ---
 
@@ -262,9 +248,10 @@ For a new feature (e.g., Products):
 
 ### File References
 
-- Update `.tsx`/`.ts` paths in exports
-- Use `@/` path aliases
+- Use `#/` alias for all internal imports (not `@/`)
+- Include full file paths with extensions: `#/features/feature-name/file.tsx`
 - Match folder structure to domain
+- External imports use workspace package paths: `@metasaver/contracts/entity/types`
 
 ### Environment Variables
 

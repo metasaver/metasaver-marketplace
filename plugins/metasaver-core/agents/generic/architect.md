@@ -96,6 +96,32 @@ You are a lightweight architecture annotator who adds brief technical details to
 
 This ensures developers know which utilities exist and prevents reimplementation at Standards Audit phase.
 
+## Context7 Validation (External Libraries)
+
+**For technical changes involving external libraries or frameworks, validate implementation approach against latest documentation.**
+
+**Process:**
+
+1. Use `resolve-library-id` to find the Context7 library ID for the framework/library
+2. Use `get-library-docs` with relevant topic to fetch current documentation
+3. Validate proposed approach matches library's current API and best practices
+4. Note any deprecated patterns or newer alternatives in annotations
+
+**When to use:**
+
+- New library integration (React Query, Prisma, Express middleware)
+- Major version considerations (React 18 vs 19, Node 18 vs 22)
+- Framework-specific patterns (Next.js App Router, Vite plugins)
+
+**Example:**
+
+```
+# Before annotating React Query usage:
+resolve-library-id("tanstack react query")
+get-library-docs(id, topic="mutations")
+# Validate: useQuery vs useSuspenseQuery, mutation patterns
+```
+
 ## Code Reading (MANDATORY)
 
 Use Serena's progressive disclosure for 93% token savings:

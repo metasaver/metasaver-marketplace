@@ -1,15 +1,18 @@
 ---
 name: scope-check
-description: Use when determining which repositories a task affects. Distinguishes between target repos (where changes happen) and reference repos (for learning patterns). Returns structured object with targets and references arrays.
+description: Use when determining which repositories or files a task affects. Distinguishes between target repos (where changes happen) and reference repos (for learning patterns). Supports both standard mode returning { targets, references } and audit mode detecting specific config files to audit. Returns structured scope object.
 ---
 
 # Scope Check Skill
 
-**Purpose:** Analyze a prompt and return target repositories (where changes happen) vs reference repositories (for learning patterns).
+**Purpose:** Analyze a prompt and return target repositories + reference repositories, or audit-specific files and repos.
 
-**Input:** `prompt` (string) - The user's request
+**Input:** `prompt` (string) - The user's request; `mode` (string, optional) - "default" or "audit"
 
-**Output:** `{ targets: string[], references: string[] }` - Structured object with repo paths
+**Output:**
+
+- Default mode: `{ targets: string[], references: string[] }` - Structured object with repo paths
+- Audit mode: `{ repos: string[], files: string[] }` - Repos to audit and specific files to check
 
 ---
 
@@ -17,16 +20,32 @@ description: Use when determining which repositories a task affects. Distinguish
 
 This is a TEXT ANALYSIS task - analyze the prompt text as your sole input:
 
+### Default Mode (targets & references)
+
 1. Scan the prompt for **reference indicators** (repos mentioned for pattern learning)
 2. Scan the prompt for **target indicators** (repos where changes should happen)
 3. Apply default: CWD is target if no explicit target mentioned
-4. Return ONLY: `scope: { targets: [...], references: [...] }`
+4. Return: `scope: { targets: [...], references: [...] }`
 5. Complete in under 200 tokens
 
 **Expected output format:**
 
 ```
 scope: { targets: ["{CODE_ROOT}/metasaver-com"], references: ["{CODE_ROOT}/rugby-crm"] }
+```
+
+### Audit Mode (repos & files)
+
+1. Detect repo targets using Step 2 rules (repositories to audit)
+2. Detect specific files using Step 2A rules (config files to check)
+3. If prompt mentions "audit X" pattern, detect files for X
+4. Return: `scope: { repos: [...], files: [...] }`
+5. Complete in under 200 tokens
+
+**Expected audit output format:**
+
+```
+scope: { repos: ["{CODE_ROOT}/metasaver-com"], files: ["eslint.config.js", "turbo.json"] }
 ```
 
 **Path Resolution:** Replace `{CODE_ROOT}` with the actual code directory (e.g., `/home/user/code/`). The calling agent provides the resolved paths.
@@ -64,6 +83,34 @@ scope: { targets: ["{CODE_ROOT}/metasaver-com"], references: ["{CODE_ROOT}/rugby
 | Explicit: `make changes in`, `modify`, `implement` | "implement auth in metasaver-com"        |
 
 **Default target:** If no explicit target mentioned, use current working directory (CWD).
+
+---
+
+## Step 2A: Detect Audit Files (Audit Mode Only)
+
+When `mode: "audit"` is specified, detect specific config files mentioned or implied:
+
+| Prompt Pattern                                    | Files Detected                                                                                                  |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `audit eslint`, `eslint config`                   | `["eslint.config.js"]`                                                                                          |
+| `audit docker-compose`, `docker compose`          | `["docker-compose.yml", "docker-compose.yaml"]`                                                                 |
+| `audit turbo`, `turbo config`                     | `["turbo.json"]`                                                                                                |
+| `audit typescript`, `audit tsconfig`, `ts config` | `["tsconfig.json", "tsconfig.*.json"]`                                                                          |
+| `audit prettier`, `prettier config`               | `["package.json"]` (prettier field)                                                                             |
+| `audit vite`, `vite config`                       | `["vite.config.ts"]`                                                                                            |
+| `audit vitest`, `vitest config`                   | `["vitest.config.ts"]`                                                                                          |
+| `audit monorepo root`, `root config`              | All root-level config files: `[".npmrc", "turbo.json", "pnpm-workspace.yaml", "package.json", "tsconfig.json"]` |
+| `audit all configs`, `all configuration`          | All known config files (union of above)                                                                         |
+| `audit package.json`, `package files`             | `["package.json"]`                                                                                              |
+| `audit pnpm-lock`                                 | `["pnpm-lock.yaml"]`                                                                                            |
+
+**File detection logic:**
+
+- Match keywords in prompt (case-insensitive)
+- If specific file mentioned (e.g., "eslint.config.js"), return exact filename
+- If config type mentioned (e.g., "turbo"), return standard filename for that config
+- If "all configs" or "monorepo root", return all root-level configs
+- Empty files array means no specific file audit requested
 
 ---
 
@@ -165,13 +212,63 @@ Prompt: "standardize eslint config across all repos"
 → Output: scope: { targets: ["{CODE_ROOT}/multi-mono", "{CODE_ROOT}/metasaver-com", "{CODE_ROOT}/resume-builder", "{CODE_ROOT}/rugby-crm", "{CODE_ROOT}/metasaver-marketplace"], references: [] }
 ```
 
+### Example 9: Audit single file (Audit Mode)
+
+```
+Prompt: "audit eslint config in metasaver-com"
+Mode: "audit"
+→ Repos: metasaver-com (explicit target)
+→ Files: ["eslint.config.js"] (audit eslint = detected)
+→ Output: scope: { repos: ["{CODE_ROOT}/metasaver-com"], files: ["eslint.config.js"] }
+```
+
+### Example 10: Audit turbo in all repos (Audit Mode)
+
+```
+Prompt: "audit turbo.json in all my metasaver repos"
+Mode: "audit"
+→ Repos: ALL known repos (detected: "all my metasaver repos")
+→ Files: ["turbo.json"] (audit turbo = detected)
+→ Output: scope: { repos: ["{CODE_ROOT}/multi-mono", "{CODE_ROOT}/metasaver-com", "{CODE_ROOT}/resume-builder", "{CODE_ROOT}/rugby-crm", "{CODE_ROOT}/metasaver-marketplace"], files: ["turbo.json"] }
+```
+
+### Example 11: Audit monorepo root configs (Audit Mode)
+
+```
+Prompt: "audit monorepo root configuration in multi-mono"
+Mode: "audit"
+→ Repos: multi-mono (explicit target)
+→ Files: [".npmrc", "turbo.json", "pnpm-workspace.yaml", "package.json", "tsconfig.json"] (monorepo root = all root configs)
+→ Output: scope: { repos: ["{CODE_ROOT}/multi-mono"], files: [".npmrc", "turbo.json", "pnpm-workspace.yaml", "package.json", "tsconfig.json"] }
+```
+
+### Example 12: Audit multiple config types (Audit Mode)
+
+```
+Prompt: "audit typescript and prettier configs"
+Mode: "audit"
+→ Repos: [CWD] (no explicit target, use current working directory)
+→ Files: ["tsconfig.json", "tsconfig.*.json", "package.json"] (combined from typescript and prettier patterns)
+→ Output: scope: { repos: ["{CWD}"], files: ["tsconfig.json", "tsconfig.*.json", "package.json"] }
+```
+
 ---
 
 ## Integration
 
 Runs in Phase 1 (Analysis) parallel with complexity-check and tool-check.
 
-Output passed to agents:
+### Output Routing
 
+**Default Mode Output** (`targets` + `references`):
+
+- Passed to: `/build`, `/ms`, and general workflow agents
 - `targets` - Repos where workers will make changes
 - `references` - Repos for pattern research (read-only exploration)
+
+**Audit Mode Output** (`repos` + `files`):
+
+- Passed to: `/audit` workflow and agent-check skill
+- `repos` - Repositories containing files to audit
+- `files` - Specific config files to audit in those repos
+- Enables targeted configuration audits without full repository scans

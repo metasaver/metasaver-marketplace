@@ -106,29 +106,20 @@ packages/example-package/
     "#/*": "./src/*.js"
   },
   "exports": {
-    "./feature-a/types": {
-      "types": "./dist/feature-a/types.d.ts",
-      "import": "./dist/feature-a/types.js"
-    },
-    "./feature-a/validation": {
-      "types": "./dist/feature-a/validation.d.ts",
-      "import": "./dist/feature-a/validation.js"
-    },
-    "./feature-b/types": {
-      "types": "./dist/feature-b/types.d.ts",
-      "import": "./dist/feature-b/types.js"
-    },
-    "./feature-b/constants": {
-      "types": "./dist/feature-b/constants.d.ts",
-      "import": "./dist/feature-b/constants.js"
-    },
-    "./shared/enums": {
-      "types": "./dist/shared/enums.d.ts",
-      "import": "./dist/shared/enums.js"
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
     }
   }
 }
 ```
+
+**Wildcard Exports Rationale:**
+
+- Single entry covers all modules (zero maintenance)
+- Same import paths work: `@metasaver/example-package/users/types`
+- Private monorepo = "everything public" is not a concern
+- Tree-shaking benefits preserved
 
 ### 4.3 TSConfig Configuration
 
@@ -362,8 +353,18 @@ export function createServer() {
    }
    ```
 
-5. **Build `exports` field from barrel contents**
-   - Each file that was exported becomes an export entry
+5. **Add `exports` field with wildcard pattern**
+
+   ```json
+   {
+     "exports": {
+       "./*": {
+         "types": "./dist/*.d.ts",
+         "import": "./dist/*.js"
+       }
+     }
+   }
+   ```
 
 6. **Delete all barrel index.ts files**
 
@@ -478,7 +479,7 @@ FILES:
 
 PACKAGE.JSON:
   "imports": { "#/*": "./src/*.js" }
-  "exports": { "./path": { "types": "...", "import": "..." } }
+  "exports": { "./*": { "types": "./dist/*.d.ts", "import": "./dist/*.js" } }
 ```
 
 ### 12.2 ESLint Rules (Future)
