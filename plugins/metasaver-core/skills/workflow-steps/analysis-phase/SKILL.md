@@ -1,6 +1,6 @@
 ---
 name: analysis-phase
-description: Parallel execution of complexity-check, tool-check, and scope-check skills. Returns complexity score (1-50), required MCP tools array, and scope object with targets and references arrays. First phase of all workflows.
+description: Parallel execution of analysis check skills. Command-specific - /ms uses all 3 checks, /build uses 2, /audit uses 2 different ones. See command for which checks to run.
 ---
 
 # Analysis Phase Skill
@@ -8,35 +8,41 @@ description: Parallel execution of complexity-check, tool-check, and scope-check
 > **ROOT AGENT ONLY** - Invokes skills in parallel, runs only from root Claude Code agent.
 
 **Purpose:** Gather context for routing and planning decisions
-**Trigger:** First phase of any workflow command
-**Input:** `prompt` (string) - Original user request
-**Output:** `{complexity: int, tools: string[], scope: {targets: string[], references: string[]}}`
+**Trigger:** First phase of workflow commands
+
+---
+
+## Command-Specific Checks
+
+Each command specifies which checks to run in parallel:
+
+| Command  | Checks                                      | Output                     |
+| -------- | ------------------------------------------- | -------------------------- |
+| `/ms`    | complexity-check + tool-check + scope-check | score, tools[], scope      |
+| `/build` | complexity-check + scope-check              | score, scope               |
+| `/audit` | scope-check + agent-check                   | repos[], files[], agents[] |
+
+**IMPORTANT:** Refer to the command file for the exact checks to spawn.
+
+---
+
+## Available Check Skills
+
+| Skill                     | Agent                  | Output                                         |
+| ------------------------- | ---------------------- | ---------------------------------------------- |
+| `/skill complexity-check` | complexity-check-agent | `score: <int 1-50>`                            |
+| `/skill tool-check`       | tool-check-agent       | `tools: [...]`                                 |
+| `/skill scope-check`      | scope-check-agent      | `scope: { targets: [...], references: [...] }` |
+| `/skill agent-check`      | agent-check-agent      | `agents: [...]`                                |
 
 ---
 
 ## How to Execute
 
-This is a PARALLEL text analysis phase. Spawn 3 independent agents simultaneously:
-
-1. **complexity-check agent** - Analyzes keywords, scopes, and quantities in the prompt only
-2. **tool-check agent** - Matches prompt keywords to MCP tool requirements
-3. **scope-check agent** - Identifies target repos (for changes) vs reference repos (for patterns)
-
-**Key Points:**
-
-- Parse the prompt text directly (keyword scanning, like regex)
-- Complete in ~200 tokens per agent
-- Focus exclusively on text analysis tasks - parse the prompt as a self-contained string
-- Each agent operates independently (true parallel execution)
-- Return structured output format exactly as specified
-
----
-
-## Workflow
-
-**Spawn 3 agents in PARALLEL using dedicated analysis agents (zero tool access):**
+Spawn check agents in PARALLEL using dedicated analysis agents (zero tool access):
 
 ```
+# Example for /ms (3 checks)
 Task 1: subagent_type="core-claude-plugin:generic:complexity-check-agent"
   Prompt: "Analyze this prompt and return complexity score: {USER_PROMPT}"
 
@@ -47,9 +53,9 @@ Task 3: subagent_type="core-claude-plugin:generic:scope-check-agent"
   Prompt: "Analyze this prompt and return scope (CWD: {CWD}): {USER_PROMPT}"
 ```
 
-**Why dedicated agents?** These agents specify `tools: TodoWrite` (a minimal core tool) instead of inheriting all tools, which eliminates ~37k tokens of MCP tool schemas per agent. Total savings: ~111k input tokens per analysis phase.
+**Why dedicated agents?** These agents specify `tools: TodoWrite` (a minimal core tool) instead of inheriting all tools, which eliminates ~37k tokens of MCP tool schemas per agent.
 
-Collect results: `complexity_score`, `tools`, `scope` (with targets and references)
+Collect results based on which checks were run.
 
 ---
 

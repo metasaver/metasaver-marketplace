@@ -3,18 +3,6 @@ name: audit
 description: Audit configurations and standards compliance with interactive discrepancy resolution
 ---
 
-# MetaSaver Constitution
-
-| #   | Principle       | Rule                                        |
-| --- | --------------- | ------------------------------------------- |
-| 1   | **Minimal**     | Change only what must change                |
-| 2   | **Root Cause**  | Fix the source (address symptoms at origin) |
-| 3   | **Read First**  | Understand existing code before modifying   |
-| 4   | **Verify**      | Confirm it works before marking done        |
-| 5   | **Exact Scope** | Do precisely what was asked                 |
-
----
-
 # Audit Command
 
 Validates configurations and standards compliance with interactive user decisions per discrepancy. Deterministic workflow: analyze → understand → investigate (read-only) → resolve with user → remediate → report.
