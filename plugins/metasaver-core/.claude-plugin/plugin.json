@@ -4,8 +4,13 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "command": "node plugins/metasaver-core/hooks/scripts/ms-reminder-hook.js",
-        "timeout": 5000
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node plugins/metasaver-core/hooks/scripts/ms-reminder-hook.js",
+            "timeout": 5000
+          }
+        ]
       }
     ]
   }
