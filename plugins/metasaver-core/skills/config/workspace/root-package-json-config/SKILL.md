@@ -1,6 +1,6 @@
 ---
 name: root-package-json-config
-description: Root package.json configuration for MetaSaver monorepos. Use when creating or auditing root package.json files to ensure workspace configuration, required scripts (build, dev, lint, test, format, clean), turbo pipeline scripts, packageManager field, and no dependencies at root (only devDependencies).
+description: Root package.json configuration for MetaSaver monorepos. Use when creating or auditing root package.json files to ensure workspace configuration, required scripts (build, dev, lint, test, format, clean), turbo pipeline scripts, packageManager field, and only devDependencies at root (no dependencies except cross-platform binaries).
 ---
 
 # Root package.json Configuration Skill
@@ -21,9 +21,9 @@ Located at: `templates/root-package.json.template`
 | ---- | ----------------------- | --------------------------------------------------------------------------------------------------- |
 | 1    | Monorepo metadata       | name: `@metasaver/*`, private: true, packageManager: `pnpm@*`, engines (node, pnpm), type: "module" |
 | 2    | Standard scripts        | build, clean, dev, lint*, prettier*, test*, db*, docker*, setup*                                    |
-| 3    | DevDependencies only    | NO dependencies (except cross-platform binaries). Tooling in devDependencies only                   |
-| 4    | Workspaces in YAML      | NO workspaces field (use pnpm-workspace.yaml)                                                       |
-| 5    | Cross-platform binaries | turbo-linux-64, turbo-windows-64 in dependencies (NOT optionalDependencies)                         |
+| 3    | DevDependencies only    | ENSURE ONLY devDependencies (except cross-platform binaries). Place all tooling in devDependencies  |
+| 4    | Workspaces in YAML      | USE pnpm-workspace.yaml instead of workspaces field in package.json                                 |
+| 5    | Cross-platform binaries | PLACE turbo-linux-64, turbo-windows-64 in dependencies (NOT optionalDependencies)                   |
 
 ### Rule 1: Monorepo Metadata
 
@@ -131,10 +131,10 @@ validate(
 ## Best Practices
 
 1. Use template as starting point
-2. All scripts use turbo for orchestration
-3. Cross-platform binaries in dependencies (not devDependencies)
-4. Keep root dependencies empty (tooling in devDependencies only)
-5. Re-audit after changes
+2. ENSURE all scripts use turbo for orchestration
+3. PLACE cross-platform binaries in dependencies (not devDependencies)
+4. VERIFY only devDependencies at root (place all tooling in devDependencies only)
+5. RE-AUDIT after making changes
 
 ## Integration
 

@@ -25,7 +25,7 @@ When /architect is invoked, ALWAYS proceed to Phase 1 regardless of prompt conte
 
 Spawn scope-check agent to identify target and reference repositories.
 
-**Note:** NO complexity-check for /architect - all requests follow FULL PATH workflow.
+**Note:** Scope-check only (no complexity evaluation) - all requests follow FULL PATH workflow.
 
 ---
 
@@ -47,7 +47,7 @@ Creates draft PRD + user stories based on exploration results.
 
 Single vibe check validates PRD coherence and requirements clarity.
 
-On failure: Return to Requirements phase for revision.
+If revision needed: Return to Requirements phase to refine PRD.
 
 **ALWAYS runs for /architect** (unlike /build where it's optional).
 
@@ -99,7 +99,7 @@ Save PRD package to `docs/projects/{yyyymmdd}-{name}/` with all artifacts.
 
 Tell user: "Run `/build {path}/prd.md` to execute this plan."
 
-**NO EXECUTION** - /architect is planning only.
+**Planning-only scope** - /architect produces PRD package, does not execute implementation.
 
 ---
 
@@ -167,7 +167,7 @@ docs/projects/{yyyymmdd}-{name}/
 9. Architect must validate against Context7 docs for external libraries
 10. Planning must create execution plan with parallel waves
 11. Final HITL approval required before saving PRD
-12. NO EXECUTION - output is PRD package only
+12. Output is PRD package only - execution via `/build {prd-path}`
 13. Tell user to run `/build {prd-path}` to execute the plan
-14. If Vibe Check fails, return to Requirements phase for revision
+14. If Vibe Check requires revision, return to Requirements phase to refine PRD
 15. Save all artifacts to `docs/projects/{yyyymmdd}-{name}/`

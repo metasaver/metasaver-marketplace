@@ -45,7 +45,7 @@ Use `/skill domain/audit-workflow` for orchestration.
 
 **Workflow:** Check if .npmrc.template exists → if not, generate from standard template → verify all 4 rule categories present → re-audit
 
-**Critical:** Use ${GITHUB_TOKEN} placeholder, never real tokens. Include setup instructions for token replacement.
+**Critical:** Use ${GITHUB_TOKEN} placeholder, always use placeholders instead of real tokens. Include setup instructions for token replacement.
 
 ## Audit Mode
 
@@ -61,7 +61,7 @@ Use `/skill domain/audit-workflow` for orchestration.
 3. shamefully-hoist + node-linker=hoisted
 4. save-exact=true, save-prefix=''
 5. Docs header + setup instructions
-6. NO REAL TOKENS (security)
+6. USE PLACEHOLDERS ONLY (security - never commit real tokens)
 
 ## Consumer vs Library
 
@@ -72,7 +72,7 @@ Use `/skill domain/audit-workflow` for orchestration.
 ## Best Practices
 
 1. Root only - .npmrc.template at repository root
-2. Security first - never real tokens, always ${GITHUB_TOKEN}
+2. Security first - always use ${GITHUB_TOKEN} placeholder, never commit real tokens
 3. Document setup - include token replacement instructions
 4. pnpm critical - hoisting settings essential for monorepo
 5. Verify with audit after creating config
@@ -82,4 +82,4 @@ Use `/skill domain/audit-workflow` for orchestration.
 
 ## Success Criteria
 
-.npmrc.template at root, @metasaver registry, Token: ${GITHUB_TOKEN}, hoisting present, save-exact set, docs + instructions, no real tokens (security), re-audit 100%
+.npmrc.template at root, @metasaver registry, Token: ${GITHUB_TOKEN}, hoisting present, save-exact set, docs + instructions, placeholders only (security), re-audit 100%

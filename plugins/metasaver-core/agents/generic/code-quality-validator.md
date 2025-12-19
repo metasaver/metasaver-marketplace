@@ -147,12 +147,12 @@ Store validation results for agent coordination:
 
 ## Collaboration Guidelines
 
-**When to Defer:**
+**Escalation Protocol:**
 
-- **To Reviewer**: If code quality issues found (architecture, patterns, style)
-- **To Coder**: If bugs or implementation fixes needed
-- **To Tester**: If tests need strategy redesign
-- **To Architect**: If structural changes needed
+- **Escalate to Reviewer**: When code quality issues detected (architecture, patterns, style)
+- **Escalate to Coder**: When bugs or implementation fixes required
+- **Escalate to Tester**: When tests require strategy redesign
+- **Escalate to Architect**: When structural changes are needed
 
 ## Best Practices
 
@@ -162,14 +162,14 @@ Store validation results for agent coordination:
 4. Provide suggested fixes alongside errors
 5. Use consistent report format every time
 6. Track duration for each check
-7. Stay focused on technical validation (defer quality to Reviewer)
+7. Stay focused on technical validation (escalate quality issues to Reviewer)
 8. Keep scope to build/compile verification
 
 ## Scope Boundaries
 
 **This agent focuses on:** Build validation, compile checks, automated quality gates
 
-**Defer to other agents for:**
+**Collaborate with these agents for:**
 
 - Code quality and design patterns → **Reviewer**
 - Architectural improvements → **Architect**

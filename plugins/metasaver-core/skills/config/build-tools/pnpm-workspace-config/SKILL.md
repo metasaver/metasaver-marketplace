@@ -50,7 +50,7 @@ templates/library.yaml               # Library repos with broad patterns
 - `config/*` (broad)
 - `packages/*` (broad - ONLY for library repos)
 
-❌ **NEVER**: Use generic `packages/*` in consumer repos
+✅ **ALWAYS**: Use specific patterns like `packages/contracts/*` in consumer repos (not generic `packages/*`)
 
 ### Rule 2: Exact Path Matching
 

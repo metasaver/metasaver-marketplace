@@ -11,13 +11,14 @@ description: Token-efficient code reading protocol using Serena's progressive di
 
 ## Mandatory Pattern (93% Token Savings)
 
-**NEVER read entire files first. Use progressive disclosure:**
+**ALWAYS use progressive disclosure instead of reading entire files:**
 
 ### 1. Overview First (~200 tokens)
+
 ```javascript
 mcp__serena__get_symbols_overview({
-  relative_path: "src/services/auth.service.ts"
-})
+  relative_path: "src/services/auth.service.ts",
+});
 ```
 
 **Returns:** File structure showing all top-level symbols (classes, functions, interfaces) with their signatures.
@@ -27,13 +28,14 @@ mcp__serena__get_symbols_overview({
 ---
 
 ### 2. Check Signatures (~50 tokens per symbol)
+
 ```javascript
 mcp__serena__find_symbol({
   name_path_pattern: "AuthService/login",
   relative_path: "src/services/auth.service.ts",
-  include_body: false,  // Just the signature
-  depth: 0
-})
+  include_body: false, // Just the signature
+  depth: 0,
+});
 ```
 
 **Returns:** Method/function signature without implementation details.
@@ -43,13 +45,14 @@ mcp__serena__find_symbol({
 ---
 
 ### 3. Read Bodies Selectively (~100 tokens per symbol)
+
 ```javascript
 mcp__serena__find_symbol({
   name_path_pattern: "AuthService/login",
   relative_path: "src/services/auth.service.ts",
-  include_body: true,  // Full implementation
-  depth: 0
-})
+  include_body: true, // Full implementation
+  depth: 0,
+});
 ```
 
 **Returns:** Complete symbol definition including implementation.
@@ -75,6 +78,7 @@ mcp__serena__find_symbol({
 ```
 
 **Real-world impact:**
+
 - Exploring 10 files: 50,000 tokens → 3,500 tokens (93% savings)
 - Editing 5 symbols: 25,000 tokens → 500 tokens (98% savings)
 
@@ -83,16 +87,19 @@ mcp__serena__find_symbol({
 ## Core Tools Reference
 
 ### File Structure
+
 - `get_symbols_overview` - Get file outline with all top-level symbols
 - `list_dir` - List directory contents
 - `find_file` - Find files by pattern
 
 ### Symbol Navigation
+
 - `find_symbol` - Search for symbols by name path
 - `find_referencing_symbols` - Find all references to a symbol
 - `search_for_pattern` - Regex search across codebase
 
 ### Precise Editing
+
 - `replace_symbol_body` - Replace symbol implementation without reading full file
 - `insert_after_symbol` - Add content after symbol
 - `insert_before_symbol` - Add content before symbol
@@ -107,19 +114,19 @@ mcp__serena__find_symbol({
 ```javascript
 // Step 1: Get overview
 const overview = await mcp__serena__get_symbols_overview({
-  relative_path: "src/services/payment.service.ts"
+  relative_path: "src/services/payment.service.ts",
 });
 
 // Step 2: Check interesting symbol signatures
 const processPaymentSignature = await mcp__serena__find_symbol({
   name_path_pattern: "PaymentService/processPayment",
-  include_body: false  // Just signature
+  include_body: false, // Just signature
 });
 
 // Step 3: Read only what you need
 const processPaymentBody = await mcp__serena__find_symbol({
   name_path_pattern: "PaymentService/processPayment",
-  include_body: true  // Full implementation
+  include_body: true, // Full implementation
 });
 
 // Result: ~350 tokens vs 5,000 tokens (93% savings)
@@ -133,7 +140,7 @@ const processPaymentBody = await mcp__serena__find_symbol({
 // Find all references to a function
 const references = await mcp__serena__find_referencing_symbols({
   name_path: "validateToken",
-  relative_path: "src/utils/auth.utils.ts"
+  relative_path: "src/utils/auth.utils.ts",
 });
 
 // Returns: List of all places that call validateToken
@@ -161,7 +168,7 @@ await mcp__serena__replace_symbol_body({
     if (!isValid) throw new UnauthorizedException();
 
     return user;
-  }`
+  }`,
 });
 
 // Result: ~100 tokens vs 5,000 tokens (98% savings)
@@ -180,7 +187,7 @@ await mcp__serena__insert_after_symbol({
   async logout(userId: string): Promise<void> {
     await this.sessionRepository.deleteByUserId(userId);
     this.logger.info('User logged out', { userId });
-  }`
+  }`,
 });
 
 // Result: ~100 tokens vs 5,000 tokens (98% savings)
@@ -196,16 +203,16 @@ Serena uses "name paths" to identify symbols (like file paths for code):
 
 ```typescript
 // Find any symbol with this name
-"UserService"  // Matches: class UserService, interface UserService, etc.
+"UserService"; // Matches: class UserService, interface UserService, etc.
 
 // Find method inside class
-"UserService/createUser"  // Matches: createUser method in UserService
+"UserService/createUser"; // Matches: createUser method in UserService
 
 // Find nested class
-"AuthModule/AuthService"  // Matches: AuthService inside AuthModule
+"AuthModule/AuthService"; // Matches: AuthService inside AuthModule
 
 // Absolute path (exact match from file root)
-"/UserService/createUser"  // Must be at file root level
+"/UserService/createUser"; // Must be at file root level
 ```
 
 ### TypeScript/JavaScript Examples
@@ -228,21 +235,21 @@ export function hashPassword() { ... }  // Name path: "hashPassword"
 // Substring matching (find all methods starting with "get")
 find_symbol({
   name_path_pattern: "UserService/get",
-  substring_matching: true
-})
+  substring_matching: true,
+});
 // Matches: getUserById, getUserByEmail, getUserProfile
 
 // Search by symbol kind (only classes)
 find_symbol({
   name_path_pattern: "Service",
-  include_kinds: [5]  // 5 = Class
-})
+  include_kinds: [5], // 5 = Class
+});
 
 // Exclude certain kinds
 find_symbol({
   name_path_pattern: "User",
-  exclude_kinds: [13]  // 13 = Variable
-})
+  exclude_kinds: [13], // 13 = Variable
+});
 ```
 
 ---
@@ -251,20 +258,20 @@ find_symbol({
 
 ```typescript
 // Common LSP symbol kinds:
-1  = File
-2  = Module
-3  = Namespace
-4  = Package
-5  = Class
-6  = Method
-7  = Property
-8  = Field
-9  = Constructor
-10 = Enum
-11 = Interface
-12 = Function
-13 = Variable
-14 = Constant
+1 = File;
+2 = Module;
+3 = Namespace;
+4 = Package;
+5 = Class;
+6 = Method;
+7 = Property;
+8 = Field;
+9 = Constructor;
+10 = Enum;
+11 = Interface;
+12 = Function;
+13 = Variable;
+14 = Constant;
 ```
 
 ---
@@ -274,47 +281,55 @@ find_symbol({
 ### ✅ DO
 
 1. **Always start with overview**
+
    ```javascript
-   get_symbols_overview(file) // See what's there first
+   get_symbols_overview(file); // See what's there first
    ```
 
 2. **Check signatures before reading bodies**
+
    ```javascript
-   find_symbol(name, include_body=false) // Interface only
+   find_symbol(name, (include_body = false)); // Interface only
    ```
 
 3. **Read only what you need**
+
    ```javascript
-   find_symbol(specific_symbol, include_body=true) // One symbol at a time
+   find_symbol(specific_symbol, (include_body = true)); // One symbol at a time
    ```
 
 4. **Use find_referencing_symbols for impact analysis**
+
    ```javascript
-   find_referencing_symbols(symbol) // Before refactoring
+   find_referencing_symbols(symbol); // Before refactoring
    ```
 
 5. **Edit at symbol level when possible**
    ```javascript
-   replace_symbol_body() // Precise changes
+   replace_symbol_body(); // Precise changes
    ```
 
-### ❌ DON'T
+### ✅ DO INSTEAD
 
-1. **Don't read entire files unless absolutely necessary**
+1. **Use Serena tools for all code exploration**
+
    ```javascript
+   ✅ get_symbols_overview("src/services/huge-file.ts") // ~200 tokens
    ❌ Read("src/services/huge-file.ts") // 5,000 tokens wasted
    ```
 
-2. **Don't use include_body=true for exploration**
+2. **Use include_body=false for exploration; true only for implementation**
+
    ```javascript
+   ✅ get_symbols_overview() // Efficient overview
+   ✅ find_symbol("*", include_body=false) // Signature only
    ❌ find_symbol("*", include_body=true) // Wasteful
-   ✅ get_symbols_overview() // Efficient
    ```
 
-3. **Don't guess symbol names - use overview first**
+3. **ALWAYS check overview first before guessing symbol names**
    ```javascript
-   ❌ find_symbol("createUser") // Might not exist
    ✅ get_symbols_overview() → see actual names → find_symbol()
+   ❌ find_symbol("createUser") // Might not exist
    ```
 
 ---
@@ -383,17 +398,17 @@ find_symbol({
 ```javascript
 // 1. Get library docs
 const docs = await mcp__Context7__get_library_docs({
-  context7CompatibleLibraryID: "/prisma/prisma"
+  context7CompatibleLibraryID: "/prisma/prisma",
 });
 
 // 2. Find where it's used in your code
 const prismaUsage = await mcp__serena__search_for_pattern({
-  substring_pattern: "PrismaClient"
+  substring_pattern: "PrismaClient",
 });
 
 // 3. Understand implementation
 const schema = await mcp__serena__get_symbols_overview({
-  relative_path: "packages/database/schema.prisma"
+  relative_path: "packages/database/schema.prisma",
 });
 ```
 
@@ -402,7 +417,9 @@ const schema = await mcp__serena__get_symbols_overview({
 ```javascript
 // 1. Check for prior patterns in Serena memories
 const memories = await list_memories();
-const authPatterns = memories.filter(m => m.includes("auth") || m.includes("pattern"));
+const authPatterns = memories.filter(
+  (m) => m.includes("auth") || m.includes("pattern"),
+);
 for (const pattern of authPatterns) {
   const content = await read_memory({ memory_file_name: pattern });
 }
@@ -410,7 +427,7 @@ for (const pattern of authPatterns) {
 // 2. Find existing auth code
 const authService = await mcp__serena__find_symbol({
   name_path_pattern: "AuthService",
-  include_body: true
+  include_body: true,
 });
 
 // 3. Store new pattern in memory
@@ -424,7 +441,7 @@ write_memory({
 - Refresh rotation on each use
 
 ## Tags
-auth, jwt, security`
+auth, jwt, security`,
 });
 ```
 
@@ -433,11 +450,13 @@ auth, jwt, security`
 ## Summary
 
 **Remember: Progressive Disclosure**
+
 1. Overview → See structure
 2. Signatures → Understand interfaces
 3. Bodies → Read only what's needed
 
 **Token Savings: 90-95%**
+
 - 10 files explored: 50,000 → 3,500 tokens
 - 5 symbols edited: 25,000 → 500 tokens
 

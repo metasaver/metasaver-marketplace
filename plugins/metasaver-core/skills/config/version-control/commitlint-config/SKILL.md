@@ -63,9 +63,9 @@ footer?
 
 **Requirements:**
 
-- Subject must be present (cannot be empty) - STRICT
+- Subject must always be present - STRICT
 - Can use any case (sentence-case, start-case, lowercase all acceptable) - RELAXED
-- Should NOT end with a period (warning only, not blocking) - RELAXED
+- Avoid ending with a period, or end with any character acceptable (warning only, not blocking) - RELAXED
 - Maximum length: 120 characters (warning only, not blocking) - RELAXED
 
 **Validation:**

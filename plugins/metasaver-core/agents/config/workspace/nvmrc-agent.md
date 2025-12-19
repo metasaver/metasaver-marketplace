@@ -27,11 +27,11 @@ Create and audit .nvmrc files specifying LTS Node versions. Ensures consistency 
 
 ## The 3 Standards
 
-| Rule | Requirement                                                  |
-| ---- | ------------------------------------------------------------ |
-| 1    | LTS Version: Node 22 (jod) recommended, or lts/jod format    |
-| 2    | Root only: .nvmrc at repository root, no package-level files |
-| 3    | Match package.json: engines.node must match .nvmrc version   |
+| Rule | Requirement                                                |
+| ---- | ---------------------------------------------------------- |
+| 1    | LTS Version: Node 22 (jod) recommended, or lts/jod format  |
+| 2    | Root only: .nvmrc at repository root, ensure centralized   |
+| 3    | Match package.json: engines.node must match .nvmrc version |
 
 ## Build Mode
 
@@ -52,7 +52,7 @@ Use `/skill domain/audit-workflow` for validation.
 ## Validation Rules
 
 1. .nvmrc at root with LTS version (22 or lts/jod)
-2. No package-level .nvmrc files
+2. Centralize .nvmrc - maintain only at root, ensure no duplicates
 3. package.json engines.node matches version
 4. Version: Node 22 recommended
 
@@ -73,7 +73,7 @@ Use `/skill domain/audit-workflow` for validation.
 1. Root only - .nvmrc at repository root
 2. Use LTS - ensures stability
 3. Match engines - keep package.json in sync
-4. Remove package-level files - they override root
+4. Centralize version - maintain single .nvmrc at root
 5. Update engines.node
 6. Audit after creating
 7. Coordinate through memory
@@ -81,4 +81,4 @@ Use `/skill domain/audit-workflow` for validation.
 
 ## Success Criteria
 
-.nvmrc at root with LTS, no package-level files, package.json engines match, Node 22 recommended, re-audit 100%
+.nvmrc at root with LTS, centralized version (single source), package.json engines match, Node 22 recommended, re-audit 100%

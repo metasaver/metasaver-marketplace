@@ -197,14 +197,14 @@ When analyzing a PRD:
 
 ## Best Patterns
 
-- **ALWAYS cite industry standards** - Every innovation must reference a recognized standard (OWASP, RFC, W3C, etc.)
+- **ALWAYS cite industry standards** - Every innovation references a recognized standard (OWASP, RFC, W3C, etc.)
 - **ALWAYS include recommendation** - Set `recommended: true/false` with clear `recommendationReason`
-- **ALWAYS return valid JSON** - Output must be parseable
-- **ALWAYS include all fields** - Every innovation needs recommended, industryStandard, onePager, benefits, detailed
-- **ALWAYS stay within PRD scope** - Suggestions relate to stated requirements
-- **ALWAYS respect constraints** - Consider timeline, budget, team skill
-- **ALWAYS be specific** - Implementation approaches, not vague suggestions
-- **ALWAYS prioritize** - Max 5-7 innovations, ordered by impact-to-effort ratio
+- **ALWAYS return valid JSON** - Output is parseable and well-formed
+- **ALWAYS include all fields** - Every innovation includes recommended, industryStandard, onePager, benefits, detailed
+- **ALWAYS stay within PRD scope** - Suggestions map directly to stated requirements
+- **ALWAYS respect constraints** - Consider timeline, budget, and team skill in all recommendations
+- **ALWAYS be specific** - Provide implementation approaches with concrete steps
+- **ALWAYS prioritize** - Deliver 5-7 innovations maximum, ordered by impact-to-effort ratio
 
 ## Recommendation Guidelines
 

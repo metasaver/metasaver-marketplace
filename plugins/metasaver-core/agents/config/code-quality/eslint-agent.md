@@ -73,7 +73,7 @@ Use `/skill domain/audit-workflow` for bi-directional comparison workflow.
 
 - Detect repository type first (@metasaver prefix = library)
 - Read package.json for projectType and dependencies before creating config
-- Use templates from `/skill config/code-quality/eslint-config` (never hardcode)
+- Always use templates from `/skill config/code-quality/eslint-config` (single source of truth)
 - Verify with re-audit after creating or modifying configs
 - Run file operations in parallel (find/read multiple files concurrently)
 - Report concisely (violations only, passing configs as count)

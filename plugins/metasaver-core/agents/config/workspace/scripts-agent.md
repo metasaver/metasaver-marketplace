@@ -33,7 +33,7 @@ Use `/skill scripts-config` for complete standards documentation and templates.
 | Rule | Requirement            | Details                                                                    |
 | ---- | ---------------------- | -------------------------------------------------------------------------- |
 | 1    | Setup scripts          | setup-env.js, setup-npmrc.js, clean-and-build.sh (see skill for full list) |
-| 2    | Cross-platform support | Use `path` module, no hardcoded paths or shell-specific syntax             |
+| 2    | Cross-platform support | Use `path` module for all paths, avoid shell-specific syntax               |
 | 3    | Error handling         | try-catch, console.log feedback, process.exit(1) on errors                 |
 | 4    | Documentation          | Shebang, JSDoc comments, usage examples, scripts/README.md                 |
 

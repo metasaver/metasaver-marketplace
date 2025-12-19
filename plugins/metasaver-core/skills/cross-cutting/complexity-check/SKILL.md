@@ -28,7 +28,7 @@ This is a TEXT ANALYSIS task - parse keywords from the user's prompt as your sol
 score: 15
 ```
 
-Focus on the prompt text as your only input. Work directly with prompt content for keyword-based analysis and scoring.
+Always focus on the prompt text as your only input. Work directly with prompt content for keyword-based analysis and scoring.
 
 ---
 
@@ -80,9 +80,9 @@ Add points for explicit quantities:
 
 ---
 
-### Step 4: Negation Check
+### Step 4: Simplicity Adjustment
 
-Reduce score for simplifying words:
+Reduce score when simplifying words indicate lower complexity:
 
 | Pattern                    | Points |
 | -------------------------- | ------ |
@@ -94,7 +94,7 @@ Reduce score for simplifying words:
 
 ### Step 5: Clamp Result
 
-- Minimum: 1 (never zero or negative)
+- Minimum: 1 (always at least 1, never zero or negative)
 - Maximum: 50 (cap for sanity)
 
 ---
@@ -103,11 +103,11 @@ Reduce score for simplifying words:
 
 After calculating, verify the score makes sense:
 
-- Does a score of 5 feel right for "fix typo in README"? ✅
-- Does a score of 35 feel right for "explain what this function does"? ❌ → Adjust down
-- Does a score of 8 feel right for "migrate entire database schema across all services"? ❌ → Adjust up
+- Does a score of 5 feel right for "fix typo in README"? ✅ (Correct)
+- Does a score of 35 feel right for "explain what this function does"? (Recalibrate down if needed)
+- Does a score of 8 feel right for "migrate entire database schema across all services"? (Recalibrate up if needed)
 
-**If adjustment needed:** Override calculated score with sensible value based on actual task scope.
+**If adjustment needed:** Override calculated score with sensible value aligned with actual task scope.
 
 ---
 

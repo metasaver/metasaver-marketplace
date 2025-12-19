@@ -25,12 +25,12 @@ sleep 3
 curl -s http://127.0.0.1:9222/json/version
 ```
 
-**MANDATORY FLAGS:**
+**REQUIRED FLAGS:**
 
 - `--user-data-dir=/tmp/chrome-debug-profile` - Remote debugging REQUIRES a non-default profile
 - `--remote-debugging-port=9222` - Standard CDP port
 
-**NOTE:** Headless mode (`--headless=new`) has known issues. Use GUI browser instead.
+**RECOMMENDED:** GUI mode (`--headless=new` has known issues). Always use GUI browser with flags specified.
 
 ### Step 2: Start Dev Server
 
@@ -177,16 +177,16 @@ Every DOM element in a page snapshot receives a unique identifier (UID). UIDs ar
 
 ---
 
-## Common Mistakes
+## Best Practices
 
-1. **Missing `--user-data-dir`** → Remote debugging fails immediately. Always use `--user-data-dir=/tmp/chrome-debug-profile`
-2. **Using stale UIDs** → Click/fill fail silently. Run `take_snapshot()` after every navigation or DOM change
-3. **Multiple Chrome instances** → Port 9222 conflicts. Use `lsof -ti:9222 | xargs kill -9` to clean up
-4. **Multiple dev servers** → Port conflicts. Use `fuser -k 3000/tcp` before starting new server
-5. **Not waiting for services** → Connection fails. Always `sleep 3-5` after starting Chrome/server
-6. **Not checking MCP status** → Tools fail silently. Have user run `/mcp` if tools don't respond
-7. **Using headless mode** → Known issues with display/MCP. Use GUI browser with `--user-data-dir` instead
-8. **Not using `--host 0.0.0.0`** → Dev server unreachable. Required for Docker/remote access
+1. **Always include `--user-data-dir`** → Remote debugging REQUIRES `--user-data-dir=/tmp/chrome-debug-profile` to function properly
+2. **Always refresh UIDs** → Run `take_snapshot()` after every navigation or DOM change to ensure element identifiers match current state
+3. **Always clean Chrome instances** → Use `lsof -ti:9222 | xargs kill -9` to clean up conflicting port 9222 instances
+4. **Always clean dev servers** → Use `fuser -k 3000/tcp` before starting new server to prevent port conflicts
+5. **Always wait for services** → Execute `sleep 3-5` after starting Chrome/server to ensure connection readiness
+6. **Always verify MCP status** → Have user run `/mcp` to reconnect if tools fail silently
+7. **Always use GUI mode** → Use GUI browser with `--user-data-dir` for reliable display and MCP connection
+8. **Always use `--host 0.0.0.0`** → Required for Docker/remote access to ensure dev server reachability
 
 ---
 
@@ -205,7 +205,7 @@ Every DOM element in a page snapshot receives a unique identifier (UID). UIDs ar
 - **Chrome < 90** → CDP protocol too old, tools may not work
 - **Chrome 90-100** → Stable, most common
 - **Chrome 101+** → Supports newer CDP features, recommended
-- **Chromium (headless)** → Not supported, use GUI Chrome instead
+- **Chromium (headless)** → Use GUI Chrome instead. GUI Chrome provides best CDP support
 
 **If version is too old:**
 
@@ -241,10 +241,10 @@ sudo apt-get update && sudo apt-get install google-chrome-stable
    Chrome DevTools automation failed. You can restart manually.
    ```
 
-2. **Do NOT:**
-   - Keep retrying indefinitely
-   - Spawn more background processes
-   - Pretend it might work next time
+2. **Instead:**
+   - Stop retries immediately
+   - Kill all background processes
+   - Acknowledge the failure and suggest manual verification
 
 3. **Tell user to verify manually:**
    - Open Chrome on Windows side
@@ -263,4 +263,4 @@ Please verify manually in your browser:
 - http://localhost:5173 (dev server)
 ```
 
-Then stop attempting browser automation.
+Then continue with manual verification only.

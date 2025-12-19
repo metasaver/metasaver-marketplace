@@ -1,6 +1,6 @@
 ---
 name: vscode-config
-description: VS Code workspace settings template and validation logic with file cleanup enforcement. Includes 8 required standards (Prettier as default formatter, format on save enabled, ESLint auto-fix, pnpm package manager, terminal configuration, TypeScript workspace SDK, search exclusions, only settings.json required). Critical Rule 8 enforces deletion of unnecessary files (extensions.json, launch.json, tasks.json). Use when creating or auditing .vscode/settings.json files and detecting unnecessary workspace files.
+description: VS Code workspace settings template and validation logic with file cleanup enforcement. Includes 8 required standards (Prettier as default formatter, format on save enabled, ESLint auto-fix, pnpm package manager, terminal configuration, TypeScript workspace SDK, search exclusions, only settings.json required). Critical Rule 8 requires deletion of unnecessary files (extensions.json, launch.json, tasks.json). Use when creating or auditing .vscode/settings.json files and detecting unnecessary workspace files.
 ---
 
 # VS Code Workspace Configuration Skill
@@ -18,7 +18,7 @@ Manage .vscode/settings.json configuration to:
 - Set up terminal environment and profiles
 - Configure TypeScript workspace SDK
 - Define search and file exclusions
-- Ensure only settings.json exists (no unnecessary files)
+- ENSURE only settings.json exists (DELETE unnecessary files)
 
 ## Usage
 
@@ -27,7 +27,7 @@ This skill is invoked by the `vscode-agent` when:
 - Creating new .vscode/settings.json files
 - Auditing existing VS Code workspace settings
 - Validating settings against standards
-- Detecting unnecessary files in .vscode directory
+- Detecting and removing unnecessary files from .vscode directory
 
 ## Template
 
@@ -247,11 +247,11 @@ jq '.files.exclude."**/.turbo"' .vscode/settings.json | grep -q "true"
 
 - ✅ `.vscode/settings.json` - Workspace settings
 
-**Not Required (Should be deleted):**
+**Unnecessary (MUST be deleted):**
 
-- ❌ `.vscode/extensions.json` - Extension recommendations (not needed)
-- ❌ `.vscode/launch.json` - Debug configurations (developer-specific)
-- ❌ `.vscode/tasks.json` - Task definitions (not used)
+- ❌ `.vscode/extensions.json` - Extension recommendations (developers manage their own)
+- ❌ `.vscode/launch.json` - Debug configurations (developer-specific preferences)
+- ❌ `.vscode/tasks.json` - Task definitions (use package.json scripts instead)
 
 **Rationale:**
 
@@ -263,13 +263,13 @@ jq '.files.exclude."**/.turbo"' .vscode/settings.json | grep -q "true"
 **Validation:**
 
 ```bash
-# Check for unnecessary files
+# Check for unnecessary files and report for deletion
 ls -la .vscode/
 
-# Warn if extras found
-[ -f ".vscode/extensions.json" ] && echo "WARNING: Found .vscode/extensions.json (recommend deletion)"
-[ -f ".vscode/launch.json" ] && echo "WARNING: Found .vscode/launch.json (recommend deletion)"
-[ -f ".vscode/tasks.json" ] && echo "WARNING: Found .vscode/tasks.json (recommend deletion)"
+# Verify unnecessary files for removal
+[ -f ".vscode/extensions.json" ] && echo "REQUIRES DELETION: .vscode/extensions.json"
+[ -f ".vscode/launch.json" ] && echo "REQUIRES DELETION: .vscode/launch.json"
+[ -f ".vscode/tasks.json" ] && echo "REQUIRES DELETION: .vscode/tasks.json"
 ```
 
 ## Optional Settings (Recommended)
@@ -320,10 +320,10 @@ To validate VS Code workspace settings:
 [ -d ".vscode" ] || echo "VIOLATION: .vscode directory missing"
 [ -f ".vscode/settings.json" ] || echo "VIOLATION: .vscode/settings.json missing"
 
-# Rule 8: Check for unnecessary files
+# Rule 8: Check for unnecessary files and mark for deletion
 if [ -f ".vscode/extensions.json" ] || [ -f ".vscode/launch.json" ] || [ -f ".vscode/tasks.json" ]; then
-  echo "WARNING: Unnecessary files in .vscode directory"
-  echo "Recommend deletion: rm .vscode/extensions.json .vscode/launch.json .vscode/tasks.json"
+  echo "VIOLATION: Unnecessary files found in .vscode directory"
+  echo "DELETE these files: rm .vscode/extensions.json .vscode/launch.json .vscode/tasks.json"
 fi
 
 # Rule 1: Prettier formatter
@@ -350,47 +350,47 @@ jq '.search.exclude."**/node_modules"' .vscode/settings.json | grep -q "true" ||
 
 ## Repository Type Considerations
 
-- **Consumer Repos**: Strict enforcement of all 8 standards
+- **Consumer Repos**: ENFORCE all 8 standards strictly
 - **Library Repos**: May have additional workspace settings
-- **All Repos**: Must have only settings.json in .vscode (no extras)
+- **All Repos**: ENSURE only settings.json in .vscode (DELETE extras)
 
 ## Best Practices
 
-1. Create only .vscode/settings.json (never create extensions.json, launch.json, tasks.json)
-2. Use Prettier for all language formatters
-3. Enable format on save for automatic formatting
-4. Configure ESLint auto-fix for automatic linting
-5. Set pnpm as package manager
-6. Use workspace TypeScript SDK
-7. Exclude build artifacts from search
-8. Report and recommend deletion of unnecessary .vscode files
-9. Re-audit after making changes
+1. CREATE only .vscode/settings.json (never create extensions.json, launch.json, tasks.json)
+2. USE Prettier for all language formatters
+3. ENABLE format on save for automatic formatting
+4. CONFIGURE ESLint auto-fix for automatic linting
+5. SET pnpm as package manager
+6. USE workspace TypeScript SDK
+7. EXCLUDE build artifacts from search
+8. DELETE unnecessary .vscode files and verify removal
+9. RE-AUDIT after making changes
 
 ## File Cleanup Workflow
 
 When unnecessary files are detected:
 
-1. Report which files exist
-2. Explain why they're not needed
-3. Provide deletion command
-4. Wait for user confirmation
-5. Delete if approved
-6. Re-audit to verify
+1. IDENTIFY which files exist in .vscode
+2. EXPLAIN why they are unnecessary (conflict with standards)
+3. PROVIDE deletion command
+4. REQUEST user confirmation
+5. DELETE if approved
+6. RE-AUDIT to verify removal
 
 **Example output:**
 
 ```
-⚠️  Unnecessary Files Detected
+VIOLATION: Unnecessary Files Detected
 
 Found in .vscode/:
-- extensions.json (not needed - developers manage their own extensions)
-- launch.json (not needed - debug configs are developer-specific)
-- tasks.json (not needed - we use package.json scripts)
+- extensions.json (developers manage their own extensions)
+- launch.json (debug configs are developer-specific preferences)
+- tasks.json (we use package.json scripts instead)
 
-Recommendation: Delete with:
+Action Required: Delete with:
   rm .vscode/extensions.json .vscode/launch.json .vscode/tasks.json
 
-Would you like me to delete these files? (y/n)
+Approve deletion? (y/n)
 ```
 
 ## Integration

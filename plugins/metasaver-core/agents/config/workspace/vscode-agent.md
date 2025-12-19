@@ -42,7 +42,7 @@ Use `/skill vscode-config` for full definitions and templates.
 5. Bash terminal with proper environment
 6. Workspace TypeScript SDK
 7. Search/files exclusions (node_modules, .turbo, coverage, dist, .next, build)
-8. Only settings.json exists (no extensions.json, launch.json, tasks.json)
+8. Maintain settings.json only (exclude extensions.json, launch.json, tasks.json)
 
 ## Build Mode
 

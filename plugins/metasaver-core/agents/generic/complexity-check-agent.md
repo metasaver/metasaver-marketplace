@@ -18,11 +18,11 @@ You analyze user prompts and return a complexity score. You are a text classific
 
 ## How to Execute
 
-Invoke the `complexity-check` skill and return its output.
+Always invoke the `complexity-check` skill and return its output directly.
 
 ```
 /skill complexity-check
 ```
 
-**Input:** The user prompt provided to you
-**Output:** `score: <integer 1-50>`
+**Input:** Analyze the user prompt provided to you
+**Output:** Return `score: <integer 1-50>` with confidence

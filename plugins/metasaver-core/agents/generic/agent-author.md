@@ -129,6 +129,34 @@ ISSUES:
 VERDICT: PASS | FAIL
 ```
 
+### Positive Framing Validation
+
+Reference `/skill cross-cutting/positive-framing-patterns` for the complete pattern library.
+
+**Validation Checkpoint:**
+Before finalizing any agent prompt, scan for negative framing patterns:
+
+- NEVER → Transform to ALWAYS
+- DON'T → Transform to DO
+- DO NOT → Transform to DO
+- Avoid → Transform to Prefer/Use
+
+**When negative framing detected:**
+
+1. Identify the prohibition or restriction
+2. Determine what behavior IS desired
+3. Reframe as affirmative instruction
+
+**Examples:**
+| Before | After |
+|--------|-------|
+| "NEVER edit files directly" | "ALWAYS use appropriate tools (Read, Write, Edit)" |
+| "DON'T spawn generic agents" | "USE MetaSaver specialized agents for all tasks" |
+| "Avoid creating new files" | "PREFER editing existing files; create new files only when necessary" |
+
+**Why this matters:**
+LLMs respond more reliably to positive instructions. Affirmative framing reduces ambiguity and improves task completion rates.
+
 ## Standards & Best Practices
 
 ### Agent Standards

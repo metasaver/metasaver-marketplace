@@ -479,18 +479,18 @@ mcp__sequential_thinking__sequentialthinking({
 });
 ```
 
-**USE WHEN:**
+**PRIORITIZE FOR SEQUENTIAL THINKING:**
 
 - Complex race conditions or timing issues
 - Multi-layered failures requiring step-by-step analysis
 - Incidents with multiple potential root causes
 - Need to trace through complex execution paths
 
-**AVOID:**
+**RESERVE FOR SIMPLER APPROACHES:**
 
-- Simple bugs with obvious causes
-- Single-layer failures
-- Issues with clear error messages
+- Simple bugs with obvious causes (direct inspection sufficient)
+- Single-layer failures (standard debugging adequate)
+- Issues with clear error messages (explicit error path available)
 
 ## Best Practices
 

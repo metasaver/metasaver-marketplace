@@ -5,7 +5,7 @@ description: Analyze PRD for innovation opportunities, present each with HITL se
 
 # Innovate Phase - PRD Enhancement with HITL Selection
 
-> **ROOT AGENT ONLY** - Called by /architect command only, never by subagents.
+> **ROOT AGENT ONLY** - Called by /architect command exclusively.
 
 **Purpose:** Analyze PRD for enhancements, walk through each innovation with HITL, update PRD with selections
 **Trigger:** After vibe-check passes (/architect workflow only)
@@ -16,13 +16,13 @@ description: Analyze PRD for innovation opportunities, present each with HITL se
 
 ## Key Differences: /architect vs /build
 
-| Aspect         | /architect (this skill)    | /build                      |
-| -------------- | -------------------------- | --------------------------- |
-| **Innovation** | ALWAYS runs                | OPTIONAL (user asked first) |
-| **PRD State**  | Already exists (from req)  | Written during innovate     |
-| **HITL Stop**  | No "want to innovate?" ask | Yes, asks before starting   |
-| **Purpose**    | Planning & exploration     | Execution optimization      |
-| **Model**      | Opus (deep analysis)       | Sonnet                      |
+| Aspect         | /architect (this skill)   | /build                      |
+| -------------- | ------------------------- | --------------------------- |
+| **Innovation** | ALWAYS runs               | OPTIONAL (user asked first) |
+| **PRD State**  | Already exists (from req) | Written during innovate     |
+| **HITL Stop**  | Always proceeds (no ask)  | Asks user before starting   |
+| **Purpose**    | Planning & exploration    | Execution optimization      |
+| **Model**      | Opus (deep analysis)      | Sonnet                      |
 
 ---
 
@@ -132,9 +132,9 @@ Innovation Phase Complete
 
 ## Integration
 
-**Called by:** /architect command only
+**Called by:** /architect command exclusively
 **Calls:** innovation-advisor agent, AskUserQuestion
-**NOT called by:** /build (different logic), /audit (no innovation)
+**Separate from:** /build (different logic), /audit (different focus)
 **Previous phase:** vibe-check
 **Next phase:** design-phase (architect-phase)
 

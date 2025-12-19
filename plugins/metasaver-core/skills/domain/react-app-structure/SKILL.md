@@ -49,7 +49,7 @@ These are handled by specialized config agents - reference them:
 ```
 public/
 └── favicon.svg                 # Browser tab icon ONLY
-                                # Do NOT duplicate icons here
+                                # Always place full logo in src/assets/logo.svg
 ```
 
 **Rule:** `public/` contains favicon.svg for browser tab. Logo goes in `src/assets/logo.svg`.
@@ -103,10 +103,10 @@ src/
 └── vite-env.d.ts               # Vite type definitions
 ```
 
-**IMPORTANT - What NOT to create:**
+**IMPORTANT - File structure requirements:**
 
-- `src/types/` - All types come from `@metasaver/{app}-contracts` packages
-- `src/lib/auth-config.ts` - Auth config goes in `src/config/`, NOT `src/lib/`
+- Always use `@metasaver/{app}-contracts` packages for types - do not create `src/types/`
+- Always place auth config in `src/config/` - do not put auth-config.ts in `src/lib/`
 
 ## File Organization Rules
 
@@ -123,11 +123,11 @@ features/
 └── status-feature/             # Maps to pages/datafeedr/status.tsx
 ```
 
-**Rule 2: No Barrel Exports**
-Import directly from specific files using `#/` alias for internal imports:
+**Rule 2: Use Direct Imports**
+Always import directly from specific files using `#/` alias for internal imports:
 
 ```typescript
-// CORRECT - Import from specific files
+// CORRECT - Import from specific files with full paths
 import { MicroservicesFeature } from "#/features/microservices-feature/microservices.tsx";
 import { useGetServices } from "#/features/microservices-feature/hooks/use-get-services.ts";
 import { ServiceCard } from "#/features/microservices-feature/components/service-card.tsx";
@@ -180,11 +180,11 @@ export function MicroServicesPage() {
 }
 ```
 
-**Rule 3: No Logic in Pages**
+**Rule 3: Keep Pages Thin**
 
-- Pages import from features using `#/` alias
-- Pages do NOT contain business logic
-- Pages do NOT have their own hooks/components
+- Always import from features using `#/` alias
+- Ensure pages contain NO business logic
+- Ensure pages have NO their own hooks/components
 - Exception: Page-level wrappers (auth guards, layouts)
 
 **Rule 4: Import Order**
@@ -324,9 +324,9 @@ Does NOT contain:
 - [ ] `src/` folder exists
 - [ ] All required subdirectories present: `assets`, `config`, `lib`, `features`, `pages`, `routes`, `styles`
 - [ ] Optional subdirectory: `hooks/` (only for app-wide hooks like impersonation)
-- [ ] NO `src/types/` folder - all types come from contracts packages
-- [ ] No `.tsx`/`.ts` files in `src/` root (except `app.tsx`, `main.tsx`, `index.css`, `vite-env.d.ts`)
-- [ ] `public/` contains only `favicon.svg` (no other icons)
+- [ ] Always use contracts packages for types - ensure no `src/types/` folder
+- [ ] Keep root `src/` clean - only have `app.tsx`, `main.tsx`, `index.css`, `vite-env.d.ts`
+- [ ] `public/` contains only `favicon.svg` (place full logo in `src/assets/logo.svg`)
 
 ### Features Directory
 
@@ -334,27 +334,27 @@ Does NOT contain:
 - [ ] Main component: `{feature}.tsx` in feature root with named export
 - [ ] Sub-components in `components/` with descriptive names (if exists)
 - [ ] Hooks in `hooks/` folder with `use-` prefix
-- [ ] NO `index.ts` barrel export files
+- [ ] Always use direct exports - ensure no `index.ts` barrel files
 - [ ] No empty folders
 - [ ] Feature names use kebab-case: `microservices-feature`
-- [ ] All imports use `#/` alias for internal paths
+- [ ] Always use `#/` alias for internal paths
 
 ### Pages Directory
 
 - [ ] Pages mirror feature structure: `pages/{domain}/{page}.tsx`
 - [ ] Page files are thin wrappers (< 20 lines)
-- [ ] Pages import from features using `#/` alias
-- [ ] No business logic in pages
-- [ ] No sub-components in pages folder
+- [ ] Always import from features using `#/` alias
+- [ ] Ensure pages contain no business logic
+- [ ] Ensure no sub-components in pages folder
 - [ ] Page export: `export function {Page}Page()` (named export only)
-- [ ] Imports follow correct order: external packages → workspace packages → internal (`#/`)
+- [ ] Always follow correct import order: external packages → workspace packages → internal (`#/`)
 
 ### Config Files
 
 - [ ] `src/config/index.tsx` exports `siteConfig` and `menuItems`
 - [ ] `src/config/auth-config.ts` exports `auth0Config` object
-- [ ] All config uses environment variables
-- [ ] No hardcoded API URLs or secrets
+- [ ] Always use environment variables for config
+- [ ] Always keep API URLs and secrets out of code
 
 ### Library Files
 
@@ -389,15 +389,15 @@ Does NOT contain:
 
 - [ ] `src/assets/logo.svg` contains full logo
 - [ ] `public/favicon.svg` contains browser tab icon ONLY
-- [ ] No duplicate icon files
-- [ ] Logo imported in config/layout files
+- [ ] Ensure no duplicate icon files
+- [ ] Always import logo in config/layout files
 
 ## Common Violations & Fixes
 
 **Violation:** Pages contain business logic
 
 ```typescript
-// WRONG
+// INCORRECT
 export function MicroServicesPage() {
   const [services, setServices] = useState([]);
   useEffect(() => { /* fetch logic */ }, []);
@@ -408,7 +408,7 @@ export function MicroServicesPage() {
 **Fix:** Move logic to feature component
 
 ```typescript
-// RIGHT - Page wrapper
+// CORRECT - Page wrapper
 export function MicroServicesPage() {
   return <MicroservicesFeature />;
 }
@@ -424,7 +424,7 @@ export function MicroservicesFeature() {
 **Violation:** Using barrel exports (index.ts files)
 
 ```typescript
-// WRONG - Barrel export pattern
+// INCORRECT - Barrel export pattern
 src/features/microservices-feature/
 ├── index.ts                    // export * from "./microservices"
 ├── microservices.tsx
@@ -432,20 +432,20 @@ src/features/microservices-feature/
 │   ├── index.ts               // export * from "./use-get-services"
 │   └── use-get-services.ts
 
-// WRONG - Import from barrel
+// INCORRECT - Import from barrel
 import { MicroservicesFeature } from "#/features/microservices-feature";
 ```
 
 **Fix:** Use direct imports with `#/` alias
 
 ```typescript
-// RIGHT - No index.ts files
+// CORRECT - No index.ts files, use direct imports
 src/features/microservices-feature/
 ├── microservices.tsx
 └── hooks/
     └── use-get-services.ts
 
-// RIGHT - Direct import with full path
+// CORRECT - Direct import with full path
 import { MicroservicesFeature } from "#/features/microservices-feature/microservices.tsx";
 import { useGetServices } from "#/features/microservices-feature/hooks/use-get-services.ts";
 ```
@@ -467,7 +467,7 @@ pages/service-catalog/micro-services.tsx   ✓
 **Violation:** Config file hardcoding values
 
 ```typescript
-// WRONG
+// INCORRECT
 export const auth0Config = {
   domain: "dev-abc123.auth0.com",
   clientId: "xyz789",
@@ -477,7 +477,7 @@ export const auth0Config = {
 **Fix:** Use environment variables
 
 ```typescript
-// RIGHT
+// CORRECT
 export const auth0Config = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,

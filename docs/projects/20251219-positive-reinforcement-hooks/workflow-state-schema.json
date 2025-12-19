@@ -1,0 +1,229 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Workflow State Schema",
+  "description": "Schema for workflow-state.json tracking active workflow progress for /ms continuation support",
+  "type": "object",
+  "required": [
+    "command",
+    "phase",
+    "phaseName",
+    "step",
+    "currentWave",
+    "totalWaves",
+    "status",
+    "lastUpdate"
+  ],
+  "properties": {
+    "command": {
+      "type": "string",
+      "enum": ["build", "audit", "architect", "debug"],
+      "description": "Active command being executed"
+    },
+    "phase": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Current phase number (1-5)"
+    },
+    "phaseName": {
+      "type": "string",
+      "description": "Human-readable phase name",
+      "examples": [
+        "Entry + State Check",
+        "New Workflow Analysis",
+        "Route to Command",
+        "Execution",
+        "Validation"
+      ]
+    },
+    "step": {
+      "type": "string",
+      "description": "Current step identifier",
+      "examples": [
+        "analysis",
+        "requirements",
+        "design",
+        "approval",
+        "wave-execution",
+        "validation"
+      ]
+    },
+    "currentWave": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current execution wave (0 if not in execution)"
+    },
+    "totalWaves": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total planned waves"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "analysis",
+        "requirements",
+        "design",
+        "approval_waiting",
+        "executing",
+        "hitl_waiting",
+        "validating",
+        "complete",
+        "error"
+      ],
+      "description": "Workflow status for proper resumption routing"
+    },
+    "lastUpdate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last update"
+    },
+    "epics": {
+      "type": "array",
+      "description": "Array of epic progress objects",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "storiesCompleted", "storiesTotal"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^EPIC-\\d{3}$",
+            "description": "Epic identifier (e.g., EPIC-001)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "complete"],
+            "description": "Epic status"
+          },
+          "storiesCompleted": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of completed stories in this epic"
+          },
+          "storiesTotal": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Total stories in this epic"
+          }
+        }
+      }
+    },
+    "stories": {
+      "type": "object",
+      "description": "Object tracking story lifecycle",
+      "required": ["completed", "inProgress", "pending"],
+      "properties": {
+        "completed": {
+          "type": "array",
+          "description": "Story IDs that have been completed",
+          "items": {
+            "type": "string",
+            "pattern": "^US-\\d{3}$"
+          },
+          "uniqueItems": true
+        },
+        "inProgress": {
+          "type": "array",
+          "description": "Story IDs currently being worked on",
+          "items": {
+            "type": "string",
+            "pattern": "^US-\\d{3}$"
+          },
+          "uniqueItems": true
+        },
+        "pending": {
+          "type": "array",
+          "description": "Story IDs not yet started",
+          "items": {
+            "type": "string",
+            "pattern": "^US-\\d{3}$"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "hitlQuestion": {
+      "type": "string",
+      "description": "Last question asked to user (optional, used when status is hitl_waiting)"
+    },
+    "resumeAction": {
+      "type": "string",
+      "description": "Action to take when resumed (optional, used when status is hitl_waiting)",
+      "examples": ["spawn-wave-3", "continue-requirements", "get-approval"]
+    }
+  },
+  "examples": [
+    {
+      "command": "build",
+      "phase": 4,
+      "phaseName": "Execution",
+      "step": "wave-execution",
+      "currentWave": 2,
+      "totalWaves": 3,
+      "status": "hitl_waiting",
+      "lastUpdate": "2025-12-19T10:30:00Z",
+      "epics": [
+        {
+          "id": "EPIC-001",
+          "status": "in_progress",
+          "storiesCompleted": 2,
+          "storiesTotal": 3
+        },
+        {
+          "id": "EPIC-002",
+          "status": "pending",
+          "storiesCompleted": 0,
+          "storiesTotal": 2
+        }
+      ],
+      "stories": {
+        "completed": ["US-001", "US-002"],
+        "inProgress": [],
+        "pending": ["US-003", "US-004", "US-005"]
+      },
+      "hitlQuestion": "Wave 2 complete. Proceed with wave 3?",
+      "resumeAction": "spawn-wave-3"
+    },
+    {
+      "command": "audit",
+      "phase": 4,
+      "phaseName": "Execution",
+      "step": "wave-execution",
+      "currentWave": 1,
+      "totalWaves": 1,
+      "status": "executing",
+      "lastUpdate": "2025-12-19T14:15:00Z",
+      "epics": [
+        {
+          "id": "EPIC-001",
+          "status": "in_progress",
+          "storiesCompleted": 0,
+          "storiesTotal": 2
+        }
+      ],
+      "stories": {
+        "completed": [],
+        "inProgress": ["US-001"],
+        "pending": ["US-002"]
+      }
+    },
+    {
+      "command": "build",
+      "phase": 2,
+      "phaseName": "Requirements",
+      "step": "requirements",
+      "currentWave": 0,
+      "totalWaves": 0,
+      "status": "hitl_waiting",
+      "lastUpdate": "2025-12-19T09:00:00Z",
+      "epics": [],
+      "stories": {
+        "completed": [],
+        "inProgress": [],
+        "pending": []
+      },
+      "hitlQuestion": "Should we use JWT or session-based authentication?",
+      "resumeAction": "continue-requirements"
+    }
+  ]
+}

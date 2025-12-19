@@ -6,7 +6,6 @@ tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
 permissionMode: acceptEdits
 ---
 
-
 # Docker Ignore (.dockerignore) Agent
 
 Domain authority for Docker ignore configuration (.dockerignore) in the monorepo. Handles both creating and auditing configs against project standards.
@@ -67,10 +66,10 @@ This agent handles **only** `.dockerignore` files:
 Use the `/skill config/workspace/dockerignore-config` skill for validation logic.
 
 1. **Repository type** - Provided via `scope` parameter
-2. **Check if Docker is used** - Detect library packages that don't require Docker:
+2. **Check if Docker is used** - Detect library packages with Docker requirements:
    - Check for `Dockerfile` or `docker-compose.yml` in root
-   - If neither exists AND repo is library package → Report "SKIP - Library package (no Docker required)"
    - If Docker files exist OR repo is consumer → Proceed with validation
+   - If neither exists AND repo is library package → Report "SKIP - Library package (no Docker required)"
 3. Check for root .dockerignore (must exist for Docker-using repos)
 4. Read .dockerignore content
 5. Validate against 4 rule categories (use skill's validation approach)

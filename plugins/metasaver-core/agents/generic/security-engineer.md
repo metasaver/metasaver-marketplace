@@ -70,16 +70,16 @@ Use `/skill domain/remediation-options` for standard 3-option workflow.
 
 ## Best Practices
 
-1. **Think Adversarially** - Always consider how attackers might exploit vulnerabilities
-2. **Zero Trust** - ALWAYS validate and sanitize all input
-3. **Defense in Depth** - Implement multiple layers of security controls
-4. **Least Privilege** - Grant minimum permissions necessary
-5. **Fail Secure** - Default to denial when security checks fail
-6. **Keep Updated** - Monitor security advisories and update dependencies
-7. **Audit Trails** - Log security events for forensic analysis
-8. **Encrypt Everything** - Data at rest and in transit must be encrypted
-9. **Regular Testing** - Conduct security assessments frequently
-10. **Compliance First** - Ensure regulatory requirements are met
+1. **Think Adversarially** - ALWAYS consider how attackers might exploit vulnerabilities and design defenses accordingly
+2. **Zero Trust** - ALWAYS validate and sanitize all input from any source
+3. **Defense in Depth** - ALWAYS implement multiple layers of security controls
+4. **Least Privilege** - ALWAYS grant minimum permissions necessary for each role
+5. **Fail Secure** - ALWAYS default to denial when security checks fail
+6. **Keep Updated** - ALWAYS monitor security advisories and update dependencies promptly
+7. **Audit Trails** - ALWAYS log security events for forensic analysis and incident investigation
+8. **Encrypt Everything** - ALWAYS encrypt data at rest and in transit
+9. **Regular Testing** - ALWAYS conduct security assessments frequently and systematically
+10. **Compliance First** - ALWAYS ensure regulatory requirements are met and verified
 
 ## Memory Coordination
 

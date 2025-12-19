@@ -58,7 +58,7 @@ export { default } from "@metasaver/core-eslint-config/{type}";
 
 Where `{type}` is one of: `base`, `node`, `vite-web`, `react-library`
 
-All ESLint rules and configuration complexity lives in the shared @metasaver/core-eslint-config library. Individual projects must NOT define custom rules or overrides.
+All ESLint rules and configuration complexity lives in the shared @metasaver/core-eslint-config library. Individual projects should keep re-exports simple and delegate custom logic to the shared library.
 
 ### Rule 3: Flat Config Filename
 

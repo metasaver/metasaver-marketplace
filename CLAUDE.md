@@ -2,6 +2,39 @@
 
 This file provides guidance to Claude Code when working with this repository.
 
+---
+
+## CRITICAL: Author Agent Requirements (metasaver-marketplace repo ONLY)
+
+**NEVER edit agent, skill, or command files directly in this repository.**
+
+This is the plugin source repository. ALL modifications to plugin components MUST go through author agents:
+
+| File Type | Location Pattern           | MUST Use Agent                              |
+| --------- | -------------------------- | ------------------------------------------- |
+| Agents    | `plugins/*/agents/**/*.md` | `core-claude-plugin:generic:agent-author`   |
+| Skills    | `plugins/*/skills/**/*.md` | `core-claude-plugin:generic:skill-author`   |
+| Commands  | `plugins/*/commands/*.md`  | `core-claude-plugin:generic:command-author` |
+
+**BEFORE any edit to these files, STOP and spawn the appropriate author agent.**
+
+```
+# Creating or updating a SKILL:
+Task: subagent_type="core-claude-plugin:generic:skill-author"
+
+# Creating or updating an AGENT:
+Task: subagent_type="core-claude-plugin:generic:agent-author"
+
+# Creating or updating a COMMAND:
+Task: subagent_type="core-claude-plugin:generic:command-author"
+```
+
+**Why:** Author agents enforce standards, validate structure, handle marketplace registration, and ensure consistency. Direct edits bypass all quality gates.
+
+**The ONLY exception:** Fixing typos in a single line (use Edit tool directly).
+
+---
+
 ## MetaSaver Constitution
 
 | #   | Principle        | Rule                                           |
@@ -15,20 +48,38 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Always-On Behavior
 
-Use MetaSaver agents instead of core Claude Code agents:
+Use MetaSaver agents for optimal workflow tracking:
+
+| Task Type        | Recommended Approach                  |
+| ---------------- | ------------------------------------- |
+| Simple questions | Answer directly without workflow      |
+| Code tasks       | Use appropriate MetaSaver agent       |
+| Complex work     | Route through `/ms` for full workflow |
+| Config files     | Use specialized config agent          |
+
+**Routing Guidance:**
+
+- **Simple questions** → Answer directly without workflow
+- **Code tasks** → Spawn appropriate agent (coder, tester, reviewer, backend-dev)
+- **Config files** → Spawn config agent (eslint-agent, vite-agent)
+- **Complex work** → Suggest `/ms`, `/build`, or `/audit` for workflow tracking
+
+**For complex multi-step work**, use `/ms {description}` to enable:
+
+- PRD creation with HITL approval
+- Wave-based parallel execution
+- Workflow state tracking for resumption
+- Coordinated agent spawning
+
+See [/ms Command Target State](docs/ms-command-target-state.md) for full workflow details.
+
+**Agent Replacement Table:**
 
 | Core Agent        | Use Instead                                        |
 | ----------------- | -------------------------------------------------- |
 | `Explore`         | `core-claude-plugin:generic:code-explorer`         |
 | `Plan`            | `core-claude-plugin:generic:architect`             |
 | `general-purpose` | Task-specific agent (see `/skill agent-selection`) |
-
-**Routing:**
-
-- Simple questions → Answer directly
-- Code tasks → Spawn appropriate agent (coder, tester, reviewer, backend-dev, etc.)
-- Config files → Spawn config agent (eslint-agent, vite-agent, etc.)
-- Complex work → Suggest `/ms`, `/build`, or `/audit`
 
 **Auto-invoke skills:**
 

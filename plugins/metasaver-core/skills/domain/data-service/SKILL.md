@@ -238,22 +238,22 @@ See `templates/server.ts.template` and `templates/index.ts.template`.
 
 ### Feature Import Pattern
 
-**Rule:** Import directly from specific files using `#/` alias for internal imports.
+**Rule:** Always use direct imports from specific files with `#/` alias for internal imports.
 
 ```typescript
 // CORRECT - Direct imports with #/ alias
 import { UsersService } from "#/features/users/users.service.js";
 import { router as usersRouter } from "#/features/users/users.controller.js";
 
-// WRONG - No barrel exports (index.ts)
+// INCORRECT - Do not use barrel exports (index.ts)
 import { UsersService, UsersRoutes } from "#/features/users/index.js";
 ```
 
 **Key principles:**
 
-- No barrel export files (index.ts) in feature folders
-- Use `#/` alias for internal imports within service package
-- Import workspace packages with full paths: `from "@metasaver/{pkg}/{path}"`
+- Always use direct exports - do not create barrel export files (index.ts) in feature folders
+- Always use `#/` alias for internal imports within service package
+- Always import workspace packages with full paths: `from "@metasaver/{pkg}/{path}"`
 
 ## Workflow: Scaffolding New Data Service Package
 
@@ -351,11 +351,11 @@ app.use("/api/v1/{feature}", authMiddleware, newFeatureRouter);
 - [ ] `/api/v1` versioning prefix
 - [ ] All API routes require authentication
 - [ ] Each feature has: service, controller in own folder
-- [ ] NO `index.ts` barrel export files in features
-- [ ] Controllers use `asyncHandler` wrapper
-- [ ] Controllers use Zod validation from contracts
-- [ ] All imports use `#/` alias for internal paths
-- [ ] Workspace imports use full paths: `from "@metasaver/{pkg}/{path}"`
+- [ ] Always use direct exports - ensure no `index.ts` barrel files in features
+- [ ] Always wrap controllers with `asyncHandler`
+- [ ] Always use Zod validation from contracts in controllers
+- [ ] Always use `#/` alias for internal paths
+- [ ] Always use full paths for workspace imports: `from "@metasaver/{pkg}/{path}"`
 
 ### Service Classes
 
@@ -380,40 +380,40 @@ app.use("/api/v1/{feature}", authMiddleware, newFeatureRouter);
 **Violation:** Express handlers not wrapped with asyncHandler
 
 ```typescript
-// WRONG
+// INCORRECT
 router.get("/:id", async (req, res) => { ... });
 
-// RIGHT
+// CORRECT
 router.get("/:id", asyncHandler(async (req, res) => { ... }));
 ```
 
 **Violation:** Service class with HTTP concerns
 
 ```typescript
-// WRONG - service knows about HTTP
+// INCORRECT - service knows about HTTP
 async getUser(req: Request): Promise<Response> { ... }
 
-// RIGHT - service is pure data layer
+// CORRECT - service is pure data layer
 async getById(id: string): Promise<User | null> { ... }
 ```
 
 **Violation:** Custom validation instead of Zod
 
 ```typescript
-// WRONG
+// INCORRECT
 if (!req.body.name || typeof req.body.name !== "string") { ... }
 
-// RIGHT
+// CORRECT
 const validated = CreateUserSchema.parse(req.body);
 ```
 
 **Violation:** Direct environment variable access throughout code
 
 ```typescript
-// WRONG - scattered env access
+// INCORRECT - scattered env access
 const port = process.env.PORT;
 
-// RIGHT - centralized env object
+// CORRECT - centralized env object
 import { env } from "./env.js";
 ```
 

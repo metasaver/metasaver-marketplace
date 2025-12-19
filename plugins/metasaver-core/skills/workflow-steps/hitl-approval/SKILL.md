@@ -25,16 +25,16 @@ Use this skill as a **generic approval gate** for any major decision:
 
 ---
 
-## When to Skip Approval
+## When Approval Auto-Approves
 
-Approval is **skipped** (auto-approved) if ANY condition is met:
+Approval auto-approves (requires no user intervention) if ANY condition is met:
 
-| Condition                             | Auto-Approve? |
-| ------------------------------------- | ------------- |
-| Complexity < 15 AND fastPathEnabled   | ✅ Yes        |
-| Prompt contains "do without approval" | ✅ Yes        |
-| Prompt contains "just do it"          | ✅ Yes        |
-| Otherwise                             | ❌ No         |
+| Condition                             | Auto-Approve?        |
+| ------------------------------------- | -------------------- |
+| Complexity < 15 AND fastPathEnabled   | ✅ Yes               |
+| Prompt contains "do without approval" | ✅ Yes               |
+| Prompt contains "just do it"          | ✅ Yes               |
+| Otherwise                             | ❌ Requires approval |
 
 ---
 
@@ -90,7 +90,7 @@ Use AskUserQuestion tool with two options:
 }
 ```
 
-**If NOT APPROVED:**
+**If APPROVED WITH REVISIONS:**
 
 ```json
 {
@@ -99,18 +99,18 @@ Use AskUserQuestion tool with two options:
 }
 ```
 
-### Step 5: Return to Previous Phase
+### Step 5: Return Control to Caller
 
-If not approved, return control to calling agent with:
+Return control to calling agent with:
 
-- `approved: false`
-- `feedback: string` (user's requested changes)
+- `approved: true|false`
+- `feedback: string` (user's requested changes, if revisions needed)
 
-Calling agent decides whether to:
+Calling agent proceeds with:
 
-- Revise and re-submit for approval
-- Abandon the operation
-- Loop back to investigation phase
+- Execute (if approved)
+- Revise based on feedback and re-submit for approval
+- Loop back to investigation phase with updated approach
 
 ---
 
@@ -248,7 +248,7 @@ Output:
 
 ## Notes
 
-- **Always respect explicit user instructions** in the original prompt about approval
-- **Complexity threshold is 15** for auto-approval (not negotiable)
+- **Always honor explicit user instructions** in the original prompt about approval
+- **Complexity threshold is 15** for auto-approval (fixed value)
 - **fastPathEnabled** flag comes from command configuration (e.g., /build --fast)
-- **AskUserQuestion** is required for this skill (only runs in root agent context)
+- **AskUserQuestion** is required for this skill (runs in root agent context only)

@@ -15,7 +15,7 @@ Analyzes prompt complexity and routes to optimal execution method.
 
 ## Entry Handling
 
-When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. User prompts may contain questions, clarifications, or confirmation requests—these are NOT reasons to skip phases. Analysis runs first to determine complexity and routing, then user questions are addressed in the appropriate phase (HITL for score ≥15, or by the routed agent for score ≤14).
+When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. Run analysis first to determine complexity and routing. User questions and clarifications are addressed in the appropriate phase afterward: HITL for score ≥15, or by the routed agent for score ≤14.
 
 ---
 
@@ -46,15 +46,15 @@ Spawn agent: subagent_type="general-purpose", model="haiku"
 Architect → PM → Workers → Validation
 ```
 
-Direct to design (PRD, Approval, Innovate skipped).
+Route directly to design phase (proceed to Architect → PM → Workers).
 
-### Score 15-29: Full Workflow (same as /build, Innovate skipped)
+### Score 15-29: Full Workflow (same as /build, proceed without Innovate phase)
 
 ```
 Requirements (HITL Q&A) → PRD → Vibe Check → Design (extract stories + annotate + plan) → Plan Approval → Execution → Report
 ```
 
-### Score ≥30: Enterprise Workflow (same as /build, with Innovate)
+### Score ≥30: Enterprise Workflow (same as /build, includes Innovate phase)
 
 ```
 Requirements (HITL Q&A) → PRD → [Innovate?] → Vibe Check → Design (extract stories + annotate + plan) → Plan Approval → Execution → Report
@@ -75,11 +75,11 @@ BA drafts PRD with clarification loop. No approval here—just Q&A to gather req
 **See:** `/skill innovate-phase`
 
 - Score ≥30: Ask "Want to Innovate?" (HARD STOP)
-- Score 15-29: Write PRD (Innovate skipped)
+- Score 15-29: Write PRD (proceed without Innovate phase)
 
 ### Vibe Check - Score ≥15
 
-Single vibe check on PRD. If fails, return to BA.
+Single vibe check on PRD. If issues found, route back to BA for revision.
 
 ### Design Phase - Score ≥15
 

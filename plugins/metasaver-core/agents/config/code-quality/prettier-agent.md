@@ -64,7 +64,7 @@ Use `/skill audit-workflow` for bi-directional comparison.
 1. Find all package.json files (scope-based)
 2. Check root .prettierignore exists
 3. Validate each package against 4 standards
-4. Scan for .prettierrc files (should not exist)
+4. Verify no .prettierrc files exist (all config via package.json "prettier" field)
 5. Report violations only (show checkmark for passing)
 6. Use `/skill remediation-options` for next steps
 
@@ -80,7 +80,7 @@ Use `/skill audit-workflow` for bi-directional comparison.
 ## Best Practices
 
 - Detect repo type first (use `/skill scope-check`)
-- Use skill templates - never hardcode config
+- Always use skill templates - ensure configs are generated from single source of truth
 - Root .prettierignore only - no package-level files
 - React detection: web-standalone, react-library
 - Re-audit after all changes

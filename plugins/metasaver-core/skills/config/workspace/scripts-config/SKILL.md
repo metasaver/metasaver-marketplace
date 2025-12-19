@@ -72,26 +72,26 @@ fi
 
 **Requirements for Node.js scripts:**
 
-- Use `path` module for all file paths (never hardcoded slashes)
-- Use `process.platform` for OS-specific logic
-- Shebang: `#!/usr/bin/env node`
+- ALWAYS USE `path` module for all file paths (do not hardcode slashes)
+- USE `process.platform` for OS-specific logic
+- INCLUDE Shebang: `#!/usr/bin/env node`
 
 **Example:**
 
 ```javascript
 const path = require("path");
-const envPath = path.join(__dirname, "..", ".env"); // CORRECT
-// const envPath = '../.env';  // WRONG - hardcoded path
+const envPath = path.join(__dirname, "..", ".env"); // CORRECT - uses path module
+// const envPath = '../.env';  // INCORRECT - avoid hardcoded paths
 ```
 
 **Validation:**
 
 ```bash
-# Check for hardcoded paths in Node.js scripts
-grep -E "\.\.\/|\.\.\\\\|\.\/" scripts/*.js && echo "WARNING: Possible hardcoded paths detected"
+# Verify path module usage
+grep -q "require.*path" scripts/*.js || echo "VIOLATION: path module must be used"
 
-# Check for path module usage
-grep -q "require.*path" scripts/*.js || echo "VIOLATION: path module not used"
+# Check for hardcoded paths (should not exist)
+grep -E "\.\.\/|\.\.\\\\|\.\/" scripts/*.js && echo "WARNING: Hardcoded paths detected - use path module instead"
 ```
 
 ### Rule 3: Error Handling
@@ -192,14 +192,14 @@ To validate /scripts directory:
 
 ## Best Practices
 
-1. Always place scripts at repository root `/scripts` (never in subdirectories)
-2. Use Node.js for cross-platform file operations (setup-env.js, setup-npmrc.js)
-3. Use bash for build/deploy scripts with proper error handling
-4. Include `chmod +x` instructions for shell scripts
-5. Document each script in scripts/README.md
-6. Test scripts on multiple platforms when possible
-7. Use `path` module consistently (never hardcoded paths)
-8. Re-audit after making changes
+1. ALWAYS PLACE scripts at repository root `/scripts` (use subdirectories for monorepo workspaces only)
+2. USE Node.js for cross-platform file operations (setup-env.js, setup-npmrc.js)
+3. USE bash for build/deploy scripts with proper error handling
+4. INCLUDE `chmod +x` instructions for shell scripts
+5. DOCUMENT each script in scripts/README.md
+6. TEST scripts on multiple platforms when possible
+7. ALWAYS USE `path` module consistently (avoid hardcoded paths)
+8. RE-AUDIT after making changes
 
 ## Integration
 

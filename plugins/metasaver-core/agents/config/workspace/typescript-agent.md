@@ -90,8 +90,8 @@ Use `/skill typescript-config` for 6 standards validation.
 
 ## Best Practices
 
-1. Detect target type first - Root monorepos should NOT have root tsconfig.json
+1. Detect target type first - Root monorepos should not include root tsconfig.json
 2. Always read package.json - Extract metasaver.projectType
-3. Use skill templates - Don't embed JSON examples
+3. Use skill templates - Always reference templates, store JSON examples in skills
 4. Vite projects - Need 3 files (root + app + node)
 5. Re-audit after changes - Verify fixes work

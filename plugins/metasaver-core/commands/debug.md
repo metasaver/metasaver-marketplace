@@ -91,12 +91,12 @@ Generate complete debug report with executive summary, steps executed with scree
 ## Enforcement
 
 1. Plan phase confirms URL + test steps with user (quick HITL)
-2. Check Chrome DevTools MCP connection before execution
+2. Verify Chrome DevTools MCP connection before execution
 3. Capture screenshots at each step
 4. Always capture console messages
 5. Always capture network requests (for debugging)
 6. Report must include all evidence
-7. Never auto-fix - report findings only
+7. Always report findings; implementation decisions belong to the user
 8. Use MCP tools exclusively for browser interactions
-9. Sequential execution - one interaction at a time
-10. Abort if Chrome DevTools MCP is not accessible
+9. Execute sequentially - one interaction at a time
+10. Require Chrome DevTools MCP accessibility before proceeding

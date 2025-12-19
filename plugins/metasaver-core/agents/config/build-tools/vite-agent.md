@@ -31,13 +31,13 @@ Domain expert for Vite configuration. Ensures correct plugins for React projects
 
 Use `/skill config/build-tools/vite-config` for templates and validation logic.
 
-| Rule | Standard                                                  |
-| ---- | --------------------------------------------------------- |
-| 1    | Correct plugins for React projects (@vitejs/plugin-react) |
-| 2    | Required path alias: `@` -> `./src`                       |
-| 3    | Required build config: outDir, sourcemap, manualChunks    |
-| 4    | Required server config: port, strictPort, host            |
-| 5    | Required dependencies: vite, @vitejs/plugin-react         |
+| Rule | Standard                                                             |
+| ---- | -------------------------------------------------------------------- |
+| 1    | Always use correct plugins for React projects (@vitejs/plugin-react) |
+| 2    | Always include path alias: `@` -> `./src`                            |
+| 3    | Always include build config: outDir, sourcemap, manualChunks         |
+| 4    | Always include server config: port, strictPort, host                 |
+| 5    | Always include dependencies: vite, @vitejs/plugin-react              |
 
 ## Build Mode
 
@@ -76,7 +76,7 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 
 - Read package.json first: Extract metasaver.projectType
 - Check port registry: For assigned port numbers
-- Path alias sync: Must match tsconfig.json paths
+- Sync path aliases: Ensure paths match tsconfig.json
 - Smart recommendations: Option 1 for consumers, option 2 for library
 - Respect exceptions: Consumer repos may declare documented exceptions
 - Library allowance: @metasaver/multi-mono may have custom Vite config

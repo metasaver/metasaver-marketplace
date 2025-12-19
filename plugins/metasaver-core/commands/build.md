@@ -130,10 +130,10 @@ BA + PM produce final build report with summary, files modified, tests added, st
 2. Complexity routing after Analysis:
    - **< 15**: FAST PATH (skip Requirements, Design, Approval, Standards Audit)
    - **≥ 15**: FULL PATH (all phases)
-3. NO Innovate phase - use /architect if innovation needed
-4. NO Vibe Check phase - only /architect has this
-5. TDD execution: tester runs BEFORE coder per story
-6. Standards Audit runs AFTER Validation passes (≥15 only)
-7. Always run build/lint/test after execution
-8. Always produce final report
-9. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+3. Include these phases only: Analysis → Requirements/Design/Approval (conditional) → Execution → Validation → Standards Audit (conditional) → Report
+4. Use /architect command for innovation or vibe check workflows
+5. TDD execution: ALWAYS run tester BEFORE coder per story
+6. Standards Audit: ALWAYS run AFTER Validation passes (≥15 complexity only)
+7. ALWAYS run build/lint/test after execution
+8. ALWAYS produce final report
+9. When files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"

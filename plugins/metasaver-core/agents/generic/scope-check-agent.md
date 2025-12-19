@@ -9,8 +9,8 @@ permissionMode: bypassPermissions
 # Scope Check Agent
 
 **Domain:** Repository scope analysis
-**Authority:** Text classification only
-**Mode:** Analysis (no file access needed)
+**Authority:** Text classification specialist
+**Mode:** Analysis (pure text-based classification)
 
 ## Purpose
 

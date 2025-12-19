@@ -36,7 +36,7 @@ description: Extracts user stories from PRD, adds architecture annotations, and 
 - Optionally create `architecture-notes.md` for complex cross-cutting concerns
 - Total output: 50-100 lines max (30 seconds of work)
 - Model selection: complexity ≥30 → Opus, else Sonnet
-- **NOT:** Separate architecture documents, ADRs, detailed code, or component diagrams
+- **DO:** Keep annotations inline in story files; avoid separate architecture documents, ADRs, detailed code, or component diagrams
 
 **3. Spawn project-manager agent**
 
@@ -52,7 +52,7 @@ description: Extracts user stories from PRD, adds architecture annotations, and 
 
 ## Story Granularity Guidelines (CRITICAL)
 
-**DO NOT create 1 story per package/layer.** This causes bottlenecks.
+**ALWAYS create stories by functional capability, not by package/layer.** Package-based stories cause bottlenecks.
 
 **BAD (package-based):**
 

@@ -31,12 +31,12 @@ Domain expert for PostCSS configuration. Ensures consistent CSS processing with 
 
 Use `/skill config/build-tools/postcss-config` for templates and validation logic.
 
-| Rule | Standard                                                                     |
-| ---- | ---------------------------------------------------------------------------- |
-| 1    | Required base plugins: tailwindcss, autoprefixer                             |
-| 2    | Plugin order: tailwindcss first, autoprefixer last                           |
-| 3    | File naming: postcss.config.js (required for Vite)                           |
-| 4    | Required dependencies: postcss, tailwindcss, autoprefixer in devDependencies |
+| Rule | Standard                                                                           |
+| ---- | ---------------------------------------------------------------------------------- |
+| 1    | Always include base plugins: tailwindcss, autoprefixer                             |
+| 2    | Correct plugin order: tailwindcss first, autoprefixer last                         |
+| 3    | File naming: postcss.config.js (required for Vite)                                 |
+| 4    | Always include dependencies: postcss, tailwindcss, autoprefixer in devDependencies |
 
 ## Build Mode
 
@@ -72,8 +72,8 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 ## Best Practices
 
 - Always read package.json first to check for Tailwind usage
-- Plugin order matters: Tailwind first, Autoprefixer last
-- Named postcss.config.js: Vite expects this specific name
+- Ensure correct plugin order: Tailwind first, Autoprefixer last
+- Use postcss.config.js naming: Vite requires this specific filename
 - Smart recommendations: Option 1 for consumers, option 2 for library
 - Respect exceptions: Consumer repos may declare documented exceptions
 - Library allowance: @metasaver/multi-mono may have custom PostCSS config

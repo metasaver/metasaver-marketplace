@@ -62,7 +62,7 @@ For each fix in remediation_plan:
 **4. Handle Failures Gracefully**
 
 - If fix fails: record error, continue with remaining fixes
-- Do NOT stop on first failure (batch all possible fixes)
+- Always batch all possible fixes before stopping (continue through all remediation actions)
 - Collect failure messages for user review
 
 **5. Track All Modifications**
@@ -196,13 +196,13 @@ Remediation: Create missing src/index.ts
 
 ## Error Handling Strategy
 
-**Critical Errors (STOP):**
+**Critical Errors (Halt & Report):**
 
 - File system errors (permission denied, disk full)
 - Agent crash during execution
 - Syntax validation failure on new code
 
-**Non-Critical (CONTINUE):**
+**Non-Critical (Continue):**
 
 - Config file update with warnings (lint warnings, etc.)
 - Optional file already exists
@@ -296,7 +296,7 @@ Next Steps:
 | --------------------- | ----- | ----------------------------------- |
 | Model for agents      | haiku | Fast execution for rule-based fixes |
 | Validation on writes  | Yes   | Prevent invalid config files        |
-| Stop on first failure | No    | Apply all fixable issues            |
+| Continue on failures  | Yes   | Apply all fixable issues            |
 | Snapshot state before | Yes   | Enable rollback if needed           |
 | Log all changes       | Yes   | Audit trail required                |
 

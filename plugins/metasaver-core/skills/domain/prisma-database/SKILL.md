@@ -325,7 +325,7 @@ export async function seedUsers(prisma: PrismaClient) {
 
 **Rule 3: Seed Data Idempotency**
 
-- Use `upsert` pattern to avoid duplicates on re-run
+- Always use `upsert` pattern to prevent duplicates on re-run
 - Document seed assumptions
 - Seed only essential data (users, core entities)
 
@@ -445,7 +445,7 @@ import type { User } from "#/types.js";
 - [ ] Package directory at `packages/database/{project}-database/`
 - [ ] All required subdirectories: `src`, `prisma/seed`
 - [ ] No unnecessary files or folders
-- [ ] Build output in `dist/` (git-ignored)
+- [ ] Always use git ignore for build output in `dist/`
 
 ### package.json
 
@@ -512,11 +512,11 @@ import type { User } from "#/types.js";
 
 ### Environment Configuration
 
-- [ ] `.env.example` exists (committed)
-- [ ] Template includes `{PROJECT_UPPER}_DATABASE_URL`
-- [ ] Database scripts use `dotenv-cli` wrapper
-- [ ] No `.env` file committed (gitignored)
-- [ ] No hardcoded credentials
+- [ ] Always create `.env.example` (committed)
+- [ ] Always include `{PROJECT_UPPER}_DATABASE_URL` in template
+- [ ] Always use `dotenv-cli` wrapper for database scripts
+- [ ] Ensure `.env` file is gitignored - never commit it
+- [ ] Always keep credentials out of code - use environment variables only
 
 ### Build & Compilation
 
@@ -531,7 +531,7 @@ import type { User } from "#/types.js";
 **Violation:** Using factory pattern instead of singleton
 
 ```typescript
-// WRONG - factory pattern
+// INCORRECT - factory pattern
 export function getPrismaClient(): PrismaClient {
   if (!client) {
     client = new PrismaClient();
@@ -543,7 +543,7 @@ export function getPrismaClient(): PrismaClient {
 **Fix:** Use simple singleton
 
 ```typescript
-// RIGHT - simple singleton
+// CORRECT - simple singleton
 export const prisma = global.prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
@@ -554,7 +554,7 @@ if (process.env.NODE_ENV !== "production") {
 **Violation:** Creating types folder with pagination interfaces
 
 ```typescript
-// WRONG - src/types/index.ts with custom types
+// INCORRECT - src/types/index.ts with custom types
 export interface PaginationOptions {
   page?: number;
   pageSize?: number;
@@ -564,14 +564,14 @@ export interface PaginationOptions {
 **Fix:** Simple type re-export
 
 ```typescript
-// RIGHT - src/types.ts with Prisma re-export
+// CORRECT - src/types.ts with Prisma re-export
 export type * from "@prisma/client";
 ```
 
 **Violation:** Including repository pattern in database package
 
 ```typescript
-// WRONG - src/repositories/base.repository.ts
+// INCORRECT - src/repositories/base.repository.ts
 export abstract class BaseRepository<T> {
   // ...
 }
@@ -580,14 +580,14 @@ export abstract class BaseRepository<T> {
 **Fix:** Remove repository pattern from database package
 
 ```typescript
-// RIGHT - consumers use Prisma directly or implement repositories
+// CORRECT - consumers use Prisma directly or implement repositories
 // Database package only provides client and types
 ```
 
 **Violation:** Schema without standard timestamps
 
 ```prisma
-// WRONG
+// INCORRECT
 model User {
   id    String @id @default(uuid())
   email String
@@ -597,7 +597,7 @@ model User {
 **Fix:** Add standard timestamp fields
 
 ```prisma
-// RIGHT
+// CORRECT
 model User {
   id        String   @id @default(uuid())
   email     String
@@ -611,7 +611,7 @@ model User {
 **Violation:** Seed scripts not idempotent
 
 ```typescript
-// WRONG - creates duplicates on re-run
+// INCORRECT - creates duplicates on re-run
 async function seedUsers(prisma: PrismaClient) {
   await prisma.user.create({ data: user });
 }
@@ -620,7 +620,7 @@ async function seedUsers(prisma: PrismaClient) {
 **Fix:** Use upsert for idempotency
 
 ```typescript
-// RIGHT - safe to run multiple times
+// CORRECT - safe to run multiple times
 async function seedUsers(prisma: PrismaClient) {
   await prisma.user.upsert({
     where: { id: user.id },

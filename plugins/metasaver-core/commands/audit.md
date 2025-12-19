@@ -114,7 +114,7 @@ Spawn config agents in waves to investigate discrepancies:
    - Sort by severity (critical → warning → info)
    - Group by repo/file
 
-**NO CHANGES MADE** during investigation. Agents only report findings.
+**READ-ONLY MODE** during investigation. Agents ALWAYS report findings without modifications.
 
 Output: Sorted list of discrepancies
 
@@ -256,13 +256,13 @@ Audited {N} files across {M} repositories.
 2. **Complexity routing after Analysis:**
    - complexity < 15: FAST PATH (skip Requirements, Planning, Approval, template-update)
    - complexity ≥ 15: FULL PATH (all phases with HITL gates)
-3. **Investigation is READ-ONLY** - No changes until approved
-4. **Every discrepancy gets user decision** - No auto-fixes
+3. **Investigation operates in READ-ONLY mode** - ALWAYS wait for user approval before making changes
+4. **Every discrepancy gets user decision via HITL** - ALWAYS get approval before applying fixes
 5. **Template updates happen FIRST** in metasaver-marketplace, then apply to other files (FULL PATH only)
-6. **Always run build/lint/test** after remediation
-7. **Always produce final report**
-8. **NO vibe check** - Audit is compliance, not creation
-9. **NO innovation phase** - Not applicable to audits
-10. **Template updates create PRs** - Never auto-merge to metasaver-marketplace
+6. **ALWAYS run build/lint/test** after remediation
+7. **ALWAYS produce final report**
+8. **ALWAYS skip vibe check** - Audit is compliance-focused, not creation-focused
+9. **ALWAYS skip innovation phase** - Focus on standards compliance, not enhancements
+10. **Template updates ALWAYS create PRs** - ALWAYS require review before merging to metasaver-marketplace
 
 ---

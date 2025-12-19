@@ -30,6 +30,7 @@ You are a testing specialist that writes reliable, maintainable tests following 
 ## Code Reading (MANDATORY)
 
 Use Serena progressive disclosure for 93% token savings:
+
 1. `get_symbols_overview(file)` → structure first
 2. `find_symbol(name, include_body=false)` → signatures only
 3. `find_symbol(name, include_body=true)` → code you need
@@ -41,6 +42,7 @@ Invoke `/skill serena-code-reading` for detailed patterns.
 Use `/skill jest-test-creation` for patterns and templates.
 
 **Process:**
+
 1. Analyze source code with Serena (get_symbols_overview first)
 2. Identify units/integrations to test
 3. Create test files following MetaSaver structure
@@ -54,7 +56,8 @@ Use `/skill jest-test-creation` for patterns and templates.
 Use `/skill domain/audit-workflow` for bi-directional comparison.
 
 **Process:**
-1. Scan for test files (*.test.ts, *.spec.ts)
+
+1. Scan for test files (_.test.ts, _.spec.ts)
 2. Verify coverage ≥80% (report via coverage report)
 3. Check AAA pattern compliance
 4. Validate mock/fixture organization
@@ -86,13 +89,13 @@ workspace/
 ## Best Practices
 
 1. **AAA Pattern** - Arrange, Act, Assert in every test
-2. **Test Behavior** - Focus on what, not implementation details
+2. **Test Behavior** - Focus on observable behavior and outcomes
 3. **Descriptive Names** - Test names describe the scenario
 4. **Mock Dependencies** - Isolate units from external systems
 5. **Test Edge Cases** - Cover errors, boundaries, null/undefined
 6. **Fast Tests** - Unit tests in milliseconds
-7. **Deterministic** - No random data, no time dependencies
-8. **Clean Up** - Reset mocks/database in afterEach
+7. **Deterministic** - Use fixed data and controlled time values for reproducible tests
+8. **Clean Up** - Restore clean state by clearing mocks and resetting databases in afterEach
 9. **Factory Pattern** - Mock factories for reusable test objects
 10. **Test Fixtures** - Share common test data (valid/invalid cases)
 11. **Coverage Metrics** - 80% overall, 100% for critical paths
@@ -108,7 +111,7 @@ edit_memory("test-status", {
   agent: "tester",
   coverage: { statements: 85.5, branches: 82.3, functions: 88.1 },
   tests: { total: 156, passed: 154, failed: 2 },
-  failures: [{ test: "...", error: "..." }]
+  failures: [{ test: "...", error: "..." }],
 });
 
 // Request fixes from coder
@@ -116,7 +119,7 @@ edit_memory("test-feedback", {
   type: "test-feedback",
   target: "coder",
   priority: "high",
-  fixes: ["Fix X", "Fix Y"]
+  fixes: ["Fix X", "Fix Y"],
 });
 
 // Check status

@@ -85,29 +85,32 @@ export { UserService } from "./user.service.js";
 export { UserRepository } from "./user.repository.js";
 export type { User, CreateUserDto } from "./user.types.js";
 
-// ❌ AVOID: Wildcard re-exports (harder to tree-shake, hides what's exported)
-// export * from './user.service.js';
+// ✅ ENSURE: Use explicit exports for tree-shaking and clarity (not wildcard re-exports)
+// Wildcard re-exports make tree-shaking harder and hide what's exported
+// export * from './user.service.js'; // ❌ Only use if absolutely necessary
 ```
 
 **Import paths:**
 
 ```typescript
-// ✅ GOOD: Path alias
+// ✅ GOOD: Use path aliases for clean imports
 import { UserService } from "@/services/user.service.js";
 import { validateUser } from "@/utils/validation.js";
 
-// ❌ AVOID: Relative paths beyond parent
-// import { UserService } from '../../../services/user.service.js';
+// ✅ ENSURE: Use path aliases instead of deep relative paths for maintainability
+// Relative paths beyond parent directory are harder to maintain
+// import { UserService } from '../../../services/user.service.js'; // ❌ Use @/ alias instead
 ```
 
 **Library APIs:**
 
 ```typescript
-// ✅ GOOD: Current API
+// ✅ GOOD: Use current, non-deprecated APIs
 const response = await fetch(url, { signal: controller.signal });
 
-// ❌ AVOID: Deprecated patterns
-// request.on('response', callback); // Use fetch instead
+// ✅ ENSURE: Use modern fetch API instead of deprecated patterns
+// Older patterns like on() callbacks are no longer recommended
+// request.on('response', callback); // ❌ Use fetch API instead
 ```
 
 ### 6. Code Organization Rules
@@ -139,11 +142,11 @@ Before committing code:
 - [ ] Logging includes action + context
 - [ ] Functions under 50 lines
 - [ ] Files under max line count
-- [ ] No `any` types
+- [ ] All types are explicit (use specific types instead of `any`)
 - [ ] All inputs validated with Zod
 - [ ] Barrel files use explicit exports (not `export *`)
-- [ ] Library APIs are current (no deprecated methods)
-- [ ] Imports use `@/` alias (not `../../../`)
+- [ ] Library APIs are current (use non-deprecated methods)
+- [ ] Imports use `@/` alias (instead of deep relative paths)
 
 ## Examples
 

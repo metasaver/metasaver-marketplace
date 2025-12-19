@@ -59,7 +59,7 @@ Use `/skill domain/audit-workflow` for validation.
 ## Best Practices
 
 1. Detect repo type first - check package.json name
-2. Validate paths exist - don't assume
+2. Validate paths exist - verify all paths are accessible
 3. Match filesystem - CLAUDE.md is source of truth
 4. Coordinate through memory
 5. Auto re-audit after changes (mandatory)

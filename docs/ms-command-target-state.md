@@ -1,10 +1,14 @@
 # MS Command Target State
 
-Target workflow architecture for the `/ms` (MetaSaver) command - the intelligent router.
+Target workflow architecture for the `/ms` (MetaSaver) command - the universal entry point.
 
-**Purpose:** Semi-freeform task handler with analysis and approval guardrails.
+**Purpose:** Universal entry point for all MetaSaver workflows. Routes to appropriate command, tracks workflow state, enables continuation after HITL stops.
 
-**For structured feature development, use `/build`. For validation, use `/audit`.**
+**Use /ms for everything.** It handles:
+
+- New work → Routes to /build, /audit, /architect, /debug, /qq
+- Continuation → Resumes interrupted workflows at correct step
+- State tracking → PM updates workflow-state.json throughout execution
 
 ---
 
@@ -12,130 +16,260 @@ Target workflow architecture for the `/ms` (MetaSaver) command - the intelligent
 
 ```mermaid
 flowchart TB
-    subgraph Entry["1. Entry Point"]
-        A["/ms {prompt}"]
+    subgraph P1["Phase 1: Entry + State Check"]
+        E1["Parse prompt"]:::step
+        E2["Check for workflow-state.json"]:::step
+        E3{{"Active workflow?"}}:::decision
+        E1 --> E2 --> E3
     end
 
-    subgraph Analysis["2. Analysis Phase (PARALLEL)"]
-        B["Complexity Check<br/>(prompt) → int"]
-        C["Tool Check<br/>(prompt) → string[]"]
-        D["Scope Check<br/>(prompt) → string[]"]
+    subgraph P2_RESUME["Phase 2a: Resume Workflow"]
+        R1["Read workflow-state.json"]:::step
+        R2["Read execution-plan.md"]:::step
+        R3["Read story statuses"]:::step
+        R4["Identify phase + step"]:::step
+        R5["Route to workflow at step"]:::step
+        R1 --> R2 --> R3 --> R4 --> R5
     end
 
-    subgraph BA["3. BA Clarification"]
-        E["Review analysis results"]
-        F["Understand requirements"]
-        G{"Questions?"}
-        H["Ask clarifying questions<br/>(HITL loop)"]
-        I["Propose execution plan"]
-        E --> F --> G
-        G -->|"YES"| H --> G
-        G -->|"NO"| I
+    subgraph P2_NEW["Phase 2b: New Workflow (PARALLEL)"]
+        N1["/skill complexity-check"]:::skill
+        N2["/skill scope-check"]:::skill
+        N3["/skill tool-check"]:::skill
     end
 
-    subgraph Approval["4. Approval Gate"]
-        J["Present plan to user"]
-        K{"Approved?"}
-        L["Proceed"]
-        M["Revise"]
-        J --> K
-        K -->|"YES"| L
-        K -->|"NO"| M --> E
+    E3 -->|Yes| P2_RESUME
+    E3 -->|No| P2_NEW
+
+    subgraph P3["Phase 3: Route to Command"]
+        RT{{"Task type?"}}:::decision
     end
 
-    subgraph Execute["5. Execute"]
-        N["Select MetaSaver agent(s)<br/>via agent-selection"]
-        O["Spawn agent(s)"]
-        N --> O
+    N1 & N2 & N3 --> P3
+    R5 --> EXEC
+
+    RT -->|"Build feature"| BUILD["/build"]:::command
+    RT -->|"Audit configs"| AUDIT["/audit"]:::command
+    RT -->|"Plan/explore"| ARCH["/architect"]:::command
+    RT -->|"Browser debug"| DEBUG["/debug"]:::command
+    RT -->|"Quick question"| QQ["/qq"]:::command
+
+    BUILD & AUDIT & ARCH & DEBUG & QQ --> EXEC
+
+    subgraph EXEC["Phase 4: Execution with State Tracking"]
+        EX1["PM reads execution plan"]:::step
+        EX2["PM spawns wave agents"]:::step
+        EX3["Agents update story status"]:::step
+        EX4["PM saves workflow-state.json"]:::step
+        EX5{{"HITL needed?"}}:::decision
+        EX1 --> EX2 --> EX3 --> EX4 --> EX5
     end
 
-    subgraph Validate["6. Validate"]
-        P["Run validation"]
-        Q["Refresh repomix cache"]
-        P --> Q
+    EX5 -->|No| NEXT{{"More waves?"}}:::decision
+    EX5 -->|Yes| STOP["Save state + HITL stop"]:::hitl
+
+    NEXT -->|Yes| EX2
+    NEXT -->|No| VAL
+
+    subgraph VAL["Phase 5: Validate"]
+        V1["/skill production-check"]:::skill
+        V2["/skill repomix-cache-refresh"]:::skill
+        V1 --> V2
     end
 
-    A --> B & C & D
-    B & C & D --> E
-    I --> J
-    L --> N
-    O --> P
+    VAL --> DONE((Complete))
+
+    STOP --> WAIT["User responds with /ms"]:::hitl
+    WAIT --> P1
+
+    classDef step fill:#e1e1e1,stroke:#333
+    classDef skill fill:#fff3cd,stroke:#333
+    classDef command fill:#cce5ff,stroke:#333
+    classDef decision fill:#f8d7da,stroke:#333
+    classDef hitl fill:#d4edda,stroke:#333
 ```
 
 ---
 
 ## 2. Phase Details
 
-### Phase 1: Analysis (PARALLEL)
+### Phase 1: Entry + State Check
 
-**See:** `/skill analysis-phase`
+```mermaid
+flowchart LR
+    C1["Look for docs/projects/*/workflow-state.json"]:::step
+    C2["Check TodoWrite for workflow todos"]:::step
+    C3["Parse prompt for continuation cues"]:::step
+    C4{{"Active workflow?"}}:::decision
+    C1 --> C2 --> C3 --> C4
+    C4 -->|Yes| RESUME["Phase 2a"]:::command
+    C4 -->|No| NEW["Phase 2b"]:::command
 
-Spawn 3 agents in parallel:
+    classDef step fill:#e1e1e1,stroke:#333
+    classDef command fill:#cce5ff,stroke:#333
+    classDef decision fill:#f8d7da,stroke:#333
+```
+
+**State detection priority:**
+
+1. `workflow-state.json` in most recent project folder
+2. TodoWrite items with workflow phase markers
+3. User prompt contains: "continue", "proceed", "yes", "do it"
+
+---
+
+### Phase 2a: Resume Workflow
+
+```mermaid
+flowchart TB
+    R1["Read workflow-state.json"]:::step
+    R2["Extract: command, phase, step, wave"]:::step
+    R3["Read execution-plan.md"]:::step
+    R4["Read story files for status"]:::step
+    R5["Route to workflow at step"]:::step
+    R1 --> R2 --> R3 --> R4 --> R5
+
+    R5 --> ROUTE{{"Resume at?"}}:::decision
+    ROUTE -->|"approval_waiting"| APP["Present plan, get approval"]:::hitl
+    ROUTE -->|"executing"| EXEC["Continue at wave N"]:::step
+    ROUTE -->|"hitl_waiting"| INPUT["Process user response"]:::step
+
+    classDef step fill:#e1e1e1,stroke:#333
+    classDef hitl fill:#d4edda,stroke:#333
+    classDef decision fill:#f8d7da,stroke:#333
+```
+
+---
+
+### Phase 2b: New Workflow Analysis (PARALLEL)
+
+**See:** `/skill complexity-check`, `/skill scope-check`, `/skill tool-check`
+
+Spawn 3 skills in parallel:
 
 - `complexity-check` → score (1-50)
-- `tool-check` → required MCP tools
 - `scope-check` → targets and references
+- `tool-check` → required MCP tools
 
-### Phase 2: BA Clarification
+---
 
-Spawn BA agent to understand requirements:
+### Phase 3: Route to Command
 
+| Condition                                              | Route To   |
+| ------------------------------------------------------ | ---------- |
+| complexity < 15 AND question only                      | /qq        |
+| "audit", "validate", "check" + config files            | /audit     |
+| "debug", "browser", "UI test"                          | /debug     |
+| vague requirements, "plan", "explore", "design"        | /architect |
+| clear requirements, "build", "implement", "add", "fix" | /build     |
+
+---
+
+### Phase 4: Execution with State Tracking
+
+**PM manages execution and state:**
+
+```mermaid
+flowchart TB
+    EX1["PM reads execution-plan.md"]:::step
+    EX2["PM identifies current wave"]:::step
+
+    subgraph WAVE["Wave N"]
+        W1["Update workflow-state: wave started"]:::step
+        W2["Spawn agents for stories (parallel)"]:::step
+        W3["Agents execute + update story status"]:::step
+        W4["PM collects results"]:::step
+        W1 --> W2 --> W3 --> W4
+    end
+
+    EX3["PM updates execution-plan.md"]:::step
+    EX4["PM saves workflow-state.json"]:::step
+    EX5{{"HITL needed?"}}:::decision
+
+    EX1 --> EX2 --> WAVE --> EX3 --> EX4 --> EX5
+
+    EX5 -->|Yes| STOP["Save state, HITL stop"]:::hitl
+    EX5 -->|No| MORE{{"More waves?"}}:::decision
+    MORE -->|Yes| WAVE
+    MORE -->|No| VAL["Phase 5: Validate"]:::step
+
+    classDef step fill:#e1e1e1,stroke:#333
+    classDef hitl fill:#d4edda,stroke:#333
+    classDef decision fill:#f8d7da,stroke:#333
 ```
-Spawn agent: subagent_type="core-claude-plugin:generic:business-analyst"
-```
 
-BA responsibilities:
+**PM responsibilities during execution:**
 
-1. Review analysis results (complexity, tools, scope)
-2. Understand what user wants to accomplish
-3. Ask clarifying questions if anything is unclear (HITL loop)
-4. Propose execution plan:
-   - Which MetaSaver agent(s) to use
-   - What files will be affected
-   - Approach summary (2-3 sentences)
+| When            | PM Action                                                     |
+| --------------- | ------------------------------------------------------------- |
+| Wave start      | Update workflow-state: `currentWave`, stories to `inProgress` |
+| Agent completes | Update story file status, move to `completed`                 |
+| Wave complete   | Update execution-plan.md with results                         |
+| HITL needed     | Set `status: hitl_waiting`, save `hitlQuestion`               |
+| Error occurs    | Set `status: error`, save error details                       |
+| All waves done  | Trigger Phase 5: Validate                                     |
 
-**Output:** Clear understanding + proposed plan presented to user
-
-### Phase 3: Approval Gate
-
-**HARD STOP** - Present plan and wait for user approval.
-
-Show user:
-
-- Complexity score
-- Proposed agent(s)
-- Files that will be affected
-- Brief approach
-
-**Bypass:** Only skip if user prompt contains "do without approval" or "just do it"
-
-### Phase 4: Execute
-
-Use `/skill agent-selection` to identify the correct MetaSaver agent(s).
-
-**CRITICAL:** Use MetaSaver agents ONLY. Never use generic agents.
-
-| Task Type        | Agent                                                       |
-| ---------------- | ----------------------------------------------------------- |
-| Code changes     | `core-claude-plugin:generic:coder`                          |
-| Bug fixes        | `core-claude-plugin:generic:root-cause-analyst` → `coder`   |
-| Tests            | `core-claude-plugin:generic:tester`                         |
-| Config files     | Appropriate config agent (eslint-agent, vite-agent, etc.)   |
-| Agent/skill work | `core-claude-plugin:generic:agent-author` or `skill-author` |
-| Questions        | `core-claude-plugin:generic:code-explorer`                  |
-
-Paired TDD structure: tester → impl per story. Compact context between waves. Track progress with TodoWrite throughout execution.
+---
 
 ### Phase 5: Validate
 
 If files were modified:
 
-1. Run appropriate validation based on change size
-2. Execute `/skill repomix-cache-refresh`
+1. `/skill production-check` - build, lint, test
+2. `/skill repomix-cache-refresh` - update cache
+3. Clear workflow-state.json (workflow complete)
 
 ---
 
-## 3. Model Selection
+## 3. Workflow State File
+
+Location: `docs/projects/{name}/workflow-state.json`
+
+```json
+{
+  "command": "build",
+  "phase": 5,
+  "phaseName": "Execution",
+  "step": "wave-execution",
+  "currentWave": 2,
+  "totalWaves": 3,
+  "status": "hitl_waiting",
+  "lastUpdate": "2025-12-19T10:30:00Z",
+  "epics": [
+    {
+      "id": "EPIC-001",
+      "status": "in_progress",
+      "storiesCompleted": 2,
+      "storiesTotal": 3
+    }
+  ],
+  "stories": {
+    "completed": ["US-001", "US-002"],
+    "inProgress": [],
+    "pending": ["US-003", "US-004", "US-005"]
+  },
+  "hitlQuestion": "Wave 2 complete. Proceed with wave 3?",
+  "resumeAction": "spawn-wave-3"
+}
+```
+
+**Status values:**
+
+| Status             | Meaning                            |
+| ------------------ | ---------------------------------- |
+| `analysis`         | Running analysis phase             |
+| `requirements`     | BA creating PRD/epics/stories      |
+| `design`           | Architect enriching stories        |
+| `approval_waiting` | Waiting for user approval          |
+| `executing`        | Running execution waves            |
+| `hitl_waiting`     | Stopped for user input             |
+| `validating`       | Running production checks          |
+| `complete`         | Workflow finished                  |
+| `error`            | Error occurred, needs intervention |
+
+---
+
+## 4. Model Selection
 
 | Complexity | BA     | Workers |
 | ---------- | ------ | ------- |
@@ -145,61 +279,85 @@ If files were modified:
 
 ---
 
-## 4. Examples
+## 5. Examples
 
 ```bash
-# Simple question
-/ms "how does the agent-selection skill work?"
-→ Analysis → BA (no questions needed) → Approve → code-explorer answers
+# New build task
+/ms "add user authentication to the app"
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis (complexity=28)
+→ Phase 3: Route to /build
+→ /build executes with state tracking
 
-# Bug fix
-/ms "the complexity-check skill is returning wrong scores"
-→ Analysis → BA asks clarifying questions → Approve → root-cause-analyst → coder fixes
+# Continue after HITL stop
+/ms "yes, proceed with the next wave"
+→ Phase 1: Found workflow-state.json (build, wave 2, hitl_waiting)
+→ Phase 2a: Resume at wave 3
+→ Phase 4: PM spawns wave 3 agents
 
-# Agent modification
-/ms "update the architect agent to include API endpoints"
-→ Analysis → BA proposes changes → Approve → agent-author executes
+# Answer clarifying question mid-workflow
+/ms "use JWT tokens, not sessions"
+→ Phase 1: Found workflow-state.json (build, requirements, hitl_waiting)
+→ Phase 2a: Resume requirements phase
+→ BA incorporates answer, continues
 
-# Quick task with bypass
-/ms "fix the typo in build.md, do without approval"
-→ Analysis → BA → (approval skipped) → coder fixes
+# Quick question (no workflow state)
+/ms "how does the auth middleware work?"
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis (complexity=5)
+→ Phase 3: Route to /qq
+→ /qq spawns code-explorer, answers
+
+# Audit task
+/ms "check if eslint config matches our standards"
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis (scope=config files)
+→ Phase 3: Route to /audit
+→ /audit executes with state tracking
 ```
 
 ---
 
-## 5. Enforcement
+## 6. Enforcement
 
-1. ALWAYS run Analysis phase first (parallel: complexity, tools, scope)
-2. ALWAYS spawn BA to clarify and propose plan
-3. ALWAYS stop for approval (unless bypassed with "do without approval" or "just do it")
-4. ALWAYS use MetaSaver agents via `/skill agent-selection` - NEVER generic agents
-5. ALWAYS validate and refresh cache if files modified
-6. Track all tasks with TodoWrite
-7. Get user approval before any git operations
+1. ALL work goes through /ms (except simple questions answered directly)
+2. /ms ALWAYS checks for active workflow state first
+3. /ms ALWAYS routes to MetaSaver commands (/build, /audit, /architect, /debug, /qq)
+4. /ms routes to commands, commands use MetaSaver agents - NEVER spawn generic agents directly
+5. PM ALWAYS updates workflow-state.json after each wave
+6. PM ALWAYS updates story files with status changes
+7. HITL stops ALWAYS save state for resumption
+8. User responses via /ms resume at correct workflow step
+9. Track all tasks with TodoWrite
+10. Get user approval before any git operations
 
 ---
 
-## 6. Key Differentiator: /ms vs /build vs /audit
+## 7. Command Routing Summary
 
-| Aspect   | /ms                        | /build            | /audit            |
-| -------- | -------------------------- | ----------------- | ----------------- |
-| Purpose  | Semi-freeform task handler | Create new code   | Validate existing |
-| BA Phase | Always                     | Always            | Always            |
-| Approval | Always (unless bypassed)   | Always            | Always            |
-| Model    | Varies by complexity       | sonnet (opus 30+) | haiku for workers |
+| /ms is...             | Routes to        | Why                           |
+| --------------------- | ---------------- | ----------------------------- |
+| Universal entry point | All commands     | Single point of enforcement   |
+| State-aware           | Resume or new    | Enables workflow continuation |
+| Router only           | Commands do work | Separation of concerns        |
 
-**When to use /ms:**
+**/ms routes. Commands execute. Agents work. PM tracks state.**
 
-- General tasks that don't fit /build or /audit
-- Mixed tasks
-- Unsure which workflow is appropriate
+---
 
-**When to use /build:**
+## 8. Migration from Old /ms
 
-- Know you're creating new features
-- Want full PRD workflow with innovation option
+**Old behavior:**
 
-**When to use /audit:**
+- /ms spawned BA directly
+- /ms spawned agents directly
+- No state tracking
+- HITL broke workflows
 
-- Compliance checking only
-- Config file validation
+**New behavior:**
+
+- /ms checks state first
+- /ms routes to commands
+- Commands handle their workflows
+- PM tracks state throughout
+- /ms resumes workflows after HITL

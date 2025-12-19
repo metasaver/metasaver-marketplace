@@ -5,21 +5,86 @@ description: Intelligent MetaSaver command that analyzes complexity and routes o
 
 # MetaSaver Command
 
-Semi-freeform task handler with analysis and approval guardrails.
+Universal entry point for all MetaSaver workflows. Analyzes tasks, routes to appropriate commands, and resumes interrupted workflows.
 
-**For structured feature development, use `/build`. For validation, use `/audit`.**
+**Use /ms for everything.** It routes to `/build`, `/audit`, `/architect`, `/debug`, or `/qq` based on task type.
 
 ---
 
 ## Workflow
 
 ```
-Analysis → BA Clarification → Approval → Execute → Validate
+Entry + State Check → Resume OR (New Analysis → Route to Command)
 ```
+
+**New tasks:** Phase 1 → Phase 2b (Analysis) → Phase 3 (Route)
+**Resuming:** Phase 1 → Phase 2a (Resume at correct step)
 
 ---
 
-## Phase 1: Analysis (PARALLEL)
+## Entry Handling
+
+When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content.
+
+---
+
+## Phase 1: Entry + State Check
+
+**See:** `/skill workflow-steps/state-management`
+
+When /ms is invoked:
+
+1. **Parse prompt** - Extract user intent from prompt text
+2. **Check for active workflow:**
+   - Glob for `docs/projects/*/workflow-state.json`
+   - Read most recent (by folder date) workflow-state.json using `/skill workflow-steps/state-management`
+   - Check status field: if not "complete" or "error", workflow is active
+3. **Check TodoWrite** - Look for todo items with workflow phase markers
+4. **Check continuation cues** - Prompt contains: "continue", "proceed", "yes", "do it", "approve"
+
+**Decision:**
+
+- Active workflow found → Phase 2a: Resume Workflow
+- No active workflow → Phase 2b: New Workflow Analysis
+
+**State Detection Priority:**
+
+1. workflow-state.json in most recent project folder
+2. TodoWrite items with workflow phase markers
+3. User prompt continuation cues
+
+---
+
+## Phase 2a: Resume Workflow
+
+**See:** `/skill workflow-steps/state-management`
+
+When active workflow is detected:
+
+1. Read workflow-state.json from project folder
+2. Extract: command, phase, phaseName, step, currentWave, status
+3. Read execution-plan.md (if exists)
+4. Read story files for status (if executing)
+5. Route to workflow at appropriate step based on status
+
+**Resume routing by status:**
+
+| Status           | Resume Action                                  |
+| ---------------- | ---------------------------------------------- |
+| analysis         | Continue analysis phase                        |
+| requirements     | Resume BA PRD creation (process user response) |
+| design           | Resume design phase                            |
+| approval_waiting | Present plan, get approval                     |
+| executing        | Continue at currentWave                        |
+| hitl_waiting     | Process user response, continue workflow       |
+| validating       | Continue validation phase                      |
+| error            | Present error, ask user how to proceed         |
+
+After routing determination, proceed to execution at identified step.
+
+---
+
+## Phase 2b: New Workflow Analysis (PARALLEL)
 
 **See:** `/skill analysis-phase`
 
@@ -31,109 +96,178 @@ Spawn 3 agents in parallel:
 
 ---
 
-## Phase 2: BA Clarification
+## Phase 3: Route to Command
 
-Spawn BA agent to understand requirements:
+Based on analysis from Phase 2b, route to appropriate command:
 
-```
-Spawn agent: subagent_type="core-claude-plugin:generic:business-analyst"
-```
+**Routing Rules:**
 
-BA responsibilities:
+| Trigger Keywords                             | Detected Scope        | Route To   |
+| -------------------------------------------- | --------------------- | ---------- |
+| None (question only)                         | complexity < 15       | /qq        |
+| "audit", "validate", "check"                 | config files in scope | /audit     |
+| "debug", "browser", "test UI"                | UI/E2E testing        | /debug     |
+| "plan", "explore", "design", vague           | unclear requirements  | /architect |
+| "build", "implement", "add", "fix", "create" | clear requirements    | /build     |
 
-1. Review analysis results (complexity, tools, scope)
-2. Understand what user wants to accomplish
-3. Ask clarifying questions if anything is unclear (HITL loop)
-4. Propose execution plan:
-   - Which MetaSaver agent(s) to use
-   - What files will be affected
-   - Approach summary (2-3 sentences)
+**Routing Priority:**
 
-**Output:** Clear understanding + proposed plan presented to user
+1. /qq - Simple questions (lowest complexity, no file changes)
+2. /audit - Compliance/validation tasks (config files in scope)
+3. /debug - Browser/E2E testing tasks (UI/testing keywords)
+4. /architect - Exploration/planning tasks (vague requirements)
+5. /build - Implementation tasks (default for complex work)
 
----
+**Route Decision:**
 
-## Phase 3: Approval Gate
+After routing decision, /ms transfers control to the target command with:
 
-**HARD STOP** - Present plan and wait for user approval.
+- Original user prompt
+- Analysis results (complexity, scope, tools)
+- Any HITL answers collected during clarification
 
-Show user:
-
-- Complexity score
-- Proposed agent(s)
-- Files that will be affected
-- Brief approach
-
-**Bypass:** Only skip if user prompt contains "do without approval" or "just do it"
+**Commands handle their own workflows** - each command (build, audit, architect, debug, qq) manages its execution, approval gates, and state tracking.
 
 ---
 
-## Phase 4: Execute
+## Phase 4: Execution (Delegated to Commands)
 
-Use `/skill agent-selection` to identify the correct MetaSaver agent(s).
+After routing in Phase 3, execution is handled by the target command:
 
-**CRITICAL:** Use MetaSaver agents ONLY. Never use generic agents.
+- `/build` → PRD creation, story extraction, wave execution
+- `/audit` → Investigation, resolution, remediation
+- `/architect` → Deep exploration and planning
+- `/debug` → Browser testing workflow
+- `/qq` → Direct answer (no execution phases)
 
-| Task Type        | Agent                                                       |
-| ---------------- | ----------------------------------------------------------- |
-| Code changes     | `core-claude-plugin:generic:coder`                          |
-| Bug fixes        | `core-claude-plugin:generic:root-cause-analyst` → `coder`   |
-| Tests            | `core-claude-plugin:generic:tester`                         |
-| Config files     | Appropriate config agent (eslint-agent, vite-agent, etc.)   |
-| Agent/skill work | `core-claude-plugin:generic:agent-author` or `skill-author` |
-| Questions        | `core-claude-plugin:generic:code-explorer`                  |
+**State Tracking During Execution:**
 
-Paired TDD structure: tester → impl per story. Compact context between waves. Track progress with TodoWrite throughout execution.
+Each command uses `/skill workflow-steps/state-management` to:
+
+1. Update workflow-state.json at wave start
+2. Track story completion
+3. Set HITL checkpoints between waves
+4. Save resumption context
+
+**Resumption Flow:**
+
+When user returns to `/ms` after HITL stop:
+
+1. Phase 1 detects active workflow from workflow-state.json
+2. Phase 2a resumes at correct command and wave
+3. Execution continues in routed command
+
+**/ms does not execute directly** - it only routes and resumes.
 
 ---
 
-## Phase 5: Validate
+## Phase 5: Validate (Delegated to Commands)
 
-If files were modified:
+After execution completes in the routed command, validation is triggered:
 
-1. Run appropriate validation based on change size
-2. Execute `/skill repomix-cache-refresh`
+**Validation Steps (handled by routed command):**
 
----
+1. `/skill production-check` - Build, lint, test
+2. `/skill repomix-cache-refresh` - Update cache
+3. Clear workflow-state.json (workflow complete)
 
-## Model Selection
+**Completion States:**
 
-| Complexity | BA     | Workers |
-| ---------- | ------ | ------- |
-| 1-14       | sonnet | sonnet  |
-| 15-29      | sonnet | sonnet  |
-| 30+        | opus   | sonnet  |
+- `status: "complete"` - Workflow finished successfully
+- `status: "error"` - Validation failed, needs intervention
+
+**On Successful Completion:**
+
+- workflow-state.json status set to "complete"
+- User notified of completion
+- Final report generated (if applicable)
+
+**On Validation Failure:**
+
+- workflow-state.json status set to "error"
+- Error details saved
+- User notified for intervention
+- `/ms` can resume from error state after fix
+
+**/ms validation behavior:**
+
+When `/ms` resumes a workflow with `status: "error"`:
+
+1. Phase 2a detects error status
+2. Routes to original command with error context
+3. Command attempts validation retry
 
 ---
 
 ## Examples
 
 ```bash
-# Simple question
+# New task: Simple question
 /ms "how does the agent-selection skill work?"
-→ Analysis → BA (no questions needed) → Approve → code-explorer answers
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis (complexity=5)
+→ Phase 3: Route to /qq
+→ /qq executes and answers
 
-# Bug fix
-/ms "the complexity-check skill is returning wrong scores"
-→ Analysis → BA asks clarifying questions → Approve → root-cause-analyst → coder fixes
+# New task: Build feature
+/ms "add user authentication to the app"
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis (complexity=28, scope=app files)
+→ Phase 3: Route to /build
+→ /build executes with state tracking
 
-# Agent modification
-/ms "update the architect agent to include API endpoints"
-→ Analysis → BA proposes changes → Approve → agent-author executes
+# New task: Audit configs
+/ms "check if eslint config matches our standards"
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis (scope=config files, "check" keyword)
+→ Phase 3: Route to /audit
+→ /audit executes investigation and remediation
 
-# Quick task with bypass
-/ms "fix the typo in build.md, do without approval"
-→ Analysis → BA → (approval skipped) → coder fixes
+# Resume workflow after HITL stop
+/ms "yes, proceed with the next wave"
+→ Phase 1: Found workflow-state.json (build, wave 2, hitl_waiting)
+→ Phase 2a: Resume at wave 3
+→ /build PM spawns wave 3 agents
+
+# Answer clarifying question mid-workflow
+/ms "use JWT tokens, not sessions"
+→ Phase 1: Found workflow-state.json (build, requirements, hitl_waiting)
+→ Phase 2a: Resume requirements phase
+→ /build BA incorporates answer, continues
+
+# Continue with approval after approval_waiting
+/ms "approved, proceed"
+→ Phase 1: Found workflow-state.json (build, approval_waiting)
+→ Phase 2a: Resume at execution phase
+→ /build executes plan
+
+# New task: Debug UI issue
+/ms "debug the login button in the browser"
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis ("debug", "browser" keywords)
+→ Phase 3: Route to /debug
+→ /debug spawns browser and debugger
+
+# New task: Plan architecture
+/ms "explore options for implementing real-time notifications"
+→ Phase 1: No active workflow
+→ Phase 2b: Analysis ("explore" keyword, vague requirements)
+→ Phase 3: Route to /architect
+→ /architect creates design docs and proposes approach
 ```
 
 ---
 
 ## Enforcement
 
-1. ALWAYS run Analysis phase first (parallel: complexity, tools, scope)
-2. ALWAYS spawn BA to clarify and propose plan
-3. ALWAYS stop for approval (unless bypassed with "do without approval" or "just do it")
-4. ALWAYS use MetaSaver agents via `/skill agent-selection` - NEVER generic agents
-5. ALWAYS validate and refresh cache if files modified
-6. Track all tasks with TodoWrite
-7. Get user approval before any git operations
+1. ALWAYS check for active workflow state first (Phase 1: Entry + State Check)
+2. ALWAYS use `/skill workflow-steps/state-management` to read workflow-state.json
+3. ALWAYS check for continuation cues in prompt ("continue", "proceed", "yes", "do it", "approve")
+4. ALWAYS resume active workflows at the correct step (Phase 2a: Resume Workflow)
+5. For new workflows: ALWAYS run Analysis phase (parallel: complexity, tools, scope)
+6. ALWAYS route to appropriate command based on analysis results (Phase 3: Route to Command)
+7. /ms is a ROUTER ONLY - commands handle execution, approval gates, state tracking
+8. NEVER spawn agents directly from /ms - route to commands, which spawn agents
+9. NEVER execute workflows directly from /ms - route to commands, which execute workflows
+10. Track workflow state via commands (PM updates workflow-state.json)
+11. All commands follow their own enforcement rules for execution

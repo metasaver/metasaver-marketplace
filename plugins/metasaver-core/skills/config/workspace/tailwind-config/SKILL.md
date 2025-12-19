@@ -31,7 +31,7 @@ export default {
 - Must include `"./index.html"` pattern
 - Must include `"./src/**/*.{js,ts,jsx,tsx}"` pattern
 
-### Rule 2: Must Extend Default Theme
+### Rule 2: Extend Default Theme (Never Replace)
 
 ```javascript
 theme: {
@@ -43,8 +43,8 @@ theme: {
 
 **Validation:**
 
-- Must have `theme.extend` object
-- Never replace the default theme completely
+- ENSURE `theme.extend` object is present
+- ALWAYS extend the default theme (do not replace it completely)
 
 ### Rule 3: Required Plugins Array
 
@@ -117,7 +117,7 @@ export default {
 function checkTailwindConfig(
   configPath: string,
   packageJson: any,
-  repoType: string
+  repoType: string,
 ) {
   const errors: string[] = [];
 
@@ -146,7 +146,9 @@ function checkTailwindConfig(
 
   // Rule 2: Check theme.extend exists
   if (!config.theme?.extend) {
-    errors.push("Rule 2: Must have theme.extend (not replace theme)");
+    errors.push(
+      "Rule 2: ENSURE theme.extend is present - always extend the default theme",
+    );
   }
 
   // Rule 3: Check plugins array exists
@@ -244,11 +246,11 @@ May have intentional differences:
 ## Best Practices
 
 1. **Content paths are critical** - Controls which files Tailwind scans
-2. **Extend theme, don't replace** - Preserves Tailwind defaults
+2. **ALWAYS extend theme** - Preserves Tailwind defaults (never replace)
 3. **CSS file required** - Import point for Tailwind directives
 4. **Template location** - Store in `.claude/skills/tailwind-config/templates/`
 5. **Validation before build** - Check project type compatibility
-6. **Always re-audit** - Verify changes after conforming
+6. **RE-AUDIT after changes** - Verify all rules pass after conforming
 
 ## Template Location
 

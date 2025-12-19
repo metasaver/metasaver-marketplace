@@ -97,7 +97,7 @@ interface AgentInstruction {
 
 ## Discovery Algorithm
 
-**CRITICAL: Use DYNAMIC DISCOVERY, not hardcoded lists!**
+**CRITICAL: Always use DYNAMIC DISCOVERY - ensure you scan actual agent directories, not hardcoded lists!**
 
 The Project Manager MUST scan the actual agent directories to discover all available agents:
 
@@ -272,7 +272,7 @@ function getExcludedPaths(repoType: string): string[] {
 }
 ```
 
-**Important:** The discovery agent MUST run `find .claude/agents -type f -name "*.md"` BEFORE generating the manifest to ensure it knows what agents are available in the current directory structure.
+**Important:** The discovery agent MUST always run `find .claude/agents -type f -name "*.md"` BEFORE generating the manifest to ensure it discovers what agents are available in the current directory structure.
 
 ## Manifest Output Format
 
@@ -331,7 +331,7 @@ Task("monorepo-setup-agent", "
   Scan the repository root and generate an audit manifest.
   Use the monorepo-audit skill to map files to agents.
   Return the exact Task calls needed for Phase 2.
-  DO NOT execute audits - only discover what needs auditing.
+  Only discover what needs auditing - do not execute audits.
 ")
 ```
 

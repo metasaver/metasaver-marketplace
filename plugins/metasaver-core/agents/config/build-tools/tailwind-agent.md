@@ -31,13 +31,13 @@ Domain expert for Tailwind CSS configuration. Ensures correct content paths, the
 
 Use `/skill config/workspace/tailwind-config` for templates and validation logic.
 
-| Rule | Standard                                                             |
-| ---- | -------------------------------------------------------------------- |
-| 1    | Required content paths: `./index.html`, `./src/**/*.{js,ts,jsx,tsx}` |
-| 2    | Must extend default theme (not replace it)                           |
-| 3    | Required plugins array (can be empty)                                |
-| 4    | File naming: tailwind.config.js                                      |
-| 5    | Required dependencies: tailwindcss in devDependencies                |
+| Rule | Standard                                                                   |
+| ---- | -------------------------------------------------------------------------- |
+| 1    | Always include content paths: `./index.html`, `./src/**/*.{js,ts,jsx,tsx}` |
+| 2    | Extend default theme (never replace it)                                    |
+| 3    | Always include plugins array (can be empty)                                |
+| 4    | Use file naming: tailwind.config.js                                        |
+| 5    | Always include dependencies: tailwindcss in devDependencies                |
 
 ## Build Mode
 
@@ -72,8 +72,8 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 
 ## Best Practices
 
-- Content paths critical: Must include `./index.html` and `./src/**/*.{js,ts,jsx,tsx}`
-- Theme extend only: Never replace default theme
+- Always include content paths: `./index.html` and `./src/**/*.{js,ts,jsx,tsx}`
+- Always extend theme: Use theme.extend to preserve defaults
 - CSS file pairing: Verify src/index.css exists with Tailwind directives
 - Smart recommendations: Option 1 for consumers, option 2 for library
 - Respect exceptions: Consumer repos may declare documented exceptions

@@ -63,7 +63,7 @@ The prettier field maps to config type based on projectType:
 | web-standalone | react       | Vite React web applications |
 | react-library  | react       | React component libraries   |
 
-All Prettier rules and configuration complexity lives in the shared @metasaver/core-prettier-config library. Individual projects must NOT define inline config objects.
+All Prettier rules and configuration complexity lives in the shared @metasaver/core-prettier-config library. Individual projects should always use string references for configuration.
 
 ### Rule 2: No Separate .prettierrc Files
 
@@ -153,7 +153,7 @@ To validate a Prettier configuration:
 5. Verify shared config dependency exists
 6. Check npm scripts (format, format:check, format:fix)
 7. Check root .prettierignore exists (monorepo only)
-8. Scan for .prettierrc files (should not exist)
+8. Verify .prettierrc files do not exist
 9. Report violations
 
 ### Validation Approach

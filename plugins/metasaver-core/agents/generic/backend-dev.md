@@ -41,7 +41,7 @@ Use `/skill serena-code-reading` for token-efficient file analysis with `get_sym
 - **Logging:** Winston (structured)
 - **Testing:** Jest + Supertest
 
-## No-Barrel Import Standards
+## Direct Import Standards
 
 **Internal imports (within same package):**
 

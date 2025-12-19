@@ -151,7 +151,7 @@ module.exports = {
 **Template-First Updates**
 
 - ALWAYS update source template in metasaver-marketplace first
-- Never apply config fixes directly to consumer repos without updating template
+- ALWAYS update template before applying config fixes to consumer repos
 - Template is the single source of truth
 
 **No Hardcoding**
@@ -221,7 +221,7 @@ Output:
 
 - Provide clear error message on what failed
 - Return to user for manual review before applying
-- Do not write invalid templates to marketplace
+- ALWAYS validate templates before writing to marketplace
 
 **Affected repos unclear:**
 

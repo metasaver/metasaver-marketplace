@@ -38,7 +38,7 @@ Primary skill: `/skill config/build-tools/docker-compose-config`
 3. Volumes section (postgres-data) and networks section ({project}-network)
 4. Service health checks (test, interval, timeout, retries)
 
-**CRITICAL:** Always compare against the template file `templates/docker-compose.yml.template` as the source of truth. Report deviations FROM the template, not invented standards.
+**CRITICAL:** Always use the template file `templates/docker-compose.yml.template` as the authoritative source of truth. Report all deviations from the template, ensuring standards remain consistent.
 
 ## Build Mode
 

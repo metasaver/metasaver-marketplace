@@ -198,10 +198,10 @@ const bundleAnalysis = {
 ##### API Response Time Optimization
 
 ```typescript
-// ❌ BAD: N+1 Query Problem
+// ANTIPATTERN: N+1 Query Problem (avoid this approach)
 async function getUsersWithPosts() {
   const users = await prisma.user.findMany();
-  // N+1: One query for users, N queries for posts
+  // Results in N+1: One query for users, N queries for posts
   const usersWithPosts = await Promise.all(
     users.map(async (user) => ({
       ...user,
@@ -211,9 +211,9 @@ async function getUsersWithPosts() {
   return usersWithPosts;
 }
 
-// ✅ GOOD: Eager Loading with Include
+// RECOMMENDED: Eager Loading with Include (efficient approach)
 async function getUsersWithPosts() {
-  // Single query with JOIN
+  // Single query with JOIN - maximizes database efficiency
   const users = await prisma.user.findMany({
     include: {
       posts: true,
@@ -222,7 +222,7 @@ async function getUsersWithPosts() {
   return users;
 }
 
-// ✅ BETTER: Selective Loading
+// BEST PRACTICE: Selective Loading (optimal performance)
 async function getUsersWithPostCount() {
   // Only fetch what you need
   const users = await prisma.user.findMany({
@@ -364,11 +364,11 @@ const prismaOptimizations = {
 const LazyComponent = lazy(() => import("./HeavyComponent"));
 
 // Tree shaking - import only what you need
-// ❌ BAD: Imports entire library
+// ANTIPATTERN: Importing entire library (increases bundle unnecessarily)
 import _ from "lodash";
 const result = _.debounce(fn, 300);
 
-// ✅ GOOD: Import specific function
+// RECOMMENDED: Import specific function (optimizes bundle size)
 import debounce from "lodash/debounce";
 const result = debounce(fn, 300);
 
@@ -607,11 +607,18 @@ mcp__sequential_thinking__sequentialthinking({
 - Profiling memory leaks or resource exhaustion
 - Investigating cache inefficiencies
 
-**AVOID:**
+**FOCUS ON SEQUENTIAL THINKING FOR:**
 
-- Simple single-query optimizations
-- Obvious bottlenecks
-- Performance issues with clear causes
+- Multi-layer analysis requiring step-by-step breakdown
+- Distributed system latency with unknown root causes
+- Complex resource exhaustion requiring investigation
+- Cache issues needing systematic diagnosis
+
+**SKIP SEQUENTIAL THINKING FOR:**
+
+- Single-query optimizations with known solutions
+- Clear, obvious bottlenecks with obvious fixes
+- Performance issues with identified root causes
 
 ## Best Practices
 

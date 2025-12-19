@@ -1,4 +1,12 @@
 {
   "name": "core-claude-plugin",
-  "version": "1.8.14"
+  "version": "1.8.14",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "command": "node plugins/metasaver-core/hooks/scripts/ms-reminder-hook.js",
+        "timeout": 5000
+      }
+    ]
+  }
 }

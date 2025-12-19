@@ -34,8 +34,8 @@ Use `/skill root-package-json-config` for complete template and validation logic
 | ---- | ----------------------- | ------------------------------------------------------------------ |
 | 1    | Monorepo metadata       | @metasaver scope, private: true, pnpm version, engines             |
 | 2    | Standard scripts        | build, dev, clean, lint, test, db, docker, setup                   |
-| 3    | DevDependencies only    | No dependencies, tooling in devDependencies only                   |
-| 4    | Workspaces in YAML      | No workspaces field (use pnpm-workspace.yaml)                      |
+| 3    | DevDependencies only    | Place all tooling in devDependencies, not dependencies             |
+| 4    | Workspaces in YAML      | Specify workspaces in pnpm-workspace.yaml only (not package.json)  |
 | 5    | Cross-platform binaries | turbo-linux-64 and turbo-windows-64 in dependencies (NOT optional) |
 
 ## Build Mode
@@ -65,10 +65,10 @@ Use `/skill audit-workflow` for bi-directional comparison.
 **Critical Notes:**
 
 - Root name must start with @metasaver/ scope
-- Cross-platform turbo binaries MUST be in dependencies (not optionalDependencies) for Windows + WSL compatibility
+- Ensure turbo binaries in dependencies (not optionalDependencies) for Windows + WSL compatibility
 - Root must be private: true
 - packageManager field must specify pnpm version
-- No dependencies at root (only devDependencies for tooling)
+- Place all tooling in devDependencies at root (keep dependencies empty)
 
 ## Best Practices
 

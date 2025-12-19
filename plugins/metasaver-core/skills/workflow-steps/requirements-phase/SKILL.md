@@ -1,22 +1,22 @@
 ---
 name: requirements-phase
-description: PRD creation with HITL clarification loop. BA drafts PRD, asks user questions until requirements are clear. NO approval here—approval happens after design phase when user can see full plan.
+description: PRD creation with HITL clarification loop, then EPIC-FIRST extraction. BA drafts PRD, asks user questions until requirements are clear, then creates epics (ALWAYS at least 1) followed by user stories under each epic. Formal approval happens in the design phase.
 ---
 
-# Requirements Phase - PRD Creation (HITL)
+# Requirements Phase - PRD + Epic/Story Creation (HITL)
 
-> **ROOT AGENT ONLY** - Called by commands only, never by subagents.
+> **ROOT AGENT ONLY** - Called by commands only, always invoked at root level.
 
-**Purpose:** Create PRD with human-in-the-loop clarification (Q&A only, no approval)
+**Purpose:** Create PRD with human-in-the-loop clarification, then extract epics and stories
 **Trigger:** After analysis-phase completes
 **Input:** prompt, complexity, tools, scope (from analysis-phase)
-**Output:** Completed PRD content (not yet written to file)
+**Output:** PRD + Epics + User Stories (hierarchy: PRD → Epics → Stories)
 
 ---
 
-## Important: No Approval Here
+## Important: Clarification Only
 
-This phase is for **clarification only**, not approval. The user can ask questions, provide context, and clarify requirements interactively. Formal approval happens later in **plan-approval** phase after:
+This phase is for **clarification and collection**, not formal approval. The user can ask questions, provide context, and clarify requirements interactively. Formal approval happens later in **plan-approval** phase after:
 
 - PRD is written
 - Stories are extracted
@@ -56,16 +56,32 @@ This way the user sees the full picture before approving.
    - Save to `{projectFolder}/prd.md`
    - Return completed PRD content and project folder path
 
-5. **For audit mode: Create user stories:**
+5. **Create epics and stories (ALWAYS - all modes):**
    - **Create folder:** `{projectFolder}/user-stories/`
-   - **Generate story for each (agent, file) pair:**
-     - For each file in scope.files:
-       - Determine agent from agent-check results
-       - Create user-story file: `US-{NNN}-audit-{file-slug}.md`
-       - Use audit-focused template (see below)
-   - **Story numbering:** Sequential (US-001, US-002, etc.)
+   - **CRITICAL: Create at least 1 epic FIRST**
+     - Determine epic boundaries based on complexity (see Epic Count Guidelines)
+     - Create epic file: `EPIC-{NNN}-{name}.md`
+     - Use `/skill user-story-template` for epic format
+   - **Then create stories under each epic:**
+     - For each story, link to parent epic
+     - Create story file: `US-{NNN}-{name}.md`
+     - Use `/skill user-story-template` for story format
+   - **Numbering:** Epics sequential (EPIC-001, EPIC-002), Stories sequential (US-001, US-002)
 
 6. **Continue to next phase** (no approval stop here)
+
+---
+
+## Epic Count Guidelines
+
+| Complexity | Recommended Epics | Example Split                 |
+| ---------- | ----------------- | ----------------------------- |
+| < 15       | 1 epic            | Single feature                |
+| 15-29      | 1-2 epics         | Feature + Tests               |
+| 30-44      | 2-3 epics         | Backend + Frontend + Database |
+| ≥ 45       | 3+ epics          | Multiple domains/services     |
+
+**ALWAYS create stories within an epic.** Even for simple tasks, wrap stories in at least one epic.
 
 ---
 
@@ -122,42 +138,63 @@ For each (agent, file) combination, create a user story file following this temp
 ```json
 {
   "status": "complete",
-  "projectFolder": "docs/projects/20251217-audit-xyz",
-  "prdPath": "docs/projects/20251217-audit-xyz/prd.md",
+  "projectFolder": "docs/projects/20251217-feature-xyz",
+  "prdPath": "docs/projects/20251217-feature-xyz/prd.md",
   "prdContent": "# PRD...",
+  "epics": [
+    {
+      "id": "EPIC-001",
+      "title": "User Authentication",
+      "path": "docs/projects/20251217-feature-xyz/user-stories/EPIC-001-user-auth.md",
+      "stories": ["US-001", "US-002", "US-003"]
+    },
+    {
+      "id": "EPIC-002",
+      "title": "Dashboard UI",
+      "path": "docs/projects/20251217-feature-xyz/user-stories/EPIC-002-dashboard.md",
+      "stories": ["US-004", "US-005"]
+    }
+  ],
   "stories": [
     {
       "id": "US-001",
-      "file": "eslint.config.js",
-      "agent": "eslint-agent",
-      "path": "docs/projects/20251217-audit-xyz/user-stories/US-001-audit-eslint.md"
+      "epic": "EPIC-001",
+      "title": "Create users table",
+      "agent": "prisma-database-agent",
+      "path": "docs/projects/20251217-feature-xyz/user-stories/US-001-users-table.md"
     },
     {
       "id": "US-002",
-      "file": "package.json",
-      "agent": "package-agent",
-      "path": "docs/projects/20251217-audit-xyz/user-stories/US-002-audit-package.md"
+      "epic": "EPIC-001",
+      "title": "Add password hashing",
+      "agent": "backend-worker-agent",
+      "path": "docs/projects/20251217-feature-xyz/user-stories/US-002-password-hash.md"
     }
   ],
   "clarificationsProvided": 0
 }
 ```
 
-**Note:** `stories` array is only populated for `/audit` workflows. For `/build` workflows, stories are extracted by Architect in the design-phase.
+**CRITICAL:** Every output MUST have at least 1 epic. Stories MUST reference their parent epic.
 
 ---
 
 ## Integration
 
-**Called by:** /audit, /build, /ms (all complexity levels that need PRD)
+**Called by:** /audit, /build, /architect, /ms (all complexity levels that need PRD)
 **Calls:** business-analyst agent, AskUserQuestion
-**User Stories:**
+**References:** `/skill user-story-template` for epic and story formats
 
-- **For /audit:** Stories created automatically from scope.files + agent-check results. Each (agent, file) pair generates one audit-focused user story.
-- **For /build:** Stories extracted by Architect in design-phase from PRD narrative (existing behavior unchanged).
+**Epic + Story Creation:**
+
+- **ALWAYS create at least 1 epic** - Required for all workflows
+- **For /audit:** Stories created automatically from scope.files + agent-check results. Group into "Audit" epic(s).
+- **For /build:** Stories extracted from PRD narrative. Group by domain/feature.
+- **For /architect:** Deep exploration with multiple epics for complex planning.
 
 **Next phase:**
 
-- /build → innovate-phase (ask user)
-- /audit → vibe-check (skip innovate)
-- All → design-phase → **plan-approval** (where formal approval happens)
+- /build → design-phase (architect enriches epics/stories)
+- /architect → vibe-check → innovate-phase
+- /audit → design-phase (skip vibe/innovate)
+- All → **hitl-approval** (where formal approval happens)

@@ -48,14 +48,13 @@ Plugins must be in this exact order:
 1. `tailwindcss` - FIRST
 2. `autoprefixer` - LAST
 
-❌ **WRONG**: Autoprefixer before Tailwind
-✅ **CORRECT**: Tailwind first, Autoprefixer last
+✅ **ALWAYS**: Use Tailwind first, Autoprefixer last (reversed order causes CSS processing errors)
 
 ### Rule 3: File Naming
 
 Must be named exactly `postcss.config.js`:
 
-- NOT `postcss.config.ts`, `postcss.config.mjs`
+- ALWAYS use `.js` extension (not `.ts` or `.mjs`)
 - Vite expects `postcss.config.js`
 
 ### Rule 4: Required Dependencies
@@ -88,18 +87,18 @@ To validate a postcss.config.js file:
 ```javascript
 // Rule 1: Check required plugins
 const hasTailwind = plugins.some(
-  (p) => p === "tailwindcss" || p.includes("tailwindcss")
+  (p) => p === "tailwindcss" || p.includes("tailwindcss"),
 );
 const hasAutoprefixer = plugins.some(
-  (p) => p === "autoprefixer" || p.includes("autoprefixer")
+  (p) => p === "autoprefixer" || p.includes("autoprefixer"),
 );
 
 // Rule 2: Check plugin order
 const tailwindIndex = plugins.findIndex(
-  (p) => p === "tailwindcss" || p.includes("tailwindcss")
+  (p) => p === "tailwindcss" || p.includes("tailwindcss"),
 );
 const autoprefixerIndex = plugins.findIndex(
-  (p) => p === "autoprefixer" || p.includes("autoprefixer")
+  (p) => p === "autoprefixer" || p.includes("autoprefixer"),
 );
 
 if (tailwindIndex > autoprefixerIndex) {

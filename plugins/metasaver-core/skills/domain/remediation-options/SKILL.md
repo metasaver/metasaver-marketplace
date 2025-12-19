@@ -38,7 +38,7 @@ When config violations are detected, ALWAYS present exactly 3 options:
 ```typescript
 async function conformToTemplate(
   configPath: string,
-  configType: string
+  configType: string,
 ): Promise<void> {
   // 1. Load template
   const template = await loadTemplate(configType);
@@ -82,7 +82,7 @@ async function conformToTemplate(
 ```typescript
 async function ignoreViolation(
   violation: string,
-  reason?: string
+  reason?: string,
 ): Promise<void> {
   console.log(`
 ℹ️  Violation ignored: ${violation}
@@ -112,7 +112,7 @@ ${reason ? `   Reason: ${reason}` : ""}
 - New best practice discovered
 - Template is outdated
 
-**CRITICAL:** Never for library repos (library is NOT the source of truth for consumer standards)
+**CRITICAL:** Only for consumer repos - library repos are NOT the source of truth for consumer standards
 
 **Implementation:**
 
@@ -120,7 +120,7 @@ ${reason ? `   Reason: ${reason}` : ""}
 async function updateTemplate(
   configType: string,
   newConfig: any,
-  reason: string
+  reason: string,
 ): Promise<void> {
   // 1. Confirm with user (this affects all repos)
   const confirmed = await confirmTemplateUpdate({
@@ -159,7 +159,7 @@ async function updateTemplate(
 function presentRemediationOptions(
   repoType: string,
   configType: string,
-  violations: string[]
+  violations: string[],
 ): string {
   const recommendation = getRecommendation(repoType);
 
@@ -242,7 +242,7 @@ function getRecommendation(repoType: string): Recommendation {
 ```typescript
 function getRecommendationBySeverity(
   severity: "critical" | "warning" | "info",
-  repoType: string
+  repoType: string,
 ): Recommendation {
   if (severity === "critical") {
     // Critical violations: Always conform (even library repos should consider)
@@ -284,7 +284,7 @@ function getRecommendationBySeverity(
 async function promptUserForRemediation(
   repoType: string,
   configType: string,
-  violations: string[]
+  violations: string[],
 ): Promise<number> {
   const recommendation = getRecommendation(repoType);
 
@@ -326,7 +326,7 @@ async function promptUserForRemediation(
 ```typescript
 async function executeRemediationChoice(
   choice: number,
-  context: RemediationContext
+  context: RemediationContext,
 ): Promise<void> {
   const { repoType, configType, configPath, violations } = context;
 
@@ -369,7 +369,7 @@ async function executeRemediationChoice(
 ```typescript
 async function offerExceptionDeclaration(
   configType: string,
-  reason: string
+  reason: string,
 ): Promise<void> {
   console.log(`
 💡 TIP: To skip this violation in future audits, declare an exception:
@@ -394,7 +394,7 @@ For multiple violations across multiple configs:
 ```typescript
 async function batchRemediation(
   violations: ConfigViolation[],
-  repoType: string
+  repoType: string,
 ): Promise<void> {
   console.log(`
 Found violations in ${violations.length} config(s).
@@ -439,7 +439,7 @@ if (auditResults.failing > 0) {
   const choice = await promptUserForRemediation(
     auditResults.repoType,
     "eslint",
-    auditResults.violations
+    auditResults.violations,
   );
 
   // Execute choice
@@ -454,7 +454,7 @@ if (auditResults.failing > 0) {
   if (choice === 2) {
     await offerExceptionDeclaration(
       "eslint",
-      "Custom ESLint rules for this project"
+      "Custom ESLint rules for this project",
     );
   }
 }

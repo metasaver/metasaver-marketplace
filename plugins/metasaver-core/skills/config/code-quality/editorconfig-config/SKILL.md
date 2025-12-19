@@ -80,7 +80,7 @@ indent_size = 4
 In monorepos, .editorconfig must exist ONLY at repository root:
 
 - Place at monorepo root (alongside pnpm-workspace.yaml)
-- Individual packages must NOT have their own .editorconfig files
+- Individual packages must only reference the root .editorconfig file
 - Single configuration ensures consistency across all packages
 
 ## Validation

@@ -6,7 +6,6 @@ tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---
 
-
 # Monorepo Root Structure Agent
 
 Domain authority for monorepo root directory structure. Detects unexpected files/folders and validates proper organization.
@@ -276,14 +275,14 @@ Remediation Options:
   3. Document (add to CLAUDE.md as intentional)
 
 💡 Recommendation: Option 1 (Clean up)
-   Test artifacts and screenshots should not be in root.
+   Test artifacts and screenshots belong in workspaces or docs/, not root.
 
 Your choice (1-3):
 ```
 
 ## Best Practices
 
-1. **Scan entire root** - Don't skip hidden files
+1. **Scan entire root** - Include hidden files in scan
 2. **Respect .gitignore** - Items in .gitignore are expected (node_modules, .turbo, etc.)
 3. **Check patterns** - Use regex for file pattern matching
 4. **Severity levels**:
@@ -293,6 +292,6 @@ Your choice (1-3):
 5. **Actionable recommendations** - Tell user exactly what to do
 6. **Consider documenting** - Some extra items may be intentional
 7. **Coordinate with gitignore** - If item should be ignored, suggest updating .gitignore
-8. **Don't audit node_modules** - This is expected and gitignored
+8. **Skip node_modules** - This is expected and gitignored
 
 Remember: Root cleanliness matters for maintainability. Unexpected files/folders indicate either leftover artifacts (delete them) or undocumented features (document them).

@@ -69,8 +69,8 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 **5. Save innovations-selected.md (conditional)**
 
-- **Skip if:** No innovations selected by user
-- **Write if:** User selected one or more innovations
+- **Create only when:** User selected one or more innovations
+- **Omit when:** No innovations selected by user
 - File: `{project-dir}/innovations-selected.md`
 - Include:
   - List of selected innovations
@@ -159,7 +159,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 - Halt workflow
 - Report error with file path
-- Do not proceed to next file
+- Stop execution and wait for user intervention
 
 ---
 

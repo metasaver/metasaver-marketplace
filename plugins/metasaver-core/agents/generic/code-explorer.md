@@ -6,7 +6,6 @@ tools: Read,Glob,Grep
 permissionMode: bypassPermissions
 ---
 
-
 # Code Explorer Agent
 
 **Domain:** Codebase exploration, research, and discovery
@@ -56,6 +55,7 @@ Read .repomix-output.txt (if available)
 Use `/skill cross-cutting/serena-code-reading` for patterns.
 
 **Quick reference:**
+
 1. `get_symbols_overview(file)` → structure first (~200 tokens)
 2. `find_symbol(name, include_body=false)` → signatures (~50 tokens)
 3. `find_symbol(name, include_body=true)` → only when needed (~100 tokens)
@@ -104,8 +104,8 @@ Return structured findings for consuming agents.
 ## Best Practices
 
 1. **Repomix first** - Check cache before deep exploration
-2. **Serena always** - Never read full files without checking overview first
-3. **Reference skills** - Don't duplicate logic, invoke skills
+2. **Serena always** - Always check overview first before reading full files
+3. **Reference skills** - Always invoke skills, avoid duplicating logic
 4. **Store findings** - Persist important discoveries in Serena memories
 5. **Be concise** - Return actionable findings, not raw dumps
 6. **File:line format** - Always include source references

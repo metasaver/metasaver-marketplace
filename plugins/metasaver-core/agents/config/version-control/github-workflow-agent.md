@@ -6,7 +6,6 @@ tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
 permissionMode: acceptEdits
 ---
 
-
 # GitHub Workflow Configuration Agent
 
 Domain authority for `.github/workflows/*.yml` files in the monorepo. Handles both creating and auditing GitHub Actions workflows against MetaSaver CI/CD standards.
@@ -162,13 +161,13 @@ Use the `/skill remediation-options` skill for the standard 3-option workflow.
 #### Library-Specific Standards (multi-mono)
 
 8. **Release Workflow** - `release-library.yml` must exist and publish to npm
-9. **NO Deploy Workflow** - Library must NOT have deployment workflows
-10. **NO Database Operations** - CI must NOT run db:\* commands
+9. **Library Scope Only** - Library must include ONLY CI, release, Dependabot, and CodeQL workflows
+10. **Production Operations** - CI must run ONLY application build steps (exclude db:\* commands for library scope)
 
 #### Consumer-Specific Standards
 
-11. **NO Deploy/Release Yet** - Consumer repos should NOT have deploy or release workflows (future feature)
-12. **CI Only** - Only CI, Dependabot, and CodeQL workflows for now
+11. **CI-Primary Workflows** - Consumer repos should include ONLY CI, Dependabot, and CodeQL workflows (deploy and release planned for future)
+12. **Focused Pipeline** - Ensure CI, Dependabot, and CodeQL workflows are present and operational
 
 ### Audit Report Format
 
@@ -299,7 +298,7 @@ jobs:
 **Fix**: Add publish step to release-library.yml
 
 **Issue**: Consumer repo has deploy or release workflows
-**Fix**: Remove them (not configured yet)
+**Fix**: Align to CI-only pattern (deploy and release workflows planned for future)
 
 ## Integration with Other Agents
 

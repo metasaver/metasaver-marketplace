@@ -168,6 +168,32 @@ Reference these in commands:
 - [ ] HITL marked clearly
 - [ ] File modification handling documented
 
+**5. Positive Framing Validation:**
+
+Reference `/skill positive-framing-patterns` for the complete pattern library.
+
+**Validation Checkpoint:**
+Before finalizing any command content, scan for negative framing patterns:
+- NEVER → Transform to ALWAYS
+- DON'T → Transform to DO
+- DO NOT → Transform to DO
+- Avoid → Transform to Prefer/Use
+
+**When negative framing detected:**
+1. Identify the prohibition or restriction
+2. Determine what behavior IS desired
+3. Reframe as affirmative instruction
+
+**Examples for Commands:**
+| Before | After |
+|--------|-------|
+| "NEVER skip the analysis phase" | "ALWAYS run analysis phase first" |
+| "DON'T bypass approval gates" | "OBTAIN user approval at each HITL gate" |
+| "Do not auto-commit changes" | "REQUEST user approval before git operations" |
+
+**Why this matters:**
+Commands define workflows. Clear, positive instructions ensure consistent execution.
+
 ### Audit Output Format
 
 ```

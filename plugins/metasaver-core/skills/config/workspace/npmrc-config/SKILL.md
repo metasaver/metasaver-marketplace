@@ -53,7 +53,7 @@ templates/.npmrc.template
 
 - Scoped registry for `@metasaver` pointing to `npm.pkg.github.com`
 - Auth token placeholder using `${GITHUB_TOKEN}` variable
-- **NEVER** include real tokens (security violation)
+- **ALWAYS** use token placeholder - never commit real tokens (security requirement)
 
 **Validation:**
 
@@ -127,7 +127,7 @@ grep -q "save-prefix=''" .npmrc.template || echo "VIOLATION: Missing save-prefix
 # ==============================================
 # MetaSaver NPM Registry Configuration Template
 # ==============================================
-# This is a TEMPLATE file - DO NOT edit directly
+# This is a TEMPLATE file - ALWAYS copy before editing directly
 #
 # Setup Instructions:
 # 1. Copy .env.example to .env
@@ -213,7 +213,7 @@ grep -q "Setup Instructions" .npmrc.template || echo "VIOLATION: Missing setup i
 
 ## Security Notes
 
-**CRITICAL:** .npmrc.template must NEVER contain real authentication tokens.
+**CRITICAL:** .npmrc.template must ALWAYS use token placeholders and never contain real authentication tokens.
 
 **Correct:**
 

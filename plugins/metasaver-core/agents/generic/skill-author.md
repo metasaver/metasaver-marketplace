@@ -107,6 +107,34 @@ skill-name/
 - [ ] File types mentioned if applicable
 - [ ] Purpose clear in first 2 lines
 
+**6. Positive Framing Validation:**
+
+Reference `/skill positive-framing-patterns` for the complete pattern library.
+
+**Validation Checkpoint:**
+Before finalizing any skill content, scan for negative framing patterns:
+
+- NEVER → Transform to ALWAYS
+- DON'T → Transform to DO
+- DO NOT → Transform to DO
+- Avoid → Transform to Prefer/Use
+
+**When negative framing detected:**
+
+1. Identify the prohibition or restriction
+2. Determine what behavior IS desired
+3. Reframe as affirmative instruction
+
+**Examples for Skills:**
+| Before | After |
+|--------|-------|
+| "NEVER skip this step" | "ALWAYS complete this step before proceeding" |
+| "DON'T create bare files" | "INCLUDE proper structure in all created files" |
+| "Do not use defaults" | "SPECIFY explicit values for all configuration" |
+
+**Why this matters:**
+Skills guide agent behavior. Positive framing produces clearer, more actionable guidance.
+
 ### Audit Output Format
 
 ```

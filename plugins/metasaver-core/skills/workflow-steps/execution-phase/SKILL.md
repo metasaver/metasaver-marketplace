@@ -22,11 +22,24 @@ description: TDD-paired Gantt-style execution with compact waves. Each story get
 
 2. **For each wave:**
 
-   a. **Persist progress:** Update all story files with current state (AC checkboxes, completion notes)
+   a. **Update workflow state:** Use `/skill state-management` to track wave progress
 
-   b. **Compact context:** Run `/compact` to free context before spawning new agents
+   ```javascript
+   updateWorkflowState(projectFolder, {
+     currentWave: waveNumber,
+     status: "executing",
+     stories: {
+       ...state.stories,
+       inProgress: waveStoryIds,
+     },
+   });
+   ```
 
-   c. **Spawn paired agents (sequential per story, parallel across stories):**
+   b. **Persist progress:** Update all story files with current state (AC checkboxes, completion notes)
+
+   c. **Compact context:** Run `/compact` to free context before spawning new agents
+
+   d. **Spawn paired agents (sequential per story, parallel across stories):**
    - For each story in wave:
      1. **Tester phase:** Spawn tester agent (unit-test, integration-test, or e2e-test)
         - Read story file → extract acceptance criteria
@@ -39,14 +52,22 @@ description: TDD-paired Gantt-style execution with compact waves. Each story get
         - Update story file: Status → 🔄 Implementing
         - Update story file: Assignee → {implementation-agent}
 
-   d. **Run pairs sequentially:** Tester → Implementation (one story pair at a time within max 10 concurrent limit)
+   e. **Run pairs sequentially:** Tester → Implementation (one story pair at a time within max 10 concurrent limit)
 
-   e. **Wait for ALL stories in wave to complete** before advancing to next wave
+   f. **Wait for ALL stories in wave to complete** before advancing to next wave
 
 3. **On task completion (tester or implementation):**
    - Update story file: Status → ✅ Complete
    - Update story file: Completion section with files modified
    - Update story file: Verified → yes (if validation passes)
+   - **Update workflow state:** Mark story complete
+
+   ```javascript
+   const state = readWorkflowState(projectFolder);
+   markStoryComplete(state, storyId);
+   writeWorkflowState(projectFolder, state);
+   ```
+
    - Record result, add to completed set
 
 4. **Production verification check:**
@@ -56,7 +77,85 @@ description: TDD-paired Gantt-style execution with compact waves. Each story get
 
 5. **On task failure:** Log error, update story status to ❌ Failed, continue (validation phase handles retries)
 
-6. **Return:** All results with status, files modified, errors, test coverage, story completion tracking
+6. **Wave completion:**
+   - **HITL checkpoint:** Set workflow to waiting state
+
+   ```javascript
+   setHITL(
+     state,
+     `Wave ${waveNumber} complete. Proceed with wave ${waveNumber + 1}?`,
+     `spawn-wave-${waveNumber + 1}`,
+   );
+   writeWorkflowState(projectFolder, state);
+   ```
+
+7. **Return:** All results with status, files modified, errors, test coverage, story completion tracking
+
+---
+
+## State Tracking
+
+Use `/skill state-management` for all workflow state operations. State tracking occurs at four key checkpoints:
+
+### 1. Wave Start
+
+At the start of each wave, update workflow-state.json with current wave and in-progress stories:
+
+```javascript
+updateWorkflowState(projectFolder, {
+  currentWave: waveNumber,
+  status: "executing",
+  stories: {
+    ...state.stories,
+    inProgress: waveStoryIds, // e.g., ["US-003", "US-004", "US-005"]
+  },
+});
+```
+
+### 2. Story Completion
+
+After each story completes (both tester and implementation phases):
+
+```javascript
+const state = readWorkflowState(projectFolder);
+markStoryComplete(state, storyId); // Moves from inProgress to completed
+writeWorkflowState(projectFolder, state);
+```
+
+This updates epic progress counters automatically.
+
+### 3. HITL Checkpoint
+
+When wave completes and human-in-the-loop input is needed:
+
+```javascript
+setHITL(
+  state,
+  `Wave ${waveNumber} complete. Proceed with wave ${waveNumber + 1}?`,
+  `spawn-wave-${waveNumber + 1}`,
+);
+writeWorkflowState(projectFolder, state);
+```
+
+Sets `status: "hitl_waiting"`, `hitlQuestion`, and `resumeAction` fields.
+
+### 4. Workflow Complete
+
+After final wave and validation phase:
+
+```javascript
+updateWorkflowState(projectFolder, {
+  status: "complete",
+  lastUpdate: new Date().toISOString(),
+});
+```
+
+**State persistence rationale:**
+
+- Enables workflow resumption after interruption
+- Provides audit trail of execution progress
+- Supports HITL checkpoints between waves
+- Tracks epic completion percentage for PM dashboards
 
 ---
 
@@ -67,6 +166,13 @@ waves = [[Story US-001], [Story US-002, US-003]]
 completed = new Set()
 
 for each wave in waves:
+  // Update workflow state - wave start
+  updateWorkflowState(projectFolder, {
+    currentWave: waveNumber,
+    status: "executing",
+    stories: { ...state.stories, inProgress: waveStoryIds }
+  })
+
   updateStoryFiles(wave, current state)
   runCompact()  // Free context
 
@@ -79,8 +185,20 @@ for each wave in waves:
 
     runProductionCheck(story)
 
+    // Update workflow state - story completion
+    state = readWorkflowState(projectFolder)
+    markStoryComplete(state, story.id)
+    writeWorkflowState(projectFolder, state)
+
   // All stories in wave complete before next wave
   completed += wave
+
+  // HITL checkpoint - wave completion
+  setHITL(state, `Wave ${waveNumber} complete. Proceed?`, `spawn-wave-${waveNumber + 1}`)
+  writeWorkflowState(projectFolder, state)
+
+// Workflow complete
+updateWorkflowState(projectFolder, { status: "complete" })
 
 return allResults
 ```

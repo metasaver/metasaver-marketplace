@@ -37,15 +37,15 @@ packages/contracts/{domain}-contracts/
 └── tsconfig.json
 ```
 
-**CRITICAL: No barrel exports (index.ts files)**
+**CRITICAL: Use direct exports (no barrel index.ts files)**
 
-- Export directly from specific files using package.json exports field
-- Consumers import with full path: `from "@metasaver/contracts/users/types"`
+- Always export directly from specific files using package.json exports field
+- Ensure consumers import with full path: `from "@metasaver/contracts/users/types"`
 
-**IMPORTANT - Files NOT to create at package level:**
+**IMPORTANT - Package level file requirements:**
 
-- NO `.gitignore` - handled by monorepo root
-- NO `.eslintrc.cjs` - use `eslint.config.js` (flat config) only
+- Always use monorepo root `.gitignore` - do not create at package level
+- Always use `eslint.config.js` (flat config) - do not use `.eslintrc.cjs`
 
 ## Templates
 
@@ -64,10 +64,10 @@ See `TEMPLATES.md` for all available templates. Key templates:
 
 ### Types File Rules
 
-- Re-export Prisma types from database package (single source of truth)
+- Always re-export Prisma types from database package (single source of truth)
 - Define API response wrapper types (Create, Update, Get, Delete)
-- DO NOT duplicate Prisma model fields
-- Use `type` imports for Prisma types
+- Ensure you do not duplicate Prisma model fields
+- Always use `type` imports for Prisma types
 
 ### Validation File Rules
 
@@ -152,10 +152,10 @@ export const UserRoleLabels = {
 
 - [ ] Package at `packages/contracts/{domain}-contracts/`
 - [ ] Each entity has its own folder under `src/`
-- [ ] Each entity folder has `types.ts`, `validation.ts` (NO index.ts)
-- [ ] NO `index.ts` barrel export files anywhere
-- [ ] NO `.gitignore` at package level (handled by root)
-- [ ] NO `.eslintrc.cjs` (old format - use `eslint.config.js`)
+- [ ] Each entity folder has `types.ts`, `validation.ts` (use direct exports, no index.ts)
+- [ ] Always use direct exports - ensure no `index.ts` barrel files anywhere
+- [ ] Always use monorepo `.gitignore` - do not create at package level
+- [ ] Always use `eslint.config.js` (flat config) - do not use `.eslintrc.cjs`
 - [ ] Has `eslint.config.js` (flat config)
 
 ### Types Files
@@ -179,7 +179,7 @@ export const UserRoleLabels = {
 - [ ] `package.json` has `exports` field with all public paths
 - [ ] Each entity has separate export paths for types and validation
 - [ ] Shared types have dedicated export path
-- [ ] NO `index.ts` barrel export files
+- [ ] Always use direct exports - ensure no `index.ts` barrel files
 
 ### Enum Organization
 
@@ -205,17 +205,17 @@ export const UserRoleLabels = {
 
 ## Common Violations & Fixes
 
-| Violation                                     | Fix                                         |
-| --------------------------------------------- | ------------------------------------------- |
-| Duplicating Prisma model fields               | Re-export from database package             |
-| Using `test` instead of `test:unit`           | Change to `test:unit`                       |
-| Using barrel exports (index.ts)               | Remove index.ts, use package.json exports   |
-| Missing package.json exports field            | Add exports field with all public paths     |
-| Duplicate tsconfig settings                   | Remove settings inherited from base         |
-| Package-level `.gitignore` or `.eslintrc.cjs` | Delete these files                          |
-| Entity-specific enum in `/shared/`            | Move to entity `types.ts` file              |
-| Using default exports                         | Use named exports only                      |
-| Importing from barrel index                   | Import directly: `from "{pkg}/users/types"` |
+| Violation                                     | Fix                                                |
+| --------------------------------------------- | -------------------------------------------------- |
+| Duplicating Prisma model fields               | Re-export from database package                    |
+| Using `test` instead of `test:unit`           | Change to `test:unit`                              |
+| Using barrel exports (index.ts)               | Remove index.ts, use package.json exports field    |
+| Missing package.json exports field            | Add exports field with all public paths            |
+| Duplicate tsconfig settings                   | Remove settings inherited from base                |
+| Package-level `.gitignore` or `.eslintrc.cjs` | Use monorepo root config, use `eslint.config.js`   |
+| Entity-specific enum in `/shared/`            | Move to entity `types.ts` file                     |
+| Using default exports                         | Always use named exports only                      |
+| Importing from barrel index                   | Always import directly: `from "{pkg}/users/types"` |
 
 ## Related Agents
 

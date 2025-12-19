@@ -11,7 +11,7 @@ Provides standardized bi-directional comparison logic for config agents auditing
 
 ## Bi-Directional Comparison Philosophy
 
-**CRITICAL:** This skill implements **bi-directional comparison**, not one-way validation.
+**CRITICAL:** This skill implements **bi-directional comparison**, always comparing from both directions.
 
 ### What This Means
 
@@ -47,7 +47,7 @@ interface ExpectedConfig {
 }
 
 async function loadExpectedStandards(
-  configType: string
+  configType: string,
 ): Promise<ExpectedConfig> {
   // Load from .claude/templates/ or skill documentation
   const templatePath = `.claude/templates/common/${configType}`;
@@ -75,7 +75,7 @@ interface ActualConfig {
 
 async function discoverActualState(
   configType: string,
-  scope: string
+  scope: string,
 ): Promise<ActualConfig[]> {
   // Use Glob to find all instances
   const pattern = getConfigPattern(configType); // e.g., "**/*.eslintrc.js"
@@ -86,7 +86,7 @@ async function discoverActualState(
       const content = await readFile(file);
       const { violations, warnings } = await validateConfig(
         content,
-        configType
+        configType,
       );
 
       return {
@@ -96,7 +96,7 @@ async function discoverActualState(
         violations,
         warnings,
       };
-    })
+    }),
   );
 }
 ```
@@ -114,7 +114,7 @@ interface ComparisonResult {
 
 function compareDirections(
   expected: ExpectedConfig,
-  actual: ActualConfig
+  actual: ActualConfig,
 ): ComparisonResult {
   const result: ComparisonResult = {
     missing: [],
@@ -172,7 +172,7 @@ interface ConfigAuditResult {
 function generateAuditReport(
   repoType: string,
   configType: string,
-  results: ConfigAuditResult[]
+  results: ConfigAuditResult[],
 ): string {
   const passing = results.filter((r) => r.status === "pass").length;
   const failing = results.filter((r) => r.status === "fail").length;
@@ -247,7 +247,7 @@ const expectedLocation = repoType === "library" ? "packages/*/.*" : ".";
 const actualConfigs = await discoverActualState("prettier", "**");
 
 const unexpected = actualConfigs.filter(
-  (config) => !config.locations.some((loc) => loc.startsWith(expectedLocation))
+  (config) => !config.locations.some((loc) => loc.startsWith(expectedLocation)),
 );
 
 if (unexpected.length > 0) {
@@ -300,7 +300,7 @@ function detectScopeFromIntent(userPrompt: string): string {
 ```typescript
 function applyStandardsForRepoType(
   repoType: string,
-  comparison: ComparisonResult
+  comparison: ComparisonResult,
 ): void {
   if (repoType === "library") {
     // Library repos: Differences are often intentional
@@ -311,7 +311,7 @@ function applyStandardsForRepoType(
 
     // Filter to only critical violations
     comparison.violations = comparison.violations.filter((v) =>
-      isCriticalViolation(v)
+      isCriticalViolation(v),
     );
   } else {
     // Consumer repos: Strict standards enforced
@@ -334,7 +334,7 @@ interface ConfigException {
 
 async function checkForExceptions(
   packagePath: string,
-  configType: string
+  configType: string,
 ): Promise<ConfigException | null> {
   const pkg = await readPackageJson(packagePath);
 
