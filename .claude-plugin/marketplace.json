@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "core-claude-plugin",
-      "version": "1.8.14",
+      "version": "1.8.15",
       "source": "./plugins/metasaver-core",
       "skills": [
         "./skills/config/build-tools/docker-compose-config",
