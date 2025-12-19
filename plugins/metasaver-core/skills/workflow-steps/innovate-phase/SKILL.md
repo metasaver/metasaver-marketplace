@@ -1,222 +1,86 @@
 ---
 name: innovate-phase
-description: Optional PRD enhancement with industry best practices. Writes PRD file, links to user, asks "Want to Innovate?" (HITL STOP). If yes, spawns innovation-advisor then walks through each innovation interactively using AskUserQuestion. Use for /build only.
+description: Analyze PRD for innovation opportunities, present each with HITL selection loop (Implement/Skip/More Details), update PRD with selections. Use when /architect workflow reaches innovation phase after vibe-check. Always runs for /architect (unlike /build where innovation is optional).
 ---
 
-# Innovate Phase - PRD Complete & Optional Enhancement
+# Innovate Phase - PRD Enhancement with HITL Selection
 
-> **ROOT AGENT ONLY** - Called by commands only, never by subagents.
+> **ROOT AGENT ONLY** - Called by /architect command only, never by subagents.
 
-**Purpose:** Write PRD file, ask user about innovation, walk through each enhancement interactively
-**Trigger:** After requirements-phase (/build only, NOT /audit)
-**Input:** PRD content from requirements-phase, complexity, scope
-**Output:** Final PRD path with selected innovations
+**Purpose:** Analyze PRD for enhancements, walk through each innovation with HITL, update PRD with selections
+**Trigger:** After vibe-check passes (/architect workflow only)
+**Input:** PRD path, complexity, scope
+**Output:** PRD updated with user-selected innovations
+
+---
+
+## Key Differences: /architect vs /build
+
+| Aspect         | /architect (this skill)    | /build                      |
+| -------------- | -------------------------- | --------------------------- |
+| **Innovation** | ALWAYS runs                | OPTIONAL (user asked first) |
+| **PRD State**  | Already exists (from req)  | Written during innovate     |
+| **HITL Stop**  | No "want to innovate?" ask | Yes, asks before starting   |
+| **Purpose**    | Planning & exploration     | Execution optimization      |
+| **Model**      | Opus (deep analysis)       | Sonnet                      |
 
 ---
 
 ## Workflow Steps
 
-### Phase 1: Write & Link PRD
+### Phase 1: Spawn Innovation Advisor
 
-1. **Write PRD file:**
-   - Path: `{scope[0]}/docs/prd/prd-{YYYYMMDD-HHmmss}-{slug}.md`
-   - Write PRD content to file
+1. **Read existing PRD** (already exists from requirements-phase, passed vibe-check)
+2. **Spawn innovation-advisor agent** with PRD content, path, complexity, scope
+3. **Agent returns structured innovations** (JSON, max 5-7) - see innovation-advisor agent for output format
 
-2. **Link PRD to user:**
-   - Show file path
-   - Brief summary of what's in the PRD
+---
 
-3. **Ask: "Do you want to innovate with industry best practices?" (HARD STOP)**
-   - Use AskUserQuestion with options: Yes, No
-   - NO → Return PRD path (skip to design-phase)
-   - YES → Continue to Phase 2
+### Phase 2: Interactive Innovation Review
 
-### Phase 2: Gather Innovations
+**For EACH innovation (one at a time):**
 
-4. **Spawn innovation-advisor agent:**
-   - Analyze PRD against industry best practices
-   - Return structured list of innovations (max 5-7)
-   - Each innovation includes: title, impact, effort, 1-pager summary, detailed explanation
+4. **Display 1-page summary** (see templates/innovation-summary.md):
+   - Title with [RECOMMENDED] or [OPTIONAL] tag
+   - Impact/Effort/Category/Industry Standard
+   - One-pager description
+   - Key benefits (3 bullets)
+   - Recommendation reason
 
-### Phase 3: Interactive Innovation Review
-
-5. **For EACH innovation (one at a time):**
-
-   a. **Display 1-pager summary:**
-
-   ```
-   ## Innovation 1 of N: [Title] [RECOMMENDED] or [OPTIONAL]
-
-   **Impact:** High/Medium/Low | **Effort:** High/Medium/Low
-   **Industry Standard:** [Reference - e.g., "OWASP API Security Top 10"]
-
-   [1-paragraph summary of what this innovation does and why it matters]
-
-   **Key Benefits:**
-   - Benefit 1
-   - Benefit 2
-   - Benefit 3
-
-   **Recommendation:** [recommendationReason from innovation-advisor]
-   ```
-
-   b. **Use AskUserQuestion:**
+5. **Use AskUserQuestion for HITL selection:**
 
    If `recommended: true`:
-
-   ```
-   question: "Would you like to implement [Innovation Title]?"
-   header: "Innovation"
-   options:
-     - label: "Implement (Recommended)"
-       description: "[recommendationReason] - Add this innovation to the PRD"
-     - label: "Skip"
-       description: "Don't include this innovation"
-     - label: "More Details"
-       description: "Show expanded explanation before deciding"
-   multiSelect: false
-   ```
+   - "Implement (Recommended)" - {recommendationReason}
+   - "Skip"
+   - "More Details"
 
    If `recommended: false`:
+   - "Implement"
+   - "Skip (Recommended)" - {recommendationReason}
+   - "More Details"
 
-   ```
-   question: "Would you like to implement [Innovation Title]?"
-   header: "Innovation"
-   options:
-     - label: "Implement"
-       description: "Add this innovation to the PRD requirements"
-     - label: "Skip (Recommended)"
-       description: "[recommendationReason] - Skip for now"
-     - label: "More Details"
-       description: "Show expanded explanation before deciding"
-   multiSelect: false
-   ```
+6. **Handle response:**
+   - **Implement** → Add to selectedInnovations, continue to next
+   - **Skip** → Continue to next
+   - **More Details** → Show detailed explanation (see templates/innovation-details.md), then ask again (Implement/Skip only)
 
-   c. **Handle response:**
-   - **Implement** → Add to selectedInnovations list, continue to next
-   - **Skip** → Continue to next innovation
-   - **More Details** → Display detailed explanation, then ask again (Implement/Skip only)
-   - **Other (custom text)** → Record user notes, ask if they want to implement with modifications
-
-6. **Repeat step 5 for all innovations**
-
-### Phase 4: Apply Selections
-
-7. **If user selected any improvements:**
-   - Spawn BA agent to update PRD with selections
-   - Include any user notes/modifications
-   - Update PRD file
-
-8. **Summary to user:**
-   - List innovations implemented
-   - List innovations skipped
-   - Confirm PRD updated
-
-9. **Return PRD path**
+7. **Repeat for all innovations**
 
 ---
 
-## Innovation Advisor Output Format
+### Phase 3: Apply Selections
 
-The innovation-advisor agent should return structured data:
+8. **Update PRD** with selected innovations (if any):
+   - Add as new section in PRD
+   - Include: title, rationale, implementation notes
 
-```json
-{
-  "innovations": [
-    {
-      "id": 1,
-      "title": "Add OpenAPI Documentation",
-      "impact": "High",
-      "effort": "Low",
-      "onePager": "OpenAPI (formerly Swagger) documentation provides a machine-readable API specification that enables automatic client generation, interactive documentation, and improved API discoverability. This is an industry standard for REST APIs.",
-      "benefits": [
-        "Auto-generate client SDKs in multiple languages",
-        "Interactive API explorer for developers",
-        "Contract-first development possible"
-      ],
-      "detailed": "Full explanation with implementation approach, examples, and considerations..."
-    },
-    {
-      "id": 2,
-      "title": "Implement Rate Limiting",
-      "impact": "High",
-      "effort": "Medium",
-      "onePager": "Rate limiting prevents API abuse by restricting the number of requests a client can make within a time window. Essential for production APIs to ensure fair resource allocation and protection against DDoS attacks.",
-      "benefits": [
-        "Prevents service degradation from abuse",
-        "Ensures fair resource allocation",
-        "Required for most enterprise deployments"
-      ],
-      "detailed": "Full explanation with implementation approach, examples, and considerations..."
-    }
-  ]
-}
-```
+9. **Summary to user:**
+   - Innovations reviewed: {total}
+   - ✅ Implemented: {list}
+   - ⏭️ Skipped: {list}
+   - PRD updated with {count} innovations
 
----
-
-## Example Interaction Flow
-
-```
-User: /build Add user authentication
-
-[... requirements phase completes, PRD written ...]
-
-Claude: [Asks: "Do you want to innovate with industry best practices?"]
-User: Yes
-
-[innovation-advisor returns 4 innovations with recommendations]
-
-Claude displays each innovation 1-by-1:
-
-## Innovation 1 of 4: Add OAuth2/OIDC Support [RECOMMENDED]
-
-**Impact:** High | **Effort:** Medium
-**Industry Standard:** OAuth 2.0 (RFC 6749), OpenID Connect 1.0
-
-OAuth2 and OIDC enable "Sign in with Google/GitHub" functionality...
-
-**Key Benefits:**
-- Users sign in with existing accounts
-- No password storage liability
-- 30-50% higher conversion rates
-
-**Recommendation:** Worth the investment - industry standard for modern auth
-
-[AskUserQuestion: Implement (Recommended) / Skip / More Details]
-User: Implement
-
-## Innovation 2 of 4: Add MFA [OPTIONAL]
-
-**Impact:** High | **Effort:** High
-**Industry Standard:** NIST SP 800-63B
-
-**Recommendation:** High effort - consider for v2 unless compliance requires
-
-[AskUserQuestion: Implement / Skip (Recommended) / More Details]
-User: Skip
-
-## Innovation 3 of 4: Rate Limiting [RECOMMENDED]
-
-**Impact:** High | **Effort:** Low
-**Industry Standard:** OWASP API Security Top 10 (API4:2023)
-
-**Recommendation:** Security-critical, low effort - implement immediately
-
-[AskUserQuestion: Implement (Recommended) / Skip / More Details]
-User: Implement
-
-## Innovation 4 of 4: Audit Logging [OPTIONAL]
-
-**Recommendation:** Nice-to-have, save for future iteration
-
-[AskUserQuestion: Implement / Skip (Recommended) / More Details]
-User: Skip
-
-Claude: Updating PRD with 2 innovations (OAuth2/OIDC, Rate Limiting)...
-→ BA agent updates PRD with OAuth2 + Rate Limiting
-→ Continue to design-phase
-```
+10. **Return control** to /architect command → Continue to design-phase
 
 ---
 
@@ -225,19 +89,62 @@ Claude: Updating PRD with 2 innovations (OAuth2/OIDC, Rate Limiting)...
 ```json
 {
   "status": "complete",
-  "prdPath": "docs/projects/20241208-feature/prd.md",
-  "innovated": true,
-  "innovationsReviewed": 4,
-  "innovationsImplemented": ["OAuth2/OIDC Support", "Rate Limiting"],
-  "innovationsSkipped": ["MFA", "Audit Logging"]
+  "prdPath": "docs/projects/20251217-feature/prd.md",
+  "totalInnovations": 4,
+  "innovationsImplemented": [
+    { "id": 1, "title": "Add OpenAPI Documentation" },
+    { "id": 3, "title": "Implement Rate Limiting" }
+  ],
+  "innovationsSkipped": [
+    { "id": 2, "title": "Add MFA" },
+    { "id": 4, "title": "Audit Logging" }
+  ]
 }
+```
+
+---
+
+## Example Interaction
+
+```
+[Vibe check passes → Innovate phase starts]
+[innovation-advisor returns 4 innovations]
+
+Innovation 1 of 4: Add OpenAPI Documentation [RECOMMENDED]
+Impact: High | Effort: Low
+[User: Implement]
+
+Innovation 2 of 4: Rate Limiting [RECOMMENDED]
+[User: Implement]
+
+Innovation 3 of 4: MFA [OPTIONAL]
+[User: Skip]
+
+Innovation 4 of 4: Audit Logging [OPTIONAL]
+[User: More Details → detailed view → Skip]
+
+Innovation Phase Complete
+✅ Implemented: OpenAPI, Rate Limiting
+⏭️ Skipped: MFA, Audit Logging
 ```
 
 ---
 
 ## Integration
 
-**Called by:** /build, /ms (complexity ≥30)
-**NOT called by:** /audit
-**Calls:** innovation-advisor agent, business-analyst agent, AskUserQuestion
-**Next phase:** design-phase
+**Called by:** /architect command only
+**Calls:** innovation-advisor agent, AskUserQuestion
+**NOT called by:** /build (different logic), /audit (no innovation)
+**Previous phase:** vibe-check
+**Next phase:** design-phase (architect-phase)
+
+---
+
+## Notes
+
+- ALWAYS runs for /architect (no "want to innovate?" HITL stop)
+- PRD already exists (from requirements-phase, validated by vibe-check)
+- HITL per innovation (user decides individually)
+- More Details loop available (full explanation before deciding)
+- Updates PRD in place (selected innovations added to existing file)
+- Uses Opus model (deep analysis requires higher reasoning)

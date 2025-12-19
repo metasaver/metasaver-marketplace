@@ -1,11 +1,11 @@
 ---
 name: audit
-description: Audit configurations and standards compliance with interactive discrepancy resolution
+description: Audit configurations and standards compliance with complexity-based routing and interactive discrepancy resolution
 ---
 
 # Audit Command
 
-Validates configurations and standards compliance with interactive user decisions per discrepancy. Deterministic workflow: analyze → understand → investigate (read-only) → resolve with user → remediate → report.
+Validates configurations and standards compliance with interactive user decisions per discrepancy. Complexity-based routing: simple audits use FAST PATH (skip Requirements/Planning/Approval), complex audits use FULL PATH with HITL gates.
 
 **IMPORTANT:** ALWAYS get user approval before git operations.
 
@@ -13,66 +13,97 @@ Validates configurations and standards compliance with interactive user decision
 
 ## Entry Handling
 
-When /audit is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. User prompts may contain questions, clarifications, or confirmation requests—these are NOT reasons to skip phases. Analysis runs first to understand scope, then the BA addresses user questions during Requirements phase while investigating the codebase.
+When /audit is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. User prompts may contain questions, clarifications, or confirmation requests—these are NOT reasons to skip phases. Analysis runs first to understand scope and complexity, then routing determines FAST or FULL path.
 
 ---
 
 ## Phase 1: Analysis (PARALLEL)
 
-**See:** `/skill scope-check-agent`, `/skill agent-check-agent`
+**See:** `/skill complexity-check`, `/skill scope-check`, `/skill agent-check`
 
-Spawn 2 agents in PARALLEL (single message with 2 Task tool calls):
+Spawn 3 skills in PARALLEL (single message with 3 invocations):
 
-```
-Task 1: subagent_type="core-claude-plugin:generic:scope-check-agent" (mode=audit)
-Task 2: subagent_type="core-claude-plugin:generic:agent-check-agent"
-```
+- `/skill complexity-check` - Returns complexity score 1-50
+- `/skill scope-check` - Returns repos[], files[]
+- `/skill agent-check` - Returns agents[] (config agents matched to files)
 
-**CRITICAL:** Wait for ALL 2 agents to complete before proceeding. Use TaskOutput to collect results.
+**CRITICAL:** Wait for ALL 3 skills to complete before proceeding to complexity routing.
 
-Scope Check identifies: `repos[]`, `files[]`
-Agent Check identifies: `agents[]` (config agents matched to files)
+**Output:**
+
+- `complexity` - Score 1-50 (drives path selection)
+- `repos[]` - Repositories in scope
+- `files[]` - Files to audit
+- `agents[]` - Config agents matched to files
 
 ---
 
-## Phase 2: Requirements (Shared Skill)
+## Complexity Routing
 
-**See:** `/skill requirements-phase` with mode=audit
+After Phase 1 Analysis, route based on complexity score:
 
-BA investigates codebase using Serena tools:
+**FAST PATH (complexity < 15):**
+
+- Skip Requirements, Planning, Approval, template-update
+- Proceed to Phase 5 Investigation → Phase 6 Resolution → Phase 7 Remediation → Phase 8 Report
+
+**FULL PATH (complexity ≥ 15):**
+
+- Run all phases with HITL gates
+- Proceed to Phase 2 Requirements → Phase 3 Planning → Phase 4 Approval → Phase 5 Investigation → Phase 6 Resolution → Phase 7 Remediation → Phase 8 Report
+
+---
+
+## Phase 2: Requirements (FULL PATH only)
+
+**See:** `/skill requirements-phase`
+
+BA investigates codebase and creates requirements:
 
 1. **Understanding:** Parse what user wants audited from prompt + scope
-2. **Confirmation:** Ask user to confirm scope via AskUserQuestion
+2. **Confirmation:** Ask user to confirm scope via HITL
 3. **PRD Creation:** Create `docs/prd/audit-{date}.md` with objectives, files, success criteria
 4. **Story Creation:** For each (agent, file) pair, create user story with agent, file, template reference, acceptance criteria
-5. **Approval:** Present stories to user, iterate if needed until approved
 
-Output: PRD + user stories ready for execution
-
----
-
-## Phase 3: Planning
-
-**See:** `/skill project-manager`
-
-PM batches agents into execution waves:
-
-1. **Review stories:** Understand agent assignments
-2. **Batch agents:** Group into waves (max 10 parallel per wave)
-3. **Create execution plan:** Define order of waves, dependencies
-
-Output: `execution_plan` with waves of (agent, file) pairs
+Output: PRD + user stories ready for planning
 
 ---
 
-## Phase 4: Investigation (READ-ONLY)
+## Phase 3: Planning (FULL PATH only)
 
-**See:** `/skill agent-investigation`
+**See:** `/skill architect-phase`, `/skill planning-phase`
 
-PM spawns config agents in waves (max 10 parallel per wave):
+Architect enriches stories, PM batches agents into execution waves:
+
+1. **Architect:** Check multi-mono for solutions, validate against templates, enrich stories
+2. **PM:** Review enriched stories, batch agents into waves (max 10 parallel per wave), define execution order
+
+Output: Enriched stories + `execution_plan` with waves of (agent, file) pairs
+
+---
+
+## Phase 4: Approval (FULL PATH only)
+
+**See:** `/skill hitl-approval`
+
+Present PRD + execution plan to user for approval:
+
+1. **Present:** Show PRD summary and execution plan
+2. **HITL:** User reviews and approves or rejects
+3. **If rejected:** Return to Phase 2 Requirements with user feedback
+
+Output: Approved PRD + execution plan
+
+---
+
+## Phase 5: Investigation (READ-ONLY)
+
+**See:** `/skill audit-investigation`
+
+Spawn config agents in waves to investigate discrepancies:
 
 1. **For each wave:**
-   - Spawn agents with execution plan
+   - Spawn agents with execution plan (max 10 parallel per wave)
    - Each agent reads template from skill
    - Each agent reads actual file from target repo
    - Each agent compares field-by-field or line-by-line
@@ -85,11 +116,15 @@ PM spawns config agents in waves (max 10 parallel per wave):
 
 **NO CHANGES MADE** during investigation. Agents only report findings.
 
+Output: Sorted list of discrepancies
+
 ---
 
-## Phase 5: Report & Resolution (HITL)
+## Phase 6: Resolution (HITL)
 
-**See:** `/skill report-and-resolution`
+**See:** `/skill audit-resolution`
+
+Present findings and get user decisions per discrepancy:
 
 1. **Present findings:** Show summary (X files audited, Y discrepancies found, Z critical)
 
@@ -106,40 +141,39 @@ PM spawns config agents in waves (max 10 parallel per wave):
 
 3. **Decisions drive remediation:**
    - "Apply" → fix approved, ready for remediation
-   - "Update template" → flag for PR to multi-mono
+   - "Update template" → flag for template-update phase
    - "Ignore" → accepted deviation
    - "Custom" → record instruction for agent
 
----
-
-## Phase 6: Remediation
-
-**See:** `/skill remediation-phase`
-
-1. **Spawn remediation agents:**
-   - Group "apply" decisions by agent type
-   - Spawn agents with fix instructions (max 10 parallel)
-   - Agents apply template changes to files
-
-2. **Production check:**
-   - Run: `pnpm build`
-   - Run: `pnpm lint`
-   - Run: `pnpm test`
-
-3. **On failure:**
-   - Report errors to agents
-   - Agents fix issues
-   - Repeat validation
-
-4. **Template updates (if any):**
-   - Collect "update template" decisions
-   - Create branch in multi-mono
-   - Update skill templates
-   - Open PR for user review (never auto-merge)
+Output: User decisions recorded per discrepancy
 
 ---
 
-## Phase 7: Final Report
+## Phase 7: Remediation
+
+**See:** `/skill template-update`, `/skill audit-remediation`, `/skill ac-verification`, `/skill production-check`
+
+Apply fixes with template-first updates:
+
+1. **Template updates (FULL PATH only - if any "update template" decisions):**
+   - `/skill template-update` - Update metasaver-marketplace template FIRST
+   - Read updated template text
+   - Use new template for remaining changes
+
+2. **Apply fixes:**
+   - `/skill audit-remediation` - Group "apply" decisions by agent type, spawn remediation agents (max 10 parallel), agents apply template changes to files
+
+3. **Verify acceptance criteria (FULL PATH only):**
+   - `/skill ac-verification` - Check each user story's acceptance criteria, report unmet AC via HITL if needed
+
+4. **Production check:**
+   - `/skill production-check` - Run build, lint, test; fix errors and retry if needed
+
+Output: Fixes applied, templates updated (if needed), all AC verified (FULL PATH), build passing
+
+---
+
+## Phase 8: Final Report
 
 **See:** `/skill report-phase`
 
@@ -147,7 +181,7 @@ BA consolidates audit results:
 
 1. **Executive Summary:** X files audited, Y discrepancies found, Z fixes applied
 2. **Actions Taken:** Table of fixes applied by agent
-3. **Template Updates:** PRs created to multi-mono
+3. **Template Updates:** PRs created to metasaver-marketplace (if any)
 4. **Accepted Deviations:** Files where user chose "ignore"
 5. **Verification:** Build/lint/test results
 
@@ -158,6 +192,7 @@ BA consolidates audit results:
 
 **Date:** {date}
 **Repos:** {repo-list}
+**Path:** {FAST|FULL} (complexity: {score})
 
 ## Executive Summary
 
@@ -197,47 +232,37 @@ Audited {N} files across {M} repositories.
 
 ---
 
-## Model Selection
-
-| Role                          | Model  |
-| ----------------------------- | ------ |
-| BA (Requirements)             | sonnet |
-| PM (Planning)                 | sonnet |
-| Config agents (Investigation) | haiku  |
-| Config agents (Remediation)   | haiku  |
-| Validation (Build/Lint/Test)  | bash   |
-
----
-
 ## Examples
 
 ```bash
-# Simple single-file audit
+# Simple single-file audit (FAST PATH)
 /audit "check eslint config"
-→ Phase 1: Scope + Agents → Phase 2: BA PRD + Stories → Phase 3: PM Plan → Phase 4: Investigation → Phase 5: HITL decisions → Phase 6: Remediation → Phase 7: Report
+→ Phase 1: Analysis (complexity=8) → FAST PATH → Phase 5: Investigation → Phase 6: HITL decisions → Phase 7: Remediation → Phase 8: Report
 
-# Domain audit (multiple files)
+# Domain audit (multiple files, FULL PATH)
 /audit "audit code quality configs"
-→ Scope identifies 3 configs → BA → PM batches → Investigation → User decides per discrepancy → Remediation → Report
+→ Phase 1: Analysis (complexity=18) → FULL PATH → Phase 2: Requirements → Phase 3: Planning → Phase 4: Approval → Phase 5: Investigation → Phase 6: HITL decisions → Phase 7: Remediation → Phase 8: Report
 
-# Cross-repo audit
+# Cross-repo audit (FULL PATH)
 /audit "audit eslint in all consumer repos"
-→ Scope Check resolves rugby-crm, resume-builder → Agent Check identifies eslint-agent → BA confirms scope → PM batches → Investigation waves → HITL → Remediation → Report
+→ Phase 1: Analysis → FULL PATH → Requirements → Planning → Approval → Investigation waves → HITL per discrepancy → Remediation → Report
 ```
 
 ---
 
 ## Enforcement
 
-1. **NO complexity check** - Audit is deterministic
-2. **NO tools check** - Agents determined by scope
-3. **NO cross-repo resolution phase** - Paths hardcoded in scope-check
-4. **NO vibe check** - Audit is compliance, not creation
-5. **NO innovation phase** - Not applicable to audits
-6. **Requirements phase uses shared skill** - Same BA workflow as /build
-7. **Investigation is read-only** - No changes until approved
-8. **Every discrepancy gets user decision** - No auto-fixes
-9. **Template updates create PRs** - Never auto-merge to multi-mono
-10. **Simplified validation** - Just build/lint/test, no config agents
+1. **ALWAYS run Analysis phase first** - complexity-check, scope-check, agent-check (PARALLEL)
+2. **Complexity routing after Analysis:**
+   - complexity < 15: FAST PATH (skip Requirements, Planning, Approval, template-update)
+   - complexity ≥ 15: FULL PATH (all phases with HITL gates)
+3. **Investigation is READ-ONLY** - No changes until approved
+4. **Every discrepancy gets user decision** - No auto-fixes
+5. **Template updates happen FIRST** in metasaver-marketplace, then apply to other files (FULL PATH only)
+6. **Always run build/lint/test** after remediation
+7. **Always produce final report**
+8. **NO vibe check** - Audit is compliance, not creation
+9. **NO innovation phase** - Not applicable to audits
+10. **Template updates create PRs** - Never auto-merge to metasaver-marketplace
 
 ---

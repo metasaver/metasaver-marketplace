@@ -11,74 +11,90 @@ Target workflow architecture for the `/build` command - building features when y
 ## 1. High-Level Workflow (Skills Only)
 
 ```mermaid
-flowchart LR
-    classDef phase fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+flowchart TB
+    classDef phase fill:#bbdefb,stroke:#1565c0,stroke-width:2px
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef entry fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef decision fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
 
     ENTRY["/build {requirement}"]:::entry
 
     subgraph P1["Phase 1: Analysis"]
         direction TB
+        CC["/skill complexity-check"]:::skill
         SC["/skill scope-check"]:::skill
     end
 
-    subgraph P2["Phase 2: Requirements"]
+    DECIDE{{"complexity < 15?"}}:::decision
+
+    subgraph FAST["FAST PATH"]
         direction TB
-        REQ["/skill requirements-phase"]:::sSkill
+        subgraph P5F["Execution"]
+            TDDF["/skill tdd-execution"]:::skill
+        end
+        subgraph P6F["Validation"]
+            ACVF["/skill ac-verification"]:::skill
+            PRDF["/skill production-check"]:::skill
+        end
+        subgraph P8F["Report"]
+            RPTF["/skill report-phase"]:::skill
+        end
+        P5F --> P6F --> P8F
     end
 
-    subgraph P3["Phase 3: Design"]
+    subgraph FULL["FULL PATH"]
         direction TB
-        ARCH["/skill architect-phase"]:::skill
-        PLAN["/skill planning-phase"]:::skill
+        subgraph P2["Requirements"]
+            REQ["/skill requirements-phase"]:::skill
+        end
+        subgraph P3["Design"]
+            ARCH["/skill architect-phase"]:::skill
+            PLAN["/skill planning-phase"]:::skill
+        end
+        subgraph P4["Approval"]
+            HITL["/skill hitl-approval"]:::skill
+        end
+        subgraph P5["Execution"]
+            TDD["/skill tdd-execution"]:::skill
+        end
+        subgraph P6["Validation"]
+            ACV["/skill ac-verification"]:::skill
+            PRD["/skill production-check"]:::skill
+        end
+        subgraph P7["Standards Audit"]
+            STRUCT["/skill structure-check"]:::skill
+            DRY["/skill dry-check"]:::skill
+            CFG["/skill config-audit"]:::skill
+        end
+        subgraph P8["Report"]
+            RPT["/skill report-phase"]:::skill
+        end
+        P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8
     end
 
-    subgraph P4["Phase 4: Approval"]
-        direction TB
-        HITL["/skill hitl-approval"]:::skill
-    end
-
-    subgraph P5["Phase 5: Execution"]
-        direction TB
-        TDD["/skill tdd-execution"]:::skill
-    end
-
-    subgraph P6["Phase 6: Validation"]
-        direction TB
-        ACV["/skill ac-verification"]:::skill
-        PRD["/skill production-check"]:::skill
-    end
-
-    subgraph P7["Phase 7: Standards Audit"]
-        direction TB
-        STRUCT["/skill structure-check"]:::skill
-        DRY["/skill dry-check"]:::skill
-        CFG["/skill config-audit"]:::skill
-    end
-
-    subgraph P8["Phase 8: Report"]
-        direction TB
-        RPT["/skill report-phase"]:::skill
-    end
-
-    ENTRY --> P1
-    P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8
+    ENTRY --> P1 --> DECIDE
+    DECIDE -->|Yes| FAST
+    DECIDE -->|No| FULL
 ```
 
 **Legend:**
 
-| Color  | Meaning         |
-| ------ | --------------- |
-| Purple | Entry point     |
-| Blue   | Phase container |
-| Yellow | Skill           |
+| Color  | Meaning           |
+| ------ | ----------------- |
+| Purple | Entry point       |
+| Blue   | Phase container   |
+| Yellow | Skill (reusable)  |
+| Orange | Complexity router |
+
+**Fast Path (<15):** Skip Requirements, Design, Approval, Standards Audit. Single tester→coder pass.
+
+**Full Path (≥15):** All phases with PRD, HITL gates, TDD waves, and standards audit.
 
 ---
 
 ## 2. Phase 1: Analysis (Exploded)
 
-**Execution:** Single skill
+**Execution:** PARALLEL - spawn both skills in single message
 
 ```mermaid
 flowchart TB
@@ -86,6 +102,12 @@ flowchart TB
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
     subgraph P1["Phase 1: Analysis"]
+        subgraph CC["/skill complexity-check"]
+            CC1["Analyze prompt complexity"]:::step
+            CC2["Return: score (1-50)"]:::step
+            CC1 --> CC2
+        end
+
         subgraph SC["/skill scope-check"]
             SC1["Parse prompt for repo/file references"]:::step
             SC2["Identify target repos"]:::step
@@ -98,6 +120,7 @@ flowchart TB
 
 **Output:**
 
+- `complexity` - Score 1-50 (drives model selection)
 - `targets[]` - Repos/paths to modify
 - `references[]` - Repos/paths to use as patterns
 

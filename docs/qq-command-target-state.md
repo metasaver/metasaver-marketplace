@@ -11,51 +11,71 @@ Target workflow architecture for the `/qq` command - quick questions answered by
 ## 1. High-Level Workflow (Skills Only)
 
 ```mermaid
-flowchart LR
+flowchart TB
     classDef phase fill:#bbdefb,stroke:#1565c0,stroke-width:2px
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef entry fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef decision fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
 
     ENTRY["/qq {question}"]:::entry
 
     subgraph P1["Phase 1: Analysis"]
         direction TB
+        CC["/skill complexity-check"]:::skill
         SC["/skill scope-check"]:::skill
         AC["/skill agent-check"]:::skill
     end
 
-    subgraph P2["Phase 2: Selection"]
+    DECIDE{{"complexity < 15?"}}:::decision
+
+    subgraph FAST["FAST PATH"]
         direction TB
-        SEL["/skill agent-selection"]:::skill
+        subgraph P3F["Execution"]
+            EXEF["Spawn agent directly"]:::skill
+        end
+        subgraph P4F["Output"]
+            OUTF["Return answer"]:::skill
+        end
+        P3F --> P4F
     end
 
-    subgraph P3["Phase 3: Execution"]
+    subgraph FULL["FULL PATH"]
         direction TB
-        EXE["Selected MetaSaver Agent"]:::skill
+        subgraph P2["Selection"]
+            SEL["/skill agent-selection"]:::skill
+        end
+        subgraph P3["Execution"]
+            EXE["Selected MetaSaver Agent"]:::skill
+        end
+        subgraph P4["Output"]
+            OUT["Return answer to user"]:::skill
+        end
+        P2 --> P3 --> P4
     end
 
-    subgraph P4["Phase 4: Output"]
-        direction TB
-        OUT["Return answer to user"]:::skill
-    end
-
-    ENTRY --> P1
-    P1 --> P2 --> P3 --> P4
+    ENTRY --> P1 --> DECIDE
+    DECIDE -->|Yes| FAST
+    DECIDE -->|No| FULL
 ```
 
 **Legend:**
 
-| Color  | Meaning         |
-| ------ | --------------- |
-| Purple | Entry point     |
-| Blue   | Phase container |
-| Yellow | Skill           |
+| Color  | Meaning           |
+| ------ | ----------------- |
+| Purple | Entry point       |
+| Blue   | Phase container   |
+| Yellow | Skill (reusable)  |
+| Orange | Complexity router |
+
+**Fast Path (<15):** Skip agent-selection validation. Direct spawn from agent-check result.
+
+**Full Path (≥15):** Validate agent selection, potentially use multiple agents.
 
 ---
 
 ## 2. Phase 1: Analysis (Exploded)
 
-**Execution:** PARALLEL - spawn both skills in single message
+**Execution:** PARALLEL - spawn all 3 skills in single message
 
 ```mermaid
 flowchart TB
@@ -63,6 +83,12 @@ flowchart TB
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
     subgraph P1["Phase 1: Analysis"]
+        subgraph CC["/skill complexity-check"]
+            CC1["Analyze prompt complexity"]:::step
+            CC2["Return: score (1-50)"]:::step
+            CC1 --> CC2
+        end
+
         subgraph SC["/skill scope-check"]
             SC1["Parse question for context clues"]:::step
             SC2["Identify relevant repos/files"]:::step
@@ -81,6 +107,7 @@ flowchart TB
 
 **Output:**
 
+- `complexity` - Score 1-50 (drives model selection)
 - `scope`: Context for the question (repos, files, domains)
 - `agent`: Best MetaSaver agent to answer
 
