@@ -1,6 +1,6 @@
 {
   "name": "core-claude-plugin",
-  "version": "1.8.15",
+  "version": "1.8.16",
   "hooks": {
     "UserPromptSubmit": [
       {
