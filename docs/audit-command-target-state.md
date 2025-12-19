@@ -1,666 +1,428 @@
 # Audit Command Target State
 
-Simplified workflow architecture for the `/audit` command.
+Target workflow architecture for the `/audit` command - configuration and standards compliance validation.
 
-**Design Principles:**
+**Purpose:** Validate configurations against templates with interactive user decisions per discrepancy.
 
-- No complexity check (audit is deterministic)
-- No tools check (agents are determined by scope)
-- No cross-repo resolution (paths hardcoded in scope-check)
-- No vibe check or innovation (audit is compliance, not creation)
-- Shared Requirements phase with `/build` (reusable skill)
-- Interactive discrepancy resolution (HITL per finding)
-- Two-phase execution: Investigation → Remediation
+**Use when:** You need to check if configs match standards or audit compliance across repos.
 
 ---
 
-## 1. High-Level Flow Overview
+## 1. High-Level Workflow (Skills Only)
+
+```mermaid
+flowchart LR
+    classDef phase fill:#bbdefb,stroke:#1565c0,stroke-width:2px
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef entry fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+
+    ENTRY["/audit {target}"]:::entry
+
+    subgraph P1["Phase 1: Analysis"]
+        direction TB
+        SC["/skill scope-check"]:::skill
+        AC["/skill agent-check"]:::skill
+    end
+
+    subgraph P2["Phase 2: Requirements"]
+        direction TB
+        REQ["/skill requirements-phase"]:::skill
+    end
+
+    subgraph P3["Phase 3: Planning"]
+        direction TB
+        PLAN["/skill planning-phase"]:::skill
+    end
+
+    subgraph P4["Phase 4: Approval"]
+        direction TB
+        HITL["/skill hitl-approval"]:::skill
+    end
+
+    subgraph P5["Phase 5: Investigation"]
+        direction TB
+        INV["/skill audit-investigation"]:::skill
+    end
+
+    subgraph P6["Phase 6: Resolution"]
+        direction TB
+        RES["/skill audit-resolution"]:::skill
+    end
+
+    subgraph P7["Phase 7: Remediation"]
+        direction TB
+        TPL["/skill template-update"]:::skill
+        REM["/skill audit-remediation"]:::skill
+        ACV["/skill ac-verification"]:::skill
+        PRD["/skill production-check"]:::skill
+    end
+
+    subgraph P8["Phase 8: Report"]
+        direction TB
+        RPT["/skill report-phase"]:::skill
+    end
+
+    ENTRY --> P1
+    P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8
+```
+
+**Legend:**
+
+| Color  | Meaning         |
+| ------ | --------------- |
+| Purple | Entry point     |
+| Blue   | Phase container |
+| Yellow | Skill           |
+
+---
+
+## 2. Phase 1: Analysis (Exploded)
+
+**Execution:** PARALLEL - spawn both skills in single message
 
 ```mermaid
 flowchart TB
-    subgraph Entry["Phase 1: Entry"]
-        A["/audit {prompt}"]
-    end
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
-    subgraph Analysis["Phase 1: Analysis (PARALLEL)"]
-        SC["Scope Check<br/>(prompt) → repos[], files[]"]
-        AC["Agent Check<br/>(scope) → agents[]"]
-    end
+    subgraph P1["Phase 1: Analysis"]
+        subgraph SC["/skill scope-check"]
+            SC1["Parse prompt for file/config references"]:::step
+            SC2["Identify repos in scope"]:::step
+            SC3["Identify files to audit"]:::step
+            SC4["Return: repos[], files[]"]:::step
+            SC1 --> SC2 --> SC3 --> SC4
+        end
 
-    subgraph Requirements["Phase 2: Requirements (Shared Skill)"]
-        BA1["BA understands task"]
-        BA2["BA confirms scope with user"]
-        BA3["BA creates PRD"]
-        BA4["BA creates user stories<br/>(1 per agent/file combo)"]
-        HV{"User approves<br/>scope + stories?"}
+        subgraph AC["/skill agent-check"]
+            AC1["Match files to config agents"]:::step
+            AC2["Map: file → agent type"]:::step
+            AC3["Return: agents[]"]:::step
+            AC1 --> AC2 --> AC3
+        end
     end
-
-    subgraph Planning["Phase 3: Planning"]
-        PM["PM batches agents<br/>into execution waves"]
-    end
-
-    subgraph Investigation["Phase 4: Investigation"]
-        INV1["Spawn agents in waves<br/>(max 10 parallel)"]
-        INV2["Each agent:<br/>compare file vs template"]
-        INV3["Collect discrepancy reports"]
-    end
-
-    subgraph Resolution["Phase 5: Report & Resolution (HITL)"]
-        RPT["Present consolidated findings"]
-        LOOP["For each discrepancy:"]
-        SHOW["Show: file differs from template"]
-        ASK["Ask user:<br/>1. Apply template<br/>2. Update template<br/>3. Ignore<br/>4. Custom"]
-        UPD["Update story with decision"]
-        MORE{"More<br/>discrepancies?"}
-    end
-
-    subgraph Remediation["Phase 6: Remediation"]
-        REM1["Spawn agents to apply<br/>approved fixes"]
-        REM2["Production check<br/>(build, lint, test)"]
-        REM3{"Passes?"}
-    end
-
-    subgraph Report["Phase 7: Final Report"]
-        FINAL["BA consolidates results"]
-    end
-
-    A --> SC & AC
-    SC & AC --> BA1
-    BA1 --> BA2
-    BA2 --> BA3
-    BA3 --> BA4
-    BA4 --> HV
-    HV -->|"No"| BA2
-    HV -->|"Yes"| PM
-    PM --> INV1
-    INV1 --> INV2
-    INV2 --> INV3
-    INV3 --> RPT
-    RPT --> LOOP
-    LOOP --> SHOW
-    SHOW --> ASK
-    ASK --> UPD
-    UPD --> MORE
-    MORE -->|"Yes"| LOOP
-    MORE -->|"No"| REM1
-    REM1 --> REM2
-    REM2 --> REM3
-    REM3 -->|"No"| REM1
-    REM3 -->|"Yes"| FINAL
 ```
+
+**Output:**
+
+- `repos[]` - Repositories in scope
+- `files[]` - Files to audit
+- `agents[]` - Config agents matched to files
 
 ---
 
-## 2. Complete Sequence Diagram
+## 3. Phase 2: Requirements (Exploded)
+
+**Execution:** Sequential with HITL clarification loop
 
 ```mermaid
-sequenceDiagram
-    participant U as User
-    participant CMD as /audit
-    participant SC as Scope Check
-    participant AC as Agent Check
-    participant BA as Business Analyst
-    participant PM as Project Manager
-    participant W as Config Agents
-    participant PC as Production Check
+flowchart TB
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:1px
 
-    U->>CMD: /audit {prompt}
+    subgraph P2["Phase 2: Requirements"]
+        subgraph REQ["/skill requirements-phase"]
+            R1["Parse scope + agent results"]:::step
+            R2["BA understands task"]:::step
 
-    rect rgb(230, 240, 250)
-        Note over SC,AC: Phase 1: Analysis (PARALLEL)
-        par Parallel Analysis
-            CMD->>SC: prompt
-            SC->>SC: Identify repos + files
-            SC-->>CMD: scope: {repos[], files[]}
-        and
-            CMD->>AC: prompt + scope
-            AC->>AC: Match files to agents
-            AC-->>CMD: agents: string[]
-        end
-        Note over CMD: WAIT for both via TaskOutput
-    end
-
-    rect rgb(250, 240, 230)
-        Note over BA: Phase 2: Requirements (Shared Skill)
-        CMD->>BA: prompt, scope, agents
-        BA->>BA: Understand audit task
-        BA->>U: "I understand you want to audit X. Confirm?"
-        U->>BA: Confirmation/clarification
-        BA->>BA: Create PRD in docs/prd
-        BA->>BA: Create user stories (1 per agent/file)
-        BA->>U: "Here are the stories. Approve?"
-
-        alt User requests changes
-            U->>BA: Changes
-            BA->>BA: Revise stories
-        end
-        U->>BA: Approved
-    end
-
-    rect rgb(240, 250, 230)
-        Note over PM: Phase 3: Planning
-        CMD->>PM: stories, agents
-        PM->>PM: Batch into waves (max 10)
-        PM-->>CMD: execution_plan
-    end
-
-    rect rgb(250, 230, 240)
-        Note over W: Phase 4: Investigation
-        CMD->>W: execution_plan
-
-        loop For each wave
-            par Agents in wave (parallel)
-                W->>W: Read template from skill
-                W->>W: Read actual file
-                W->>W: Compare and report
-                W-->>CMD: discrepancy_report
+            subgraph LOOP["HITL Clarification Loop"]
+                R3["HITL: Ask clarifying questions"]:::hitl
+                R4["User answers"]:::hitl
+                R5["BA updates understanding"]:::step
+                R6{"More questions?"}
+                R3 --> R4 --> R5 --> R6
+                R6 -->|Yes| R3
             end
-        end
 
-        CMD->>CMD: Aggregate all reports
-    end
+            R7["Create/Update PRD"]:::step
+            R8["Create user stories"]:::step
 
-    rect rgb(255, 250, 220)
-        Note over U: Phase 5: Report & Resolution (HITL)
-        CMD->>U: "Found N discrepancies. Let's review."
-
-        loop For each discrepancy
-            CMD->>U: "{file} differs from template"
-            CMD->>U: Show diff/comparison
-            CMD->>U: AskUserQuestion:<br/>1. Apply template<br/>2. Update template<br/>3. Ignore<br/>4. Custom
-            U->>CMD: Decision
-            CMD->>CMD: Update story with decision
+            R1 --> R2 --> LOOP
+            R6 -->|No| R7 --> R8 --> OUT((To Approval))
         end
     end
+```
 
-    rect rgb(230, 255, 230)
-        Note over W,PC: Phase 6: Remediation
-        CMD->>W: Stories with "apply" decisions
+**Key:** Same skill for all commands - no mode parameter. BA gathers requirements, creates PRD + stories. Approval is separate phase.
 
-        par Apply fixes (parallel)
-            W->>W: Apply template to file
+**Output:** PRD + user stories (not yet approved)
+
+---
+
+## 4. Phase 3: Design (Exploded)
+
+**Execution:** Sequential - architect first, then planning
+
+```mermaid
+flowchart TB
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
+
+    subgraph P3["Phase 3: Design"]
+        subgraph ARCH["/skill architect-phase"]
+            A1["Check multi-mono for existing solutions"]:::step
+            A2["Search reference repos for patterns"]:::step
+            A3["Validate against templates"]:::step
+            A4["Enrich stories with implementation details"]:::step
+            A1 --> A2 --> A3 --> A4
         end
 
-        W-->>PC: Changes applied
-        PC->>PC: Run build, lint, test
-
-        alt Checks fail
-            PC->>W: Fix errors
-            W->>W: Iterate
+        subgraph PM["/skill planning-phase"]
+            PM1["Review enriched stories"]:::step
+            PM2["Group agents into waves (max 10 parallel)"]:::step
+            PM3["Define execution order"]:::step
+            PM4["Return: execution_plan with waves"]:::step
+            PM1 --> PM2 --> PM3 --> PM4
         end
 
-        PC-->>CMD: All checks pass
-    end
-
-    rect rgb(230, 250, 250)
-        Note over BA: Phase 7: Final Report
-        CMD->>BA: All results + decisions
-        BA->>BA: Consolidate
-        BA-->>U: Final audit report
+        ARCH --> PM
     end
 ```
 
+**Output:** Enriched stories + `execution_plan` with waves of (agent, file) pairs
+
 ---
 
-## 3. Analysis Phase Detail
+## 5. Phase 4: Approval (Exploded)
+
+**Execution:** HITL approval loop
 
 ```mermaid
 flowchart TB
-    subgraph Input["Input"]
-        P["prompt: '/audit eslint across all repos'"]
-    end
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:1px
 
-    subgraph ScopeCheck["Scope Check"]
-        S1["Parse prompt for targets"]
-        S2["Resolve 'all repos' → actual paths"]
-        S3["List files matching target type"]
-        S4["Return: repos[], files[]"]
-    end
+    subgraph P4["Phase 4: Approval"]
+        subgraph HITL["/skill hitl-approval"]
+            H1["Present PRD summary"]:::step
+            H2["Present execution plan"]:::step
+            H3["HITL: User reviews"]:::hitl
+            H4{"User approves?"}
+            H5["Collect feedback"]:::step
+            H6["Return to Requirements phase"]:::step
 
-    subgraph AgentCheck["Agent Check"]
-        A1["For each file type:"]
-        A2["Match to config agent"]
-        A3["Match to domain agent (if composite)"]
-        A4["Return: agents[]"]
+            H1 --> H2 --> H3 --> H4
+            H4 -->|No| H5 --> H6
+            H4 -->|Yes| OUT((Approved))
+        end
     end
-
-    subgraph Output["Output"]
-        O1["scope: {<br/>repos: [rugby-crm, resume-builder],<br/>files: [eslint.config.js, eslint.config.js]<br/>}"]
-        O2["agents: [eslint-agent]"]
-    end
-
-    Input --> ScopeCheck
-    Input --> AgentCheck
-    S1 --> S2 --> S3 --> S4
-    A1 --> A2 --> A3 --> A4
-    S4 --> O1
-    A4 --> O2
 ```
 
-**Scope Check Output Examples:**
+**Key:** Separate phase for approval. User reviews PRD + execution plan. If rejected, returns to Requirements phase.
 
-| Prompt                               | scope.repos                 | scope.files                            | agents                                   |
-| ------------------------------------ | --------------------------- | -------------------------------------- | ---------------------------------------- |
-| "audit eslint"                       | [current-repo]              | [eslint.config.js]                     | [eslint-agent]                           |
-| "audit eslint across consumer repos" | [rugby-crm, resume-builder] | [eslint.config.js, eslint.config.js]   | [eslint-agent]                           |
-| "audit monorepo root"                | [current-repo]              | [turbo.json, pnpm-workspace.yaml, ...] | [turbo-agent, pnpm-workspace-agent, ...] |
-| "audit data-service"                 | [current-repo]              | [/apps/api/*]                          | [data-service-agent]                     |
-
-**Agent Selection Logic:**
-
-| Target Type        | Single Agent         | Composite Agents                  |
-| ------------------ | -------------------- | --------------------------------- |
-| eslint.config.js   | eslint-agent         | -                                 |
-| docker-compose.yml | docker-compose-agent | -                                 |
-| turbo.json         | turbo-agent          | -                                 |
-| "monorepo root"    | -                    | All config agents for root        |
-| "data-service"     | -                    | data-service-agent (orchestrates) |
-| "react-app"        | -                    | react-app-agent (orchestrates)    |
+**Output:** Approved PRD + execution plan
 
 ---
 
-## 4. Requirements Phase Detail (Shared Skill)
+## 6. Phase 5: Investigation (Exploded)
+
+**Execution:** Parallel waves (max 10 per wave), READ-ONLY
 
 ```mermaid
 flowchart TB
-    subgraph Input["Input to BA"]
-        I1["prompt"]
-        I2["scope: {repos[], files[]}"]
-        I3["agents: string[]"]
-    end
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef readonly fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
 
-    subgraph Understanding["BA Understanding"]
-        U1["Parse what user wants audited"]
-        U2["Confirm scope with user"]
-        U3{"User confirms?"}
-        U4["Adjust scope"]
+    subgraph P4["Phase 4: Investigation"]
+        subgraph INV["/skill audit-investigation"]
+            I1["For each wave, spawn config agents"]:::step
+            I2["Agent reads template from skill"]:::readonly
+            I3["Agent reads actual file from repo"]:::readonly
+            I4["Agent compares field-by-field"]:::readonly
+            I5["Agent reports discrepancies"]:::step
+            I6["Aggregate all results"]:::step
+            I7["Sort by severity: critical → warning → info"]:::step
+            I1 --> I2 --> I3 --> I4 --> I5 --> I6 --> I7
+        end
     end
-
-    subgraph PRD["PRD Creation"]
-        P1["Create docs/prd/audit-{date}.md"]
-        P2["Define audit objectives"]
-        P3["List files to check"]
-        P4["Define success criteria"]
-    end
-
-    subgraph Stories["User Story Creation"]
-        ST1["For each (agent, file) pair:"]
-        ST2["Create story with:"]
-        ST3["- Agent to use"]
-        ST4["- File to audit"]
-        ST5["- Template/skill reference"]
-        ST6["- AC: report discrepancies"]
-    end
-
-    subgraph Approval["User Approval"]
-        AP1["Present stories to user"]
-        AP2{"User approves?"}
-        AP3["Revise stories"]
-    end
-
-    Input --> U1
-    U1 --> U2 --> U3
-    U3 -->|"No"| U4 --> U2
-    U3 -->|"Yes"| P1
-    P1 --> P2 --> P3 --> P4
-    P4 --> ST1
-    ST1 --> ST2
-    ST2 --> ST3 & ST4 & ST5 & ST6
-    ST6 --> AP1
-    AP1 --> AP2
-    AP2 -->|"No"| AP3 --> AP1
-    AP2 -->|"Yes"| OUT((Continue))
 ```
 
-**User Story Template (Audit):**
+**Key:** NO CHANGES MADE - agents only report findings
 
-```markdown
-## Story: Audit {file} in {repo}
-
-**Agent:** {agent-name}
-**Scope:** {repo}/{path/to/file}
-**Template:** {skill-name}
-
-### Acceptance Criteria
-
-- [ ] Agent reads template from skill
-- [ ] Agent reads actual file
-- [ ] Agent compares and identifies discrepancies
-- [ ] Discrepancies reported with line numbers
-- [ ] User decision recorded (apply/update/ignore/custom)
-
-### User Decision
-
-- [ ] Pending investigation
-```
+**Output:** Sorted list of discrepancies with line numbers, expected/actual values, severity
 
 ---
 
-## 5. Investigation Phase Detail
+## 7. Phase 6: Resolution (Exploded)
+
+**Execution:** Sequential HITL - one decision per discrepancy
 
 ```mermaid
 flowchart TB
-    subgraph Input["From PM"]
-        EP["execution_plan:<br/>waves of (agent, file) pairs"]
-    end
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:1px
 
-    subgraph Wave["For Each Wave (max 10 parallel)"]
-        W1["Spawn agent"]
-        W2["Agent reads skill/template"]
-        W3["Agent reads actual file"]
-        W4["Agent compares"]
-        W5["Agent returns discrepancy report"]
+    subgraph P5["Phase 5: Resolution"]
+        subgraph RES["/skill audit-resolution"]
+            RS1["Present summary: X files, Y discrepancies"]:::step
+            RS2["For each discrepancy:"]:::step
+            RS3["Show file path, diff, template vs actual"]:::step
+            RS4["HITL: What to do?"]:::hitl
+            RS5["[1] Apply template"]:::step
+            RS6["[2] Update template (PR to multi-mono)"]:::step
+            RS7["[3] Ignore discrepancy"]:::step
+            RS8["[4] Custom instruction"]:::step
+            RS9["Record decision in story"]:::step
+            RS1 --> RS2 --> RS3 --> RS4
+            RS4 --> RS5 & RS6 & RS7 & RS8
+            RS5 & RS6 & RS7 & RS8 --> RS9
+        end
     end
-
-    subgraph Report["Discrepancy Report Structure"]
-        R1["file: string"]
-        R2["agent: string"]
-        R3["status: PASS | FAIL"]
-        R4["discrepancies: [{<br/>  line: number,<br/>  expected: string,<br/>  actual: string,<br/>  severity: critical|warning|info<br/>}]"]
-    end
-
-    subgraph Aggregate["Aggregation"]
-        A1["Collect all reports"]
-        A2["Sort by severity"]
-        A3["Group by repo/file"]
-    end
-
-    Input --> Wave
-    W1 --> W2 --> W3 --> W4 --> W5
-    W5 --> Report
-    R1 & R2 & R3 & R4 --> Aggregate
-    A1 --> A2 --> A3
 ```
 
-**Agent Investigation Behavior:**
-
-Each config agent in audit mode:
-
-1. **Reads template** from its skill (e.g., `/skill eslint-config`)
-2. **Reads actual file** from target repo
-3. **Compares** field-by-field or line-by-line
-4. **Reports** discrepancies with:
-   - Exact location (line number)
-   - Expected value (from template)
-   - Actual value (from file)
-   - Severity classification
-
-**No changes made during investigation.** Agents only report.
+**Output:** User decisions recorded per discrepancy
 
 ---
 
-## 6. Report & Resolution Phase Detail (HITL)
+## 8. Phase 7: Remediation (Exploded)
+
+**Execution:** Multiple skills, template-first updates
 
 ```mermaid
 flowchart TB
-    subgraph Present["Present Findings"]
-        P1["Summary: X files audited"]
-        P2["Y discrepancies found"]
-        P3["Z critical, W warnings"]
-    end
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef validate fill:#e3f2fd,stroke:#1565c0,stroke-width:1px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:1px
 
-    subgraph Loop["For Each Discrepancy"]
-        L1["Show file path"]
-        L2["Show diff/comparison"]
-        L3["Show template expectation"]
-        L4["Show actual value"]
-    end
+    subgraph P6["Phase 6: Remediation"]
 
-    subgraph Ask["AskUserQuestion"]
-        Q["What would you like to do?"]
-        O1["1. Apply template to this file"]
-        O2["2. Update template with this change"]
-        O3["3. Ignore this discrepancy"]
-        O4["4. Custom (enter text)"]
-    end
+        subgraph TPLFIRST["/skill template-update (if any 'update template' decisions)"]
+            T1["Update metasaver-marketplace template FIRST"]:::step
+            T2["Read updated template text"]:::step
+            T3["Use new template for remaining changes"]:::step
+            T1 --> T2 --> T3
+        end
 
-    subgraph Update["Update Story"]
-        U1["Record decision in story"]
-        U2["If 'apply': mark for remediation"]
-        U3["If 'update template': flag for multi-mono PR"]
-        U4["If 'ignore': mark as accepted deviation"]
-        U5["If 'custom': record custom instruction"]
-    end
+        subgraph APPLY["/skill audit-remediation"]
+            A1["Group 'apply' decisions by agent type"]:::step
+            A2["Spawn remediation agents (max 10 parallel)"]:::step
+            A3["Agents apply template to target files"]:::step
+            A1 --> A2 --> A3
+        end
 
-    Present --> Loop
-    L1 --> L2 --> L3 --> L4 --> Ask
-    Q --> O1 & O2 & O3 & O4
-    O1 & O2 & O3 & O4 --> Update
-    U1 --> U2 & U3 & U4 & U5
+        subgraph VERIFY["/skill ac-verification"]
+            V1["For each user story:"]:::step
+            V2["Check acceptance criteria met"]:::step
+            V3{"All AC pass?"}
+            V4["HITL: Report unmet AC"]:::hitl
+            V1 --> V2 --> V3
+            V3 -->|No| V4
+        end
+
+        subgraph VALIDATE["/skill production-check"]
+            P1["Run: pnpm build"]:::validate
+            P2["Run: pnpm lint"]:::validate
+            P3["Run: pnpm test"]:::validate
+            P4{"All pass?"}
+            P5["Fix errors and retry"]:::step
+            P1 --> P2 --> P3 --> P4
+            P4 -->|No| P5 --> P1
+        end
+
+        TPLFIRST --> APPLY --> VERIFY
+        V3 -->|Yes| VALIDATE
+        P4 -->|Yes| OUT((Done))
+    end
 ```
 
-**Resolution Dialog Example:**
+**Key:** Template updates happen FIRST in metasaver-marketplace, then that new text is used for all other changes.
 
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Discrepancy 1 of 5: rugby-crm/eslint.config.js
+**Skills in this phase:**
+| Skill | Purpose |
+| ----- | ------- |
+| `/skill template-update` | Update source template in metasaver-marketplace |
+| `/skill audit-remediation` | Apply templates to target files |
+| `/skill ac-verification` | Verify user story acceptance criteria |
+| `/skill production-check` | Build, lint, test validation |
 
-Template expects:
-  "parserOptions": { "ecmaVersion": 2024 }
-
-Actual file has:
-  "parserOptions": { "ecmaVersion": 2022 }
-
-What would you like to do?
-  [1] Apply template to this file (update to 2024)
-  [2] Update template with this change (keep 2022)
-  [3] Ignore this discrepancy
-  [4] Other (enter text)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
+**Output:** Fixes applied, templates updated, all AC verified, build passing
 
 ---
 
-## 7. Remediation Phase Detail
+## 9. Phase 8: Report (Exploded)
+
+**Execution:** Sequential
 
 ```mermaid
 flowchart TB
-    subgraph Input["From Resolution"]
-        I1["Stories with decisions"]
-        I2["Filter: only 'apply' decisions"]
-    end
+    classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
-    subgraph Spawn["Spawn Remediation Agents"]
-        S1["Group by agent type"]
-        S2["Spawn agents with fix instructions"]
-        S3["Agents apply template to files"]
+    subgraph P7["Phase 7: Report"]
+        subgraph RPT["/skill report-phase"]
+            RP1["Executive Summary: X files, Y discrepancies, Z fixes"]:::step
+            RP2["Actions Taken: Table of fixes by agent"]:::step
+            RP3["Template Updates: PRs created"]:::step
+            RP4["Accepted Deviations: Files where user chose ignore"]:::step
+            RP5["Verification: Build/lint/test results"]:::step
+            RP1 --> RP2 --> RP3 --> RP4 --> RP5
+        end
     end
-
-    subgraph Validate["Production Check"]
-        V1["Run: pnpm build"]
-        V2["Run: pnpm lint"]
-        V3["Run: pnpm test"]
-        V4{"All pass?"}
-    end
-
-    subgraph Retry["On Failure"]
-        R1["Report errors to agents"]
-        R2["Agents fix issues"]
-    end
-
-    subgraph TemplateUpdates["Template Updates (if any)"]
-        T1["Collect 'update template' decisions"]
-        T2["Create multi-mono branch"]
-        T3["Update skill templates"]
-        T4["Open PR for review"]
-    end
-
-    Input --> Spawn
-    I1 --> I2 --> S1
-    S1 --> S2 --> S3
-    S3 --> V1
-    V1 --> V2 --> V3 --> V4
-    V4 -->|"No"| R1
-    R1 --> R2 --> V1
-    V4 -->|"Yes"| TemplateUpdates
-    T1 --> T2 --> T3 --> T4
 ```
 
-**Remediation Rules:**
-
-1. **Only apply approved fixes** - No changes without user decision
-2. **Batch by agent** - All eslint fixes together, all turbo fixes together
-3. **Validate after each batch** - Don't accumulate breaking changes
-4. **Template updates are separate** - Create PR to multi-mono, don't auto-merge
-
-**Simplified Validation:**
-
-| Check           | Run? | Reason                          |
-| --------------- | ---- | ------------------------------- |
-| build           | Yes  | Ensure no syntax errors         |
-| lint            | Yes  | Ensure code quality             |
-| test            | Yes  | Ensure no regressions           |
-| Structure check | No   | Config agents already validated |
-| DRY check       | No   | Not adding new code             |
-| Config agents   | No   | They just ran in investigation  |
+**Output:** Complete audit report in markdown
 
 ---
 
-## 8. Final Report Structure
+## 10. Quick Reference
 
-```mermaid
-flowchart TB
-    subgraph Input["Aggregated Data"]
-        I1["All discrepancy reports"]
-        I2["All user decisions"]
-        I3["Remediation results"]
-        I4["Template update PRs"]
-    end
+| Phase | Skill                        | Agent                | Model  |
+| ----- | ---------------------------- | -------------------- | ------ |
+| 1     | `/skill scope-check`         | scope-check-agent    | sonnet |
+| 1     | `/skill agent-check`         | agent-check-agent    | sonnet |
+| 2     | `/skill requirements-phase`  | business-analyst     | opus   |
+| 3     | `/skill architect-phase`     | architect            | sonnet |
+| 3     | `/skill planning-phase`      | project-manager      | sonnet |
+| 4     | `/skill hitl-approval`       | - (HITL)             | -      |
+| 5     | `/skill audit-investigation` | config/domain agents | sonnet |
+| 6     | `/skill audit-resolution`    | - (HITL)             | -      |
+| 7     | `/skill template-update`     | coder                | sonnet |
+| 7     | `/skill audit-remediation`   | config/domain agents | sonnet |
+| 7     | `/skill ac-verification`     | reviewer             | sonnet |
+| 7     | `/skill production-check`    | - (bash)             | -      |
+| 8     | `/skill report-phase`        | business-analyst     | sonnet |
 
-    subgraph Generate["BA Report Generation"]
-        G1["Count by status"]
-        G2["List applied fixes"]
-        G3["List ignored items"]
-        G4["List template updates"]
-    end
+---
 
-    subgraph Report["Final Report"]
-        R1["Executive Summary"]
-        R2["Audit Scope"]
-        R3["Findings by File"]
-        R4["Actions Taken"]
-        R5["Template PRs Created"]
-        R6["Accepted Deviations"]
-    end
+## 11. Examples
 
-    Input --> Generate
-    G1 --> G2 --> G3 --> G4
-    G4 --> Report
-```
+```bash
+# Simple single-file audit
+/audit "check eslint config"
+→ P1: scope=[eslint.config.js], agents=[eslint-agent]
+→ P2: BA confirms, creates story
+→ P3: PM plans (1 wave)
+→ P4: eslint-agent investigates
+→ P5: User decides per discrepancy
+→ P6: Apply fixes
+→ P7: Report
 
-**Report Template:**
+# Domain audit (multiple files)
+/audit "audit code quality configs"
+→ P1: scope=[eslint, prettier, editorconfig], agents=[3 config agents]
+→ P2-P7: Full workflow
 
-```markdown
-# Audit Report: {scope}
-
-**Date:** {date}
-**Repos:** {repo-list}
-
-## Executive Summary
-
-Audited {N} files across {M} repositories.
-
-- {X} discrepancies found
-- {Y} fixes applied
-- {Z} template updates proposed
-- {W} deviations accepted
-
-## Actions Taken
-
-### Fixes Applied
-
-| File                       | Change                | Agent        |
-| -------------------------- | --------------------- | ------------ |
-| rugby-crm/eslint.config.js | ecmaVersion 2022→2024 | eslint-agent |
-
-### Template Updates (PRs Created)
-
-| Template            | Change         | PR             |
-| ------------------- | -------------- | -------------- |
-| eslint-config skill | Add new rule X | multi-mono#123 |
-
-### Accepted Deviations
-
-| File                      | Deviation      | Reason                      |
-| ------------------------- | -------------- | --------------------------- |
-| resume-builder/turbo.json | Missing task Y | Not needed for this project |
-
-## Verification
-
-- Build: PASS
-- Lint: PASS
-- Tests: PASS
+# Cross-repo audit
+/audit "audit eslint in all consumer repos"
+→ P1: scope=[rugby-crm, resume-builder], agents=[eslint-agent x2]
+→ P2-P7: Full workflow with wave execution
 ```
 
 ---
 
-## 9. Quick Reference
-
-| Phase | Function        | Input                 | Output              | Agent  | Parallel               |
-| ----- | --------------- | --------------------- | ------------------- | ------ | ---------------------- |
-| 1     | Scope Check     | prompt                | repos[], files[]    | haiku  | Yes (with Agent Check) |
-| 1     | Agent Check     | prompt, scope         | agents[]            | haiku  | Yes (with Scope Check) |
-| 2     | BA Requirements | prompt, scope, agents | PRD, stories        | sonnet | No                     |
-| 2     | User Approval   | stories               | approved            | Human  | No                     |
-| 3     | PM Planning     | stories               | execution_plan      | sonnet | No                     |
-| 4     | Investigation   | execution_plan        | discrepancy_reports | haiku  | Yes (waves of 10)      |
-| 5     | Report          | reports               | summary             | sonnet | No                     |
-| 5     | Resolution      | discrepancies         | decisions           | Human  | No (sequential)        |
-| 6     | Remediation     | decisions             | fixed_files         | haiku  | Yes (by agent type)    |
-| 6     | Validation      | fixed_files           | pass/fail           | Bash   | No                     |
-| 7     | Final Report    | all_data              | report              | sonnet | No                     |
-
----
-
-## 10. Enforcement Rules
+## 12. Enforcement Rules
 
 1. **NO complexity check** - Audit is deterministic
-2. **NO tools check** - Agents determined by scope
-3. **NO cross-repo resolution** - Paths hardcoded in scope-check
-4. **NO vibe check** - Audit is compliance, not creation
-5. **NO innovation phase** - Not applicable to audits
-6. **Requirements phase uses shared skill** - Same as /build
-7. **Investigation is read-only** - No changes until approved
-8. **Every discrepancy gets user decision** - No auto-fixes
-9. **Template updates create PRs** - Never auto-merge to multi-mono
-10. **Simplified validation** - Just build/lint/test, no config agents
-
----
-
-## 11. Comparison: /audit vs /build
-
-| Phase        | /audit                            | /build                            |
-| ------------ | --------------------------------- | --------------------------------- |
-| Analysis     | Scope + Agent check               | Complexity + Tools + Scope        |
-| Cross-repo   | Hardcoded in scope                | Hardcoded in scope                |
-| Requirements | Shared skill (BA → PRD → Stories) | Shared skill (BA → PRD → Stories) |
-| Vibe Check   | Skip                              | Required (≥15)                    |
-| Innovation   | Skip                              | Optional (≥30)                    |
-| Design       | PM batches agents                 | Architect + PM                    |
-| Execution    | Investigation (read-only)         | TDD pairs (write)                 |
-| HITL         | Per-discrepancy decisions         | Approval before execution         |
-| Remediation  | Apply approved fixes              | N/A (part of execution)           |
-| Validation   | build/lint/test only              | Full standards audit              |
-| Report       | BA consolidates                   | BA consolidates                   |
-
----
-
-## 12. Open Questions
-
-1. **Should scope-check and agent-check be one skill or two?**
-   - Combined: simpler, single call
-   - Separate: more reusable, agent-check could be used elsewhere
-
-2. **How to handle "update template" decisions?**
-   - Auto-create PR to multi-mono?
-   - Just log for manual action?
-   - Create branch but require manual PR?
-
-3. **What if user wants to audit but NOT fix?**
-   - Add "report only" mode?
-   - Or just let them choose "ignore" for everything?
-
-4. **Batching discrepancy questions:**
-   - Ask one-by-one (current design)?
-   - Group by file and ask batch decisions?
-   - Show all, let user mark multiple?
+2. **NO tool check** - Agents determined by scope
+3. **NO vibe check** - Audit is compliance, not creation
+4. **NO innovation phase** - Not applicable to audits
+5. Investigation is **READ-ONLY** - No changes until approved
+6. **Every discrepancy gets user decision** - No auto-fixes
+7. Template updates create **PRs** - Never auto-merge
+8. Always run **build/lint/test** after remediation
+9. Always produce **final report**
