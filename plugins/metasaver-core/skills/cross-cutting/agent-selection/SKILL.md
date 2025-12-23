@@ -31,7 +31,7 @@ Complete reference for selecting the correct MetaSaver agents and their `subagen
 
 ## Analysis Agents (3)
 
-**Minimal-tool agents** for prompt classification. These specify `tools: TodoWrite` to avoid inheriting MCP tools (~37k tokens each).
+**Minimal-tool agents** for prompt classification. These specify `tools: TodoWrite` to avoid inheriting MCP tools (~37k tokens each). Results are returned inline in the Task response.
 
 | Task Type            | Agent Name             | subagent_type                                       |
 | -------------------- | ---------------------- | --------------------------------------------------- |

@@ -53,9 +53,11 @@ Task 3: subagent_type="core-claude-plugin:generic:scope-check-agent"
   Prompt: "Analyze this prompt and return scope (CWD: {CWD}): {USER_PROMPT}"
 ```
 
+**Results are returned inline.** Each Task call returns the agent's output directly in the response. Read the result from the Task response and proceed immediately.
+
 **Why dedicated agents?** These agents specify `tools: TodoWrite` (a minimal core tool) instead of inheriting all tools, which eliminates ~37k tokens of MCP tool schemas per agent.
 
-Collect results based on which checks were run.
+Collect results from the Task responses based on which checks were run.
 
 ---
 
