@@ -1,7 +1,6 @@
 ---
 name: business-analyst
 description: Requirements analysis, PRD creation, and sign-off specialist for defining audit scope and success criteria
-model: sonnet
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---
@@ -139,6 +138,30 @@ Reference `/skill user-story-template` for the standard user story markdown form
 - Status: 🔵 Pending (initial), 🟢 In Progress, ✅ Complete
 - Sections: Title, Agent, Story, Acceptance Criteria, Dependencies, Technical Notes
 - **Be exhaustive:** List every field, endpoint, parameter, and item explicitly. If adding 18 fields, name all 18.
+
+### Story Consolidation
+
+**Group all requirements for a file into a single story.**
+
+When extracting stories, consolidate requirements that target the same file:
+
+- Multiple requirements for `build.md` → ONE story covering all changes
+- Multiple requirements for `execution-phase/SKILL.md` → ONE story
+
+**Example:**
+
+```
+Requirements:
+1. Add agent delegation to build.md
+2. Add TDD sequence to build.md
+3. Clarify HITL timing in build.md
+
+Result:
+ONE story: "US-001: Update build.md with agent delegation, TDD sequence, and HITL timing"
+Acceptance criteria covers all three requirements
+```
+
+**Why:** Prevents parallel agents from editing the same file. Ensures sequential, conflict-free execution.
 
 ## PRD Storage
 

@@ -1,7 +1,6 @@
 ---
 name: backend-dev
 description: Backend development specialist with Express, Prisma, and MetaSaver API patterns
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---

@@ -1,7 +1,6 @@
 ---
 name: coder
 description: Implementation specialist enforcing MetaSaver coding standards and SOLID principles
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---
@@ -34,6 +33,16 @@ Use Serena progressive disclosure for efficient code analysis (93% token savings
 **Invoke `/skill serena-code-reading` for detailed analysis.**
 
 ## Import/Export Standards
+
+### Direct Imports Pattern
+
+Import directly from source files for optimal treeshaking and bundle optimization:
+
+**Why direct imports:**
+
+- Enables modern bundler treeshaking to eliminate unused code
+- Reduces bundle size by importing only what's needed
+- Makes dependencies explicit and traceable
 
 **Internal imports (within same package):**
 
@@ -145,7 +154,8 @@ search_for_pattern "repository-pattern" --scope implementation
 11. **Use Early Returns** - Flatten control flow with guard clauses
 12. **Name Things Clearly** - Self-documenting variables and functions
 13. **Follow DRY** - Extract common patterns to utilities
-14. **Refactor Continuously** - Leave code better than you found it
+14. **Use Direct Imports** - Import from source files directly for optimal treeshaking and bundle optimization
+15. **Refactor Continuously** - Leave code better than you found it
 
 ## Standards Reference
 

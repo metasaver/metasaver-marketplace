@@ -1,7 +1,6 @@
 ---
 name: nodemon-agent
 description: Nodemon configuration specialist - enforces 5 standards for dev server auto-restart
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

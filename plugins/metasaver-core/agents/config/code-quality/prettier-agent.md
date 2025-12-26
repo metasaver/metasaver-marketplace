@@ -1,7 +1,6 @@
 ---
 name: prettier-agent
 description: Prettier configuration expert for package.json "prettier" field. Use when creating or auditing Prettier configs in MetaSaver projects.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

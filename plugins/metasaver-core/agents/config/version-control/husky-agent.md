@@ -1,7 +1,6 @@
 ---
 name: husky-git-hooks-agent
 description: Husky git hooks domain expert - handles build and audit modes
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
 permissionMode: acceptEdits
 ---

@@ -1,6 +1,6 @@
 ---
 name: execution-phase
-description: TDD-paired Gantt-style execution with compact waves. Each story gets tester agent (writes tests) BEFORE implementation agent (passes tests). Compact before each wave to avoid context exhaustion. Respects dependencies, spawns up to 10 concurrent agents. Use when orchestrating parallel implementation workflows with test-first discipline.
+description: TDD-paired Gantt-style execution with compact waves. Each story gets tester agent (writes tests) BEFORE implementation agent (passes tests). Waves execute continuously with /compact between each wave. Respects dependencies, spawns up to 10 concurrent agents. Use when orchestrating parallel implementation workflows with test-first discipline.
 ---
 
 # Execution Phase - TDD-Paired Domain Worker Orchestration
@@ -11,6 +11,14 @@ description: TDD-paired Gantt-style execution with compact waves. Each story get
 **Trigger:** After design-phase completes
 **Input:** Execution plan with task dependencies, wave batching
 **Output:** Collection of all worker outputs with test coverage
+
+---
+
+## Core Principle
+
+**The orchestrator spawns agents and tracks progress. All implementation happens inside spawned agents.**
+
+The execution phase orchestrates parallel work through agent spawning and state management. The orchestrator ALWAYS spawns domain workers (tester and coder agents) to perform implementation. The orchestrator NEVER writes implementation code directly—it coordinates, tracks progress, and manages state across waves.
 
 ---
 
@@ -78,16 +86,7 @@ description: TDD-paired Gantt-style execution with compact waves. Each story get
 5. **On task failure:** Log error, update story status to ❌ Failed, continue (validation phase handles retries)
 
 6. **Wave completion:**
-   - **HITL checkpoint:** Set workflow to waiting state
-
-   ```javascript
-   setHITL(
-     state,
-     `Wave ${waveNumber} complete. Proceed with wave ${waveNumber + 1}?`,
-     `spawn-wave-${waveNumber + 1}`,
-   );
-   writeWorkflowState(projectFolder, state);
-   ```
+   - **Continue to next wave:** Waves execute continuously (no HITL stop between waves)
 
 7. **Return:** All results with status, files modified, errors, test coverage, story completion tracking
 
@@ -119,27 +118,11 @@ After each story completes (both tester and implementation phases):
 ```javascript
 const state = readWorkflowState(projectFolder);
 markStoryComplete(state, storyId); // Moves from inProgress to completed
+updateEpicProgress(state, storyId); // ALWAYS update parent epic counter
 writeWorkflowState(projectFolder, state);
 ```
 
-This updates epic progress counters automatically.
-
-### 3. HITL Checkpoint
-
-When wave completes and human-in-the-loop input is needed:
-
-```javascript
-setHITL(
-  state,
-  `Wave ${waveNumber} complete. Proceed with wave ${waveNumber + 1}?`,
-  `spawn-wave-${waveNumber + 1}`,
-);
-writeWorkflowState(projectFolder, state);
-```
-
-Sets `status: "hitl_waiting"`, `hitlQuestion`, and `resumeAction` fields.
-
-### 4. Workflow Complete
+### 3. Workflow Complete
 
 After final wave and validation phase:
 
@@ -154,8 +137,19 @@ updateWorkflowState(projectFolder, {
 
 - Enables workflow resumption after interruption
 - Provides audit trail of execution progress
-- Supports HITL checkpoints between waves
 - Tracks epic completion percentage for PM dashboards
+
+---
+
+## Interruption Handling
+
+Save state early and often for reliable workflow resumption:
+
+1. **Before spawning agent:** Update workflow-state.json with story in `inProgress`
+2. **After story completes:** Update workflow-state.json with story in `completed` and epic counter incremented
+3. **On any error:** Update workflow-state.json with `status: "error"` and error details
+
+This ensures workflows can resume correctly after user interruption or context clear.
 
 ---
 
@@ -193,10 +187,6 @@ for each wave in waves:
   // All stories in wave complete before next wave
   completed += wave
 
-  // HITL checkpoint - wave completion
-  setHITL(state, `Wave ${waveNumber} complete. Proceed?`, `spawn-wave-${waveNumber + 1}`)
-  writeWorkflowState(projectFolder, state)
-
 // Workflow complete
 updateWorkflowState(projectFolder, { status: "complete" })
 
@@ -213,6 +203,13 @@ return allResults
 ---
 
 ## Agent Spawning
+
+**Agent Announcement (ALWAYS do this before spawning):**
+
+Before spawning any agent, announce the selection:
+"Spawning {agent-type} agent ({agent-name}) for {story-id}"
+
+Example: "Spawning tester agent (core-claude-plugin:generic:tester) for US-001"
 
 **Tester spawn template:**
 
@@ -249,8 +246,6 @@ FILES: Report files modified for PM tracking
 UPDATE: Story status → ✅ Complete (tests passing)
 ```
 
-Model: `sonnet` (balanced cost/capability)
-
 **Key Changes:**
 
 - Tester writes tests from AC (before implementation exists)
@@ -276,11 +271,9 @@ Model: `sonnet` (balanced cost/capability)
 
 ## Constraints
 
-| Constraint         | Value  | Rationale                   |
-| ------------------ | ------ | --------------------------- |
-| Max concurrent     | 10     | Prevent resource exhaustion |
-| Worker model       | sonnet | Balanced cost               |
-| Config agent model | haiku  | Fast audit                  |
+| Constraint     | Value | Rationale                   |
+| -------------- | ----- | --------------------------- |
+| Max concurrent | 10    | Prevent resource exhaustion |
 
 ---
 
@@ -311,6 +304,18 @@ Model: `sonnet` (balanced cost/capability)
   "totalTestsPassed": 45
 }
 ```
+
+---
+
+## Success Criteria
+
+- ALWAYS spawn tester and coder agents for each story (orchestrator only directs work)
+- ALWAYS track all implementation code written by spawned agents (tester writes tests, coder writes features)
+- ALWAYS persist story state (status, assignments, completion notes) between agent spawns
+- ALWAYS run production verification (tests pass, AC checkboxes marked) before marking story complete
+- All implementation code written by spawned agents (tester and coder agents)
+- Orchestrator only spawns, waits, tracks, and updates state
+- No implementation code added by the orchestrator itself
 
 ---
 

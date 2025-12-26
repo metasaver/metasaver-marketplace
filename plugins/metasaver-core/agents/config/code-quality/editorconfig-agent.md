@@ -1,7 +1,6 @@
 ---
 name: editorconfig-agent
 description: EditorConfig domain expert for monorepo root configuration. Use when creating or auditing .editorconfig files.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

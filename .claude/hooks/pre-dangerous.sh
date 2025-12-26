@@ -19,11 +19,11 @@ fi
 [[ -n "$COMMAND" ]] || exit 0
 
 # Check for dangerous patterns
-if echo "$COMMAND" | grep -qE '(rm\s+-rf\s+/[^a-zA-Z]|DROP\s+DATABASE|git\s+push.*--force)'; then
+if echo "$COMMAND" | grep -qE '(rm\s+-rf\s+/[^a-zA-Z]|DROP\s+DATABASE|git\s+push.*--force|git\s+(add|commit)|npm\s+(publish|unpublish|dist-tag|version))'; then
   cat >&2 << EOF
 {
   "decision": "block",
-  "reason": "⚠️  Dangerous command blocked!\n\nCommand: ${COMMAND:0:100}\n\nThis command could cause data loss. Please review carefully."
+  "reason": "⚠️  Dangerous command blocked!\n\nCommand: ${COMMAND:0:100}\n\nThis command could cause data loss or unauthorized publishing. Please review carefully."
 }
 EOF
   exit 2

@@ -1,7 +1,6 @@
 ---
 name: tool-check-agent
 description: Text analysis specialist for MCP tool detection from prompt keywords
-model: haiku
 tools: TodoWrite
 permissionMode: bypassPermissions
 ---

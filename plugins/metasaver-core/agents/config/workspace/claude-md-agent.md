@@ -1,7 +1,6 @@
 ---
 name: claude-md-configuration-agent
 description: CLAUDE.md configuration domain expert - enforces 8-standard compliance with multi-mono awareness
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

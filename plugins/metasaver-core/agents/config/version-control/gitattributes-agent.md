@@ -1,7 +1,6 @@
 ---
 name: gitattributes-agent
 /mcpdescription: Git attributes (.gitattributes) expert for line ending normalization and cross-platform consistency. Use when creating or auditing file handling rules.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
 permissionMode: acceptEdits
 ---

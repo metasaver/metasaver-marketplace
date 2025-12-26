@@ -164,23 +164,6 @@ Configuration file specialists for auditing and building configs.
 
 ---
 
-## Model Selection Rules
-
-| Agent Category         | Model      | When                                         |
-| ---------------------- | ---------- | -------------------------------------------- |
-| Config agents          | **haiku**  | Single file audits, simple config validation |
-| Domain agents          | **sonnet** | Implementation work, standard development    |
-| Generic agents         | **sonnet** | Orchestration, coordination, review          |
-| BA/Architect (complex) | **opus**   | Complexity score >=30, novel architecture    |
-
-**Guidelines:**
-
-- **haiku**: Fast, efficient - use for config agents and truly simple tasks (score <=5)
-- **sonnet**: Default for all implementation work (score 6-29)
-- **opus**: Rare, only for ultra-complex architecture (score >=30)
-
----
-
 ## Agent Spawning Pattern
 
 Tell agents to READ their own instruction file:
@@ -197,7 +180,6 @@ Follow YOUR rules, invoke YOUR skills, use YOUR output format.
 ```
 Task(
   subagent_type: "core-claude-plugin:config:build-tools:eslint-agent",
-  model: "haiku",
   prompt: `
     AUDIT MODE for /path/to/eslint.config.js
     You are the ESLint Agent.
@@ -207,6 +189,8 @@ Task(
   `
 )
 ```
+
+Results are returned inline.
 
 ---
 

@@ -32,7 +32,7 @@ description: Final reporting and sign-off workflow. Spawns business-analyst for 
 3. **If files were modified:** Spawn agent to execute `repomix-cache-refresh` skill:
 
    ```
-   subagent_type="general-purpose", model="haiku"
+   subagent_type="general-purpose"
    Prompt: "Execute /skill repomix-cache-refresh"
    ```
 
@@ -74,11 +74,9 @@ Both include:
 
 ## Configuration
 
-| Setting  | Value    | Rationale              |
-| -------- | -------- | ---------------------- |
-| BA model | sonnet   | Needs reasoning        |
-| PM model | sonnet   | Complex aggregation    |
-| Format   | Markdown | Standard documentation |
+| Setting | Value    | Rationale              |
+| ------- | -------- | ---------------------- |
+| Format  | Markdown | Standard documentation |
 
 ---
 

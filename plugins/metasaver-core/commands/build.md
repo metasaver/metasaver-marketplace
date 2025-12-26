@@ -58,7 +58,9 @@ Architect enriches stories with implementation details, PM creates execution pla
 
 **See:** `/skill hitl-approval`
 
-User reviews PRD, enriched stories, and execution plan before execution begins.
+**Single approval gate** - User reviews PRD, enriched stories, and execution plan. After approval, execution proceeds continuously.
+
+After approval, all waves execute continuously with `/compact` between waves. No additional HITL stops during execution.
 
 **SKIPPED for complexity < 15.**
 
@@ -68,9 +70,9 @@ User reviews PRD, enriched stories, and execution plan before execution begins.
 
 **See:** `/skill tdd-execution`
 
-Paired TDD structure per story: tester agent runs BEFORE coder agent. PM spawns workers per wave, updates story status.
+ALWAYS spawn agents for all implementation work. Paired TDD structure per story: spawn tester agent to write tests BEFORE spawning coder agent for implementation. PM spawns workers per wave, updates story status.
 
-**For FAST PATH (<15):** Single tester→coder pass without formal stories.
+**For FAST PATH (<15):** Spawn tester agent to write tests, then spawn coder agent for implementation.
 
 ---
 
@@ -113,13 +115,19 @@ BA + PM produce final build report with summary, files modified, tests added, st
 
 ```bash
 /build "add logging to service" (complexity: 8)
-→ Analysis → FAST PATH → Execution → Validation → Report
+→ Analysis → FAST PATH → Task(spawn tester) → Task(spawn coder) → Validation → Report
 
 /build "refactor auth module" (complexity: 22)
-→ Analysis → Requirements → Design → Approval → Execution → Validation → Standards Audit → Report
+→ Analysis → Requirements → Design → Approval → Task(spawn tester) → Task(spawn coder) → Validation → Standards Audit → Report
 
 /build "multi-tenant SaaS" (complexity: 45)
-→ Analysis → Requirements → Design → Approval → TDD waves → Validation → Standards Audit → Report
+→ Analysis → Requirements → Design → Approval → Wave1: Task(spawn tester) → Task(spawn coder) → Wave2: Task(spawn tester) → Task(spawn coder) → Validation → Standards Audit → Report
+
+# Spawning agents with Task tool:
+Task: subagent_type="core-claude-plugin:generic:tester" prompt="Execute /skill tdd-execution for story X"
+→ (tester creates test file)
+Task: subagent_type="core-claude-plugin:generic:coder" prompt="Implement against tests from story X"
+→ (coder implements feature)
 ```
 
 ---
@@ -133,7 +141,10 @@ BA + PM produce final build report with summary, files modified, tests added, st
 3. Include these phases only: Analysis → Requirements/Design/Approval (conditional) → Execution → Validation → Standards Audit (conditional) → Report
 4. Use /architect command for innovation or vibe check workflows
 5. TDD execution: ALWAYS run tester BEFORE coder per story
-6. Standards Audit: ALWAYS run AFTER Validation passes (≥15 complexity only)
-7. ALWAYS run build/lint/test after execution
-8. ALWAYS produce final report
-9. When files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+6. ALWAYS use Task tool to spawn tester agent first, then coder agent for implementation work
+7. For FAST PATH (<15 complexity): ALWAYS spawn tester agent to write tests BEFORE spawning coder agent
+8. ALWAYS spawn agents for implementation - the orchestrator tracks progress while agents write code
+9. Standards Audit: ALWAYS run AFTER Validation passes (≥15 complexity only)
+10. ALWAYS run build/lint/test after execution
+11. ALWAYS produce final report
+12. When files modified, spawn agent: `subagent_type="general-purpose"` with prompt "Execute /skill repomix-cache-refresh"

@@ -1,7 +1,6 @@
 ---
 name: project-manager
 description: Resource scheduler that transforms plans into Gantt charts and consolidates execution results
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---

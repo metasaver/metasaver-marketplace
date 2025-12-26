@@ -1,7 +1,6 @@
 ---
 name: data-service-agent
 description: Data service REST API domain expert - handles feature-based service architecture, CRUD operations, validation, authentication, and database integration
-model: sonnet
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

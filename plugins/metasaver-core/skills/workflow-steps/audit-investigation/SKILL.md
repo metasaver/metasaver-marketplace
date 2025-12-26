@@ -36,13 +36,13 @@ description: Use when investigating config file discrepancies during audit. Spaw
 
 For each wave:
 
-| Step                             | Action                                  | Model  |
-| -------------------------------- | --------------------------------------- | ------ |
-| a. Spawn config agents           | Parallel invocation (max 10)            | sonnet |
-| b. Agent reads template          | From agent's skill templates/ directory | -      |
-| c. Agent reads actual file       | From repository using Read tool         | -      |
-| d. Agent compares field-by-field | Template rules vs actual config         | -      |
-| e. Agent reports discrepancies   | Line numbers, expected/actual, severity | -      |
+| Step                             | Action                                  |
+| -------------------------------- | --------------------------------------- |
+| a. Spawn config agents           | Parallel invocation (max 10)            |
+| b. Agent reads template          | From agent's skill templates/ directory |
+| c. Agent reads actual file       | From repository using Read tool         |
+| d. Agent compares field-by-field | Template rules vs actual config         |
+| e. Agent reports discrepancies   | Line numbers, expected/actual, severity |
 
 **3. Aggregate Results from All Waves**
 
@@ -383,14 +383,13 @@ Sort by severity: 3 critical → 6 warning → 1 info
 
 ## Configuration
 
-| Setting             | Value               | Rationale                                    |
-| ------------------- | ------------------- | -------------------------------------------- |
-| Model for agents    | sonnet              | Balance speed and accuracy for rule checking |
-| Max agents per wave | 10                  | Prevent resource exhaustion                  |
-| Wave execution      | Sequential          | Ensure results collected before next wave    |
-| Agents within wave  | Parallel            | Maximize throughput                          |
-| File access         | Read-only           | Investigation phase - no changes             |
-| Error handling      | Continue on failure | Collect partial results if some agents fail  |
+| Setting             | Value               | Rationale                                   |
+| ------------------- | ------------------- | ------------------------------------------- |
+| Max agents per wave | 10                  | Prevent resource exhaustion                 |
+| Wave execution      | Sequential          | Ensure results collected before next wave   |
+| Agents within wave  | Parallel            | Maximize throughput                         |
+| File access         | Read-only           | Investigation phase - no changes            |
+| Error handling      | Continue on failure | Collect partial results if some agents fail |
 
 ---
 

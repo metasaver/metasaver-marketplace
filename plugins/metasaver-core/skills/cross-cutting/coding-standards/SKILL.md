@@ -113,7 +113,39 @@ const response = await fetch(url, { signal: controller.signal });
 // request.on('response', callback); // ❌ Use fetch API instead
 ```
 
-### 6. Code Organization Rules
+## Direct Imports
+
+Import directly from source files for optimal treeshaking and explicit dependency tracking.
+
+### Benefits
+
+- **Treeshaking** - Modern bundlers eliminate unused exports when imports are specific
+- **Explicit Dependencies** - Each import shows exactly what the file needs
+- **Smaller Bundles** - Only imported code is included in production builds
+
+### Pattern
+
+```typescript
+// Direct import from source file (optimal)
+import { validateUser } from "#/users/validation.js";
+import type { User } from "#/users/types.js";
+import { AuthService } from "#/services/auth.js";
+
+// Package subpath imports (external packages)
+import { prisma } from "@metasaver/database/client";
+import type { UserSchema } from "@metasaver/contracts/users/schemas";
+```
+
+### Key Points
+
+1. **Internal imports** use `#/` path alias pointing to `./src`
+2. **External imports** use package subpaths (`@metasaver/contracts/users/types`)
+3. Each file imports only what it needs from specific source files
+4. Bundler treeshaking eliminates unused code at build time
+
+**See also:** Coder agent (`core-claude-plugin:generic:coder`) for full import/export patterns
+
+### 7. Code Organization Rules
 
 | Type       | Ideal      | Max       | If exceeded           |
 | ---------- | ---------- | --------- | --------------------- |

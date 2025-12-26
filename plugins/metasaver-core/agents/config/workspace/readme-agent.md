@@ -1,7 +1,6 @@
 ---
 name: readme-agent
 description: README.md documentation domain expert - handles build and audit modes for repository-specific templates
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

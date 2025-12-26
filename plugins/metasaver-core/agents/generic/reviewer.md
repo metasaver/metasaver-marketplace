@@ -1,7 +1,6 @@
 ---
 name: reviewer
 description: Code review specialist enforcing MetaSaver quality standards, SOLID principles, and security best practices
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---

@@ -292,13 +292,12 @@ Next Steps:
 
 ## Configuration
 
-| Setting               | Value | Rationale                           |
-| --------------------- | ----- | ----------------------------------- |
-| Model for agents      | haiku | Fast execution for rule-based fixes |
-| Validation on writes  | Yes   | Prevent invalid config files        |
-| Continue on failures  | Yes   | Apply all fixable issues            |
-| Snapshot state before | Yes   | Enable rollback if needed           |
-| Log all changes       | Yes   | Audit trail required                |
+| Setting               | Value | Rationale                    |
+| --------------------- | ----- | ---------------------------- |
+| Validation on writes  | Yes   | Prevent invalid config files |
+| Continue on failures  | Yes   | Apply all fixable issues     |
+| Snapshot state before | Yes   | Enable rollback if needed    |
+| Log all changes       | Yes   | Audit trail required         |
 
 ---
 

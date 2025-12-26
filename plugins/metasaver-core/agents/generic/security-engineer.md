@@ -1,7 +1,6 @@
 ---
 name: security-engineer
 description: Security assessment specialist with OWASP expertise and threat modeling
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---

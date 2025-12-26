@@ -1,7 +1,6 @@
 ---
 name: eslint-agent
 description: ESLint flat config expert for eslint.config.js files. Use when creating or auditing ESLint configurations.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

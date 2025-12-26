@@ -1,7 +1,6 @@
 ---
 name: command-author
 description: Creates minimal workflow-based slash commands that orchestrate skills - pure orchestration, no inline logic.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

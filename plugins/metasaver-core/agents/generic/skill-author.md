@@ -1,7 +1,6 @@
 ---
 name: skill-author
 description: Skill creation specialist for trigger-optimized Claude Code skills. Use when creating, refactoring, or validating .claude/skills/ files, skill YAML frontmatter, or skill directory structure.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

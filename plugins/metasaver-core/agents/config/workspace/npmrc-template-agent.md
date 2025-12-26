@@ -1,7 +1,6 @@
 ---
 name: npmrc-template-agent
 description: NPM registry template specialist - enforces 4 standards for .npmrc.template configuration
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

@@ -1,7 +1,6 @@
 ---
 name: docker-compose-agent
 description: Docker Compose (docker-compose.yml) domain expert - validates services, environment variables, volumes, and health checks
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

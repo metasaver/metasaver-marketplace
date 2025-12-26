@@ -1,7 +1,6 @@
 ---
 name: postcss-agent
 description: PostCSS configuration expert - validates plugins, plugin order, and CSS processing chain
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

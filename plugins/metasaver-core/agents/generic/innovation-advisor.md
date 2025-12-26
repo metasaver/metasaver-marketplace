@@ -1,7 +1,6 @@
 ---
 name: innovation-advisor
 description: Innovation SME that analyzes PRDs and proposes improvements based on industry standards, best practices, and modern implementations. Returns structured data for iterative user review.
-model: sonnet
 tools: Read,Glob,Grep,WebSearch,WebFetch
 permissionMode: default
 ---

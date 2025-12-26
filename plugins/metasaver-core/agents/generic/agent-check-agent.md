@@ -1,7 +1,6 @@
 ---
 name: agent-check-agent
 description: Maps audit targets to appropriate config or domain agents based on files
-model: haiku
 tools: TodoWrite
 permissionMode: bypassPermissions
 ---

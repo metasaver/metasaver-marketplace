@@ -103,4 +103,3 @@ Agent returns answer to user with:
 10. Include file references in answers when relevant
 11. Keep answers focused and concise
 12. Respect scope boundaries from scope-check
-13. Model selection: haiku for analysis, sonnet for agent execution (or as defined by agent)

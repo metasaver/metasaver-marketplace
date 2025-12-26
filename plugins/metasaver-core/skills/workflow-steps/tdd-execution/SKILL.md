@@ -10,14 +10,16 @@ description: Execute TDD workflow for user stories - spawn tester agent to write
 **Input:** User stories with acceptance criteria, execution plan with waves
 **Output:** Tests written, implementation code, story files updated
 
+**Core Principle:** RED and GREEN phases execute exclusively through agent spawning. The orchestrator spawns tester agent, waits for completion, then spawns coder agent. All test and implementation code is written by agents—never inline in orchestrator.
+
 ---
 
 ## TDD Pattern Overview
 
 ```
 Per story:
-  RED   → Write tests (tester agent)
-  GREEN → Implement to pass tests (coder agent)
+  RED   → Spawn tester agent to write tests (wait for completion)
+  GREEN → Spawn coder agent to implement (wait for completion)
   READY → Story completed with tests passing
 ```
 
@@ -32,22 +34,24 @@ For each story in the current wave:
 **a. RED Phase - Test Writing:**
 
 1. Read story file (extract acceptance criteria, story ID, test path)
-2. Spawn tester agent (core-claude-plugin:generic:tester):
+2. **SPAWN tester agent** (core-claude-plugin:generic:tester):
    - Write comprehensive test file from acceptance criteria
    - Include passing & failing test scenarios
    - Mock external dependencies
    - Update story: Status → 🧪 Testing
-3. Verify test file compiles (no passing yet)
+3. **WAIT for tester agent to complete** before proceeding to GREEN phase
+4. Verify test file compiles (no passing yet)
 
 **b. GREEN Phase - Implementation:**
 
-1. Spawn coder agent (core-claude-plugin:generic:coder):
+1. **SPAWN coder agent** (core-claude-plugin:generic:coder) only after tester agent completes:
    - Read story file (AC, test file path)
    - Implement feature code to pass all tests
    - Update story: Status → 🔄 Implementing
    - Run tests until ALL pass
-2. Update story: Status → ✅ Complete
-3. Record files modified for PM tracking
+2. **WAIT for coder agent to complete**
+3. Update story: Status → ✅ Complete
+4. Record files modified for PM tracking
 
 **c. Production Verification:**
 
@@ -87,18 +91,23 @@ After each phase, update story file with:
 
 ```
 for each story in current_wave:
-  // RED phase
+  // RED phase - Spawn tester, wait for completion
   tester_agent = spawn(tester, {story, AC})
-  test_file = await tester_agent.write_tests()
+  test_file = await tester_agent.write_tests()  // ALWAYS wait
   updateStoryFile(story, Status="🧪 Testing", TestFile=test_file)
 
-  // GREEN phase
+  // Verify test file before proceeding
+  compile_result = verify_test_compiles(test_file)
+  ALWAYS_ASSERT(compile_result == success, "Tests must compile")
+
+  // GREEN phase - Spawn coder ONLY after tester completes
   impl_agent = spawn(coder, {story, test_file})
-  impl_files = await impl_agent.implement_to_pass_tests()
+  impl_files = await impl_agent.implement_to_pass_tests()  // ALWAYS wait
   updateStoryFile(story, Status="🔄 Implementing", FilesModified=impl_files)
 
-  // Production check
-  run_tests(test_file)  // Must all pass
+  // Production verification
+  test_result = run_tests(test_file)  // Must all pass
+  ALWAYS_ASSERT(test_result == all_pass, "All tests must pass")
   updateStoryFile(story, Status="✅ Complete", Verified="yes")
 
 return {
@@ -136,8 +145,6 @@ DELIVERABLE: Test file at {test_file_path}
 VERIFY: Test file compiles and runs (no tests passing yet)
 ```
 
-Model: `sonnet` (balanced reasoning)
-
 **Coder Agent Spawn (GREEN Phase):**
 
 ```
@@ -164,8 +171,6 @@ DELIVERABLE: Implementation code at {impl_file_paths}
 
 VERIFY: Run test file - confirm 100% passing
 ```
-
-Model: `sonnet` (balanced cost)
 
 ---
 
@@ -271,8 +276,14 @@ Story files (`US-001.md`) track progress:
 
 ## Success Criteria
 
-- All tests written from acceptance criteria
+- **ALWAYS spawn tester agent** to write all tests from acceptance criteria
+- **ALWAYS wait for tester agent to complete** before spawning coder agent (RED → GREEN sequence)
+- **ALWAYS spawn coder agent** to implement all feature code
+- **ALWAYS wait for coder agent to complete** before marking story complete
 - All tests passing after implementation
 - Story files updated with progress
 - Files modified tracked for PM
 - Production verification passed
+- **ALWAYS verify:** All tests written by spawned tester agent before any implementation code written
+- **ALWAYS verify:** All implementation code written by spawned coder agent
+- **ALWAYS verify:** Tester agent completes before coder agent spawns (sequential, never parallel)

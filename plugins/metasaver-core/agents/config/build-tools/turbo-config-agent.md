@@ -1,7 +1,6 @@
 ---
 name: turbo-config-agent
 description: Turbo.json configuration domain expert - handles build and audit modes
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
 permissionMode: acceptEdits
 ---

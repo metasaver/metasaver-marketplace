@@ -1,7 +1,6 @@
 ---
 name: performance-engineer
 description: Performance optimization specialist using data-driven profiling and metrics-based improvements
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---

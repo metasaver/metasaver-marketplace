@@ -31,7 +31,19 @@
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-dangerous.sh",
             "timeout": 5000
           }
-        ]
+        ],
+        "_blocked_commands": [
+          "git add",
+          "git commit",
+          "git push --force",
+          "npm publish",
+          "npm unpublish",
+          "npm dist-tag",
+          "npm version",
+          "rm -rf /",
+          "DROP DATABASE"
+        ],
+        "_note": "BROKEN: PreToolUse hooks don't fire (GitHub issue #6305). Using .claude/hooks/pre-dangerous.sh workaround in each repo instead."
       },
       {
         "matcher": "Read",

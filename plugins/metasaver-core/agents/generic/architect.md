@@ -1,7 +1,6 @@
 ---
 name: architect
 description: Lightweight architecture annotator - adds brief inline "Architecture:" subsections to PRD user stories with API endpoints, key files, database models, and component names. Output 50-100 lines max in ~30 seconds.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---

@@ -1,7 +1,6 @@
 ---
 name: react-app-agent
 description: React application domain expert - handles app scaffolding, feature-based architecture, routing, and portal/admin app patterns
-model: sonnet
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

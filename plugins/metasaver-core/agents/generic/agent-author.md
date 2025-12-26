@@ -1,7 +1,6 @@
 ---
 name: agent-author
 description: Meta-level agent specialist for creating, refactoring, and validating .claude/agents/ and .claude/skills/ files. Use for ANY work on agent system documentation, NOT for user application code.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

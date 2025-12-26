@@ -1,7 +1,6 @@
 ---
 name: tailwind-agent
 description: Tailwind CSS configuration expert - validates content paths, theme extension, plugins, and CSS files
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

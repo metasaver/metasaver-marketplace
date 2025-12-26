@@ -1,7 +1,6 @@
 ---
 name: root-cause-analyst
 description: Systematic debugging specialist using evidence-based investigation and hypothesis validation
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---

@@ -1,7 +1,6 @@
 ---
 name: prisma-database-agent
 description: Prisma database package domain expert - handles package scaffolding, schema design, migrations, seeding, and type re-exports
-model: sonnet
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

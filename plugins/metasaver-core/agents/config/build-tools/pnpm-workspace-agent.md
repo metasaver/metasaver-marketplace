@@ -1,7 +1,6 @@
 ---
 name: pnpm-workspace-agent
 description: pnpm workspace configuration expert - validates workspace patterns and alphabetical ordering
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

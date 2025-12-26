@@ -1,7 +1,6 @@
 ---
 name: vite-agent
 description: Vite configuration expert - validates plugins, path aliases, build settings, and server configuration
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

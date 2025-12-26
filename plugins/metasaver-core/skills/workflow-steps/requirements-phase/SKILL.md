@@ -29,10 +29,12 @@ This way the user sees the full picture before approving.
 
 ## Workflow Steps
 
-1. **Create project folder:**
-   - Format: `docs/projects/{yyyymmdd}-{descriptive-name}/`
+1. **Check for existing project folder:**
+   - Glob for `docs/projects/*` to find existing project folders
+   - If a related folder exists (matching topic/date), ask user: "Found existing project folder {path}. Reuse this or create new?"
+   - If no match or user wants new, create: `docs/projects/{yyyymmdd}-{descriptive-name}/`
    - Example: `docs/projects/20251208-applications-feature/`
-   - BA creates this folder before drafting PRD
+   - BA creates or reuses folder before drafting PRD
 
 2. **Spawn BA agent (draft mode):**
    - Analyze prompt and context
@@ -82,6 +84,21 @@ This way the user sees the full picture before approving.
 | ≥ 45       | 3+ epics          | Multiple domains/services     |
 
 **ALWAYS create stories within an epic.** Even for simple tasks, wrap stories in at least one epic.
+
+---
+
+## Story Consolidation Rule
+
+**Create ONE story per target file.** When multiple requirements target the same file, consolidate them into a single story.
+
+**Why:** Prevents parallel agents from editing the same file simultaneously. Ensures sequential, conflict-free execution.
+
+**Example:**
+
+- Requirements: "Add agent delegation to build.md" + "Add TDD sequence to build.md"
+- Result: ONE story "US-001: Update build.md with agent delegation and TDD sequence"
+
+**Rule:** Group all requirements for a file into a single story. List all acceptance criteria together.
 
 ---
 

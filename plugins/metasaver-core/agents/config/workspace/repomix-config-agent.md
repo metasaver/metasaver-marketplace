@@ -1,7 +1,6 @@
 ---
 name: repomix-config-agent
 description: Repomix configuration (.repomix.config.json) domain expert - achieves 70% token reduction through XML compression and proper include patterns
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

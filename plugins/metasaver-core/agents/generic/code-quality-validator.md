@@ -1,7 +1,6 @@
 ---
 name: code-quality-validator
 description: Technical validation specialist that scales quality checks based on change size and verifies code builds, compiles, and passes automated checks
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

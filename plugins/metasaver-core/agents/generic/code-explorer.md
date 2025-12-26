@@ -1,7 +1,6 @@
 ---
 name: code-explorer
 description: Codebase exploration specialist using Serena, repomix, and MetaSaver MCP ecosystem for token-efficient research
-model: haiku
 tools: Read,Glob,Grep
 permissionMode: bypassPermissions
 ---

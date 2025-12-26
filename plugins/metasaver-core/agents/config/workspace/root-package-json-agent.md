@@ -1,7 +1,6 @@
 ---
 name: root-package-json-agent
 description: Root package.json domain expert - orchestrates monorepo scripts, dependencies, and workspace configuration
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

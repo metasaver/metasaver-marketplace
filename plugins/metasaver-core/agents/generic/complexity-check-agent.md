@@ -1,7 +1,6 @@
 ---
 name: complexity-check-agent
 description: Text analysis specialist for prompt complexity scoring (1-50)
-model: haiku
 tools: TodoWrite
 permissionMode: bypassPermissions
 ---

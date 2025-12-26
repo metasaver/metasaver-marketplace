@@ -1,7 +1,6 @@
 ---
 name: tester
 description: Jest testing specialist - writes unit/integration tests achieving ≥80% coverage with AAA patterns
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash,Task
 permissionMode: acceptEdits
 ---
@@ -36,6 +35,26 @@ Use Serena progressive disclosure for 93% token savings:
 3. `find_symbol(name, include_body=true)` → code you need
 
 Invoke `/skill serena-code-reading` for detailed patterns.
+
+## Direct Imports in Tests
+
+Import test subjects and mocks directly from source files for optimal treeshaking and consistency:
+
+```typescript
+// Import test subject from source file directly
+import { validateUser } from "#/users/validation.js";
+import { AuthService } from "#/services/auth.js";
+
+// Import types from source files
+import type { User } from "#/users/types.js";
+import type { AuthConfig } from "#/config/auth.js";
+
+// Import mocks from mock files directly
+import { createMockUser } from "#/tests/mocks/user.mock.js";
+import { mockPrisma } from "#/tests/mocks/prisma.mock.js";
+```
+
+This pattern enables bundler treeshaking in test builds, makes test dependencies explicit and traceable, and matches production code import patterns.
 
 ## Build Mode
 
@@ -100,6 +119,7 @@ workspace/
 10. **Test Fixtures** - Share common test data (valid/invalid cases)
 11. **Coverage Metrics** - 80% overall, 100% for critical paths
 12. **Security Testing** - Verify auth, authorization, input validation
+13. **Use Direct Imports** - Import test subjects from source files directly with `#/` paths for consistency with production code
 
 ## Memory Coordination
 

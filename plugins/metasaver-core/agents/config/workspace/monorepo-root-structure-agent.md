@@ -1,7 +1,6 @@
 ---
 name: monorepo-root-structure-agent
 description: Monorepo root structure expert - detects unexpected files and validates directory organization
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

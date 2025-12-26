@@ -1,7 +1,6 @@
 ---
 name: contracts-agent
 description: Contracts package domain expert - handles Zod validation schemas, TypeScript type re-exports, barrel patterns, and API request/response contracts
-model: sonnet
 tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---

@@ -1,7 +1,6 @@
 ---
 name: scripts-agent
 description: Scripts directory (/scripts) domain expert - creates and audits utility scripts with cross-platform support
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

@@ -1,7 +1,6 @@
 ---
 name: dockerignore-agent
 description: Docker ignore (.dockerignore) domain expert - handles build and audit modes
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
 permissionMode: acceptEdits
 ---

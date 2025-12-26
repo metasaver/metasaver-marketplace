@@ -33,7 +33,7 @@ Spawn scope-check agent to identify target and reference repositories.
 
 **See:** `/skill requirements-phase`
 
-BA performs DEEP exploration with many HITL questions to understand vague requirements. Uses opus model for thorough investigation.
+BA performs DEEP exploration with many HITL questions to understand vague requirements.
 
 **ALWAYS uses sequential-thinking MCP tool** to structure analysis.
 
@@ -126,7 +126,7 @@ docs/projects/{yyyymmdd}-{name}/
 ```bash
 /architect "need user authentication somehow"
 → P1: scope=[current repo]
-→ P2: BA explores (opus): OAuth? JWT? Session? User base? Many questions
+→ P2: BA explores: OAuth? JWT? Session? User base? Many questions
 → P3: Vibe check passes
 → P4: Innovate: passwordless auth, SSO, MFA - user selects
 → P5: Architect validates, PM plans waves
@@ -158,7 +158,7 @@ docs/projects/{yyyymmdd}-{name}/
 
 1. ALWAYS run Analysis phase first (scope-check only, NO complexity-check)
 2. ALWAYS follow FULL PATH workflow (no fast path for /architect)
-3. BA must use opus model for deep exploration
+3. BA must perform deep exploration
 4. BA must use sequential-thinking MCP tool for requirements analysis
 5. BA must ask many questions to understand vague requirements
 6. ALWAYS run Vibe Check on PRD (quality gate before innovation)

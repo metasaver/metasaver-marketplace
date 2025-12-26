@@ -1,7 +1,6 @@
 ---
 name: vscode-agent
 description: VS Code settings domain expert - creates and audits .vscode/settings.json with standard workspace configuration
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

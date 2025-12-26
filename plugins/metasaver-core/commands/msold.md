@@ -33,7 +33,7 @@ Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
 ### Score ≤4: Agent Check (Direct)
 
 ```
-Spawn agent: subagent_type="general-purpose", model="haiku"
+Spawn agent: subagent_type="general-purpose"
   Prompt: "Execute /skill agent-check on: {USER_PROMPT}. Return ONLY: agent: <name> or agent: none"
 ```
 
@@ -113,12 +113,12 @@ Workers read their assigned story file. PM tracks status in story files.
 
 ## Model Selection
 
-| Complexity | BA/Architect | Workers | Thinking   |
-| ---------- | ------------ | ------- | ---------- |
-| ≤4         | -            | haiku   | none       |
-| 5-14       | sonnet       | sonnet  | none       |
-| 15-29      | sonnet       | sonnet  | think      |
-| ≥30        | opus         | sonnet  | ultrathink |
+| Complexity | Thinking   |
+| ---------- | ---------- |
+| ≤4         | none       |
+| 5-14       | none       |
+| 15-29      | think      |
+| ≥30        | ultrathink |
 
 ---
 
@@ -164,5 +164,4 @@ Workers read their assigned story file. PM tracks status in story files.
 6. Score ≥15: Full workflow with HITL Requirements (Q&A only), Design, Plan Approval
 7. Score ≥30: Include Innovate phase (ask user, hard stop)
 8. Plan Approval happens AFTER design—user sees PRD + stories + plan together
-9. Select model by complexity
-10. If files modified, spawn agent: `subagent_type="general-purpose", model="haiku"` with prompt "Execute /skill repomix-cache-refresh"
+9. If files modified, spawn agent: `subagent_type="general-purpose"` with prompt "Execute /skill repomix-cache-refresh"

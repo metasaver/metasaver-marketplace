@@ -1,7 +1,6 @@
 ---
 name: scope-check-agent
 description: Text analysis specialist for repository and file scope detection. Supports audit mode (repos + files) and build mode (targets + references).
-model: haiku
 tools: TodoWrite
 permissionMode: bypassPermissions
 ---

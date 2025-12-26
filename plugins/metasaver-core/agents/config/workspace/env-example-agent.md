@@ -1,7 +1,6 @@
 ---
 name: env-example-agent
 description: Environment variable specialist - enforces SINGLE OWNERSHIP rule and 5-standard distributed .env.example pattern
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

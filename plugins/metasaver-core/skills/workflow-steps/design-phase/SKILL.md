@@ -88,15 +88,6 @@ US-005: Frontend              → 1 agent
 
 ---
 
-## Model Selection
-
-| Complexity | Architect | PM     |
-| ---------- | --------- | ------ |
-| 15-29      | sonnet    | sonnet |
-| ≥30        | opus      | sonnet |
-
----
-
 ## Architecture Annotation Example
 
 **Story File (before): `user-stories/US-003-user-registration.md`**

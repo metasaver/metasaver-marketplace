@@ -1,7 +1,6 @@
 ---
 name: commitlint-agent
 description: Commit message validation expert for commitlint.config.js and Copilot instructions. Use when creating or auditing conventional commit standards.
-model: haiku
 tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
 permissionMode: acceptEdits
 ---

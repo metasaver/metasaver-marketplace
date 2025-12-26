@@ -1,7 +1,6 @@
 ---
 name: nvmrc-agent
 description: Node version specialist - enforces 3 standards for .nvmrc LTS version specification
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

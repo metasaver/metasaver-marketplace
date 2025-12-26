@@ -1,7 +1,6 @@
 ---
 name: typescript-configuration-agent
 description: TypeScript configuration domain expert - creates and audits tsconfig.json variants with monorepo support
-model: haiku
 tools: Read,Write,Edit,Glob,Grep
 permissionMode: acceptEdits
 ---

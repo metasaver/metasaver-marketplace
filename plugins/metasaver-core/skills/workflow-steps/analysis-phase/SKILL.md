@@ -92,12 +92,12 @@ See individual skill files for detailed algorithms and examples.
 
 ## Post-Analysis Routing
 
-| Complexity | Route                           | Human Validation |
-| ---------- | ------------------------------- | ---------------- |
-| ≤4         | Direct Claude                   | No               |
-| 5-14       | Quick workflow                  | No               |
-| 15-29      | Full workflow (sonnet)          | Yes              |
-| ≥30        | Full workflow (opus) + innovate | Yes              |
+| Complexity | Route                    | Human Validation |
+| ---------- | ------------------------ | ---------------- |
+| ≤4         | Direct Claude            | No               |
+| 5-14       | Quick workflow           | No               |
+| 15-29      | Full workflow            | Yes              |
+| ≥30        | Full workflow + innovate | Yes              |
 
 ---
 

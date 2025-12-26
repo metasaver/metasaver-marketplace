@@ -160,15 +160,6 @@ description: Takes user stories and enriches them with implementation details, p
 
 ---
 
-## Model Selection
-
-| Complexity | Architect |
-| ---------- | --------- |
-| 15-29      | sonnet    |
-| ≥30        | opus      |
-
----
-
 ## Key Guidelines
 
 **1. Pattern Discovery:**
