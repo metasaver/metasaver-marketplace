@@ -45,12 +45,12 @@ After Phase 1 Analysis, route based on complexity score:
 **FAST PATH (complexity < 15):**
 
 - Skip Requirements, Planning, Approval, template-update
-- Proceed to Phase 5 Investigation → Phase 6 Resolution → Phase 7 Remediation → Phase 8 Report
+- Proceed to Phase 5 Investigation → Phase 6 Resolution → Phase 7 Remediation → Phase 8 Workflow Postmortem → Phase 9 Report
 
 **FULL PATH (complexity ≥ 15):**
 
 - Run all phases with HITL gates
-- Proceed to Phase 2 Requirements → Phase 3 Planning → Phase 4 Approval → Phase 5 Investigation → Phase 6 Resolution → Phase 7 Remediation → Phase 8 Report
+- Proceed to Phase 2 Requirements → Phase 3 Planning → Phase 4 Approval → Phase 5 Investigation → Phase 6 Resolution → Phase 7 Remediation → Phase 8 Workflow Postmortem → Phase 9 Report
 
 ---
 
@@ -98,7 +98,7 @@ Output: Approved PRD + execution plan
 
 ## Phase 5: Investigation (READ-ONLY)
 
-**See:** `/skill audit-investigation`
+**See:** `/skill audit-investigation`, `/skill workflow-postmortem`
 
 Spawn config agents in waves to investigate discrepancies:
 
@@ -109,7 +109,14 @@ Spawn config agents in waves to investigate discrepancies:
    - Each agent compares field-by-field or line-by-line
    - Each agent reports discrepancies with line numbers, expected/actual values, severity
 
-2. **Aggregate results:**
+2. **Wave Checkpoint Flow (FULL PATH, multi-wave):**
+   - Wave N agents complete their investigations
+   - **Quick log** - `/skill workflow-postmortem mode=log` (30 seconds max, append obvious mistakes)
+   - **Compact context** - Run `/compact` to manage context window
+   - **HITL checkpoint** - Brief wave summary to user
+   - Proceed to Wave N+1
+
+3. **Aggregate results:**
    - Collect all discrepancy reports
    - Sort by severity (critical → warning → info)
    - Group by repo/file
@@ -173,17 +180,28 @@ Output: Fixes applied, templates updated (if needed), all AC verified (FULL PATH
 
 ---
 
-## Phase 8: Final Report
+## Phase 8: Final Workflow Postmortem
+
+**See:** `/skill workflow-postmortem mode=summary`
+
+Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads the accumulated wave logs from `docs/projects/{project}/post-mortem.md` and presents a summary to the user.
+
+**Output:** Summary of issues logged across waves (count by category, patterns identified), appended to post-mortem.md and included in final report.
+
+---
+
+## Phase 9: Final Report
 
 **See:** `/skill report-phase`
 
-BA consolidates audit results:
+BA consolidates audit results (including workflow postmortem):
 
 1. **Executive Summary:** X files audited, Y discrepancies found, Z fixes applied
 2. **Actions Taken:** Table of fixes applied by agent
 3. **Template Updates:** PRs created to metasaver-marketplace (if any)
 4. **Accepted Deviations:** Files where user chose "ignore"
-5. **Verification:** Build/lint/test results
+5. **Workflow Postmortem:** Compliance score and deviation analysis
+6. **Verification:** Build/lint/test results
 
 **Output Format:**
 
@@ -223,6 +241,10 @@ Audited {N} files across {M} repositories.
 | -------------- | --------- | ---------- |
 | repo/config.js | Missing X | Not needed |
 
+## Workflow Postmortem
+
+**See:** `/skill workflow-postmortem mode=summary`
+
 ## Verification
 
 - Build: PASS
@@ -237,32 +259,41 @@ Audited {N} files across {M} repositories.
 ```bash
 # Simple single-file audit (FAST PATH)
 /audit "check eslint config"
-→ Phase 1: Analysis (complexity=8) → FAST PATH → Phase 5: Investigation → Phase 6: HITL decisions → Phase 7: Remediation → Phase 8: Report
+→ Phase 1: Analysis (complexity=8) → FAST PATH → Phase 5: Investigation → Phase 6: HITL decisions → Phase 7: Remediation → Phase 8: Final Postmortem → Phase 9: Report
 
 # Domain audit (multiple files, FULL PATH)
 /audit "audit code quality configs"
-→ Phase 1: Analysis (complexity=18) → FULL PATH → Phase 2: Requirements → Phase 3: Planning → Phase 4: Approval → Phase 5: Investigation → Phase 6: HITL decisions → Phase 7: Remediation → Phase 8: Report
+→ Phase 1: Analysis (complexity=18) → FULL PATH → Phase 2: Requirements → Phase 3: Planning → Phase 4: Approval → Phase 5: Investigation → Phase 6: HITL decisions → Phase 7: Remediation → Phase 8: Final Postmortem → Phase 9: Report
 
-# Cross-repo audit (FULL PATH)
+# Cross-repo audit with multi-wave investigation (FULL PATH)
 /audit "audit eslint in all consumer repos"
-→ Phase 1: Analysis → FULL PATH → Requirements → Planning → Approval → Investigation waves → HITL per discrepancy → Remediation → Report
+→ Analysis → FULL PATH → Requirements → Planning → Approval → Wave1 Investigation → Log → Compact → HITL → Wave2 Investigation → Log → Compact → HITL → Resolution → Remediation → Summary → Report
+
+# Wave checkpoint flow:
+Wave1: Agents investigate files → /skill workflow-postmortem mode=log → /compact → HITL checkpoint
+Wave2: Agents investigate files → /skill workflow-postmortem mode=log → /compact → HITL checkpoint
+End: /skill workflow-postmortem mode=summary → Report
 ```
 
 ---
 
 ## Enforcement
 
-1. **ALWAYS run Analysis phase first** - complexity-check, scope-check, agent-check (PARALLEL)
-2. **Complexity routing after Analysis:**
+1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
+2. **ALWAYS run Analysis phase first** - complexity-check, scope-check, agent-check (PARALLEL)
+3. **Complexity routing after Analysis:**
    - complexity < 15: FAST PATH (skip Requirements, Planning, Approval, template-update)
    - complexity ≥ 15: FULL PATH (all phases with HITL gates)
-3. **Investigation operates in READ-ONLY mode** - ALWAYS wait for user approval before making changes
-4. **Every discrepancy gets user decision via HITL** - ALWAYS get approval before applying fixes
-5. **Template updates happen FIRST** in metasaver-marketplace, then apply to other files (FULL PATH only)
-6. **ALWAYS run build/lint/test** after remediation
-7. **ALWAYS produce final report**
-8. **ALWAYS skip vibe check** - Audit is compliance-focused, not creation-focused
-9. **ALWAYS skip innovation phase** - Focus on standards compliance, not enhancements
-10. **Template updates ALWAYS create PRs** - ALWAYS require review before merging to metasaver-marketplace
+4. **Investigation operates in READ-ONLY mode** - ALWAYS wait for user approval before making changes
+5. **Every discrepancy gets user decision via HITL** - ALWAYS get approval before applying fixes
+6. **Template updates happen FIRST** in metasaver-marketplace, then apply to other files (FULL PATH only)
+7. **ALWAYS run build/lint/test** after remediation
+8. **WAVE CHECKPOINT TIMING (FULL PATH, multi-wave):** ALWAYS run `/skill workflow-postmortem mode=log` BEFORE compact at each wave checkpoint (log → compact → HITL → next wave)
+9. **POSTMORTEM LOG ACCUMULATION:** Each wave log appends to `docs/projects/{project}/post-mortem.md`, building a record across waves
+10. **ALWAYS run `/skill workflow-postmortem mode=summary`** AFTER Remediation, BEFORE Final Report - reads accumulated logs and presents summary
+11. **ALWAYS produce final report** with workflow postmortem section
+12. **ALWAYS skip vibe check** - Audit is compliance-focused, not creation-focused
+13. **ALWAYS skip innovation phase** - Focus on standards compliance, not enhancements
+14. **Template updates ALWAYS create PRs** - ALWAYS require review before merging to metasaver-marketplace
 
 ---

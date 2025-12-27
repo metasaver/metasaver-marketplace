@@ -260,14 +260,15 @@ When `/ms` resumes a workflow with `status: "error"`:
 
 ## Enforcement
 
-1. ALWAYS check for active workflow state first (Phase 1: Entry + State Check)
-2. ALWAYS use `/skill workflow-steps/state-management` to read workflow-state.json
-3. ALWAYS check for continuation cues in prompt ("continue", "proceed", "yes", "do it", "approve")
-4. ALWAYS resume active workflows at the correct step (Phase 2a: Resume Workflow)
-5. For new workflows: ALWAYS run Analysis phase (parallel: complexity, tools, scope)
-6. ALWAYS route to appropriate command based on analysis results (Phase 3: Route to Command)
-7. /ms is a ROUTER ONLY - commands handle execution, approval gates, state tracking
-8. NEVER spawn agents directly from /ms - route to commands, which spawn agents
-9. NEVER execute workflows directly from /ms - route to commands, which execute workflows
-10. Track workflow state via commands (PM updates workflow-state.json)
-11. All commands follow their own enforcement rules for execution
+1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
+2. ALWAYS check for active workflow state first (Phase 1: Entry + State Check)
+3. ALWAYS use `/skill workflow-steps/state-management` to read workflow-state.json
+4. ALWAYS check for continuation cues in prompt ("continue", "proceed", "yes", "do it", "approve")
+5. ALWAYS resume active workflows at the correct step (Phase 2a: Resume Workflow)
+6. For new workflows: ALWAYS run Analysis phase (parallel: complexity, tools, scope)
+7. ALWAYS route to appropriate command based on analysis results (Phase 3: Route to Command)
+8. /ms is a ROUTER ONLY - commands handle execution, approval gates, state tracking
+9. NEVER spawn agents directly from /ms - route to commands, which spawn agents
+10. NEVER execute workflows directly from /ms - route to commands, which execute workflows
+11. Track workflow state via commands (PM updates workflow-state.json)
+12. All commands follow their own enforcement rules for execution

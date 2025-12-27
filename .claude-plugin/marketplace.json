@@ -53,6 +53,7 @@
         "./skills/workflow-steps/ac-verification",
         "./skills/workflow-steps/validation-phase",
         "./skills/workflow-steps/report-phase",
+        "./skills/workflow-steps/workflow-postmortem",
         "./skills/workflow-steps/audit-investigation",
         "./skills/workflow-steps/audit-resolution",
         "./skills/workflow-steps/audit-remediation",

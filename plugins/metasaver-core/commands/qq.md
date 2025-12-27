@@ -49,7 +49,7 @@ Spawn MetaSaver agent in "answer mode":
 - Agent researches using tools (Serena, Grep, Read)
 - Agent analyzes codebase if needed
 - Agent formulates comprehensive answer
-- NO code changes allowed
+- Provide answers inline only (read-only mode)
 
 ---
 
@@ -89,17 +89,18 @@ Agent returns answer to user with:
 
 ## Enforcement
 
-1. ALWAYS run Analysis phase first (complexity + scope + agent check in PARALLEL)
-2. Run analysis skills in PARALLEL (single message, 3 skill calls)
-3. Complexity routing after Analysis:
+1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
+2. ALWAYS run Analysis phase first (complexity + scope + agent check in PARALLEL)
+3. Run analysis skills in PARALLEL (single message, 3 skill calls)
+4. Complexity routing after Analysis:
    - < 15: Use agent-check recommendation directly (FAST PATH)
    - > = 15: Validate agent with agent-selection skill (FULL PATH)
-4. ALWAYS validate agent exists before spawning
-5. Use `code-explorer` as fallback if agent not found
-6. Agent executes in "answer mode" - NO code changes
-7. NO PRD creation - this is quick questions only
-8. NO approval gates - direct answer
-9. NO execution planning - just answer
-10. Include file references in answers when relevant
-11. Keep answers focused and concise
-12. Respect scope boundaries from scope-check
+5. ALWAYS validate agent exists before spawning
+6. Use `code-explorer` as fallback if agent not found
+7. Agent executes in "answer mode" - read and analyze only
+8. Answer questions directly - skip PRD creation
+9. Provide immediate responses - skip approval gates
+10. Focus on answering - skip execution planning
+11. Include file references in answers when relevant
+12. Keep answers focused and concise
+13. Respect scope boundaries from scope-check

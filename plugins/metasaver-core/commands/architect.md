@@ -91,7 +91,17 @@ User approves or requests revisions. On revision: Return to Requirements phase.
 
 ---
 
-## Phase 7: Output
+## Phase 7: Workflow Postmortem
+
+**See:** `/skill workflow-postmortem mode=summary`
+
+Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads any accumulated logs from `docs/projects/{project}/post-mortem.md` and presents a summary to the user.
+
+**Output:** Summary of issues logged during workflow (count by category, patterns identified), included in final artifacts.
+
+---
+
+## Phase 8: Output
 
 **See:** `/skill save-prd`
 
@@ -131,7 +141,8 @@ docs/projects/{yyyymmdd}-{name}/
 → P4: Innovate: passwordless auth, SSO, MFA - user selects
 → P5: Architect validates, PM plans waves
 → P6: User approves
-→ P7: PRD saved → "Run /build docs/projects/20251217-user-auth/prd.md"
+→ P7: Postmortem summary
+→ P8: PRD saved → "Run /build docs/projects/20251217-user-auth/prd.md"
 
 /architect "dashboard but not sure what's on it"
 → P1: scope=[current repo]
@@ -140,7 +151,8 @@ docs/projects/{yyyymmdd}-{name}/
 → P4: Innovate: widgets, customization, export - user selects
 → P5: Architect checks existing components, PM creates phased plan
 → P6: User approves
-→ P7: PRD saved
+→ P7: Postmortem summary
+→ P8: PRD saved
 
 /architect "integrate Stripe but not sure best approach"
 → P1: scope=[current repo]
@@ -149,25 +161,28 @@ docs/projects/{yyyymmdd}-{name}/
 → P4: Innovate: checkout sessions, payment intents - user selects
 → P5: Architect checks Context7 for Stripe patterns
 → P6: User approves
-→ P7: PRD saved
+→ P7: Postmortem summary
+→ P8: PRD saved
 ```
 
 ---
 
 ## Enforcement
 
-1. ALWAYS run Analysis phase first (scope-check only, NO complexity-check)
-2. ALWAYS follow FULL PATH workflow (no fast path for /architect)
-3. BA must perform deep exploration
-4. BA must use sequential-thinking MCP tool for requirements analysis
-5. BA must ask many questions to understand vague requirements
-6. ALWAYS run Vibe Check on PRD (quality gate before innovation)
-7. ALWAYS run Innovate phase with HITL per innovation
-8. Architect must check multi-mono BEFORE enriching stories
-9. Architect must validate against Context7 docs for external libraries
-10. Planning must create execution plan with parallel waves
-11. Final HITL approval required before saving PRD
-12. Output is PRD package only - execution via `/build {prd-path}`
-13. Tell user to run `/build {prd-path}` to execute the plan
-14. If Vibe Check requires revision, return to Requirements phase to refine PRD
-15. Save all artifacts to `docs/projects/{yyyymmdd}-{name}/`
+1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
+2. ALWAYS run Analysis phase first (scope-check only, NO complexity-check)
+3. ALWAYS follow FULL PATH workflow (no fast path for /architect)
+4. BA must perform deep exploration
+5. BA must use sequential-thinking MCP tool for requirements analysis
+6. BA must ask many questions to understand vague requirements
+7. ALWAYS run Vibe Check on PRD (quality gate before innovation)
+8. ALWAYS run Innovate phase with HITL per innovation
+9. Architect must check multi-mono BEFORE enriching stories
+10. Architect must validate against Context7 docs for external libraries
+11. Planning must create execution plan with parallel waves
+12. Final HITL approval required before saving PRD
+13. Output is PRD package only - execution via `/build {prd-path}`
+14. Tell user to run `/build {prd-path}` to execute the plan
+15. If Vibe Check requires revision, return to Requirements phase to refine PRD
+16. Save all artifacts to `docs/projects/{yyyymmdd}-{name}/`
+17. ALWAYS run `/skill workflow-postmortem mode=summary` AFTER HITL approval, BEFORE Output phase

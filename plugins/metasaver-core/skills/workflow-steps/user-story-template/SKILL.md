@@ -18,6 +18,30 @@ Define consistent epic and user story file structure to:
 - Record implementation notes during execution
 - Enable PM to verify completion
 
+## Standard AC Items
+
+**Every user story MUST include the appropriate standard AC items based on story type.** BA selects the correct set during story extraction.
+
+### Code Stories
+
+Use for: features, bug fixes, API endpoints, components, services, libraries.
+
+| Required AC Item                           | Purpose                                   |
+| ------------------------------------------ | ----------------------------------------- |
+| `[ ] Unit tests cover acceptance criteria` | Ensures testable implementation           |
+| `[ ] All tests pass`                       | Verifies no regressions before completion |
+
+### Non-Code Stories
+
+Use for: documentation, configs, agents, skills, templates, workflows.
+
+| Required AC Item                           | Purpose                               |
+| ------------------------------------------ | ------------------------------------- |
+| `[ ] Follows established template/pattern` | Ensures consistency with standards    |
+| `[ ] Format validated`                     | Verifies correct structure and syntax |
+
+**Why centralized:** All workflows using this template automatically inherit these requirements, ensuring consistent quality without duplicating rules in each agent or phase.
+
 ## Hierarchy: Epics → Stories
 
 **ALWAYS create at least 1 epic.** Stories belong to epics.
@@ -150,6 +174,20 @@ As a {role}, I want to {action} so that {benefit}.
 - [ ] {criterion 1}
 - [ ] {criterion 2}
 - [ ] {criterion 3}
+
+### Standard AC Items (Required)
+
+> BA: Select ONE set based on story type. Delete the unused set.
+
+**For Code Stories** (features, bug fixes, API endpoints, components):
+
+- [ ] Unit tests cover acceptance criteria
+- [ ] All tests pass
+
+**For Non-Code Stories** (docs, configs, agents, skills, templates):
+
+- [ ] Follows established template/pattern
+- [ ] Format validated
 
 ---
 

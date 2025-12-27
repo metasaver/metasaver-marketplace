@@ -62,7 +62,17 @@ Navigate to target URL, capture baseline DOM and screenshots, execute planned in
 
 ---
 
-## Phase 4: Report
+## Phase 4: Workflow Postmortem
+
+**See:** `/skill workflow-postmortem mode=summary`
+
+Run `/skill workflow-postmortem mode=summary` to generate final summary. This checks if the debug workflow followed expected phases and logs any issues.
+
+**Output:** Summary of issues logged during workflow (if any), included in final report.
+
+---
+
+## Phase 5: Report
 
 **See:** `/skill workflow-steps/report-phase`
 
@@ -74,29 +84,31 @@ Generate complete debug report with executive summary, steps executed with scree
 
 ```bash
 /debug "check if the login form works"
-→ Plan → Setup → Execute (navigate, fill, submit, capture) → Report
+→ Plan → Setup → Execute (navigate, fill, submit, capture) → Postmortem → Report
 
 /debug "the modal isn't centered on mobile"
-→ Plan → Setup → Execute (resize, open modal, capture) → Report
+→ Plan → Setup → Execute (resize, open modal, capture) → Postmortem → Report
 
 /debug "test the checkout flow"
-→ Plan → Setup → Execute full flow with screenshots → Report
+→ Plan → Setup → Execute full flow with screenshots → Postmortem → Report
 
 /debug "there's a React error on the settings page"
-→ Plan → Setup → Execute, capture console → Report: Error details + location
+→ Plan → Setup → Execute, capture console → Postmortem → Report: Error details + location
 ```
 
 ---
 
 ## Enforcement
 
-1. Plan phase confirms URL + test steps with user (quick HITL)
-2. Verify Chrome DevTools MCP connection before execution
-3. Capture screenshots at each step
-4. Always capture console messages
-5. Always capture network requests (for debugging)
-6. Report must include all evidence
-7. Always report findings; implementation decisions belong to the user
-8. Use MCP tools exclusively for browser interactions
-9. Execute sequentially - one interaction at a time
-10. Require Chrome DevTools MCP accessibility before proceeding
+1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
+2. Plan phase confirms URL + test steps with user (quick HITL)
+3. Verify Chrome DevTools MCP connection before execution
+4. Capture screenshots at each step
+5. Always capture console messages
+6. Always capture network requests (for debugging)
+7. Report must include all evidence
+8. Always report findings; implementation decisions belong to the user
+9. Use MCP tools exclusively for browser interactions
+10. Execute sequentially - one interaction at a time
+11. Require Chrome DevTools MCP accessibility before proceeding
+12. ALWAYS run `/skill workflow-postmortem mode=summary` AFTER Execution, BEFORE Report phase
