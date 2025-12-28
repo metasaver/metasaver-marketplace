@@ -35,7 +35,7 @@ description: Extracts user stories from PRD, adds architecture annotations, and 
   - Save updated story file
 - Optionally create `architecture-notes.md` for complex cross-cutting concerns
 - Total output: 50-100 lines max (30 seconds of work)
-- Model selection: complexity ≥30 → Opus, else Sonnet
+- Complexity ≥30 → deeper analysis mode
 - **DO:** Keep annotations inline in story files; avoid separate architecture documents, ADRs, detailed code, or component diagrams
 
 **3. Spawn project-manager agent**
@@ -46,7 +46,7 @@ description: Extracts user stories from PRD, adds architecture annotations, and 
 - Organize into parallel waves (max 10 agents/wave)
 - Identify dependencies between tasks based on story dependencies
 - Output to `execution-plan.md` in project folder
-- Model: Sonnet
+- Standard analysis mode
 
 ---
 

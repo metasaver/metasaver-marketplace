@@ -340,18 +340,16 @@ flowchart TB
 
 ## 9. Quick Reference
 
-| Phase | Skill                       | Agent              | Model  |
-| ----- | --------------------------- | ------------------ | ------ |
-| 1     | `/skill scope-check`        | scope-check-agent  | sonnet |
-| 2     | `/skill requirements-phase` | business-analyst   | opus   |
-| 3     | `/skill vibe-check`         | (MCP tool)         | -      |
-| 4     | `/skill innovate-phase`     | innovation-advisor | opus   |
-| 5     | `/skill architect-phase`    | architect          | sonnet |
-| 5     | `/skill planning-phase`     | project-manager    | sonnet |
-| 6     | `/skill hitl-approval`      | - (HITL)           | -      |
-| 7     | `/skill save-prd`           | -                  | -      |
-
-**Note:** /architect uses opus for BA exploration and innovation because user doesn't know what they want.
+| Phase | Skill                       | Agent              |
+| ----- | --------------------------- | ------------------ |
+| 1     | `/skill scope-check`        | scope-check-agent  |
+| 2     | `/skill requirements-phase` | business-analyst   |
+| 3     | `/skill vibe-check`         | (MCP tool)         |
+| 4     | `/skill innovate-phase`     | innovation-advisor |
+| 5     | `/skill architect-phase`    | architect          |
+| 5     | `/skill planning-phase`     | project-manager    |
+| 6     | `/skill hitl-approval`      | - (HITL)           |
+| 7     | `/skill save-prd`           | -                  |
 
 ---
 
@@ -422,7 +420,6 @@ flowchart TB
 | **BA**         | Deep exploration         | Clarify details          |
 | **Vibe Check** | YES                      | NO                       |
 | **Innovate**   | ALWAYS                   | NEVER                    |
-| **Model**      | opus for BA              | sonnet for BA            |
 | **Output**     | PRD                      | Code                     |
 | **Execution**  | NO                       | YES                      |
 

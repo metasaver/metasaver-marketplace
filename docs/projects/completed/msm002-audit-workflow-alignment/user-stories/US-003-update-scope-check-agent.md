@@ -35,7 +35,7 @@ As a scope-check agent, I need to update my description and output format refere
 ### Verify No Breaking Changes
 
 - [ ] Ensure agent still invokes `/skill scope-check` correctly
-- [ ] Ensure agent metadata (model: haiku, tools: TodoWrite, permissionMode: bypassPermissions) unchanged
+- [ ] Ensure agent metadata (tools: TodoWrite, permissionMode: bypassPermissions) unchanged
 - [ ] Ensure "How to Execute" section remains accurate
 
 ---
@@ -56,7 +56,6 @@ This is a lightweight update to align agent documentation with skill changes. Th
 **Current Structure (Keep):**
 
 - name: scope-check-agent
-- model: haiku
 - tools: TodoWrite
 - permissionMode: bypassPermissions
 

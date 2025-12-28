@@ -269,17 +269,7 @@ Location: `docs/projects/{name}/workflow-state.json`
 
 ---
 
-## 4. Model Selection
-
-| Complexity | BA     | Workers |
-| ---------- | ------ | ------- |
-| 1-14       | sonnet | sonnet  |
-| 15-29      | sonnet | sonnet  |
-| 30+        | opus   | sonnet  |
-
----
-
-## 5. Examples
+## 4. Examples
 
 ```bash
 # New build task

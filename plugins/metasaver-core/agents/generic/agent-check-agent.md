@@ -25,3 +25,27 @@ Invoke the `agent-check` skill and return its output.
 
 **Input:** The audit targets and scope from scope-check analysis
 **Output:** `agents: string[]` - List of agent names needed (e.g., `["eslint-agent", "typescript-agent", "react-component-agent"]`)
+
+---
+
+## Enforcement
+
+**CRITICAL:** Your response MUST be ONLY the structured output. No prose, no explanation, no questions.
+
+**Required format:**
+
+```
+agents: ["eslint-agent", "turbo-config-agent", "vite-agent"]
+```
+
+or if no specific agents needed:
+
+```
+agents: []
+```
+
+**NOT allowed:**
+
+- "The following agents are needed..." ❌
+- "Based on the scope..." ❌
+- Any text other than `agents: [...]` ❌

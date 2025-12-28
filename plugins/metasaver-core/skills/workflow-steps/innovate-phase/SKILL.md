@@ -22,7 +22,7 @@ description: Analyze PRD for innovation opportunities, present each with HITL se
 | **PRD State**  | Already exists (from req) | Written during innovate     |
 | **HITL Stop**  | Always proceeds (no ask)  | Asks user before starting   |
 | **Purpose**    | Planning & exploration    | Execution optimization      |
-| **Model**      | Opus (deep analysis)      | Sonnet                      |
+| **Depth**      | Deep analysis required    | Standard analysis           |
 
 ---
 
@@ -147,4 +147,4 @@ Innovation Phase Complete
 - HITL per innovation (user decides individually)
 - More Details loop available (full explanation before deciding)
 - Updates PRD in place (selected innovations added to existing file)
-- Uses Opus model (deep analysis requires higher reasoning)
+- Deep analysis mode (higher reasoning required)

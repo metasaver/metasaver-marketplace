@@ -235,51 +235,6 @@ Complete template libraries for configuration agents:
 - `/ms` - MetaSaver intelligent command router (complexity scoring, automatic agent spawning)
 - `/ss` - Screenshot command for processing saved screenshots with instructions
 
-## Intelligent Model Selection
-
-MetaSaver commands automatically select the optimal Claude model based on task complexity, delivering 60-90% cost savings while maintaining quality.
-
-**Model Selection Strategy:**
-
-- **Haiku** (Score ≤4): Simple fixes/explanations only (fix, debug, explain, config audits)
-- **Sonnet** (Score 5-29): All implementation work - create, build, implement, refactor (default)
-- **Opus** (Score ≥30): Ultra-complex architecture, system-wide changes (rare, <5% usage)
-
-**Examples:**
-
-```bash
-# Haiku - Simple fixes/audits only
-/ms fix TypeScript error in service
-/audit turbo.json
-→ Quick fixes, config audits (score ≤4)
-
-# Sonnet - All implementation work (default)
-/build simple REST API endpoint
-/ms implement user authentication
-/build JWT auth service with tests
-→ backend-dev, unit-test-agent (sonnet) (score 5-29)
-
-# Opus - Ultra-complex architecture (rare)
-/build multi-tenant SaaS architecture
-→ BA, Architect (opus) + Workers (sonnet) (score ≥30)
-```
-
-**Cost Optimization:**
-
-- Config agents (28 total): Always haiku (score ≤4) - 10-20x cheaper than opus
-- Domain agents (11 total): Always sonnet (score 5+) - all implementation work
-- Generic agents (15 total): Sonnet (default) or Opus (ultra-complex only)
-
-Full monorepo audit (28 config agents):
-
-- ❌ All Opus: 390x cost
-- ❌ All Sonnet: 78x cost
-- ✅ Haiku configs + Sonnet orchestration: 35x cost (91% savings vs opus)
-
-**Key Insight:** Haiku is NOT for implementation (create, build, implement). Those need Sonnet's reasoning. Haiku only for truly simple operations (fix, debug, explain, config checks).
-
-**See:** [`plugins/metasaver-core/MODEL-SELECTION.md`](plugins/metasaver-core/MODEL-SELECTION.md) for detailed model selection guide.
-
 ## MCP Server Configuration
 
 The plugin includes `.mcp.json` configuration for recommended MCP servers:
@@ -390,13 +345,6 @@ Marketplace manifest: MIT License
 Individual plugins: See respective plugin repositories for license information.
 
 ## Version History
-
-### v1.1.0 (2025-01-19)
-
-- Added intelligent model selection (haiku/sonnet/opus)
-- 60-90% cost savings through automatic model routing
-- Updated all commands (/ms, /build, /audit) with model selection logic
-- Added MODEL-SELECTION.md comprehensive guide
 
 ### v1.0.0 (2025-01-18)
 

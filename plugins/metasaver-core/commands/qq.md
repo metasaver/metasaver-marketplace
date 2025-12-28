@@ -19,7 +19,7 @@ When /qq is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. Que
 
 ## Phase 1: Analysis (PARALLEL)
 
-**See:** `/skill complexity-check`, `/skill scope-check`, `/skill agent-check`
+**Follow:** `/skill complexity-check`, `/skill scope-check`, `/skill agent-check`
 
 Spawn 3 agents in parallel to execute analysis skills.
 Collect: `complexity_score`, `scope` (with `targets` and `references`), `recommended_agent`
@@ -33,7 +33,7 @@ Collect: `complexity_score`, `scope` (with `targets` and `references`), `recomme
 - **If complexity < 15**: SKIP to Phase 3 (use agent from agent-check directly)
 - **If complexity >= 15**: Execute agent validation
 
-**See:** `/skill agent-selection`
+**Follow:** `/skill agent-selection`
 
 Validate recommended agent exists in MetaSaver agent pool. Fallback to `code-explorer` if agent not found.
 
@@ -41,7 +41,7 @@ Validate recommended agent exists in MetaSaver agent pool. Fallback to `code-exp
 
 ## Phase 3: Question Execution
 
-**See:** Selected agent from Phase 1 or Phase 2
+**Follow:** Selected agent from Phase 1 or Phase 2
 
 Spawn MetaSaver agent in "answer mode":
 

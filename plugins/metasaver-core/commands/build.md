@@ -21,7 +21,7 @@ When /build is invoked, ALWAYS proceed to Phase 1 regardless of prompt content.
 
 ## Phase 1: Analysis (PARALLEL)
 
-**See:** `/skill complexity-check`, `/skill scope-check`
+**Follow:** `/skill complexity-check`, `/skill scope-check`
 
 Spawn 2 agents in parallel to execute complexity-check and scope-check skills. Use scope-check agent results directly. Proceed with identified targets immediately.
 
@@ -36,7 +36,7 @@ Spawn 2 agents in parallel to execute complexity-check and scope-check skills. U
 
 ## Phase 2: Requirements
 
-**See:** `/skill requirements-phase`
+**Follow:** `/skill requirements-phase`
 
 BA creates PRD and user stories with acceptance criteria through HITL clarification loop. Structure stories around features, each with tester-first execution. Each story = tester agent writes tests, then coder agent implements.
 
@@ -50,7 +50,7 @@ After incorporating user feedback into PRD, re-present the full summary and use 
 
 ## Phase 3: Design
 
-**See:** `/skill architect-phase` → `/skill planning-phase`
+**Follow:** `/skill architect-phase` → `/skill planning-phase`
 
 Architect enriches stories with implementation details, PM creates execution plan with parallel waves.
 
@@ -60,7 +60,7 @@ Architect enriches stories with implementation details, PM creates execution pla
 
 ## Phase 4: Approval (HITL)
 
-**See:** `/skill hitl-approval`
+**Follow:** `/skill hitl-approval`
 
 **Single approval gate** - User reviews PRD, enriched stories, and execution plan. Use AskUserQuestion tool for all user questions. Present structured options with clear descriptions. After approval, execution proceeds continuously.
 
@@ -78,7 +78,7 @@ After approval, waves execute with postmortem-then-compact between waves:
 
 ## Phase 5: Execution
 
-**See:** `/skill tdd-execution`, `/skill workflow-postmortem`
+**Follow:** `/skill tdd-execution`, `/skill workflow-postmortem`
 
 ALWAYS spawn agents for all implementation work. Paired TDD structure per story: spawn tester agent to write tests BEFORE spawning coder agent for implementation. PM spawns workers per wave, updates story status.
 
@@ -96,7 +96,7 @@ ALWAYS spawn agents for all implementation work. Paired TDD structure per story:
 
 ## Phase 6: Validation
 
-**See:** `/skill ac-verification`, `/skill production-check`
+**Follow:** `/skill ac-verification`, `/skill production-check`
 
 1. Verify all acceptance criteria met
 2. Run build/lint/test (pnpm build, pnpm lint, pnpm test)
@@ -107,7 +107,7 @@ ALWAYS spawn agents for all implementation work. Paired TDD structure per story:
 
 ## Phase 7: Standards Audit
 
-**See:** `/skill structure-check`, `/skill dry-check`, `/skill config-audit`
+**Follow:** `/skill structure-check`, `/skill dry-check`, `/skill config-audit`
 
 **Three checks (PARALLEL):**
 
@@ -123,7 +123,7 @@ ALWAYS spawn agents for all implementation work. Paired TDD structure per story:
 
 ## Phase 8: Final Workflow Postmortem
 
-**See:** `/skill workflow-postmortem mode=summary`
+**Follow:** `/skill workflow-postmortem mode=summary`
 
 Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads the accumulated wave logs from `docs/projects/{project}/post-mortem.md` and presents a summary to the user.
 
@@ -133,7 +133,7 @@ Run `/skill workflow-postmortem mode=summary` to generate final summary. This re
 
 ## Phase 9: Report
 
-**See:** `/skill report-phase`
+**Follow:** `/skill report-phase`
 
 BA + PM produce final build report with summary, files modified, tests added, standards audit results, workflow postmortem, and next steps.
 

@@ -25,3 +25,27 @@ Invoke the `tool-check` skill and return its output.
 
 **Input:** The user prompt provided to you
 **Output:** `tools: ["tool1", "tool2"]` or `tools: []`
+
+---
+
+## Enforcement
+
+**CRITICAL:** Your response MUST be ONLY the structured output. No prose, no explanation, no questions.
+
+**Required format:**
+
+```
+tools: ["serena", "Context7"]
+```
+
+or if no tools needed:
+
+```
+tools: []
+```
+
+**NOT allowed:**
+
+- "The following tools are needed..." ❌
+- "Based on the prompt..." ❌
+- Any text other than `tools: [...]` ❌

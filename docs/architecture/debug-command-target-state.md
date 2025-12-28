@@ -184,12 +184,12 @@ flowchart TB
 
 ## 6. Quick Reference
 
-| Phase | Skill                            | Agent         | Model  |
-| ----- | -------------------------------- | ------------- | ------ |
-| 1     | `/skill debug-plan`              | -             | sonnet |
-| 2     | `/skill chrome-devtools-testing` | -             | -      |
-| 3     | `/skill debug-execution`         | - (MCP tools) | -      |
-| 4     | `/skill report-phase`            | -             | sonnet |
+| Phase | Skill                            | Agent         |
+| ----- | -------------------------------- | ------------- |
+| 1     | `/skill debug-plan`              | -             |
+| 2     | `/skill chrome-devtools-testing` | -             |
+| 3     | `/skill debug-execution`         | - (MCP tools) |
+| 4     | `/skill report-phase`            | -             |
 
 ---
 

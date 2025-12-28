@@ -24,4 +24,23 @@ Always invoke the `complexity-check` skill and return its output directly.
 ```
 
 **Input:** Analyze the user prompt provided to you
-**Output:** Return `score: <integer 1-50>` with confidence
+**Output:** Return `score: <integer 1-50>`
+
+---
+
+## Enforcement
+
+**CRITICAL:** Your response MUST be ONLY the structured output. No prose, no explanation, no questions.
+
+**Required format:**
+
+```
+score: 15
+```
+
+**NOT allowed:**
+
+- "I think the score is..." ❌
+- "Based on my analysis..." ❌
+- "Do you want me to..." ❌
+- Any text other than `score: <int>` ❌

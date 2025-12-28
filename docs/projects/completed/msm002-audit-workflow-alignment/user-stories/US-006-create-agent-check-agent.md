@@ -21,7 +21,6 @@ As a new agent, I need to invoke the agent-check skill and return the list of ag
 - [ ] Add frontmatter:
   - name: agent-check-agent
   - description: Mapping specialist that identifies which config agents are needed for audit
-  - model: haiku
   - tools: TodoWrite
   - permissionMode: bypassPermissions
 
@@ -56,7 +55,7 @@ As a new agent, I need to invoke the agent-check skill and return the list of ag
 - [ ] Runs in Phase 1 Analysis (parallel with scope-check-agent)
 - [ ] Receives scope-check output via command orchestration
 - [ ] Output passed to Requirements phase for story creation
-- [ ] Fast execution (haiku model, text analysis only)
+- [ ] Fast execution (text analysis only)
 
 ---
 
@@ -74,7 +73,7 @@ As a new agent, I need to invoke the agent-check skill and return the list of ag
 This is a lightweight wrapper agent similar to scope-check-agent:
 
 - Invokes a skill (doesn't implement logic directly)
-- Fast execution (haiku model)
+- Fast execution
 - Text analysis only (no file operations)
 - Returns structured output for command to consume
 

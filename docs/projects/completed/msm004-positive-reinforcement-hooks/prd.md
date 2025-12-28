@@ -2,7 +2,7 @@
 
 **Request:** Implement hook enforcement system for MetaSaver workflows with positive framing guidance
 **Type:** Full - Major workflow enhancement with plugin-wide refactoring
-**Complexity:** 32 (FULL PATH - requires Opus for requirements)
+**Complexity:** 32 (FULL PATH)
 **Date:** 2025-12-19
 
 ---

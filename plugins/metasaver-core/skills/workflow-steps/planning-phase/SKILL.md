@@ -38,7 +38,7 @@ description: Take enriched user stories and create execution plan with waves for
   - Components → react-component-agent
   - Testing → unit-test, integration-test, e2e-test-agent
 - Output to `execution-plan.md` in project folder
-- Model: Sonnet
+- Standard analysis mode
 
 ---
 

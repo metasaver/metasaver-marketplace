@@ -19,7 +19,7 @@ When /audit is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. 
 
 ## Phase 1: Analysis (PARALLEL)
 
-**See:** `/skill complexity-check`, `/skill scope-check`, `/skill agent-check`
+**Follow:** `/skill complexity-check`, `/skill scope-check`, `/skill agent-check`
 
 Spawn 3 skills in PARALLEL (single message with 3 invocations):
 
@@ -56,7 +56,7 @@ After Phase 1 Analysis, route based on complexity score:
 
 ## Phase 2: Requirements (FULL PATH only)
 
-**See:** `/skill requirements-phase`
+**Follow:** `/skill requirements-phase`
 
 BA investigates codebase and creates requirements:
 
@@ -71,7 +71,7 @@ Output: PRD + user stories ready for planning
 
 ## Phase 3: Planning (FULL PATH only)
 
-**See:** `/skill architect-phase`, `/skill planning-phase`
+**Follow:** `/skill architect-phase`, `/skill planning-phase`
 
 Architect enriches stories, PM batches agents into execution waves:
 
@@ -84,7 +84,7 @@ Output: Enriched stories + `execution_plan` with waves of (agent, file) pairs
 
 ## Phase 4: Approval (FULL PATH only)
 
-**See:** `/skill hitl-approval`
+**Follow:** `/skill hitl-approval`
 
 Present PRD + execution plan to user for approval:
 
@@ -98,7 +98,7 @@ Output: Approved PRD + execution plan
 
 ## Phase 5: Investigation (READ-ONLY)
 
-**See:** `/skill audit-investigation`, `/skill workflow-postmortem`
+**Follow:** `/skill audit-investigation`, `/skill workflow-postmortem`
 
 Spawn config agents in waves to investigate discrepancies:
 
@@ -129,7 +129,7 @@ Output: Sorted list of discrepancies
 
 ## Phase 6: Resolution (HITL)
 
-**See:** `/skill audit-resolution`
+**Follow:** `/skill audit-resolution`
 
 Present findings and get user decisions per discrepancy:
 
@@ -158,7 +158,7 @@ Output: User decisions recorded per discrepancy
 
 ## Phase 7: Remediation
 
-**See:** `/skill template-update`, `/skill audit-remediation`, `/skill ac-verification`, `/skill production-check`
+**Follow:** `/skill template-update`, `/skill audit-remediation`, `/skill ac-verification`, `/skill production-check`
 
 Apply fixes with template-first updates:
 
@@ -182,7 +182,7 @@ Output: Fixes applied, templates updated (if needed), all AC verified (FULL PATH
 
 ## Phase 8: Final Workflow Postmortem
 
-**See:** `/skill workflow-postmortem mode=summary`
+**Follow:** `/skill workflow-postmortem mode=summary`
 
 Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads the accumulated wave logs from `docs/projects/{project}/post-mortem.md` and presents a summary to the user.
 
@@ -192,7 +192,7 @@ Run `/skill workflow-postmortem mode=summary` to generate final summary. This re
 
 ## Phase 9: Final Report
 
-**See:** `/skill report-phase`
+**Follow:** `/skill report-phase`
 
 BA consolidates audit results (including workflow postmortem):
 
@@ -243,7 +243,7 @@ Audited {N} files across {M} repositories.
 
 ## Workflow Postmortem
 
-**See:** `/skill workflow-postmortem mode=summary`
+**Follow:** `/skill workflow-postmortem mode=summary`
 
 ## Verification
 

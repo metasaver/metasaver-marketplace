@@ -104,13 +104,9 @@ Spawn 2 agents in PARALLEL (single message with 2 Task tool calls):
 - If fails: report errors, agents fix, retry
 - If passes: proceed to report
 
-### Model Selection Simplification
+### Model Selection Removed
 
-Remove complexity-based routing. Use consistent model selection:
-
-- BA/Architect: sonnet
-- Config agents: haiku
-- PM: sonnet
+Model selection removed - use default model for all agents.
 
 ---
 

@@ -29,3 +29,30 @@ Invoke the `scope-check` skill and return its output.
 
 - **Build/MS Mode:** `scope: { targets: [...], references: [...] }`
 - **Audit Mode:** `scope: { repos: [...], files: [...] }`
+
+---
+
+## Enforcement
+
+**CRITICAL:** Your response MUST be ONLY the structured output. No prose, no explanation, no questions.
+
+**Required format (Build/MS mode):**
+
+```
+scope: { targets: ["/home/user/code/metasaver-com"], references: ["/home/user/code/rugby-crm"] }
+```
+
+**Required format (Audit mode):**
+
+```
+scope: { repos: ["/home/user/code/metasaver-com"], files: ["eslint.config.js"] }
+```
+
+**NOT allowed:**
+
+- "I need clarification on..." ❌
+- "Which repos do you mean?" ❌
+- "Based on my analysis..." ❌
+- Any text other than `scope: {...}` ❌
+
+**If uncertain:** Use CWD as default target. Never ask questions.

@@ -19,11 +19,12 @@ fi
 [[ -n "$COMMAND" ]] || exit 0
 
 # Check for dangerous patterns
-if echo "$COMMAND" | grep -qE '(rm\s+-rf\s+/[^a-zA-Z]|DROP\s+DATABASE|git\s+push.*--force)'; then
+# Block ALL git operations that modify history or state (except read-only commands like status, log, diff, show, branch -l)
+if echo "$COMMAND" | grep -qE '(rm\s+-rf\s+/[^a-zA-Z]|DROP\s+DATABASE|git\s+(add|commit|push|pull|rebase|reset|merge|cherry-pick|revert|checkout|switch|restore|stash|am|apply)|npm\s+(publish|unpublish|dist-tag|version))'; then
   cat >&2 << EOF
 {
   "decision": "block",
-  "reason": "⚠️  Dangerous command blocked!\n\nCommand: ${COMMAND:0:100}\n\nThis command could cause data loss. Please review carefully."
+  "reason": "⚠️  Git/dangerous command blocked!\n\nCommand: ${COMMAND:0:100}\n\nClaude is BANNED from git operations unless explicitly requested by user.\nAllowed git commands: status, log, diff, show, branch -l, fetch, reflog"
 }
 EOF
   exit 2

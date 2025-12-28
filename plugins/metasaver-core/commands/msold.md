@@ -21,7 +21,7 @@ When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. Run
 
 ## Phase 1: Analysis (PARALLEL)
 
-**See:** `/skill analysis-phase`
+**Follow:** `/skill analysis-phase`
 
 Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
 Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
@@ -66,13 +66,13 @@ Requirements (HITL Q&A) → PRD → [Innovate?] → Vibe Check → Design (extra
 
 ### Requirements Phase (HITL Q&A) - Score ≥15
 
-**See:** `/skill requirements-phase`
+**Follow:** `/skill requirements-phase`
 
 BA drafts PRD with clarification loop. No approval here—just Q&A to gather requirements.
 
 ### PRD Complete + Innovate - Score ≥15
 
-**See:** `/skill innovate-phase`
+**Follow:** `/skill innovate-phase`
 
 - Score ≥30: Ask "Want to Innovate?" (HARD STOP)
 - Score 15-29: Write PRD (proceed without Innovate phase)
@@ -83,7 +83,7 @@ Single vibe check on PRD. If issues found, route back to BA for revision.
 
 ### Design Phase - Score ≥15
 
-**See:** `/skill design-phase`
+**Follow:** `/skill design-phase`
 
 1. BA extracts user stories (following granularity guidelines)
 2. Architect annotates story files
@@ -91,23 +91,23 @@ Single vibe check on PRD. If issues found, route back to BA for revision.
 
 ### Plan Approval - Score ≥15
 
-**See:** `/skill plan-approval`
+**Follow:** `/skill plan-approval`
 
 User sees complete picture (PRD + stories + plan), then approves. This is the single approval point.
 
 ### Execution Phase
 
-**See:** `/skill execution-phase`
+**Follow:** `/skill execution-phase`
 
 Workers read their assigned story file. PM tracks status in story files.
 
 ### Validation Phase
 
-**See:** `/skill validation-phase`
+**Follow:** `/skill validation-phase`
 
 ### Report Phase - Score ≥15
 
-**See:** `/skill report-phase`
+**Follow:** `/skill report-phase`
 
 ---
 

@@ -21,7 +21,7 @@ When /architect is invoked, ALWAYS proceed to Phase 1 regardless of prompt conte
 
 ## Phase 1: Analysis
 
-**See:** `/skill analysis-phase`
+**Follow:** `/skill analysis-phase`
 
 Spawn scope-check agent to identify target and reference repositories.
 
@@ -31,7 +31,7 @@ Spawn scope-check agent to identify target and reference repositories.
 
 ## Phase 2: Requirements (Deep Exploration)
 
-**See:** `/skill requirements-phase`
+**Follow:** `/skill requirements-phase`
 
 BA performs DEEP exploration with many HITL questions to understand vague requirements.
 
@@ -43,7 +43,7 @@ Creates draft PRD + user stories based on exploration results.
 
 ## Phase 3: Vibe Check
 
-**See:** `/skill vibe-check`
+**Follow:** `/skill vibe-check`
 
 Single vibe check validates PRD coherence and requirements clarity.
 
@@ -55,7 +55,7 @@ If revision needed: Return to Requirements phase to refine PRD.
 
 ## Phase 4: Innovation
 
-**See:** `/skill innovate-phase`
+**Follow:** `/skill innovate-phase`
 
 Innovation advisor analyzes PRD for enhancement opportunities. For EACH innovation: show 1-pager, ask user (Implement/Skip/More Details). BA updates PRD with selected innovations.
 
@@ -65,17 +65,17 @@ Innovation advisor analyzes PRD for enhancement opportunities. For EACH innovati
 
 ## Phase 5: Design
 
-**See:** `/skill design-phase`
+**Follow:** `/skill design-phase`
 
 ### Step 1: Architect Annotations
 
-**See:** `/skill architect-phase`
+**Follow:** `/skill architect-phase`
 
 Architect checks multi-mono for existing solutions, validates against Context7 docs, enriches stories with implementation details.
 
 ### Step 2: Execution Planning
 
-**See:** `/skill planning-phase`
+**Follow:** `/skill planning-phase`
 
 PM reviews enriched stories, identifies dependencies, groups into execution waves, creates Gantt chart.
 
@@ -83,7 +83,7 @@ PM reviews enriched stories, identifies dependencies, groups into execution wave
 
 ## Phase 6: Human Validation (HITL)
 
-**See:** `/skill hitl-approval`
+**Follow:** `/skill hitl-approval`
 
 User reviews complete PRD package: PRD summary, enriched stories, selected innovations, execution plan.
 
@@ -93,7 +93,7 @@ User approves or requests revisions. On revision: Return to Requirements phase.
 
 ## Phase 7: Workflow Postmortem
 
-**See:** `/skill workflow-postmortem mode=summary`
+**Follow:** `/skill workflow-postmortem mode=summary`
 
 Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads any accumulated logs from `docs/projects/{project}/post-mortem.md` and presents a summary to the user.
 
@@ -103,7 +103,7 @@ Run `/skill workflow-postmortem mode=summary` to generate final summary. This re
 
 ## Phase 8: Output
 
-**See:** `/skill save-prd`
+**Follow:** `/skill save-prd`
 
 Save PRD package to `docs/projects/{yyyymmdd}-{name}/` with all artifacts.
 

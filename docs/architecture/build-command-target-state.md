@@ -404,20 +404,20 @@ flowchart TB
 
 ## 10. Quick Reference
 
-| Phase | Skill                       | Agent                  | Model  |
-| ----- | --------------------------- | ---------------------- | ------ |
-| 1     | `/skill scope-check`        | scope-check-agent      | sonnet |
-| 2     | `/skill requirements-phase` | business-analyst       | opus   |
-| 3     | `/skill architect-phase`    | architect              | sonnet |
-| 3     | `/skill planning-phase`     | project-manager        | sonnet |
-| 4     | `/skill hitl-approval`      | - (HITL)               | -      |
-| 5     | `/skill tdd-execution`      | tester + coder         | sonnet |
-| 6     | `/skill ac-verification`    | reviewer               | sonnet |
-| 6     | `/skill production-check`   | - (bash)               | -      |
-| 7     | `/skill structure-check`    | code-quality-validator | sonnet |
-| 7     | `/skill dry-check`          | code-quality-validator | sonnet |
-| 7     | `/skill config-audit`       | config/domain agents   | sonnet |
-| 8     | `/skill report-phase`       | business-analyst       | sonnet |
+| Phase | Skill                       | Agent                  |
+| ----- | --------------------------- | ---------------------- |
+| 1     | `/skill scope-check`        | scope-check-agent      |
+| 2     | `/skill requirements-phase` | business-analyst       |
+| 3     | `/skill architect-phase`    | architect              |
+| 3     | `/skill planning-phase`     | project-manager        |
+| 4     | `/skill hitl-approval`      | - (HITL)               |
+| 5     | `/skill tdd-execution`      | tester + coder         |
+| 6     | `/skill ac-verification`    | reviewer               |
+| 6     | `/skill production-check`   | - (bash)               |
+| 7     | `/skill structure-check`    | code-quality-validator |
+| 7     | `/skill dry-check`          | code-quality-validator |
+| 7     | `/skill config-audit`       | config/domain agents   |
+| 8     | `/skill report-phase`       | business-analyst       |
 
 ---
 

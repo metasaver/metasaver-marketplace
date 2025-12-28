@@ -35,7 +35,19 @@
         "_blocked_commands": [
           "git add",
           "git commit",
-          "git push --force",
+          "git push",
+          "git pull",
+          "git rebase",
+          "git reset",
+          "git merge",
+          "git cherry-pick",
+          "git revert",
+          "git checkout",
+          "git switch",
+          "git restore",
+          "git stash",
+          "git am",
+          "git apply",
           "npm publish",
           "npm unpublish",
           "npm dist-tag",
@@ -43,7 +55,7 @@
           "rm -rf /",
           "DROP DATABASE"
         ],
-        "_note": "BROKEN: PreToolUse hooks don't fire (GitHub issue #6305). Using .claude/hooks/pre-dangerous.sh workaround in each repo instead."
+        "_note": "BROKEN: PreToolUse hooks don't fire (GitHub issue #6305). Using .claude/hooks/pre-dangerous.sh workaround in each repo instead. Claude is BANNED from ALL git operations except read-only (status, log, diff, show, branch -l, fetch, reflog)."
       },
       {
         "matcher": "Read",

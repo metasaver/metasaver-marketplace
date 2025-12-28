@@ -40,7 +40,7 @@ pnpm dev --host 0.0.0.0
 
 ## Phase 1: Plan
 
-**See:** `/skill workflow-steps/debug-plan`
+**Follow:** `/skill workflow-steps/debug-plan`
 
 Parse prompt for URL/target, identify what to test, confirm with user (quick HITL), create debug steps.
 
@@ -48,7 +48,7 @@ Parse prompt for URL/target, identify what to test, confirm with user (quick HIT
 
 ## Phase 2: Setup
 
-**See:** `/skill cross-cutting/chrome-devtools-testing`
+**Follow:** `/skill cross-cutting/chrome-devtools-testing`
 
 Check Chrome DevTools MCP connection, verify Chrome is accessible, check dev server status for localhost targets, start dev server if needed (HITL).
 
@@ -56,7 +56,7 @@ Check Chrome DevTools MCP connection, verify Chrome is accessible, check dev ser
 
 ## Phase 3: Execution
 
-**See:** `/skill workflow-steps/debug-execution`
+**Follow:** `/skill workflow-steps/debug-execution`
 
 Navigate to target URL, capture baseline DOM and screenshots, execute planned interactions with MCP tools (click, fill, hover, press_key), capture state after each interaction, collect console messages and network requests, validate results.
 
@@ -64,7 +64,7 @@ Navigate to target URL, capture baseline DOM and screenshots, execute planned in
 
 ## Phase 4: Workflow Postmortem
 
-**See:** `/skill workflow-postmortem mode=summary`
+**Follow:** `/skill workflow-postmortem mode=summary`
 
 Run `/skill workflow-postmortem mode=summary` to generate final summary. This checks if the debug workflow followed expected phases and logs any issues.
 
@@ -74,7 +74,7 @@ Run `/skill workflow-postmortem mode=summary` to generate final summary. This ch
 
 ## Phase 5: Report
 
-**See:** `/skill workflow-steps/report-phase`
+**Follow:** `/skill workflow-steps/report-phase`
 
 Generate complete debug report with executive summary, steps executed with screenshots, findings (console errors, network issues, visual problems), and recommendations.
 

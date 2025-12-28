@@ -398,21 +398,21 @@ flowchart TB
 
 ## 10. Quick Reference
 
-| Phase | Skill                        | Agent                | Model  |
-| ----- | ---------------------------- | -------------------- | ------ |
-| 1     | `/skill scope-check`         | scope-check-agent    | sonnet |
-| 1     | `/skill agent-check`         | agent-check-agent    | sonnet |
-| 2     | `/skill requirements-phase`  | business-analyst     | opus   |
-| 3     | `/skill architect-phase`     | architect            | sonnet |
-| 3     | `/skill planning-phase`      | project-manager      | sonnet |
-| 4     | `/skill hitl-approval`       | - (HITL)             | -      |
-| 5     | `/skill audit-investigation` | config/domain agents | sonnet |
-| 6     | `/skill audit-resolution`    | - (HITL)             | -      |
-| 7     | `/skill template-update`     | coder                | sonnet |
-| 7     | `/skill audit-remediation`   | config/domain agents | sonnet |
-| 7     | `/skill ac-verification`     | reviewer             | sonnet |
-| 7     | `/skill production-check`    | - (bash)             | -      |
-| 8     | `/skill report-phase`        | business-analyst     | sonnet |
+| Phase | Skill                        | Agent                |
+| ----- | ---------------------------- | -------------------- |
+| 1     | `/skill scope-check`         | scope-check-agent    |
+| 1     | `/skill agent-check`         | agent-check-agent    |
+| 2     | `/skill requirements-phase`  | business-analyst     |
+| 3     | `/skill architect-phase`     | architect            |
+| 3     | `/skill planning-phase`      | project-manager      |
+| 4     | `/skill hitl-approval`       | - (HITL)             |
+| 5     | `/skill audit-investigation` | config/domain agents |
+| 6     | `/skill audit-resolution`    | - (HITL)             |
+| 7     | `/skill template-update`     | coder                |
+| 7     | `/skill audit-remediation`   | config/domain agents |
+| 7     | `/skill ac-verification`     | reviewer             |
+| 7     | `/skill production-check`    | - (bash)             |
+| 8     | `/skill report-phase`        | business-analyst     |
 
 ---
 

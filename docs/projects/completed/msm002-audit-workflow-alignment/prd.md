@@ -298,7 +298,6 @@ description: Maps detected files to appropriate config agents for audit executio
 ---
 name: agent-check-agent
 description: Mapping specialist that identifies which config agents are needed for audit
-model: haiku
 tools: TodoWrite
 permissionMode: bypassPermissions
 ---

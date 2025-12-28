@@ -40,7 +40,7 @@ description: Takes user stories and enriches them with implementation details, p
   - Create `architecture-notes.md` in project folder
   - Document shared patterns, middleware, utilities
   - Add dependency graph or integration points
-- Model selection: complexity ≥30 → Opus, else Sonnet
+- Complexity ≥30 → deeper analysis mode
 
 **3. Output enriched stories**
 

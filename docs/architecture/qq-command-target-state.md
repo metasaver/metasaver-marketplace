@@ -230,18 +230,7 @@ flowchart TB
 
 ---
 
-## 5. Model Selection
-
-| Phase           | Model                           |
-| --------------- | ------------------------------- |
-| Analysis        | haiku                           |
-| Agent Execution | sonnet (or as defined by agent) |
-
-**Note:** /qq uses lightweight models since it's just answering questions.
-
----
-
-## 6. Examples
+## 5. Examples
 
 ```bash
 # Architecture question
@@ -323,7 +312,6 @@ flowchart TB
 | **PRD**       | NO               | Maybe (≥15)          | Yes (≥15)          |
 | **Execution** | NO               | Yes                  | Yes                |
 | **Approval**  | NO               | Yes (≥15)            | Yes (≥15)          |
-| **Model**     | haiku/sonnet     | varies               | sonnet/opus        |
 
 ---
 

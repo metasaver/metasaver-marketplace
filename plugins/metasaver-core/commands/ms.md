@@ -30,7 +30,7 @@ When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content.
 
 ## Phase 1: Entry + State Check
 
-**See:** `/skill workflow-steps/state-management`
+**Follow:** `/skill workflow-steps/state-management`
 
 When /ms is invoked:
 
@@ -57,7 +57,7 @@ When /ms is invoked:
 
 ## Phase 2a: Resume Workflow
 
-**See:** `/skill workflow-steps/state-management`
+**Follow:** `/skill workflow-steps/state-management`
 
 When active workflow is detected:
 
@@ -86,7 +86,7 @@ After routing determination, proceed to execution at identified step.
 
 ## Phase 2b: New Workflow Analysis (PARALLEL)
 
-**See:** `/skill analysis-phase`
+**Follow:** `/skill analysis-phase`
 
 **MANDATORY for ALL new workflows.** Run full analysis (complexity, scope, tools) for every new workflow.
 
