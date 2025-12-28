@@ -189,7 +189,7 @@ Limit waves to ≤10 concurrent agents per wave
 Input: 5 enriched user stories with architecture notes
 
 Design Phase Output:
-  storiesFolder: docs/projects/20251208-feature/user-stories/
+  storiesFolder: docs/projects/msm008-feature/user-stories/
   storyFiles: [US-001-schema.md, US-002-contracts.md, US-003a-parser.md, US-003b-parser.md, US-004-api.md]
 
 Planning Phase:

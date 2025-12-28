@@ -33,7 +33,7 @@ This way the user sees the full picture before approving.
    - Glob for `docs/projects/*` to find existing project folders
    - If a related folder exists (matching topic/date), ask user: "Found existing project folder {path}. Reuse this or create new?"
    - If no match or user wants new, create: `docs/projects/{yyyymmdd}-{descriptive-name}/`
-   - Example: `docs/projects/20251208-applications-feature/`
+   - Example: `docs/projects/msm008-applications-feature/`
    - BA creates or reuses folder before drafting PRD
 
 2. **Spawn BA agent (draft mode):**
@@ -155,20 +155,20 @@ For each (agent, file) combination, create a user story file following this temp
 ```json
 {
   "status": "complete",
-  "projectFolder": "docs/projects/20251217-feature-xyz",
-  "prdPath": "docs/projects/20251217-feature-xyz/prd.md",
+  "projectFolder": "docs/projects/msm007-feature-xyz",
+  "prdPath": "docs/projects/msm007-feature-xyz/prd.md",
   "prdContent": "# PRD...",
   "epics": [
     {
       "id": "EPIC-001",
       "title": "User Authentication",
-      "path": "docs/projects/20251217-feature-xyz/user-stories/EPIC-001-user-auth.md",
+      "path": "docs/projects/msm007-feature-xyz/user-stories/EPIC-001-user-auth.md",
       "stories": ["US-001", "US-002", "US-003"]
     },
     {
       "id": "EPIC-002",
       "title": "Dashboard UI",
-      "path": "docs/projects/20251217-feature-xyz/user-stories/EPIC-002-dashboard.md",
+      "path": "docs/projects/msm007-feature-xyz/user-stories/EPIC-002-dashboard.md",
       "stories": ["US-004", "US-005"]
     }
   ],
@@ -178,14 +178,14 @@ For each (agent, file) combination, create a user story file following this temp
       "epic": "EPIC-001",
       "title": "Create users table",
       "agent": "prisma-database-agent",
-      "path": "docs/projects/20251217-feature-xyz/user-stories/US-001-users-table.md"
+      "path": "docs/projects/msm007-feature-xyz/user-stories/US-001-users-table.md"
     },
     {
       "id": "US-002",
       "epic": "EPIC-001",
       "title": "Add password hashing",
       "agent": "backend-worker-agent",
-      "path": "docs/projects/20251217-feature-xyz/user-stories/US-002-password-hash.md"
+      "path": "docs/projects/msm007-feature-xyz/user-stories/US-002-password-hash.md"
     }
   ],
   "clarificationsProvided": 0

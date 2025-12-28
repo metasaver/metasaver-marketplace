@@ -14,9 +14,9 @@
 
 ## Location
 
-`docs/projects/{yyyymmdd}-{name}/workflow-state.json`
+`docs/projects/{prefix}{NNN}-{name}/workflow-state.json`
 
-Example: `docs/projects/20251219-positive-reinforcement-hooks/workflow-state.json`
+Example: `docs/projects/msm004-positive-reinforcement-hooks/workflow-state.json`
 
 ## Schema
 

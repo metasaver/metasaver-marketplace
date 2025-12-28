@@ -50,19 +50,9 @@ Task: subagent_type="core-claude-plugin:generic:command-author"
 
 Use MetaSaver agents for optimal workflow tracking:
 
-| Task Type        | Recommended Approach                  |
-| ---------------- | ------------------------------------- |
-| Simple questions | Answer directly without workflow      |
-| Code tasks       | Use appropriate MetaSaver agent       |
-| Complex work     | Route through `/ms` for full workflow |
-| Config files     | Use specialized config agent          |
+**Routing:** Use `/ms` for everything - it analyzes and routes to the appropriate command.
 
-**Routing Guidance:**
-
-- **Simple questions** → Answer directly without workflow
-- **Code tasks** → Spawn appropriate agent (coder, tester, reviewer, backend-dev)
-- **Config files** → Spawn config agent (eslint-agent, vite-agent)
-- **Complex work** → Suggest `/ms`, `/build`, or `/audit` for workflow tracking
+**Questions to user:** Always use AskUserQuestion tool.
 
 **For complex multi-step work**, use `/ms {description}` to enable:
 

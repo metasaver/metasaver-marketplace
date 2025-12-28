@@ -142,7 +142,7 @@ docs/projects/{yyyymmdd}-{name}/
 → P5: Architect validates, PM plans waves
 → P6: User approves
 → P7: Postmortem summary
-→ P8: PRD saved → "Run /build docs/projects/20251217-user-auth/prd.md"
+→ P8: PRD saved → "Run /build docs/projects/msm007-user-auth/prd.md"
 
 /architect "dashboard but not sure what's on it"
 → P1: scope=[current repo]

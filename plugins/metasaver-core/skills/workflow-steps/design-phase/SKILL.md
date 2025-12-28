@@ -138,7 +138,7 @@ US-005: Frontend              → 1 agent
 
 ```json
 {
-  "storiesFolder": "docs/projects/20251208-feature/user-stories/",
+  "storiesFolder": "docs/projects/msm008-feature/user-stories/",
   "storyFiles": [
     "US-001-database-schema.md",
     "US-002-contracts-types.md",

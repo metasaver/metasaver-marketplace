@@ -165,9 +165,9 @@ Acceptance criteria covers all three requirements
 
 ## PRD Storage
 
-PRDs should be written to: `{repo}/docs/prd/prd-{YYYYMMDD-HHmmss}-{slug}.md`
+PRDs should be written to: `{repo}/docs/prd/prd-{epic}-{slug}.md`
 
-Example: `/mnt/f/code/resume-builder/docs/prd/prd-20241203-143022-monorepo-audit.md`
+Example: `/mnt/f/code/resume-builder/docs/prd/prd-msm007-monorepo-audit.md`
 
 ## Examples
 
@@ -271,7 +271,7 @@ Example: `/mnt/f/code/resume-builder/docs/prd/prd-20241203-143022-monorepo-audit
 
 ```json
 {
-  "prd_path": "/docs/prd/prd-20241203-143022-monorepo-audit.md",
+  "prd_path": "/docs/prd/prd-msm007-monorepo-audit.md",
   "results": [
     /* 25 agent results */
   ],
@@ -324,7 +324,7 @@ BA reads approved PRD and extracts user stories into individual files.
 
 ```json
 {
-  "storiesFolder": "docs/projects/20251208-feature/user-stories/",
+  "storiesFolder": "docs/projects/msm008-feature/user-stories/",
   "storyFiles": ["US-001-view-list.md", "US-002-add-item.md"],
   "dependencies": {
     "US-002": ["US-001"],

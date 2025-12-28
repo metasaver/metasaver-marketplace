@@ -1,6 +1,6 @@
 ---
 name: save-prd
-description: Save PRD artifacts to project directory after approval. Creates docs/projects/{yyyymmdd}-{name}/ with prd.md, user-stories/, execution-plan.md, innovations-selected.md, and architecture-notes.md. Use when persisting approved PRD from /architect command.
+description: Save PRD artifacts to project directory after approval. Creates docs/projects/{prefix}{NNN}-{name}/ with prd.md, user-stories/, execution-plan.md, innovations-selected.md, and architecture-notes.md. Use when persisting approved PRD from /architect command.
 ---
 
 # Save PRD Skill
@@ -16,10 +16,36 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 ## Workflow
 
-**1. Create project directory**
+**1. Detect project prefix**
 
-- Generate directory name: `docs/projects/{yyyymmdd}-{kebab-case-name}/`
-- Date format: YYYYMMDD (e.g., 20251217)
+- Check git remote origin URL: `git remote get-url origin`
+- Apply prefix mapping:
+
+| Remote Contains       | Prefix |
+| --------------------- | ------ |
+| metasaver-marketplace | msm    |
+| multi-mono            | mum    |
+| rugby-crm / commithub | chc    |
+| metasaver-com         | msc    |
+
+- Fallback: Check folder name for matches
+- Final fallback: Ask user for 3-letter prefix
+
+**2. Auto-increment epic number**
+
+- Scan both directories for existing epics:
+  - `docs/projects/`
+  - `docs/projects/completed/`
+- Extract folders matching `{prefix}NNN-*` pattern
+- Find highest number for the detected prefix
+- Increment by 1
+- Format: Zero-padded 3 digits (e.g., `007`)
+- First epic for prefix starts at `001`
+
+**3. Create project directory**
+
+- Generate directory name: `docs/projects/{prefix}{NNN}-{kebab-case-name}/`
+- Example: `docs/projects/msm007-user-authentication-api/`
 - Name derived from PRD title (lowercase, hyphens)
 - Ensure `docs/projects/` parent exists
 - Create directory structure:
@@ -32,7 +58,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
   └── architecture-notes.md
   ```
 
-**2. Save prd.md**
+**4. Save prd.md**
 
 - Write PRD content to `{project-dir}/prd.md`
 - Include all sections:
@@ -43,7 +69,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
   - Out of Scope
 - Format: Markdown with proper headings
 
-**3. Save user-stories/ directory**
+**5. Save user-stories/ directory**
 
 - Create `{project-dir}/user-stories/` subdirectory
 - For each story, write individual file:
@@ -56,7 +82,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
   - Architecture annotations (files, imports, patterns)
   - Dependencies (if any)
 
-**4. Save execution-plan.md**
+**6. Save execution-plan.md**
 
 - Write execution plan to `{project-dir}/execution-plan.md`
 - Include:
@@ -67,7 +93,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
   - Gantt-style task schedule
 - Format: Markdown with tables and lists
 
-**5. Save innovations-selected.md (conditional)**
+**7. Save innovations-selected.md (conditional)**
 
 - **Create only when:** User selected one or more innovations
 - **Omit when:** No innovations selected by user
@@ -78,7 +104,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
   - Impact on PRD (what changed)
 - Format: Markdown with bullet lists
 
-**6. Save architecture-notes.md**
+**8. Save architecture-notes.md**
 
 - Write architecture validation notes to `{project-dir}/architecture-notes.md`
 - Include:
@@ -89,40 +115,64 @@ description: Save PRD artifacts to project directory after approval. Creates doc
   - Files to create/modify
 - Format: Markdown with code blocks and file paths
 
-**7. Output final instruction**
+**9. Output final instruction**
 
 - Return absolute path to PRD
 - Tell user: `Run /build {absolute-path}/prd.md`
-- Example: `Run /build /home/user/repo/docs/projects/20251217-user-auth/prd.md`
+- Example: `Run /build /home/user/repo/docs/projects/msm007-user-auth/prd.md`
+
+---
+
+## Epic Number Detection Logic
+
+```pseudocode
+function getNextEpicNumber(prefix):
+  folders = listDirectories("docs/projects/")
+  folders += listDirectories("docs/projects/completed/")
+
+  existingNumbers = []
+  for folder in folders:
+    if folder matches pattern "{prefix}(\d{3})-.*":
+      existingNumbers.append(extractNumber(folder))
+
+  if existingNumbers is empty:
+    return "001"
+
+  maxNumber = max(existingNumbers)
+  return zeroPad(maxNumber + 1, 3)
+```
 
 ---
 
 ## File Creation Order
 
-1. Create parent directory (`docs/projects/{name}/`)
-2. Create `user-stories/` subdirectory
-3. Write `prd.md`
-4. Write each `US-{NNN}-{slug}.md` file
-5. Write `execution-plan.md`
-6. Write `innovations-selected.md` (if applicable)
-7. Write `architecture-notes.md`
-8. Output instruction to user
+1. Detect project prefix from git remote
+2. Scan for existing epic numbers
+3. Create parent directory (`docs/projects/{prefix}{NNN}-{name}/`)
+4. Create `user-stories/` subdirectory
+5. Write `prd.md`
+6. Write each `US-{NNN}-{slug}.md` file
+7. Write `execution-plan.md`
+8. Write `innovations-selected.md` (if applicable)
+9. Write `architecture-notes.md`
+10. Output instruction to user
 
 ---
 
 ## Directory Naming Rules
 
-| Input PRD Title            | Generated Directory Name            |
-| -------------------------- | ----------------------------------- |
-| "User Authentication API"  | `20251217-user-authentication-api`  |
-| "Dashboard Feature"        | `20251217-dashboard-feature`        |
-| "Stripe Integration Setup" | `20251217-stripe-integration-setup` |
+| Input PRD Title            | Project         | Generated Directory Name          |
+| -------------------------- | --------------- | --------------------------------- |
+| "User Authentication API"  | metasaver-mktpl | `msm007-user-authentication-api`  |
+| "Dashboard Feature"        | multi-mono      | `mum012-dashboard-feature`        |
+| "Stripe Integration Setup" | rugby-crm       | `chc003-stripe-integration-setup` |
 
 **Rules:**
 
-- Date prefix: Always YYYYMMDD format (e.g., 20251217)
+- Prefix: 3-letter project code (msm, mum, chc, msc)
+- Number: Auto-incremented, zero-padded to 3 digits
 - Name: Lowercase, words separated by hyphens
-- Max length: 50 characters (truncate if needed)
+- Max name length: 50 characters (truncate if needed)
 - Remove special characters except hyphens
 
 ---
@@ -145,10 +195,17 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 ## Error Handling
 
-**If directory exists:**
+**If directory with epic number exists:**
 
-- Append timestamp suffix: `{name}-{HHmmss}`
-- Example: `20251217-user-auth-143022`
+- This indicates a race condition or manual creation
+- Increment to next available number
+- Log warning about skipped number
+
+**If prefix detection fails:**
+
+- Prompt user: "Enter 3-letter project prefix (e.g., msm, mum, chc):"
+- Validate: Exactly 3 lowercase letters
+- Proceed with user-provided prefix
 
 **If parent doesn't exist:**
 
@@ -172,6 +229,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 **Calls:**
 
 - File system operations (Write tool)
+- Git operations (remote detection)
 - No agent spawning required
 
 **Next step:** User executes `/build {prd-path}`
@@ -183,27 +241,32 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 ```
 Input:
   PRD Title: "User Authentication API"
+  Project: metasaver-marketplace (detected from git remote)
+  Existing epics: msm001, msm002, msm003, msm005, msm006
   Stories: 5 enriched stories with architecture notes
   Execution Plan: 3 waves, 5 TDD pairs
   Innovations: 2 selected (passwordless auth, MFA)
   Architecture Notes: Multi-mono findings, Context7 validation
 
 Save PRD Phase (this skill):
-  1. Create directory: docs/projects/20251217-user-authentication-api/
-  2. Write prd.md (all sections)
-  3. Write user-stories/:
+  1. Detect prefix: "msm" (from git remote containing "metasaver-marketplace")
+  2. Scan docs/projects/ and docs/projects/completed/
+  3. Find highest: msm006 -> next is msm007
+  4. Create directory: docs/projects/msm007-user-authentication-api/
+  5. Write prd.md (all sections)
+  6. Write user-stories/:
      - US-001-auth-schema.md
      - US-002-auth-service.md
      - US-003-token-service.md
      - US-004-login-endpoint.md
      - US-005-logout-endpoint.md
-  4. Write execution-plan.md (3 waves, dependencies)
-  5. Write innovations-selected.md (passwordless, MFA)
-  6. Write architecture-notes.md (multi-mono, patterns)
-  7. Output: "Run /build /home/user/repo/docs/projects/20251217-user-authentication-api/prd.md"
+  7. Write execution-plan.md (3 waves, dependencies)
+  8. Write innovations-selected.md (passwordless, MFA)
+  9. Write architecture-notes.md (multi-mono, patterns)
+  10. Output: "Run /build /home/user/repo/docs/projects/msm007-user-authentication-api/prd.md"
 
 Result:
-  docs/projects/20251217-user-authentication-api/
+  docs/projects/msm007-user-authentication-api/
   ├── prd.md
   ├── user-stories/
   │   ├── US-001-auth-schema.md
@@ -224,3 +287,4 @@ Result:
 - Always run AFTER hitl-approval (user must approve before saving)
 - Output structure matches PRD specification from architect-command-target-state.md
 - **NO EXECUTION** - /architect is planning only, /build executes the PRD
+- Epic numbers provide traceable project identifiers across repositories

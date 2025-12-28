@@ -89,7 +89,7 @@ description: Analyze PRD for innovation opportunities, present each with HITL se
 ```json
 {
   "status": "complete",
-  "prdPath": "docs/projects/20251217-feature/prd.md",
+  "prdPath": "docs/projects/msm007-feature/prd.md",
   "totalInnovations": 4,
   "innovationsImplemented": [
     { "id": 1, "title": "Add OpenAPI Documentation" },

@@ -13,7 +13,7 @@ Provides consistent operations for workflow-state.json management during `/ms` w
 
 `{projectFolder}/workflow-state.json`
 
-**Example:** `docs/projects/20251219-positive-reinforcement-hooks/workflow-state.json`
+**Example:** `docs/projects/msm004-positive-reinforcement-hooks/workflow-state.json`
 
 ## Core Methods
 

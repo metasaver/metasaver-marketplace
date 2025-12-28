@@ -1,8 +1,10 @@
 # PRD: Command and Skill Restructuring
 
 **Date:** 2025-12-17
-**Status:** Draft
+**Status:** Superseded (~85% complete)
 **Author:** Claude + User
+**Superseded By:** MSM007 (tool-check cleanup remaining work)
+**Completion Notes:** Most work completed via MSM004-006. Remaining items (tool-check deletion, standards-audit creation) moved to MSM007.
 
 ---
 

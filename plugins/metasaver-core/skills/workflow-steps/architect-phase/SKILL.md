@@ -124,8 +124,8 @@ description: Takes user stories and enriches them with implementation details, p
 
 ```json
 {
-  "storiesFolder": "docs/projects/20251208-feature/user-stories/",
-  "projectFolder": "docs/projects/20251208-feature/",
+  "storiesFolder": "docs/projects/msm008-feature/user-stories/",
+  "projectFolder": "docs/projects/msm008-feature/",
   "complexity": 26,
   "scope": {
     "targets": ["/home/user/code/metasaver-com"],

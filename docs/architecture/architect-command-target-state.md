@@ -369,7 +369,7 @@ flowchart TB
 → P5: Architect validates, PM plans
 → P6: User approves
 → P7: PRD saved
-→ "Run /build docs/projects/20251217-user-auth/prd.md"
+→ "Run /build docs/projects/msm007-user-auth/prd.md"
 
 # Feature idea
 /architect "I want to add a dashboard but not sure what should be on it"

@@ -88,6 +88,8 @@ After routing determination, proceed to execution at identified step.
 
 **See:** `/skill analysis-phase`
 
+**MANDATORY for ALL new workflows.** Run full analysis (complexity, scope, tools) for every new workflow.
+
 Spawn 3 agents in parallel:
 
 - `complexity-check` → score (1-50)
@@ -260,7 +262,7 @@ When `/ms` resumes a workflow with `status: "error"`:
 
 ## Enforcement
 
-1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
+1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions. Provide context and background in response text, but invoke AskUserQuestion for the actual question.
 2. ALWAYS check for active workflow state first (Phase 1: Entry + State Check)
 3. ALWAYS use `/skill workflow-steps/state-management` to read workflow-state.json
 4. ALWAYS check for continuation cues in prompt ("continue", "proceed", "yes", "do it", "approve")

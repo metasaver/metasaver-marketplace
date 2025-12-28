@@ -55,7 +55,7 @@ This is more useful than approving just the PRD, because:
    PLAN SUMMARY
    ════════════════════════════════════════
 
-   📄 PRD: docs/projects/20251208-feature/prd.md
+   📄 PRD: docs/projects/msm008-feature/prd.md
 
    📋 User Stories (9 total):
    ├── Wave 1 (parallel): US-001, US-002
@@ -87,8 +87,8 @@ This is more useful than approving just the PRD, because:
 ```json
 {
   "status": "approved",
-  "prdPath": "docs/projects/20251208-feature/prd.md",
-  "storiesFolder": "docs/projects/20251208-feature/user-stories/",
+  "prdPath": "docs/projects/msm008-feature/prd.md",
+  "storiesFolder": "docs/projects/msm008-feature/user-stories/",
   "storyFiles": [
     "US-001-database-schema.md",
     "US-002-contracts-types.md",
@@ -100,7 +100,7 @@ This is more useful than approving just the PRD, because:
     "US-004-api-layer.md",
     "US-005-frontend.md"
   ],
-  "executionPlan": "docs/projects/20251208-feature/execution-plan.md",
+  "executionPlan": "docs/projects/msm008-feature/execution-plan.md",
   "iterations": 1
 }
 ```

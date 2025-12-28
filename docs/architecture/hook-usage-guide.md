@@ -84,4 +84,4 @@ Start your prompt with a command:
 
 - [/ms Command Target State](ms-command-target-state.md)
 - [Workflow State Specification](workflow-state-spec.md)
-- [Migration Guide](projects/20251219-positive-reinforcement-hooks/migration-guide.md)
+- [Migration Guide](../projects/completed/msm004-positive-reinforcement-hooks/migration-guide.md)
