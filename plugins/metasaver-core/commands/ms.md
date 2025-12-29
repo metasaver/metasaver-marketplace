@@ -130,8 +130,22 @@ This self-audit catches:
 Confirm completion with user:
 
 1. Use AskUserQuestion tool: "Did this solve what you asked for?"
-2. If yes: workflow complete
+2. If yes: proceed to Phase 9
 3. If no: ask what adjustments needed, return to Phase 5
+
+---
+
+## Phase 9: Epic Archival (Conditional)
+
+Archive epic folder when task is confirmed complete:
+
+1. Check if `docs/epics/{project}/` exists for this task
+2. If epic folder exists:
+   - Create `docs/epics/completed/` directory if it does not exist
+   - Move `docs/epics/{project}/` to `docs/epics/completed/{project}/`
+   - Report: "Archived epic folder to docs/epics/completed/{project}/"
+3. If no epic folder exists: skip silently
+4. Workflow complete
 
 ---
 
@@ -178,3 +192,4 @@ Confirm completion with user:
 13. ALWAYS present understanding before getting approval (Phase 3 output required)
 14. ALWAYS return to Phase 3 if user provides clarification during approval
 15. ALWAYS consult `/skill agent-selection` for appropriate agent mapping
+16. ALWAYS archive epic folder to `docs/epics/completed/` after user confirms completion (Phase 9)

@@ -78,7 +78,7 @@ Run this checklist before marking PRD complete:
 
 ### Frontmatter
 
-- [ ] `project_id` present (format: `{PREFIX}{NNN}`)
+- [ ] `epic_id` present (format: `{app}-{epic}` e.g., `msm-aut`)
 - [ ] `title` present
 - [ ] `version` present (start at "1.0")
 - [ ] `status` present (draft | in-review | approved)
@@ -132,7 +132,7 @@ Run this checklist before marking PRD complete:
    - Section 4: FR-001 Login endpoint, FR-002 Logout endpoint...
    - Section 6: "| E01 | Authentication | 5 | 15 |"
 3. EA validates against checklist
-4. EA saves to `docs/epics/msm007-auth-api/prd.md`
+4. EA saves to `docs/epics/msm-aut-auth-api/prd.md`
 
 **Output:** Complete PRD with all 10 sections, ready for story extraction
 

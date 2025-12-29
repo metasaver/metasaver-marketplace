@@ -1,5 +1,5 @@
 ---
-epic_id: "MSM-WKR"
+epic_id: "msm-wkr"
 title: "Workflow Refactor - Agent/Skill Separation & Template Enforcement"
 version: "1.0"
 status: "draft"

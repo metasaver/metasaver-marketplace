@@ -31,22 +31,24 @@ The template contains required frontmatter, story format, acceptance criteria st
 3. **Draft sections:** Story statement, acceptance criteria, files to create/modify
 4. **Assign agent:** Use full subagent_type paths (see `/skill agent-selection`)
 5. **Validate:** Run checklist below, fix any issues
-6. **Save:** Write to `{projectFolder}/user-stories/{PROJ}-{EPIC}-{NNN}-{desc}.md`
+6. **Save:** Write to `{epicFolder}/user-stories/{app}-{epic}-{NNN}-{desc}.md`
 
 ---
 
 ## File Naming Convention
 
-**Format:** `{PROJ}-{EPIC}-{NNN}-{kebab-case-description}.md`
+**Epic folder:** `docs/epics/{app}-{epic}-{description}/`
+**Story file:** `{app}-{epic}-{NNN}-{description}.md`
 
-| Component | Format      | Example        |
-| --------- | ----------- | -------------- |
-| PROJ      | 3-4 chars   | MSM, AUTH, API |
-| EPIC      | Code/number | WKR, E01, 001  |
-| NNN       | 3-digit     | 001, 002, 015  |
-| desc      | kebab-case  | create-skill   |
+| Component | Format              | Example       |
+| --------- | ------------------- | ------------- |
+| app       | 3 letters lowercase | msm, crm, api |
+| epic      | 3 letters lowercase | wkr, aut, prh |
+| NNN       | 3-digit number      | 001, 002, 015 |
+| desc      | kebab-case          | create-skill  |
 
-**Example:** `MSM-WKR-007-create-user-story-creation-skill.md`
+**Epic folder example:** `docs/epics/msm-wkr-workflow-refactor/`
+**Story file example:** `msm-wkr-007-create-user-story-creation-skill.md`
 
 ---
 
@@ -54,8 +56,8 @@ The template contains required frontmatter, story format, acceptance criteria st
 
 | Field        | Format                               | Example                            |
 | ------------ | ------------------------------------ | ---------------------------------- |
-| story_id     | `{PROJ}-{EPIC}-{NNN}`                | `MSM-WKR-007`                      |
-| epic_id      | Epic identifier                      | `MSM-WKR`                          |
+| story_id     | `{app}-{epic}-{NNN}`                 | `msm-wkr-007`                      |
+| epic_id      | `{app}-{epic}`                       | `msm-wkr`                          |
 | title        | Brief description                    | `Create user-story-creation-skill` |
 | status       | pending/in-progress/complete/blocked | `pending`                          |
 | complexity   | 1-10 score                           | `3`                                |
@@ -100,7 +102,7 @@ The template contains required frontmatter, story format, acceptance criteria st
 
 ### Frontmatter
 
-- [ ] `story_id` present (format: `{PROJ}-{EPIC}-{NNN}`)
+- [ ] `story_id` present (format: `{app}-{epic}-{NNN}` e.g., `msm-wkr-007`)
 - [ ] `epic_id`, `title`, `status`, `complexity`, `wave` present
 - [ ] `agent` present with full subagent_type path
 - [ ] `dependencies` array present (empty `[]` if none)
@@ -126,7 +128,7 @@ The template contains required frontmatter, story format, acceptance criteria st
 
 ### File Naming
 
-- [ ] Filename matches pattern: `{PROJ}-{EPIC}-{NNN}-{desc}.md`
+- [ ] Filename matches pattern: `{app}-{epic}-{NNN}-{desc}.md`
 - [ ] Filename matches story_id in frontmatter
 
 ---
@@ -138,10 +140,10 @@ The template contains required frontmatter, story format, acceptance criteria st
 **Process:**
 
 1. BA reads template from `templates/docs/user-story-template.md`
-2. BA drafts frontmatter with `story_id: MSM-WKR-007`, `agent: core-claude-plugin:generic:skill-author`
+2. BA drafts frontmatter with `story_id: msm-wkr-007`, `agent: core-claude-plugin:generic:skill-author`
 3. BA writes story: "As a BA agent, I want a user-story-creation skill..."
 4. BA validates against checklist
-5. BA saves to `docs/epics/MSM-WKR/user-stories/MSM-WKR-007-create-user-story-creation-skill.md`
+5. BA saves to `docs/epics/msm-wkr-workflow-refactor/user-stories/msm-wkr-007-create-user-story-creation-skill.md`
 
 **Output:** Complete user story ready for wave assignment
 

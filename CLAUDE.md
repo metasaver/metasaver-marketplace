@@ -149,7 +149,7 @@ Skills MUST be explicitly listed in marketplace.json for discovery:
       "source": "./plugins/metasaver-core",
       "strict": false,
       "skills": [
-        "./skills/cross-cutting/tool-check",
+        "./skills/workflow-steps/analysis-phase",
         "./skills/domain/monorepo-audit"
       ]
     }

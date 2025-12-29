@@ -172,17 +172,29 @@ BA + PM produce final build report with:
 
 ---
 
+## Phase 10: Epic Archival
+
+After user approves the final report, archive the epic:
+
+1. Check if `docs/epics/{project}/` exists
+2. If exists, move to `docs/epics/completed/{project}/`
+3. Confirm archival to user
+
+This preserves the complete epic documentation (PRD, stories, execution plan, post-mortem) for future reference.
+
+---
+
 ## Examples
 
 ```bash
 /build "add logging to service"
-→ sequential-thinking → Analysis → Requirements (EA→Reviewer→HITL→BA) → Design (Architect→PM→Reviewer→HITL→BA→Reviewer→HITL) → Execution → Validation → Standards Audit → Postmortem → Report
+→ sequential-thinking → Analysis → Requirements (EA→Reviewer→HITL→BA) → Design (Architect→PM→Reviewer→HITL→BA→Reviewer→HITL) → Execution → Validation → Standards Audit → Postmortem → Report → Epic Archival
 
 /build "refactor auth module"
-→ sequential-thinking → Analysis → Requirements → Design → Execution (waves) → Validation → Standards Audit → Postmortem → Report
+→ sequential-thinking → Analysis → Requirements → Design → Execution (waves) → Validation → Standards Audit → Postmortem → Report → Epic Archival
 
 /build "multi-tenant SaaS"
-→ sequential-thinking → Analysis → Requirements → Design → Wave1 → Log → Compact → HITL → Wave2 → ... → Validation → Standards Audit → Summary → Report
+→ sequential-thinking → Analysis → Requirements → Design → Wave1 → Log → Compact → HITL → Wave2 → ... → Validation → Standards Audit → Summary → Report → Epic Archival
 
 # Wave checkpoint flow:
 Wave1: Task(spawn tester) → Task(spawn coder) → /skill workflow-postmortem mode=log → /compact → HITL checkpoint
@@ -202,7 +214,7 @@ Task: subagent_type="core-claude-plugin:generic:coder" prompt="Implement against
 
 1. Frame all instructions positively. State what to do.
 2. ALWAYS run sequential-thinking MCP tool first to plan approach.
-3. ALWAYS run full workflow: Planning → Analysis → Requirements → Design → Execution → Validation → Standards Audit → Postmortem → Report
+3. ALWAYS run full workflow: Planning → Analysis → Requirements → Design → Execution → Validation → Standards Audit → Postmortem → Report → Epic Archival
 4. Requirements phase uses full agent chain: EA → Reviewer → HITL → BA
 5. Design phase uses full agent chain: Architect → PM → Reviewer → HITL → BA → Architect → Reviewer → HITL
 6. TDD execution: ALWAYS run tester BEFORE coder per story.
@@ -217,3 +229,4 @@ Task: subagent_type="core-claude-plugin:generic:coder" prompt="Implement against
 15. When files modified, spawn agent: `subagent_type="general-purpose"` with prompt "Execute /skill repomix-cache-refresh"
 16. Use AskUserQuestion tool for all user questions. Present structured options with clear descriptions.
 17. Use `/architect` command for innovation or vibe check workflows.
+18. ALWAYS archive epic folder after user approves final report: move `docs/epics/{project}/` to `docs/epics/completed/{project}/` if folder exists.
