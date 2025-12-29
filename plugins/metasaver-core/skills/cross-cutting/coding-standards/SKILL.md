@@ -285,6 +285,5 @@ See `reference.md` for:
 
 ## Related Skills
 
-- `/skill cross-cutting/tool-check` - Tool discovery and usage
 - `/skill domain/monorepo-audit` - Monorepo structure validation
 - `/skill cross-cutting/serena-code-reading` - Progressive code analysis

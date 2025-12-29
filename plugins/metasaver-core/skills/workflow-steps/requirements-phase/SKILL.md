@@ -1,152 +1,114 @@
 ---
 name: requirements-phase
-description: PRD creation with HITL clarification loop, then EPIC-FIRST extraction. BA drafts PRD, asks user questions until requirements are clear, then creates epics (ALWAYS at least 1) followed by user stories under each epic. Formal approval happens in the design phase.
+description: PRD creation with EA agent, validation with reviewer, HITL approval, then BA extracts stories. EA creates PRD, reviewer validates, user approves, BA creates epics and user stories. Formal PRD approval happens in THIS phase.
 ---
 
 # Requirements Phase - PRD + Epic/Story Creation (HITL)
 
 > **ROOT AGENT ONLY** - Called by commands only, always invoked at root level.
 
-**Purpose:** Create PRD with human-in-the-loop clarification, then extract epics and stories
+**Purpose:** Create PRD (EA), validate (reviewer), HITL approve, extract stories (BA)
 **Trigger:** After analysis-phase completes
-**Input:** prompt, complexity, tools, scope (from analysis-phase)
-**Output:** PRD + Epics + User Stories (hierarchy: PRD → Epics → Stories)
+**Input:** prompt, complexity, tools, scope
+**Output:** Approved PRD + Epics + User Stories
 
 ---
 
-## Important: Clarification Only
+## Workflow
 
-This phase is for **clarification and collection**, not formal approval. The user can ask questions, provide context, and clarify requirements interactively. Formal approval happens later in **plan-approval** phase after:
+```
+1. Check/Create Project Folder
+         │
+         ▼
+2. Spawn EA Agent ──► Creates PRD (prd-creation skill)
+         │
+         ▼
+3. Spawn Reviewer ──► Validates PRD (document-validation)
+         │
+         ▼
+4. HITL Gate ──► User approves/rejects PRD
+    │         │
+    │ REJECT ──► Return to EA with feedback
+    │
+    │ APPROVE
+         │
+         ▼
+5. Spawn BA Agent ──► Creates story outlines
+         │
+         ▼
+6. Continue to design-phase
+```
 
-- PRD is written
-- Stories are extracted
-- Architect has annotated stories
-- PM has created execution plan
+### Step 1: Project Folder
 
-This way the user sees the full picture before approving.
+- Glob `docs/epics/*` for existing folders
+- Reuse or create: `docs/epics/{PREFIX}{NNN}-{name}/`
 
----
+### Step 2: EA Agent (PRD)
 
-## Workflow Steps
+Spawn: `core-claude-plugin:generic:enterprise-architect`
 
-1. **Check for existing project folder:**
-   - Glob for `docs/projects/*` to find existing project folders
-   - If a related folder exists (matching topic/date), ask user: "Found existing project folder {path}. Reuse this or create new?"
-   - If no match or user wants new, create: `docs/projects/{yyyymmdd}-{descriptive-name}/`
-   - Example: `docs/projects/msm008-applications-feature/`
-   - BA creates or reuses folder before drafting PRD
+- Analyze prompt; investigate codebase (audits)
+- Draft PRD using `/skill prd-creation`
+- Clarification loop (AskUserQuestion) if uncertainties exist
+- Save to `{projectFolder}/prd.md`
 
-2. **Spawn BA agent (draft mode):**
-   - Analyze prompt and context
-   - **For audits:** Investigate codebase first using Serena tools (read package.json, config files, directory structure), discover scope, classify repo type from `metasaver.projectType` in package.json
-   - Draft initial PRD based on discoveries
-   - Identify questions/uncertainties
+### Step 3: Reviewer (Validation)
 
-3. **HITL Clarification Loop:**
+Spawn: `core-claude-plugin:generic:reviewer`
 
-   ```
-   WHILE BA has questions:
-     → Ask user via AskUserQuestion
-     → User provides answers
-     → BA incorporates answers, may have follow-up questions
-   ```
+- Use `/skill document-validation` to validate PRD
+- If invalid: return to EA with issues
 
-   **For audits:** Only enter this loop if scope is genuinely ambiguous after codebase investigation. Skip if scope is clear from file discovery.
+### Step 4: HITL Approval
 
-4. **BA completes PRD:**
-   - All questions resolved
-   - Save to `{projectFolder}/prd.md`
-   - Return completed PRD content and project folder path
+Use `/skill hitl-approval`:
 
-5. **Create epics and stories (ALWAYS - all modes):**
-   - **Create folder:** `{projectFolder}/user-stories/`
-   - **CRITICAL: Create at least 1 epic FIRST**
-     - Determine epic boundaries based on complexity (see Epic Count Guidelines)
-     - Create epic file: `EPIC-{NNN}-{name}.md`
-     - Use `/skill user-story-template` for epic format
-   - **Then create stories under each epic:**
-     - For each story, link to parent epic
-     - Create story file: `US-{NNN}-{name}.md`
-     - Use `/skill user-story-template` for story format
-   - **Numbering:** Epics sequential (EPIC-001, EPIC-002), Stories sequential (US-001, US-002)
+- **APPROVE** -> Continue to BA
+- **REJECT** -> Return to EA with feedback
 
-6. **Continue to next phase** (no approval stop here)
+### Step 5: BA Agent (Stories)
 
----
+Spawn: `core-claude-plugin:generic:business-analyst`
 
-## Epic Count Guidelines
+**Precondition:** PRD MUST be approved first.
 
-| Complexity | Recommended Epics | Example Split                 |
-| ---------- | ----------------- | ----------------------------- |
-| < 15       | 1 epic            | Single feature                |
-| 15-29      | 1-2 epics         | Feature + Tests               |
-| 30-44      | 2-3 epics         | Backend + Frontend + Database |
-| ≥ 45       | 3+ epics          | Multiple domains/services     |
+- Mode: `extract-stories`
+- Create `{projectFolder}/user-stories/`
+- Create epics then stories (ALWAYS at least 1 epic)
 
-**ALWAYS create stories within an epic.** Even for simple tasks, wrap stories in at least one epic.
-
----
-
-## Story Consolidation Rule
-
-**Create ONE story per target file.** When multiple requirements target the same file, consolidate them into a single story.
-
-**Why:** Prevents parallel agents from editing the same file simultaneously. Ensures sequential, conflict-free execution.
-
-**Example:**
-
-- Requirements: "Add agent delegation to build.md" + "Add TDD sequence to build.md"
-- Result: ONE story "US-001: Update build.md with agent delegation and TDD sequence"
-
-**Rule:** Group all requirements for a file into a single story. List all acceptance criteria together.
+| Complexity | Epics |
+| ---------- | ----- |
+| < 15       | 1     |
+| 15-29      | 1-2   |
+| 30-44      | 2-3   |
+| >= 45      | 3+    |
 
 ---
 
-## BA Agent Modes
+## Agent Summary
 
-| Mode  | Input                     | Output                |
-| ----- | ------------------------- | --------------------- |
-| draft | prompt, complexity, scope | PRD draft + questions |
+| Step | Agent                | Mode            | Output          |
+| ---- | -------------------- | --------------- | --------------- |
+| 2    | enterprise-architect | create-prd      | PRD draft       |
+| 3    | reviewer             | validate        | Validation      |
+| 5    | business-analyst     | extract-stories | Epics + Stories |
+
+---
+
+## Story Consolidation
+
+**ONE story per target file.** Consolidate multiple requirements for same file.
 
 ---
 
 ## Audit Mode
 
-For audit workflows, BA MUST prioritize codebase investigation before asking clarification questions:
+EA prioritizes codebase investigation before questions:
 
-- **Investigation First:** Use Serena tools to read package.json, config files (eslint, prettier, vite, etc.), and directory structure
-- **Discover Scope:** Identify project type, dependencies, build tools, and configuration state
-- **Classify Repos:** Determine if repo is consumer or library using `metasaver.projectType` field in package.json
-- **Minimize Questions:** Only ask clarification questions if scope is genuinely ambiguous after investigation
-- **Assumption:** For audits, scope is often self-evident from file discovery; unnecessary questions waste time
-
----
-
-## User Story Template (Audit Mode)
-
-For each (agent, file) combination, create a user story file following this template:
-
-```markdown
-## Story: Audit {file} in {repo}
-
-**Agent:** {agent-name}
-**Scope:** {repo}/{path/to/file}
-**Template:** {skill-name}
-
-### Acceptance Criteria
-
-- [ ] Agent reads template from skill
-- [ ] Agent reads actual file
-- [ ] Agent compares and identifies discrepancies
-- [ ] Discrepancies reported with line numbers
-- [ ] User decision recorded (apply/update/ignore/custom)
-
-### User Decision
-
-- [ ] Pending investigation
-```
-
-**Example filename:** `US-001-audit-eslint.md` for auditing eslint.config.js
+- Use Serena tools (package.json, configs, structure)
+- Classify repos via `metasaver.projectType`
+- Minimize clarification questions
 
 ---
 
@@ -155,63 +117,19 @@ For each (agent, file) combination, create a user story file following this temp
 ```json
 {
   "status": "complete",
-  "projectFolder": "docs/projects/msm007-feature-xyz",
-  "prdPath": "docs/projects/msm007-feature-xyz/prd.md",
-  "prdContent": "# PRD...",
-  "epics": [
-    {
-      "id": "EPIC-001",
-      "title": "User Authentication",
-      "path": "docs/projects/msm007-feature-xyz/user-stories/EPIC-001-user-auth.md",
-      "stories": ["US-001", "US-002", "US-003"]
-    },
-    {
-      "id": "EPIC-002",
-      "title": "Dashboard UI",
-      "path": "docs/projects/msm007-feature-xyz/user-stories/EPIC-002-dashboard.md",
-      "stories": ["US-004", "US-005"]
-    }
-  ],
-  "stories": [
-    {
-      "id": "US-001",
-      "epic": "EPIC-001",
-      "title": "Create users table",
-      "agent": "prisma-database-agent",
-      "path": "docs/projects/msm007-feature-xyz/user-stories/US-001-users-table.md"
-    },
-    {
-      "id": "US-002",
-      "epic": "EPIC-001",
-      "title": "Add password hashing",
-      "agent": "backend-worker-agent",
-      "path": "docs/projects/msm007-feature-xyz/user-stories/US-002-password-hash.md"
-    }
-  ],
-  "clarificationsProvided": 0
+  "projectFolder": "docs/epics/msm007-feature",
+  "prdPath": "docs/epics/msm007-feature/prd.md",
+  "prdApproved": true,
+  "epics": [{ "id": "EPIC-001", "title": "...", "stories": ["US-001"] }],
+  "stories": [{ "id": "US-001", "epic": "EPIC-001", "agent": "..." }]
 }
 ```
-
-**CRITICAL:** Every output MUST have at least 1 epic. Stories MUST reference their parent epic.
 
 ---
 
 ## Integration
 
-**Called by:** /audit, /build, /architect, /ms (all complexity levels that need PRD)
-**Calls:** business-analyst agent, AskUserQuestion
-**References:** `/skill user-story-template` for epic and story formats
-
-**Epic + Story Creation:**
-
-- **ALWAYS create at least 1 epic** - Required for all workflows
-- **For /audit:** Stories created automatically from scope.files + agent-check results. Group into "Audit" epic(s).
-- **For /build:** Stories extracted from PRD narrative. Group by domain/feature.
-- **For /architect:** Deep exploration with multiple epics for complex planning.
-
-**Next phase:**
-
-- /build → design-phase (architect enriches epics/stories)
-- /architect → vibe-check → innovate-phase
-- /audit → design-phase (skip vibe/innovate)
-- All → **hitl-approval** (where formal approval happens)
+**Called by:** /audit, /build, /architect, /ms
+**Spawns:** enterprise-architect, reviewer, business-analyst
+**Calls:** `/skill hitl-approval`, `/skill prd-creation`, `/skill document-validation`, `/skill user-story-template`
+**Next:** design-phase (architect enriches stories)

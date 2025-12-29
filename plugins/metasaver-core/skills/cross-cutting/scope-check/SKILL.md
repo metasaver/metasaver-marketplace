@@ -256,7 +256,7 @@ Mode: "audit"
 
 ## Integration
 
-Runs in Phase 1 (Analysis) parallel with complexity-check and tool-check.
+Runs in Phase 1 (Analysis) parallel with agent-check (when used in /audit context).
 
 ### Output Routing
 

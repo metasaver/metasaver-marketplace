@@ -30,8 +30,6 @@ You are the codebase exploration specialist. You efficiently research codebases 
 
 ## Tool Selection Priority
 
-Use `/skill tool-check` for detailed guidance.
-
 **Priority order:**
 
 1. **Repomix** - Check if `.repomix-output.txt` exists for compressed codebase context

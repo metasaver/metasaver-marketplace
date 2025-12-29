@@ -1,211 +1,209 @@
 ---
 name: design-phase
-description: Extracts user stories from PRD, adds architecture annotations, and creates execution plan. Spawns BA to extract stories, architect to annotate, PM to plan parallel waves. Approval happens AFTER this phase so user sees full picture.
+description: Design phase with validation gates. Annotates PRD, creates story outlines, builds execution plan (via execution-plan-creation skill), validates artifacts via reviewer, and gets HITL approval. Use when orchestrating the design phase after PRD approval.
 ---
 
 # Design Phase Skill
 
 > **ROOT AGENT ONLY** - Spawns agents, runs only from root Claude Code agent.
 
-**Purpose:** Extract stories from PRD, add architecture annotations, create execution plan
-**Trigger:** After vibe-check passes (PRD is written)
+**Purpose:** Annotate PRD, create stories, build execution plan with validation gates
+**Trigger:** After requirements-phase passes (PRD approved)
 **Input:** `prdPath` (string), `projectFolder` (string), `complexity` (int), `tools` (string[]), `scope` (string[])
-**Output:** `{storiesFolder, storyFiles, annotatedStories, architectureNotes, executionPlan}`
+**Output:** `{storiesFolder, storyFiles, executionPlan, allApproved}`
 
 ---
 
-## Workflow
+## Workflow Diagram
 
-**1. Spawn BA agent (extract-stories mode)**
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         DESIGN PHASE                                │
+├─────────────────────────────────────────────────────────────────────┤
+│  1. Architect annotates PRD                                         │
+│       ↓                                                             │
+│  2. BA creates story outlines                                       │
+│       ↓                                                             │
+│  3. PM creates execution plan (uses execution-plan-creation skill)  │
+│       ↓                                                             │
+│  4. Reviewer validates execution plan (uses document-validation)    │
+│       ↓                                                             │
+│  5. HITL: User approves execution plan                              │
+│       ↓                                                             │
+│  6. BA fills story details (uses user-story-creation skill)         │
+│       ↓                                                             │
+│  7. Architect adds Architecture section to stories                  │
+│       ↓                                                             │
+│  8. Reviewer validates stories (uses document-validation)           │
+│       ↓                                                             │
+│  9. HITL: User approves stories                                     │
+│       ↓                                                             │
+│ 10. Continue to execution-phase                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Workflow Steps
+
+### Step 1: Architect Annotates PRD
+
+**Spawn:** `core-claude-plugin:generic:architect`
 
 - Read approved PRD from `prdPath`
+- Add inline architecture notes (API endpoints, key files, patterns)
+- Keep annotations concise (50-100 lines max)
+- Complexity >= 30 triggers deeper analysis mode
+
+### Step 2: BA Creates Story Outlines
+
+**Spawn:** `core-claude-plugin:generic:business-analyst`
+
+- Read annotated PRD
 - Create `user-stories/` folder in project folder
-- Extract individual stories using `/skill user-story-template`
-- **CRITICAL: Follow Story Granularity Guidelines** (see below)
-- Create files: `US-001-{slug}.md`, `US-002-{slug}.md`, etc.
+- Extract story outlines (title, brief description, dependencies)
+- Follow Story Granularity Guidelines (see below)
+- Create files: `{PROJ}-{EPIC}-{NNN}-{slug}.md`
 - Return paths to all story files
 
-**2. Spawn architect agent**
+### Step 3: PM Creates Execution Plan
 
-- Read all story files from `storiesFolder`
-- For each story file:
-  - Read the story
-  - Add "Architecture Notes" section (if not exists)
-  - Fill in: API endpoints, key files, database models, component names, patterns
-  - Save updated story file
-- Optionally create `architecture-notes.md` for complex cross-cutting concerns
-- Total output: 50-100 lines max (30 seconds of work)
-- Complexity ≥30 → deeper analysis mode
-- **DO:** Keep annotations inline in story files; avoid separate architecture documents, ADRs, detailed code, or component diagrams
+**Spawn:** `core-claude-plugin:generic:project-manager`
 
-**3. Spawn project-manager agent**
+**Invokes:** `/skill execution-plan-creation`
 
-- Read annotated story files (with inline architecture notes)
-- Break down into implementable tasks
-- Assign each task to domain agent
+- Read story outlines
+- Analyze dependencies, build dependency graph
 - Organize into parallel waves (max 10 agents/wave)
-- Identify dependencies between tasks based on story dependencies
+- Assign agents to each story
 - Output to `execution-plan.md` in project folder
-- Standard analysis mode
 
----
+### Step 4: Validate Execution Plan
 
-## Story Granularity Guidelines (CRITICAL)
+**Spawn:** `core-claude-plugin:generic:reviewer`
 
-**ALWAYS create stories by functional capability, not by package/layer.** Package-based stories cause bottlenecks.
+**Invokes:** `/skill document-validation` (type: execution-plan)
 
-**BAD (package-based):**
+- Validate frontmatter fields
+- Validate required sections
+- Check wave integrity (all stories assigned, valid DAG)
+- **If invalid:** Return issues to PM, loop back to Step 3
 
-```
-US-001: Database changes      → 1 agent, 20 min
-US-002: Contracts package     → 1 agent, 10 min
-US-003: Workflow package      → 1 agent, 30 min (BOTTLENECK - too large!)
-US-004: API layer             → 1 agent, 10 min
-US-005: Frontend              → 1 agent, 15 min
-```
+### Step 5: HITL - Approve Execution Plan
 
-**GOOD (functional capability-based):**
+**Invokes:** `/skill hitl-approval`
 
-```
-US-001: Database schema       → 1 agent
-US-002: Contracts types       → 1 agent (parallel with US-001)
-US-003a: Workflow scaffolding → 1 agent
-US-003b: Height/weight parser → 1 agent (parallel)
-US-003c: Team fuzzy matching  → 1 agent (parallel)
-US-003d: Major entity parser  → 1 agent (parallel)
-US-003e: Validation + upsert  → 1 agent (after US-003b-d)
-US-004: API layer             → 1 agent
-US-005: Frontend              → 1 agent
-```
+Present to user:
 
-**Rules for Story Granularity:**
+- Execution plan summary (total stories, waves, complexity)
+- Wave breakdown with agent assignments
+- Critical path through dependencies
 
-1. **Stories = Testable Units**: Each story should be independently testable
-2. **Max 15-20 min per story**: If larger, break it down
-3. **Parallel by default**: Stories in same layer should be parallelizable
-4. **Dependency-aware**: Use `Depends On` field to show execution order
-5. **Add `parallelizable_with` field**: Show which stories can run together
+**If rejected:** Collect feedback, return to Step 3
 
----
+### Step 6: BA Fills Story Details
 
-## Architecture Annotation Example
+**Spawn:** `core-claude-plugin:generic:business-analyst`
 
-**Story File (before): `user-stories/US-003-user-registration.md`**
+**Invokes:** `/skill user-story-creation`
 
-```markdown
-# User Story 3: User Registration
+- Read each story outline
+- Fill in complete story format (As a / I want / So that)
+- Add acceptance criteria (minimum 3 testable criteria)
+- Add technical details (files to create/modify)
+- Save updated story files
 
-**As a** new user
-**I want to** register an account
-**So that** I can access the platform
+### Step 7: Architect Adds Architecture Section
 
-## Acceptance Criteria
+**Spawn:** `core-claude-plugin:generic:architect`
 
-- User can enter email and password
-- Form validates input before submission
-- User receives confirmation email
-```
+For each story file:
 
-**Story File (after architect annotation):**
+- Read the story
+- Add "Architecture" section (if not exists)
+- Fill in: API endpoints, key files, database models, component names, patterns
+- Save updated story file
 
-```markdown
-# User Story 3: User Registration
+### Step 8: Validate Stories
 
-**As a** new user
-**I want to** register an account
-**So that** I can access the platform
+**Spawn:** `core-claude-plugin:generic:reviewer`
 
-## Acceptance Criteria
+**Invokes:** `/skill document-validation` (type: user-story)
 
-- User can enter email and password
-- Form validates input before submission
-- User receives confirmation email
+For each story:
 
-## Architecture Notes
+- Validate frontmatter fields
+- Validate required sections
+- Check acceptance criteria completeness
+- **If invalid:** Return issues to BA, loop back to Step 6
 
-- **API:** `POST /api/auth/register`
-- **Files:** `services/auth/routes/auth.routes.ts`, `services/auth/controllers/auth.controller.ts`
-- **Database:** User model (email, password, createdAt)
-- **Components:** `RegisterForm.tsx`
-- **Pattern:** Form validation + email service integration
-```
+### Step 9: HITL - Approve Stories
 
----
+**Invokes:** `/skill hitl-approval`
 
-## Output Format
+Present to user:
 
-**Full Design Output (ready for plan-approval):**
+- List of all stories with complexity scores
+- Stories grouped by wave
+- Total implementation effort estimate
+
+**If rejected:** Collect feedback, return to Step 6
+
+### Step 10: Continue to Execution Phase
+
+**Output:**
 
 ```json
 {
-  "storiesFolder": "docs/projects/msm008-feature/user-stories/",
-  "storyFiles": [
-    "US-001-database-schema.md",
-    "US-002-contracts-types.md",
-    "US-003a-workflow-scaffolding.md",
-    "US-003b-height-weight-parser.md",
-    "US-003c-team-fuzzy-matching.md",
-    "US-003d-major-entity-parser.md",
-    "US-003e-validation-upsert.md",
-    "US-004-api-layer.md",
-    "US-005-frontend.md"
-  ],
-  "annotatedStories": [
-    "user-stories/US-001-database-schema.md",
-    "user-stories/US-002-contracts-types.md",
-    "user-stories/US-003a-workflow-scaffolding.md"
-  ],
-  "architectureNotes": "architecture-notes.md",
-  "executionPlan": "execution-plan.md"
-}
-```
-
-**Execution Plan (`execution-plan.md`) Example:**
-
-```json
-{
-  "totalTasks": 4,
-  "totalWaves": 2,
-  "waves": [
-    {
-      "waveNumber": 1,
-      "tasks": [
-        {
-          "id": "task-1",
-          "description": "Create Prisma schema for users",
-          "agent": "prisma-database-agent",
-          "storyFiles": ["US-003-user-registration.md"],
-          "dependencies": []
-        }
-      ]
-    },
-    {
-      "waveNumber": 2,
-      "tasks": [
-        {
-          "id": "task-3",
-          "description": "Implement UserService",
-          "agent": "data-service-agent",
-          "storyFiles": ["US-003-user-registration.md"],
-          "dependencies": ["task-1"]
-        }
-      ]
-    }
-  ]
+  "storiesFolder": "docs/epics/msm008-feature/user-stories/",
+  "storyFiles": ["MSM-008-001-story.md", "MSM-008-002-story.md"],
+  "executionPlan": "docs/epics/msm008-feature/execution-plan.md",
+  "allApproved": true
 }
 ```
 
 ---
 
-## Agent Selection Guide
+## Story Granularity Guidelines
 
-| Domain              | Agent(s)                                                |
-| ------------------- | ------------------------------------------------------- |
-| Backend API         | backend-dev, data-service-agent                         |
-| Frontend components | react-component-agent, shadcn-component-agent           |
-| Database            | prisma-database-agent                                   |
-| Testing             | unit-test-agent, integration-test-agent, e2e-test-agent |
-| Config files        | Specific config agent (eslint-agent, etc.)              |
+**ALWAYS create stories by functional capability, not by package/layer.**
+
+| Approach         | Result                              |
+| ---------------- | ----------------------------------- |
+| Package-based    | Bottlenecks, sequential execution   |
+| Capability-based | Parallel execution, smaller stories |
+
+**Rules:**
+
+1. **Stories = Testable Units**: Each story independently testable
+2. **Max 15-20 min per story**: Break down larger stories
+3. **Parallel by default**: Stories in same wave run concurrently
+4. **Dependency-aware**: Use `dependencies` field in frontmatter
+
+**Example - Good (capability-based):**
+
+```
+US-001: Database schema       → Wave 1 (parallel)
+US-002: Contracts types       → Wave 1 (parallel)
+US-003a: Workflow scaffolding → Wave 2
+US-003b: Height/weight parser → Wave 2 (parallel)
+US-003c: Team fuzzy matching  → Wave 2 (parallel)
+```
+
+---
+
+## Validation Gate Pattern
+
+Each validation gate follows this pattern:
+
+```
+1. Spawn reviewer agent
+2. Reviewer invokes document-validation skill
+3. If valid: Continue to next step
+4. If invalid: Return issues to authoring agent
+5. Authoring agent fixes issues
+6. Loop back to validation
+```
 
 ---
 
@@ -213,14 +211,21 @@ US-005: Frontend              → 1 agent
 
 **Called by:**
 
-- `/audit` command (after vibe-check)
-- `/build` command (after vibe-check / innovate)
-- `/ms` command (for complexity ≥15, after vibe-check)
+- `/build` command (after requirements-phase)
+- `/ms` command (for complexity >= 15, after requirements-phase)
 
-**Calls:**
+**Spawns:**
 
-- `business-analyst` agent (extract-stories mode)
-- `architect` agent (SME for architecture design)
-- `project-manager` agent (SME for planning)
+- `core-claude-plugin:generic:architect` (Steps 1, 7)
+- `core-claude-plugin:generic:business-analyst` (Steps 2, 6)
+- `core-claude-plugin:generic:project-manager` (Step 3)
+- `core-claude-plugin:generic:reviewer` (Steps 4, 8)
 
-**Next step:** plan-approval (user sees PRD + stories + plan, then approves)
+**Invokes Skills:**
+
+- `/skill execution-plan-creation` (Step 3)
+- `/skill user-story-creation` (Step 6)
+- `/skill document-validation` (Steps 4, 8)
+- `/skill hitl-approval` (Steps 5, 9)
+
+**Next step:** execution-phase (wave-based implementation)

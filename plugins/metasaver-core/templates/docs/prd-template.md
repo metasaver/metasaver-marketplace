@@ -4,7 +4,6 @@ project_id: "{PREFIX}{NNN}" # e.g., MSC015, CHB008, MUM003
 title: "{Project Title}"
 version: "1.0"
 status: "draft" # draft | in-review | approved | in-progress | complete
-complexity: 0 # 1-50 score from complexity-check
 created: "YYYY-MM-DD"
 updated: "YYYY-MM-DD"
 owner: "business-analyst-agent" # Agent that owns this document
@@ -166,5 +165,4 @@ TEMPLATE RULES:
 4. Architect adds technical notes via inline "Architecture:" subsections
 5. Frontmatter MUST include owner agent
 6. Status field tracks document lifecycle
-7. Complexity score from complexity-check agent
 -->

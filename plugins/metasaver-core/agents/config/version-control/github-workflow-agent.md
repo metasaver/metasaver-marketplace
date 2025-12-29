@@ -1,7 +1,7 @@
 ---
 name: github-workflow-agent
 description: GitHub Actions workflow domain expert - handles build and audit modes
-tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---
 

@@ -19,19 +19,14 @@ When /qq is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. Que
 
 ## Phase 1: Analysis (PARALLEL)
 
-**Follow:** `/skill complexity-check`, `/skill scope-check`, `/skill agent-check`
+**Follow:** `/skill scope-check`, `/skill agent-check`
 
-Spawn 3 agents in parallel to execute analysis skills.
-Collect: `complexity_score`, `scope` (with `targets` and `references`), `recommended_agent`
+Spawn 2 agents in parallel to execute analysis skills.
+Collect: `scope` (with `targets` and `references`), `recommended_agent`
 
 ---
 
-## Phase 2: Agent Selection (Conditional)
-
-**Routing Decision:**
-
-- **If complexity < 15**: SKIP to Phase 3 (use agent from agent-check directly)
-- **If complexity >= 15**: Execute agent validation
+## Phase 2: Agent Selection
 
 **Follow:** `/skill agent-selection`
 
@@ -90,17 +85,14 @@ Agent returns answer to user with:
 ## Enforcement
 
 1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
-2. ALWAYS run Analysis phase first (complexity + scope + agent check in PARALLEL)
-3. Run analysis skills in PARALLEL (single message, 3 skill calls)
-4. Complexity routing after Analysis:
-   - < 15: Use agent-check recommendation directly (FAST PATH)
-   - > = 15: Validate agent with agent-selection skill (FULL PATH)
-5. ALWAYS validate agent exists before spawning
-6. Use `code-explorer` as fallback if agent not found
-7. Agent executes in "answer mode" - read and analyze only
-8. Answer questions directly - skip PRD creation
-9. Provide immediate responses - skip approval gates
-10. Focus on answering - skip execution planning
-11. Include file references in answers when relevant
-12. Keep answers focused and concise
-13. Respect scope boundaries from scope-check
+2. ALWAYS run Analysis phase first (scope + agent check in PARALLEL)
+3. Run analysis skills in PARALLEL (single message, 2 skill calls)
+4. ALWAYS validate agent exists before spawning
+5. Use `code-explorer` as fallback if agent not found
+6. Agent executes in "answer mode" - read and analyze only
+7. Answer questions directly - skip PRD creation
+8. Provide immediate responses - skip approval gates
+9. Focus on answering - skip execution planning
+10. Include file references in answers when relevant
+11. Keep answers focused and concise
+12. Respect scope boundaries from scope-check

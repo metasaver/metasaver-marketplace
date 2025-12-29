@@ -1,7 +1,7 @@
 ---
 name: turbo-config-agent
 description: Turbo.json configuration domain expert - handles build and audit modes
-tools: Read,Write,Edit,Glob,Grep,Bash(pnpm:*,npm:*)
+tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---
 

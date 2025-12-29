@@ -1,11 +1,11 @@
 ---
 name: build
-description: Build features with TDD workflow and standards compliance
+description: Build features with TDD workflow using sequential-thinking and full agent chain
 ---
 
 # Build Command
 
-Execute known requirements through TDD workflow with standards compliance.
+Execute builds through sequential-thinking planning and complete agent chain workflow.
 
 **Use when:** You know what you want to build. For exploration/planning, use `/architect` instead.
 
@@ -19,87 +19,115 @@ When /build is invoked, ALWAYS proceed to Phase 1 regardless of prompt content.
 
 ---
 
-## Phase 1: Analysis (PARALLEL)
+## Phase 1: Planning (Sequential Thinking)
 
-**Follow:** `/skill complexity-check`, `/skill scope-check`
+**Use:** sequential-thinking MCP tool
 
-Spawn 2 agents in parallel to execute complexity-check and scope-check skills. Use scope-check agent results directly. Proceed with identified targets immediately.
+Plan the approach using sequential-thinking MCP tool:
 
-**Output:** `complexity_score`, `targets[]`, `references[]`
+1. Analyze the prompt to understand scope and requirements
+2. Identify target repositories and reference patterns
+3. Outline high-level implementation strategy
+4. Note potential risks and dependencies
 
-**Complexity Routing:**
-
-- **< 15**: FAST PATH (skip Requirements, Design, Approval, Standards Audit → jump to Execution)
-- **≥ 15**: FULL PATH (all phases)
+This creates the mental model for the full workflow.
 
 ---
 
-## Phase 2: Requirements
+## Phase 2: Analysis
+
+**Follow:** `/skill analysis-phase`
+
+Spawn scope-check agent to identify target and reference repositories. Use scope-check agent results directly. Proceed with identified targets immediately.
+
+**Output:** `scope: { targets[], references[] }`
+
+---
+
+## Phase 3: Requirements
 
 **Follow:** `/skill requirements-phase`
 
-BA creates PRD and user stories with acceptance criteria through HITL clarification loop. Structure stories around features, each with tester-first execution. Each story = tester agent writes tests, then coder agent implements.
+Full agent chain for PRD and story creation:
 
-**Standard AC Items:** See `/skill user-story-template` for required AC items in every story.
+```
+Enterprise Architect (EA) → creates PRD
+    → Reviewer → validates PRD (document-validation)
+    → HITL → user approves PRD
+    → Business Analyst (BA) → extracts epics and story outlines
+```
 
-After incorporating user feedback into PRD, re-present the full summary and use AskUserQuestion tool to obtain explicit sign-off before proceeding to execution.
+**Skills used internally:**
 
-**SKIPPED for complexity < 15.**
+- `/skill prd-creation` (EA creates PRD)
+- `/skill document-validation` (Reviewer validates)
+- `/skill hitl-approval` (user approves)
+
+**Output:** Approved PRD + Epics + Story outlines
 
 ---
 
-## Phase 3: Design
+## Phase 4: Design
 
-**Follow:** `/skill architect-phase` → `/skill planning-phase`
+**Follow:** `/skill design-phase`
 
-Architect enriches stories with implementation details, PM creates execution plan with parallel waves.
+Full agent chain for execution planning and story completion:
 
-**SKIPPED for complexity < 15.**
+```
+Architect → annotates PRD with implementation details
+    → BA → creates story outlines
+    → PM → creates execution plan (execution-plan-creation)
+    → Reviewer → validates execution plan (document-validation)
+    → HITL → user approves execution plan
+    → BA → fills story details (user-story-creation)
+    → Architect → adds Architecture sections
+    → Reviewer → validates stories (document-validation)
+    → HITL → user approves stories
+```
 
----
+**Skills used internally:**
 
-## Phase 4: Approval (HITL)
+- `/skill execution-plan-creation` (PM creates plan)
+- `/skill user-story-creation` (BA fills stories)
+- `/skill document-validation` (Reviewer validates)
+- `/skill hitl-approval` (user approves)
 
-**Follow:** `/skill hitl-approval`
-
-**Single approval gate** - User reviews PRD, enriched stories, and execution plan. Use AskUserQuestion tool for all user questions. Present structured options with clear descriptions. After approval, execution proceeds continuously.
-
-After approval, waves execute with postmortem-then-compact between waves:
-
-1. Wave N completes
-2. Run postmortem (capture issues while context is fresh)
-3. Compact context
-4. HITL checkpoint (brief wave summary)
-5. Wave N+1 starts
-
-**SKIPPED for complexity < 15.**
+**Output:** Execution plan + Complete user stories
 
 ---
 
 ## Phase 5: Execution
 
-**Follow:** `/skill tdd-execution`, `/skill workflow-postmortem`
+**Follow:** `/skill execution-phase`
 
-ALWAYS spawn agents for all implementation work. Paired TDD structure per story: spawn tester agent to write tests BEFORE spawning coder agent for implementation. PM spawns workers per wave, updates story status.
+TDD-paired wave-based execution:
 
-**Wave Checkpoint Flow (FULL PATH, multi-wave):**
+1. Load execution plan (waves with dependencies)
+2. For each wave:
+   - Update workflow state
+   - Run `/compact` to free context
+   - Spawn tester agent (writes tests from AC)
+   - Spawn implementation agent (passes tests)
+   - Production verification (tests pass, AC marked)
+3. Waves execute continuously with state persistence
+
+**Wave Checkpoint Flow:**
 
 1. Wave N agents complete their stories
-2. **Quick log** - `/skill workflow-postmortem mode=log` (30 seconds max, append obvious mistakes)
+2. **Quick log** - `/skill workflow-postmortem mode=log` (30 seconds max)
 3. **Compact context** - Run `/compact` to manage context window
 4. **HITL checkpoint** - Brief wave summary to user
 5. Proceed to Wave N+1
-
-**For FAST PATH (<15):** Spawn tester agent to write tests, then spawn coder agent for implementation. Single wave, no intermediate logging.
 
 ---
 
 ## Phase 6: Validation
 
-**Follow:** `/skill ac-verification`, `/skill production-check`
+**Follow:** `/skill validation-phase`
 
-1. Verify all acceptance criteria met
+1. Verify all acceptance criteria marked complete
 2. Run build/lint/test (pnpm build, pnpm lint, pnpm test)
+3. Run code quality checks scaled by change size
 
 **On failure:** Return to Execution for fixes.
 
@@ -112,12 +140,10 @@ ALWAYS spawn agents for all implementation work. Paired TDD structure per story:
 **Three checks (PARALLEL):**
 
 1. **Structure Check**: Validate files in correct locations per domain
-2. **DRY Check**: Scan new code against multi-mono shared libraries
+2. **DRY Check**: Scan new code against shared libraries
 3. **Config Audit**: Spawn config agents in audit mode for modified files
 
-**On failure:** Return to Execution for fixes → Re-run Validation → Re-run Standards Audit → Loop until pass.
-
-**SKIPPED for complexity < 15.**
+**On failure:** Return to Execution for fixes, re-run Validation, re-run Standards Audit, loop until pass.
 
 ---
 
@@ -125,9 +151,9 @@ ALWAYS spawn agents for all implementation work. Paired TDD structure per story:
 
 **Follow:** `/skill workflow-postmortem mode=summary`
 
-Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads the accumulated wave logs from `docs/projects/{project}/post-mortem.md` and presents a summary to the user.
+Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads the accumulated wave logs from `docs/epics/{project}/post-mortem.md` and presents a summary to the user.
 
-**Output:** Summary of issues logged across waves (count by category, patterns identified), appended to post-mortem.md and included in final report.
+**Output:** Summary of issues logged across waves (count by category, patterns identified).
 
 ---
 
@@ -135,21 +161,28 @@ Run `/skill workflow-postmortem mode=summary` to generate final summary. This re
 
 **Follow:** `/skill report-phase`
 
-BA + PM produce final build report with summary, files modified, tests added, standards audit results, workflow postmortem, and next steps.
+BA + PM produce final build report with:
+
+- Summary of changes
+- Files modified
+- Tests added
+- Standards audit results
+- Workflow postmortem
+- Next steps
 
 ---
 
 ## Examples
 
 ```bash
-/build "add logging to service" (complexity: 8)
-→ Analysis → FAST PATH → Task(spawn tester) → Task(spawn coder) → Validation → Final Postmortem → Report
+/build "add logging to service"
+→ sequential-thinking → Analysis → Requirements (EA→Reviewer→HITL→BA) → Design (Architect→PM→Reviewer→HITL→BA→Reviewer→HITL) → Execution → Validation → Standards Audit → Postmortem → Report
 
-/build "refactor auth module" (complexity: 22)
-→ Analysis → Requirements → Design → Approval → Task(spawn tester) → Task(spawn coder) → Validation → Standards Audit → Final Postmortem → Report
+/build "refactor auth module"
+→ sequential-thinking → Analysis → Requirements → Design → Execution (waves) → Validation → Standards Audit → Postmortem → Report
 
-/build "multi-tenant SaaS" (complexity: 45)
-→ Analysis → Requirements → Design → Approval → Wave1 → Log → Compact → HITL → Wave2 → Log → Compact → HITL → Validation → Standards Audit → Summary → Report
+/build "multi-tenant SaaS"
+→ sequential-thinking → Analysis → Requirements → Design → Wave1 → Log → Compact → HITL → Wave2 → ... → Validation → Standards Audit → Summary → Report
 
 # Wave checkpoint flow:
 Wave1: Task(spawn tester) → Task(spawn coder) → /skill workflow-postmortem mode=log → /compact → HITL checkpoint
@@ -168,23 +201,19 @@ Task: subagent_type="core-claude-plugin:generic:coder" prompt="Implement against
 ## Enforcement
 
 1. Frame all instructions positively. State what to do.
-2. ALWAYS run Analysis phase first (complexity-check + scope-check in PARALLEL). Use agent results directly and proceed with identified targets.
-3. Complexity routing after Analysis:
-   - **< 15**: FAST PATH (skip Requirements, Design, Approval, Standards Audit)
-   - **≥ 15**: FULL PATH (all phases)
-4. Include these phases only: Analysis → Requirements/Design/Approval (conditional) → Execution → Validation → Standards Audit (conditional) → Final Workflow Postmortem → Report
-5. Use /architect command for innovation or vibe check workflows
-6. TDD execution: ALWAYS run tester BEFORE coder per story. Structure stories around features with tester-first execution.
-7. ALWAYS use Task tool to spawn tester agent first, then coder agent for implementation work
-8. For FAST PATH (<15 complexity): ALWAYS spawn tester agent to write tests BEFORE spawning coder agent
-9. ALWAYS spawn agents for implementation - the orchestrator tracks progress while agents write code
-10. Standards Audit: ALWAYS run AFTER Validation passes (≥15 complexity only)
-11. ALWAYS run build/lint/test after execution
-12. **WAVE CHECKPOINT TIMING (FULL PATH, multi-wave):** ALWAYS run `/skill workflow-postmortem mode=log` BEFORE compact at each wave checkpoint (log → compact → HITL → next wave)
-13. **POSTMORTEM LOG ACCUMULATION:** Each wave log appends to `docs/projects/{project}/post-mortem.md`, building a record across waves
-14. ALWAYS run `/skill workflow-postmortem mode=summary` AFTER Standards Audit (or Validation for FAST PATH), BEFORE Report - reads accumulated logs and presents summary
-15. ALWAYS produce final report with workflow postmortem section
-16. When files modified, spawn agent: `subagent_type="general-purpose"` with prompt "Execute /skill repomix-cache-refresh"
-17. Use AskUserQuestion tool for all user questions. Present structured options with clear descriptions.
-18. After incorporating user feedback into PRD, re-present the full summary and obtain explicit sign-off before proceeding.
-19. BA includes standard AC items in every story per `/skill user-story-template`
+2. ALWAYS run sequential-thinking MCP tool first to plan approach.
+3. ALWAYS run full workflow: Planning → Analysis → Requirements → Design → Execution → Validation → Standards Audit → Postmortem → Report
+4. Requirements phase uses full agent chain: EA → Reviewer → HITL → BA
+5. Design phase uses full agent chain: Architect → PM → Reviewer → HITL → BA → Architect → Reviewer → HITL
+6. TDD execution: ALWAYS run tester BEFORE coder per story.
+7. ALWAYS use Task tool to spawn tester agent first, then coder agent for implementation work.
+8. ALWAYS spawn agents for implementation - the orchestrator tracks progress while agents write code.
+9. Standards Audit: ALWAYS run AFTER Validation passes.
+10. ALWAYS run build/lint/test after execution.
+11. **WAVE CHECKPOINT TIMING:** ALWAYS run `/skill workflow-postmortem mode=log` BEFORE compact at each wave checkpoint.
+12. **POSTMORTEM LOG ACCUMULATION:** Each wave log appends to `docs/epics/{project}/post-mortem.md`.
+13. ALWAYS run `/skill workflow-postmortem mode=summary` AFTER Standards Audit, BEFORE Report.
+14. ALWAYS produce final report with workflow postmortem section.
+15. When files modified, spawn agent: `subagent_type="general-purpose"` with prompt "Execute /skill repomix-cache-refresh"
+16. Use AskUserQuestion tool for all user questions. Present structured options with clear descriptions.
+17. Use `/architect` command for innovation or vibe check workflows.

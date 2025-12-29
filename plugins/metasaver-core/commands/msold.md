@@ -23,8 +23,8 @@ When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content. Run
 
 **Follow:** `/skill analysis-phase`
 
-Spawn 3 agents in parallel to execute complexity-check, tool-check, and scope-check skills.
-Collect: `complexity_score`, `tools`, `scope` (with `targets` and `references`)
+Spawn scope-check agent to identify target and reference repositories.
+Collect: `scope` (with `targets` and `references`)
 
 ---
 
@@ -157,7 +157,7 @@ Workers read their assigned story file. PM tracks status in story files.
 ## Enforcement
 
 1. ALWAYS run Analysis phase first—never skip to answer user questions
-2. Run analysis skills in PARALLEL (single message, 3 Task calls)
+2. Run scope-check skill
 3. User questions addressed by routed agent (≤14) or BA in HITL (≥15)
 4. Score ≤4: Spawn agent for `/skill agent-check`, then route accordingly
 5. Score 5-14: Skip PRD, go direct to Architect

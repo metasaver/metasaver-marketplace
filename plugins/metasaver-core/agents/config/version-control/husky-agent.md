@@ -1,7 +1,7 @@
 ---
 name: husky-git-hooks-agent
 description: Husky git hooks domain expert - handles build and audit modes
-tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---
 
@@ -26,6 +26,7 @@ You are the Husky git hooks expert. You create and audit `.husky/pre-commit` and
 Use `/skill husky-hooks` for template and creation logic.
 
 **Process:**
+
 1. Repository type (library/consumer) is provided via the `scope` parameter
 2. Install husky if needed
 3. Create pre-commit and pre-push hooks from templates
@@ -39,6 +40,7 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 Use `/skill husky-hooks` for hook validation standards.
 
 **Process:**
+
 1. Detect repository type (library vs consumer)
 2. Check both hooks exist and are executable
 3. Validate pre-commit content (shebang, fail-fast, steps, git add)
@@ -49,6 +51,7 @@ Use `/skill husky-hooks` for hook validation standards.
 8. Use `/skill domain/remediation-options` for next steps
 
 **Output Example:**
+
 ```
 Husky Hooks Audit
 ==============================================
@@ -78,6 +81,7 @@ Repository type is provided via the `scope` parameter from the workflow.
 **Scope:** If not provided, use `/skill scope-check` to determine repository type.
 
 **Quick Reference:** Library = `@metasaver/multi-mono`, Consumer = all other repos
+
 - Library: May have intentional differences or additional hooks (use base validation)
 - Consumer without exception: Enforce strict byte-for-byte consistency
 - Consumer with exception: Allow documented deviations via `metasaver.configExceptions.husky`
@@ -85,12 +89,14 @@ Repository type is provided via the `scope` parameter from the workflow.
 ## Hook Standards
 
 **Pre-commit Hook:**
+
 1. `#!/bin/sh` shebang + `set -e` (fail-fast)
 2. Smart multi-mono detection (allow root `.npmrc`, block subdirectory `.npmrc`)
 3. Prettier auto-fix + ESLint auto-fix
 4. `git add -u` to stage fixed files
 
 **Pre-push Hook:**
+
 1. `#!/bin/sh` shebang + `set -e` (fail-fast)
 2. CI environment detection (skip in CI/CD)
 3. Time tracking (`START_TIME`, `END_TIME`, `DURATION`)

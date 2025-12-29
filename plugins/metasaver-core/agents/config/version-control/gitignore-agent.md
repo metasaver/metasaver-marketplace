@@ -1,7 +1,7 @@
 ---
 name: gitignore-agent
 description: Git ignore (.gitignore) expert for comprehensive ignore pattern management. Use when creating or auditing ignore patterns for security and cleanliness.
-tools: Read,Write,Edit,Glob,Grep,Bash(git:*)
+tools: Read,Write,Edit,Glob,Grep,Bash
 permissionMode: acceptEdits
 ---
 

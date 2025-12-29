@@ -1,6 +1,6 @@
 ---
 name: hitl-approval
-description: Use when presenting a plan/summary to user and requesting explicit approval before proceeding. Generic approval gate for /audit, /build, /architect, /debug commands. Checks for auto-approve conditions (complexity <15 with fast-path enabled, or "do without approval" in prompt).
+description: Use when presenting a plan/summary to user and requesting explicit approval before proceeding. Generic approval gate for /audit, /build, /architect, /debug commands. Checks for auto-approve conditions ("do without approval" in prompt).
 ---
 
 # HITL Approval Skill
@@ -9,7 +9,7 @@ description: Use when presenting a plan/summary to user and requesting explicit 
 
 **Purpose:** Present plan/summary to user and get explicit approval before proceeding
 **Trigger:** Decision point requiring human validation
-**Inputs:** summary, affectedFiles, approach, complexity, fastPathEnabled
+**Inputs:** summary, affectedFiles, approach
 **Outputs:** approved (boolean), feedback (string)
 
 ---
@@ -29,12 +29,11 @@ Use this skill as a **generic approval gate** for any major decision:
 
 Approval auto-approves (requires no user intervention) if ANY condition is met:
 
-| Condition                             | Auto-Approve?        |
-| ------------------------------------- | -------------------- |
-| Complexity < 15 AND fastPathEnabled   | ✅ Yes               |
-| Prompt contains "do without approval" | ✅ Yes               |
-| Prompt contains "just do it"          | ✅ Yes               |
-| Otherwise                             | ❌ Requires approval |
+| Condition                             | Auto-Approve?     |
+| ------------------------------------- | ----------------- |
+| Prompt contains "do without approval" | Yes               |
+| Prompt contains "just do it"          | Yes               |
+| Otherwise                             | Requires approval |
 
 ---
 
@@ -43,9 +42,6 @@ Approval auto-approves (requires no user intervention) if ANY condition is met:
 ### Step 1: Check Auto-Approve Conditions
 
 ```
-IF complexity < 15 AND fastPathEnabled:
-    RETURN { approved: true, feedback: null }
-
 IF prompt contains "do without approval" OR "just do it":
     RETURN { approved: true, feedback: null }
 
@@ -120,9 +116,7 @@ Calling agent proceeds with:
 {
   "summary": "string (2-5 sentences describing what will happen)",
   "affectedFiles": "string[] (list of file paths or patterns)",
-  "approach": "string (3-5 sentences explaining HOW it will be done)",
-  "complexity": "number (0-100, from complexity-check skill)",
-  "fastPathEnabled": "boolean (skip approvals for low-complexity tasks)"
+  "approach": "string (3-5 sentences explaining HOW it will be done)"
 }
 ```
 
@@ -141,30 +135,7 @@ Calling agent proceeds with:
 
 ## Examples
 
-### Example 1: Simple Fix (Auto-Approved)
-
-```
-Inputs:
-{
-  "summary": "Add missing email validation to signup form",
-  "affectedFiles": ["src/components/SignupForm.tsx"],
-  "approach": "Add Zod schema validation before form submission",
-  "complexity": 3,
-  "fastPathEnabled": true
-}
-
-Processing:
-  - Complexity (3) < 15 AND fastPathEnabled=true
-  - Auto-approve without showing to user
-
-Output:
-{
-  "approved": true,
-  "feedback": null
-}
-```
-
-### Example 2: Complex Change (Requires Approval)
+### Example 1: Change (Requires Approval)
 
 ```
 Inputs:
@@ -176,14 +147,10 @@ Inputs:
     "src/services/user.service.ts",
     "src/services/team.service.ts"
   ],
-  "approach": "1. Create new schema with tenant_id column. 2. Write migration script. 3. Deploy with blue-green strategy.",
-  "complexity": 42,
-  "fastPathEnabled": false
+  "approach": "1. Create new schema with tenant_id column. 2. Write migration script. 3. Deploy with blue-green strategy."
 }
 
 Processing:
-  - Complexity (42) >= 15
-  - fastPathEnabled=false
   - Show approval request to user
 
 User sees:
@@ -216,7 +183,7 @@ Output:
 }
 ```
 
-### Example 3: Approval Denied with Feedback
+### Example 2: Approval Denied with Feedback
 
 ```
 User clicks: NO, requesting changes
@@ -249,6 +216,4 @@ Output:
 ## Notes
 
 - **Always honor explicit user instructions** in the original prompt about approval
-- **Complexity threshold is 15** for auto-approval (fixed value)
-- **fastPathEnabled** flag comes from command configuration (e.g., /build --fast)
 - **AskUserQuestion** is required for this skill (runs in root agent context only)
