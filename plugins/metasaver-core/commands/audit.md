@@ -7,8 +7,6 @@ description: Audit configurations and standards compliance with complexity-based
 
 Validates configurations and standards compliance with interactive user decisions per discrepancy. Complexity-based routing: simple audits use FAST PATH (skip Requirements/Planning/Approval), complex audits use FULL PATH with HITL gates.
 
-**IMPORTANT:** ALWAYS get user approval before git operations.
-
 ---
 
 ## Entry Handling
@@ -274,5 +272,6 @@ End: /skill workflow-postmortem mode=summary → Report
 11. **ALWAYS skip vibe check** - Audit is compliance-focused, not creation-focused
 12. **ALWAYS skip innovation phase** - Focus on standards compliance, not enhancements
 13. **Template updates ALWAYS create PRs** - ALWAYS require review before merging to metasaver-marketplace
+14. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.
 
 ---

@@ -185,6 +185,7 @@ Use AskUserQuestion tool: "Did this solve what you asked for?"
 9. NEVER specify model parameter on Task calls
 10. NEVER skip HITL approval phase
 11. NEVER assume - ask if unclear
+12. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.
 
 ---
 

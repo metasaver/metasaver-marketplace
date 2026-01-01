@@ -9,8 +9,6 @@ Execute builds through sequential-thinking planning and complete agent chain wor
 
 **Use when:** You know what you want to build. For exploration/planning, use `/architect` instead.
 
-**IMPORTANT:** ALWAYS get user approval before git operations.
-
 ---
 
 ## Entry Handling
@@ -248,3 +246,4 @@ Task: subagent_type="core-claude-plugin:generic:coder" prompt="Implement against
 17. Use AskUserQuestion tool for clarifications during Requirements and Design phases.
 18. Use `/architect` command for innovation or vibe check workflows.
 19. ALWAYS archive epic folder after user approves final report: move `docs/epics/{project}/` to `docs/epics/completed/{project}/` if folder exists.
+20. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.

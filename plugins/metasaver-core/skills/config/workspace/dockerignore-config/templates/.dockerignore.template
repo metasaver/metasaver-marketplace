@@ -1,63 +1,117 @@
-# Dependencies
+# ========================================
+# Dependencies & Package Managers
+# ========================================
 node_modules/
+.pnpm-store/
+.yarn/
+.npm/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
-# Build outputs
+# ========================================
+# Build Outputs & Compiled Code
+# ========================================
 dist/
 build/
-.next/
 out/
+bin/
+.next/
 .turbo/
 *.tsbuildinfo
 
-# Environment files
-.env
-.env.*
-.env.local
-.env.*.local
+# ========================================
+# Environment & Configuration (SECURITY CRITICAL)
+# ========================================
+# Env files
+.env*
+!.env.example
+!.env.template
 
-# IDE
+# NPM config files
+.npmrc*
+!.npmrc.template
+
+# Certificate & key files
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+
+# DevContainer environment
+devcontainer.env
+
+# ========================================
+# Testing & Coverage
+# ========================================
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
+.jest-cache/
+
+# ========================================
+# Development & IDE
+# ========================================
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
+.editorconfig
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Git
-.git/
-.gitignore
-.github/
+# Development tools
+.husky/
+.eslintcache
+.prettierignore
 
-# Testing
-coverage/
-.nyc_output/
-*.test.ts
-*.test.js
-*.spec.ts
-*.spec.js
-__tests__/
-__mocks__/
-
-# Logs
-*.log
+# ========================================
+# Logs & Temporary Files
+# ========================================
+**/*.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
+pnpm-debug.log*
+.cache/
+tmp/
+temp/
+*.tmp
 
-# Documentation (except README)
-docs/
+# ========================================
+# Version Control & Docker Meta-files
+# ========================================
+.git/
+.gitignore
+.gitattributes
+.gitmodules
+.dockerignore
+Dockerfile*
+docker-compose*
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+azure-pipelines.yml
+
+# Documentation (keep in source, not in Docker)
 *.md
 !README.md
+docs/
 
-# Temporary
-*.tmp
-*.temp
-.cache/
-
-# Prisma (if applicable)
+# ========================================
+# Database (Prisma)
+# ========================================
 prisma/*.db
 prisma/*.db-journal
