@@ -1,6 +1,6 @@
 ---
 name: vite-config
-description: Vite configuration templates and validation logic for React web apps. Includes 5 required standards (correct plugins for React, required path alias @ to ./src, build configuration with sourcemaps and manual chunks, server configuration with strictPort, required dependencies). Use when creating or auditing vite.config.ts files.
+description: Vite configuration templates and validation logic for React web apps. Includes 5 required standards (correct plugins for React, required path alias #src to ./src, build configuration with sourcemaps and manual chunks, server configuration with strictPort, required dependencies). Use when creating or auditing vite.config.ts files.
 ---
 
 # Vite Configuration Skill
@@ -41,12 +41,12 @@ All React projects must have:
 
 ### Rule 2: Required Path Alias
 
-Must include `@` alias pointing to `./src`:
+Must include `#src` alias pointing to `./src`:
 
 ```typescript
 resolve: {
   alias: {
-    '@': path.resolve(__dirname, './src'),
+    '#src': path.resolve(__dirname, './src'),
   },
 }
 ```
@@ -110,8 +110,8 @@ if (!hasReact) {
 }
 
 // Rule 2: Check path alias
-if (!config.resolve?.alias?.["@"]) {
-  errors.push("Rule 2: Missing path alias '@' → './src'");
+if (!config.resolve?.alias?.["#src"]) {
+  errors.push("Rule 2: Missing path alias '#src' → './src'");
 }
 
 // Rule 3: Check build configuration

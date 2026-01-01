@@ -48,7 +48,7 @@ Use `/skill config/build-tools/vite-config` for templates and validation logic.
 | Rule | Standard                                                             |
 | ---- | -------------------------------------------------------------------- |
 | 1    | Always use correct plugins for React projects (@vitejs/plugin-react) |
-| 2    | Always include path alias: `@` -> `./src`                            |
+| 2    | Always include path alias: `#src` -> `./src`                         |
 | 3    | Always include build config: outDir, sourcemap, manualChunks         |
 | 4    | Always include server config: port, strictPort, host                 |
 | 5    | Always include dependencies: vite, @vitejs/plugin-react              |
