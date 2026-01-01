@@ -32,6 +32,8 @@ Spawn 2 skills in PARALLEL (single message with 2 invocations):
 - `files[]` - Files to audit
 - `agents[]` - Config agents matched to files
 
+**→ CONTINUE IMMEDIATELY to Phase 2.** Do not stop after outputting scope. The analysis output feeds directly into Requirements.
+
 ---
 
 ## Phase 2: Requirements
@@ -260,18 +262,19 @@ End: /skill workflow-postmortem mode=summary → Report
 ## Enforcement
 
 1. Use AskUserQuestion tool for every question to the user. Present structured options with clear descriptions.
-2. **ALWAYS run Analysis phase first** - scope-check, agent-check (PARALLEL)
-3. **Investigation operates in READ-ONLY mode** - ALWAYS wait for user approval before making changes
-4. **Every discrepancy gets user decision via HITL** - ALWAYS get approval before applying fixes
-5. **Template updates happen FIRST** in metasaver-marketplace, then apply to other files
-6. **ALWAYS run build/lint/test** after remediation
-7. **WAVE CHECKPOINT TIMING (multi-wave):** ALWAYS run `/skill workflow-postmortem mode=log` BEFORE compact at each wave checkpoint (log → compact → HITL → next wave)
-8. **POSTMORTEM LOG ACCUMULATION:** Each wave log appends to `docs/projects/{project}/post-mortem.md`, building a record across waves
-9. **ALWAYS run `/skill workflow-postmortem mode=summary`** AFTER Remediation, BEFORE Final Report - reads accumulated logs and presents summary
-10. **ALWAYS produce final report** with workflow postmortem section
-11. **ALWAYS skip vibe check** - Audit is compliance-focused, not creation-focused
-12. **ALWAYS skip innovation phase** - Focus on standards compliance, not enhancements
-13. **Template updates ALWAYS create PRs** - ALWAYS require review before merging to metasaver-marketplace
-14. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.
+2. **ALWAYS run full workflow:** Analysis → Requirements → Planning → Approval → Investigation → Resolution → Remediation → Final Postmortem → Final Report. Do not stop between phases.
+3. **ALWAYS run Analysis phase first** - scope-check, agent-check (PARALLEL)
+4. **Investigation operates in READ-ONLY mode** - ALWAYS wait for user approval before making changes
+5. **Every discrepancy gets user decision via HITL** - ALWAYS get approval before applying fixes
+6. **Template updates happen FIRST** in metasaver-marketplace, then apply to other files
+7. **ALWAYS run build/lint/test** after remediation
+8. **WAVE CHECKPOINT TIMING (multi-wave):** ALWAYS run `/skill workflow-postmortem mode=log` BEFORE compact at each wave checkpoint (log → compact → HITL → next wave)
+9. **POSTMORTEM LOG ACCUMULATION:** Each wave log appends to `docs/projects/{project}/post-mortem.md`, building a record across waves
+10. **ALWAYS run `/skill workflow-postmortem mode=summary`** AFTER Remediation, BEFORE Final Report - reads accumulated logs and presents summary
+11. **ALWAYS produce final report** with workflow postmortem section
+12. **ALWAYS skip vibe check** - Audit is compliance-focused, not creation-focused
+13. **ALWAYS skip innovation phase** - Focus on standards compliance, not enhancements
+14. **Template updates ALWAYS create PRs** - ALWAYS require review before merging to metasaver-marketplace
+15. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.
 
 ---
