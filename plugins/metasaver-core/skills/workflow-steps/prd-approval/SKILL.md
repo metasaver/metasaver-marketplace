@@ -55,16 +55,16 @@ This is more useful than approving just the PRD, because:
    PLAN SUMMARY
    ════════════════════════════════════════
 
-   📄 PRD: docs/projects/msm008-feature/prd.md
+   PRD: docs/projects/msm008-feature/prd.md
 
-   📋 User Stories (9 total):
-   ├── Wave 1 (parallel): US-001, US-002
-   ├── Wave 2 (parallel): US-003a, US-003b, US-003c, US-003d
-   ├── Wave 3 (parallel): US-003e, US-004
-   └── Wave 4: US-005
+   User Stories (9 total):
+   - Wave 1 (parallel): msm-feat-001, msm-feat-002
+   - Wave 2 (parallel): msm-feat-003, msm-feat-004, msm-feat-005, msm-feat-006
+   - Wave 3 (parallel): msm-feat-007, msm-feat-008
+   - Wave 4: msm-feat-009
 
-   ⚡ Parallelization: 65% (vs 0% if stories were per-package)
-   🤖 Max concurrent agents: 4
+   Parallelization: 65% (vs 0% if stories were per-package)
+   Max concurrent agents: 4
 
    Ready to execute?
    ```
@@ -90,15 +90,15 @@ This is more useful than approving just the PRD, because:
   "prdPath": "docs/projects/msm008-feature/prd.md",
   "storiesFolder": "docs/projects/msm008-feature/user-stories/",
   "storyFiles": [
-    "US-001-database-schema.md",
-    "US-002-contracts-types.md",
-    "US-003a-workflow-scaffolding.md",
-    "US-003b-height-weight-parser.md",
-    "US-003c-team-fuzzy-matching.md",
-    "US-003d-major-entity-parser.md",
-    "US-003e-validation-upsert.md",
-    "US-004-api-layer.md",
-    "US-005-frontend.md"
+    "msm-feat-001-database-schema.md",
+    "msm-feat-002-contracts-types.md",
+    "msm-feat-003-workflow-scaffolding.md",
+    "msm-feat-004-height-weight-parser.md",
+    "msm-feat-005-team-fuzzy-matching.md",
+    "msm-feat-006-major-entity-parser.md",
+    "msm-feat-007-validation-upsert.md",
+    "msm-feat-008-api-layer.md",
+    "msm-feat-009-frontend.md"
   ],
   "executionPlan": "docs/projects/msm008-feature/execution-plan.md",
   "iterations": 1

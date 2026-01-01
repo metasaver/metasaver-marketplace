@@ -1,7 +1,7 @@
 ---
 # User Story Frontmatter - REQUIRED FIELDS
-story_id: "US-{NNN}" # e.g., US-001, US-002
-epic_id: "E{NN}" # e.g., E01, E02
+story_id: "{PROJECT}-{EPIC}-{NNN}" # e.g., msm-feat-001, msc-app-002
+epic_id: "{PROJECT}-{EPIC}" # e.g., msm-feat, msc-app
 title: "{Story Title}"
 status: "pending" # pending | in-progress | complete | blocked
 complexity: 0 # 1-10 score
@@ -111,11 +111,11 @@ updated: "YYYY-MM-DD"
 <!--
 TEMPLATE RULES:
 1. Every user story MUST have frontmatter with agent field
-2. story_id format: US-{NNN} (3-digit, zero-padded)
-3. epic_id format: E{NN} (2-digit, zero-padded)
+2. story_id format: {PROJECT}-{EPIC}-{NNN} (e.g., msm-feat-001, msc-app-002)
+3. epic_id format: {PROJECT}-{EPIC} (e.g., msm-feat, msc-app)
 4. agent field uses full subagent_type from execution-plan
-5. dependencies list story IDs (e.g., ["US-001", "US-002"])
+5. dependencies list story IDs (e.g., ["msm-feat-001", "msm-feat-002"])
 6. Architecture section added by architect-agent, not BA
 7. Status updates as story progresses
-8. File naming: US-{NNN}-{kebab-case-title}.md
+8. File naming: {PROJECT}-{EPIC}-{NNN}-{kebab-case-title}.md (e.g., msm-feat-001-view-applications.md)
 -->

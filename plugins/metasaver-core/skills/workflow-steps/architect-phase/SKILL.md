@@ -142,14 +142,14 @@ description: Takes user stories and enriches them with implementation details, p
 ```json
 {
   "enrichedStories": [
-    "user-stories/US-001-database-schema.md",
-    "user-stories/US-002-contracts-types.md",
-    "user-stories/US-003-workflow-scaffolding.md"
+    "user-stories/msm-feat-001-database-schema.md",
+    "user-stories/msm-feat-002-contracts-types.md",
+    "user-stories/msm-feat-003-workflow-scaffolding.md"
   ],
   "architectureNotes": "architecture-notes.md",
   "patternReferences": [
     {
-      "story": "US-003",
+      "story": "msm-feat-003",
       "pattern": "Real-time updates",
       "reference": "rugby-crm/src/features/notifications",
       "reason": "Similar WebSocket + polling pattern"
@@ -214,9 +214,9 @@ description: Takes user stories and enriches them with implementation details, p
 ```
 Design Phase Output:
   stories/
-    US-001-database-schema.md
-    US-002-contracts-types.md
-    US-003-workflow-scaffolding.md
+    msm-feat-001-database-schema.md
+    msm-feat-002-contracts-types.md
+    msm-feat-003-workflow-scaffolding.md
 
 Architect Phase (this skill):
   → Read scope: targets=[metasaver-com], references=[rugby-crm]
@@ -232,7 +232,7 @@ Architect Phase (this skill):
 
 Output:
   {
-    enrichedStories: [US-001-enriched.md, US-002-enriched.md, ...],
+    enrichedStories: [msm-feat-001-enriched.md, msm-feat-002-enriched.md, ...],
     architectureNotes: "architecture-notes.md",
     patternReferences: [...]
   }

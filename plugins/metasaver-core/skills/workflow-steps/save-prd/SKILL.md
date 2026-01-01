@@ -73,7 +73,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 - Create `{project-dir}/user-stories/` subdirectory
 - For each story, write individual file:
-  - Filename: `US-{NNN}-{slug}.md` (e.g., `US-001-user-auth.md`)
+  - Filename: `{PROJECT}-{EPIC}-{NNN}-{slug}.md` (e.g., `msm-auth-001-user-login.md`)
   - Number: Zero-padded 3 digits
   - Slug: Derived from story title (kebab-case)
 - Include in each story file:
@@ -179,15 +179,16 @@ function getNextEpicNumber(prefix):
 
 ## User Story Filename Examples
 
-| Story ID | Story Title             | Generated Filename                |
-| -------- | ----------------------- | --------------------------------- |
-| US-001   | "User Authentication"   | `US-001-user-authentication.md`   |
-| US-002   | "Token Service"         | `US-002-token-service.md`         |
-| US-015   | "Dashboard Widgets API" | `US-015-dashboard-widgets-api.md` |
+| Story ID     | Story Title             | Generated Filename                    |
+| ------------ | ----------------------- | ------------------------------------- |
+| msm-auth-001 | "User Authentication"   | `msm-auth-001-user-authentication.md` |
+| msm-auth-002 | "Token Service"         | `msm-auth-002-token-service.md`       |
+| chb-dash-015 | "Dashboard Widgets API" | `chb-dash-015-dashboard-widgets.md`   |
 
 **Rules:**
 
-- Story ID: Zero-padded to 3 digits
+- Story ID format: {PROJECT}-{EPIC}-{NNN} (e.g., msm-auth-001)
+- Number: Zero-padded to 3 digits
 - Slug: Derived from title (kebab-case)
 - Max slug length: 40 characters
 
@@ -255,11 +256,11 @@ Save PRD Phase (this skill):
   4. Create directory: docs/projects/msm007-user-authentication-api/
   5. Write prd.md (all sections)
   6. Write user-stories/:
-     - US-001-auth-schema.md
-     - US-002-auth-service.md
-     - US-003-token-service.md
-     - US-004-login-endpoint.md
-     - US-005-logout-endpoint.md
+     - msm-auth-001-auth-schema.md
+     - msm-auth-002-auth-service.md
+     - msm-auth-003-token-service.md
+     - msm-auth-004-login-endpoint.md
+     - msm-auth-005-logout-endpoint.md
   7. Write execution-plan.md (3 waves, dependencies)
   8. Write innovations-selected.md (passwordless, MFA)
   9. Write architecture-notes.md (multi-mono, patterns)
@@ -269,11 +270,11 @@ Result:
   docs/projects/msm007-user-authentication-api/
   ├── prd.md
   ├── user-stories/
-  │   ├── US-001-auth-schema.md
-  │   ├── US-002-auth-service.md
-  │   ├── US-003-token-service.md
-  │   ├── US-004-login-endpoint.md
-  │   └── US-005-logout-endpoint.md
+  │   ├── msm-auth-001-auth-schema.md
+  │   ├── msm-auth-002-auth-service.md
+  │   ├── msm-auth-003-token-service.md
+  │   ├── msm-auth-004-login-endpoint.md
+  │   └── msm-auth-005-logout-endpoint.md
   ├── execution-plan.md
   ├── innovations-selected.md
   └── architecture-notes.md

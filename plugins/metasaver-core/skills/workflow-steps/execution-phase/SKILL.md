@@ -106,7 +106,7 @@ updateWorkflowState(projectFolder, {
   status: "executing",
   stories: {
     ...state.stories,
-    inProgress: waveStoryIds, // e.g., ["US-003", "US-004", "US-005"]
+    inProgress: waveStoryIds, // e.g., ["msm-feat-003", "msm-feat-004", "msm-feat-005"]
   },
 });
 ```
@@ -156,7 +156,7 @@ This ensures workflows can resume correctly after user interruption or context c
 ## Execution Logic
 
 ```
-waves = [[Story US-001], [Story US-002, US-003]]
+waves = [[Story prj-epc-001], [Story prj-epc-002, prj-epc-003]]
 completed = new Set()
 
 for each wave in waves:
@@ -209,7 +209,7 @@ return allResults
 Before spawning any agent, announce the selection:
 "Spawning {agent-type} agent ({agent-name}) for {story-id}"
 
-Example: "Spawning tester agent (core-claude-plugin:generic:tester) for US-001"
+Example: "Spawning tester agent (core-claude-plugin:generic:tester) for msm-auth-001"
 
 **Tester spawn template:**
 
@@ -283,12 +283,12 @@ UPDATE: Story status → ✅ Complete (tests passing)
 {
   "totalWaves": 2,
   "totalStories": 5,
-  "storiesCompleted": ["US-001", "US-002", "US-003"],
-  "storiesFailed": ["US-004"],
-  "storiesRemaining": ["US-005"],
+  "storiesCompleted": ["msm-auth-001", "msm-auth-002", "msm-auth-003"],
+  "storiesFailed": ["msm-auth-004"],
+  "storiesRemaining": ["msm-auth-005"],
   "results": [
     {
-      "storyId": "US-001",
+      "storyId": "msm-auth-001",
       "wave": 1,
       "testerAgent": "unit-test",
       "testFile": "src/__tests__/auth.test.ts",
@@ -332,15 +332,15 @@ UPDATE: Story status → ✅ Complete (tests passing)
 ```
 /build JWT authentication API
 
-Wave 1: US-001 (Schema + AuthService)
-  1. updateStoryFiles(US-001)
+Wave 1: msm-auth-001 (Schema + AuthService)
+  1. updateStoryFiles(msm-auth-001)
   2. runCompact()
   3. T-001 (unit-test): Write auth.test.ts (mocks User model + AuthService)
   4. I-001 (backend-dev): Implement User model + AuthService (pass T-001)
   5. productionCheck: tests still pass, AC marked
 
-Wave 2: US-002 (TokenService) | US-003 (API integration)
-  1. updateStoryFiles(US-002, US-003)
+Wave 2: msm-auth-002 (TokenService) | msm-auth-003 (API integration)
+  1. updateStoryFiles(msm-auth-002, msm-auth-003)
   2. runCompact()
   3a. T-002 (unit-test): Write token.test.ts (parallel)
   3b. T-003 (integration-test): Write api.test.ts (parallel)

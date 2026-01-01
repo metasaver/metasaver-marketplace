@@ -105,8 +105,8 @@ description: Quality validation after execution. Runs confidence-check skill (if
     "status": "incomplete",
     "checked": 8,
     "incompleteStories": [
-      "US-002: User login - AC 2, 4 incomplete",
-      "US-005: Password reset - AC 1 incomplete"
+      "prj-epc-002: User login - AC 2, 4 incomplete",
+      "prj-epc-005: Password reset - AC 1 incomplete"
     ]
   },
   "message": "Cannot proceed: 2 stories have incomplete acceptance criteria"

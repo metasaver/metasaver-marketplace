@@ -15,99 +15,88 @@ flowchart TB
     classDef phase fill:#bbdefb,stroke:#1565c0,stroke-width:2px
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef entry fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef decision fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:2px
 
     ENTRY["/build {requirement}"]:::entry
 
-    subgraph P1["Phase 1: Analysis"]
-        direction TB
-        CC["/skill complexity-check"]:::skill
+    subgraph P1["Phase 1: Planning"]
+        SEQ["sequential-thinking MCP"]:::skill
+    end
+
+    subgraph P2["Phase 2: Analysis"]
         SC["/skill scope-check"]:::skill
     end
 
-    DECIDE{{"complexity < 15?"}}:::decision
-
-    subgraph FAST["FAST PATH"]
-        direction TB
-        subgraph P5F["Execution"]
-            TDDF["/skill tdd-execution"]:::skill
-        end
-        subgraph P6F["Validation"]
-            ACVF["/skill ac-verification"]:::skill
-            PRDF["/skill production-check"]:::skill
-        end
-        subgraph P8F["Report"]
-            RPTF["/skill report-phase"]:::skill
-        end
-        P5F --> P6F --> P8F
+    subgraph P3["Phase 3: Requirements"]
+        REQ["/skill requirements-phase"]:::skill
     end
 
-    subgraph FULL["FULL PATH"]
-        direction TB
-        subgraph P2["Requirements"]
-            REQ["/skill requirements-phase"]:::skill
-        end
-        subgraph P3["Design"]
-            ARCH["/skill architect-phase"]:::skill
-            PLAN["/skill planning-phase"]:::skill
-        end
-        subgraph P4["Approval"]
-            HITL["/skill hitl-approval"]:::skill
-        end
-        subgraph P5["Execution"]
-            TDD["/skill tdd-execution"]:::skill
-        end
-        subgraph P6["Validation"]
-            ACV["/skill ac-verification"]:::skill
-            PRD["/skill production-check"]:::skill
-        end
-        subgraph P7["Standards Audit"]
-            STRUCT["/skill structure-check"]:::skill
-            DRY["/skill dry-check"]:::skill
-            CFG["/skill config-audit"]:::skill
-        end
-        subgraph P8["Report"]
-            RPT["/skill report-phase"]:::skill
-        end
-        P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8
+    subgraph P4["Phase 4: Design"]
+        DES["/skill design-phase"]:::skill
     end
 
-    ENTRY --> P1 --> DECIDE
-    DECIDE -->|Yes| FAST
-    DECIDE -->|No| FULL
+    subgraph P5["Phase 5: HITL Approval"]
+        HITL["/skill hitl-approval"]:::hitl
+    end
+
+    subgraph P6["Phase 6: Execution"]
+        TDD["/skill tdd-execution"]:::skill
+    end
+
+    subgraph P7["Phase 7: Validation"]
+        VAL["/skill validation-phase"]:::skill
+    end
+
+    subgraph P8["Phase 8: Standards Audit"]
+        STRUCT["/skill structure-check"]:::skill
+        DRY["/skill dry-check"]:::skill
+    end
+
+    subgraph P9["Phase 9: Postmortem"]
+        POST["/skill workflow-postmortem"]:::skill
+    end
+
+    subgraph P10["Phase 10: Report"]
+        RPT["/skill report-phase"]:::skill
+    end
+
+    subgraph P11["Phase 11: Archival"]
+        ARCH["Archive epic folder"]:::skill
+    end
+
+    ENTRY --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8 --> P9 --> P10 --> P11
 ```
 
 **Legend:**
 
-| Color  | Meaning           |
-| ------ | ----------------- |
-| Purple | Entry point       |
-| Blue   | Phase container   |
-| Yellow | Skill (reusable)  |
-| Orange | Complexity router |
+| Color  | Meaning            |
+| ------ | ------------------ |
+| Purple | Entry point        |
+| Blue   | Phase container    |
+| Yellow | Skill (reusable)   |
+| Red    | HITL approval gate |
 
-**Fast Path (<15):** Skip Requirements, Design, Approval, Standards Audit. Single tester→coder pass.
-
-**Full Path (≥15):** All phases with PRD, HITL gates, TDD waves, and standards audit.
+**/build is ALWAYS full workflow.** No complexity routing - use `/ms` for simple tasks.
 
 ---
 
-## 2. Phase 1: Analysis (Exploded)
+## 2. Phase 1: Planning + Phase 2: Analysis (Exploded)
 
-**Execution:** PARALLEL - spawn both skills in single message
+**Execution:** Sequential - planning first, then scope analysis
 
 ```mermaid
 flowchart TB
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
-    subgraph P1["Phase 1: Analysis"]
-        subgraph CC["/skill complexity-check"]
-            CC1["Analyze prompt complexity"]:::step
-            CC2["Return: score (1-50)"]:::step
-            CC1 --> CC2
-        end
+    subgraph P1["Phase 1: Planning"]
+        SEQ1["Use sequential-thinking MCP tool"]:::step
+        SEQ2["Analyze prompt scope and requirements"]:::step
+        SEQ3["Outline high-level implementation strategy"]:::step
+        SEQ1 --> SEQ2 --> SEQ3
+    end
 
+    subgraph P2["Phase 2: Analysis"]
         subgraph SC["/skill scope-check"]
             SC1["Parse prompt for repo/file references"]:::step
             SC2["Identify target repos"]:::step
@@ -116,11 +105,12 @@ flowchart TB
             SC1 --> SC2 --> SC3 --> SC4
         end
     end
+
+    P1 --> P2
 ```
 
 **Output:**
 
-- `complexity` - Score 1-50 (drives model selection)
 - `targets[]` - Repos/paths to modify
 - `references[]` - Repos/paths to use as patterns
 
@@ -128,109 +118,137 @@ flowchart TB
 
 ## 3. Phase 2: Requirements (Exploded)
 
-**Execution:** Sequential with HITL clarification loop
+**Execution:** Sequential with AskUserQuestion clarification loop (NOT HITL)
 
 ```mermaid
 flowchart TB
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
-    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:1px
+    classDef ask fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
 
     subgraph P2["Phase 2: Requirements"]
         subgraph REQ["/skill requirements-phase"]
             R1["Parse scope + complexity results"]:::step
-            R2["BA understands task"]:::step
+            R2["EA analyzes task"]:::step
 
-            subgraph LOOP["HITL Clarification Loop"]
-                R3["HITL: Ask clarifying questions"]:::hitl
-                R4["User answers"]:::hitl
-                R5["BA updates understanding"]:::step
-                R6{"More questions?"}
+            subgraph LOOP["AskUserQuestion Clarification Loop"]
+                R3["AskUserQuestion: clarifying questions"]:::ask
+                R4["User answers"]:::ask
+                R5["EA updates understanding"]:::step
+                R6{"100% understood?"}
                 R3 --> R4 --> R5 --> R6
-                R6 -->|Yes| R3
+                R6 -->|No| R3
             end
 
-            R7["Create PRD: docs/prd/build-{date}.md"]:::step
-            R8["Create user stories with acceptance criteria"]:::step
+            R7["Create PRD: docs/epics/{project}/prd.md"]:::step
+            R8["Reviewer validates PRD"]:::step
+            R9["BA extracts user stories"]:::step
 
             R1 --> R2 --> LOOP
-            R6 -->|No| R7 --> R8 --> OUT((To Design))
+            R6 -->|Yes| R7 --> R8 --> R9 --> OUT((To Design))
         end
     end
 ```
 
-**Key:** Always creates PRD for /build. BA gathers requirements, creates PRD + stories.
+**Key:** EA uses AskUserQuestion until 100% understanding, then creates PRD. NO HITL in this phase.
 
-**Output:** PRD + user stories (not yet approved)
+**Output:** PRD + user stories (continues to Design, NOT approval)
 
 ---
 
 ## 4. Phase 3: Design (Exploded)
 
-**Execution:** Sequential - architect first, then planning
+**Execution:** Sequential - architect, BA, PM, reviewer (NO HITL)
 
 ```mermaid
 flowchart TB
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef validate fill:#e3f2fd,stroke:#1565c0,stroke-width:1px
 
-    subgraph P3["Phase 3: Design"]
+    subgraph P3["Phase 3: Design (NO HITL)"]
         subgraph ARCH["/skill architect-phase"]
-            A1["Check multi-mono for existing solutions"]:::step
-            A2["Search reference repos for patterns"]:::step
-            A3["Validate against Context7 docs"]:::step
-            A4["Enrich stories with implementation details"]:::step
-            A5["Add: files to create/modify, imports, patterns"]:::step
-            A1 --> A2 --> A3 --> A4 --> A5
+            A1["Annotate PRD with implementation details"]:::step
+            A2["Add: API endpoints, key files, patterns"]:::step
+            A1 --> A2
         end
 
-        subgraph PLANNING["/skill planning-phase"]
-            PL1["Review enriched stories"]:::step
+        subgraph BA1["BA: Story Outlines"]
+            B1["Create story outlines from annotated PRD"]:::step
+        end
+
+        subgraph PM["/skill planning-phase"]
+            PL1["Review story outlines"]:::step
             PL2["Identify dependencies between stories"]:::step
             PL3["Group into execution waves"]:::step
-            PL4["Define parallel pairs per wave"]:::step
-            PL5["Return: execution_plan"]:::step
-            PL1 --> PL2 --> PL3 --> PL4 --> PL5
+            PL4["Create execution-plan.md"]:::step
+            PL1 --> PL2 --> PL3 --> PL4
         end
 
-        ARCH --> PLANNING
+        subgraph REV1["Reviewer: Validate Plan"]
+            V1["Validate execution plan"]:::validate
+            V2{"Valid?"}
+            V1 --> V2
+        end
+
+        subgraph BA2["BA: Fill Story Details"]
+            B2["Fill complete story format"]:::step
+            B3["Add acceptance criteria"]:::step
+            B2 --> B3
+        end
+
+        subgraph ARCH2["Architect: Architecture Section"]
+            A3["Add Architecture section to each story"]:::step
+        end
+
+        subgraph REV2["Reviewer: Validate Stories"]
+            V3["Validate all stories"]:::validate
+            V4{"Valid?"}
+            V3 --> V4
+        end
+
+        ARCH --> BA1 --> PM --> REV1
+        V2 -->|No| PM
+        V2 -->|Yes| BA2 --> ARCH2 --> REV2
+        V4 -->|No| BA2
+        V4 -->|Yes| OUT((To HITL Approval))
     end
 ```
 
-**Output:** Enriched stories + execution plan with waves
+**Output:** Enriched stories + execution plan with waves (continues to SINGLE HITL)
 
 ---
 
 ## 5. Phase 4: Approval (Exploded)
 
-**Execution:** HITL approval loop
+**Execution:** SINGLE HITL approval for all documentation
 
 ```mermaid
 flowchart TB
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
-    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:1px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:2px
 
-    subgraph P4["Phase 4: Approval"]
+    subgraph P4["Phase 4: SINGLE HITL Approval"]
         subgraph HITL["/skill hitl-approval"]
             H1["Present PRD summary"]:::step
-            H2["Present enriched stories"]:::step
-            H3["Present execution plan"]:::step
-            H4["HITL: User reviews"]:::hitl
+            H2["Present execution plan (waves, dependencies)"]:::step
+            H3["Present user stories (count, complexity)"]:::step
+            H4["HITL: User reviews ALL docs"]:::hitl
             H5{"User approves?"}
             H6["Collect feedback"]:::step
-            H7["Return to Requirements phase"]:::step
+            H7["Return to Requirements or Design phase"]:::step
 
             H1 --> H2 --> H3 --> H4 --> H5
             H5 -->|No| H6 --> H7
-            H5 -->|Yes| OUT((Approved))
+            H5 -->|Yes| OUT((Approved - Start Execution))
         end
     end
 ```
 
-**Key:** User reviews PRD + stories + execution plan before any code is written.
+**Key:** This is the ONLY HITL gate. User reviews PRD + execution plan + stories before any code is written.
 
-**Output:** Approved PRD + execution plan
+**Output:** All docs approved → proceed to execution
 
 ---
 

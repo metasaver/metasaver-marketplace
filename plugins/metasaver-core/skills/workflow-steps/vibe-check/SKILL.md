@@ -57,7 +57,7 @@ Quality gate using vibe-check MCP tool. Validates: (1) Internal consistency, (2)
   "status": "passed" | "failed",
   "coherent": true | false,
   "issues": [
-    "User story US-003 missing acceptance criteria",
+    "User story prj-epc-003 missing acceptance criteria",
     "Requirement R-005 is vague - 'fast performance' needs quantification",
     "Gap: No error handling strategy defined"
   ],
@@ -73,7 +73,7 @@ Quality gate using vibe-check MCP tool. Validates: (1) Internal consistency, (2)
 **Failed:**
 
 ```
-Issues: US-003 missing AC, R-005 vague ("fast" needs metrics),
+Issues: prj-epc-003 missing AC, R-005 vague ("fast" needs metrics),
         No error handling, Conflict: R-002 real-time vs R-007 batch
 Action: AUTO (BA fixes) or MANUAL (user guidance)?
 ```

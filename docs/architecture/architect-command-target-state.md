@@ -17,82 +17,58 @@ flowchart TB
     classDef phase fill:#bbdefb,stroke:#1565c0,stroke-width:2px
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef entry fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef decision fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:2px
 
     ENTRY["/architect {idea/problem}"]:::entry
 
     subgraph P1["Phase 1: Analysis"]
-        direction TB
-        CC["/skill complexity-check"]:::skill
         SC["/skill scope-check"]:::skill
     end
 
-    DECIDE{{"complexity < 15?"}}:::decision
-
-    subgraph FAST["FAST PATH"]
-        direction TB
-        subgraph P2F["Requirements"]
-            REQF["/skill requirements-phase"]:::skill
-        end
-        subgraph P5F["Design"]
-            PLANF["/skill planning-phase"]:::skill
-        end
-        subgraph P6F["Approval"]
-            HITLF["/skill hitl-approval"]:::skill
-        end
-        subgraph P7F["Output"]
-            SAVEF["/skill save-prd"]:::skill
-        end
-        P2F --> P5F --> P6F --> P7F
+    subgraph P2["Phase 2: Requirements"]
+        REQ["/skill requirements-phase"]:::skill
     end
 
-    subgraph FULL["FULL PATH"]
-        direction TB
-        subgraph P2["Requirements"]
-            REQ["/skill requirements-phase"]:::skill
-        end
-        subgraph P3["Vibe Check"]
-            VC["/skill vibe-check"]:::skill
-        end
-        subgraph P4["Innovation"]
-            INN["/skill innovate-phase"]:::skill
-        end
-        subgraph P5["Design"]
-            ARCH["/skill architect-phase"]:::skill
-            PLAN["/skill planning-phase"]:::skill
-        end
-        subgraph P6["Approval"]
-            HITL["/skill hitl-approval"]:::skill
-        end
-        subgraph P7["Output"]
-            SAVE["/skill save-prd"]:::skill
-        end
-        P2 --> P3 --> P4 --> P5 --> P6 --> P7
+    subgraph P3["Phase 3: Vibe Check (Optional)"]
+        VC["/skill vibe-check"]:::skill
     end
 
-    ENTRY --> P1 --> DECIDE
-    DECIDE -->|Yes| FAST
-    DECIDE -->|No| FULL
+    subgraph P4["Phase 4: Innovation"]
+        INN["/skill innovate-phase"]:::skill
+    end
+
+    subgraph P5["Phase 5: Design"]
+        ARCH["/skill architect-phase"]:::skill
+        PLAN["/skill planning-phase"]:::skill
+    end
+
+    subgraph P6["Phase 6: HITL Approval"]
+        HITL["/skill hitl-approval"]:::hitl
+    end
+
+    subgraph P7["Phase 7: Output"]
+        SAVE["/skill save-prd"]:::skill
+    end
+
+    ENTRY --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7
 ```
 
 **Legend:**
 
-| Color  | Meaning           |
-| ------ | ----------------- |
-| Purple | Entry point       |
-| Blue   | Phase container   |
-| Yellow | Skill (reusable)  |
-| Orange | Complexity router |
+| Color  | Meaning            |
+| ------ | ------------------ |
+| Purple | Entry point        |
+| Blue   | Phase container    |
+| Yellow | Skill (reusable)   |
+| Red    | HITL approval gate |
 
-**Fast Path (<15):** Skip Vibe Check, Innovation, architect-phase. Quick requirements → planning → approve → save.
-
-**Full Path (≥15):** Deep exploration with vibe check, innovation advisor, full architecture.
+**/architect is ALWAYS full workflow.** Deep exploration with vibe check, innovation advisor, full architecture.
 
 ---
 
 ## 2. Phase 1: Analysis (Exploded)
 
-**Execution:** PARALLEL - spawn both skills in single message
+**Execution:** Spawn scope-check skill
 
 ```mermaid
 flowchart TB
@@ -100,12 +76,6 @@ flowchart TB
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
     subgraph P1["Phase 1: Analysis"]
-        subgraph CC["/skill complexity-check"]
-            CC1["Analyze prompt complexity"]:::step
-            CC2["Return: score (1-50)"]:::step
-            CC1 --> CC2
-        end
-
         subgraph SC["/skill scope-check"]
             SC1["Parse prompt for repo/file references"]:::step
             SC2["Identify target repos"]:::step
@@ -118,7 +88,6 @@ flowchart TB
 
 **Output:**
 
-- `complexity` - Score 1-50 (drives model selection)
 - `targets[]` - Repos/paths to modify
 - `references[]` - Repos/paths to use as patterns
 
@@ -398,7 +367,7 @@ flowchart TB
 
 ## 11. Enforcement Rules
 
-1. ALWAYS run Analysis phase first (scope only, NO complexity-check)
+1. ALWAYS run Analysis phase first (scope-check only)
 2. BA must do DEEP exploration - ask many questions
 3. ALWAYS run Vibe Check on PRD
 4. ALWAYS run Innovate phase (unlike /build which skips it)

@@ -30,8 +30,8 @@ owner: "project-manager-agent" # Agent that owns this document
 ```
 Wave 1 (Name)         Wave 2 (Name)         Wave 3 (Name)
 ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
-│ US-001          │──▶│ US-003          │──▶│ US-005          │
-│ US-002          │   │ US-004          │   │ US-006          │
+│ prj-epc-001     │──▶│ prj-epc-003     │──▶│ prj-epc-005     │
+│ prj-epc-002     │   │ prj-epc-004     │   │ prj-epc-006     │
 └─────────────────┘   └─────────────────┘   └─────────────────┘
      Parallel              Parallel              Sequential
 ```
@@ -42,12 +42,12 @@ Wave 1 (Name)         Wave 2 (Name)         Wave 3 (Name)
 
 {This section lists ALL user stories in the epic with their status}
 
-| Wave | Story ID | Title   | Epic | Dependencies   | Complexity | Status  |
-| ---- | -------- | ------- | ---- | -------------- | ---------- | ------- |
-| 1    | US-001   | {Title} | E01  | None           | {X}        | pending |
-| 1    | US-002   | {Title} | E01  | None           | {X}        | pending |
-| 2    | US-003   | {Title} | E02  | US-001         | {X}        | pending |
-| 2    | US-004   | {Title} | E02  | US-001, US-002 | {X}        | pending |
+| Wave | Story ID    | Title   | Epic    | Dependencies             | Complexity | Status  |
+| ---- | ----------- | ------- | ------- | ------------------------ | ---------- | ------- |
+| 1    | prj-epc-001 | {Title} | prj-epc | None                     | {X}        | pending |
+| 1    | prj-epc-002 | {Title} | prj-epc | None                     | {X}        | pending |
+| 2    | prj-epc-003 | {Title} | prj-epc | prj-epc-001              | {X}        | pending |
+| 2    | prj-epc-004 | {Title} | prj-epc | prj-epc-001, prj-epc-002 | {X}        | pending |
 
 ---
 
@@ -58,10 +58,10 @@ Wave 1 (Name)         Wave 2 (Name)         Wave 3 (Name)
 **Dependencies:** None
 **Execution:** Parallel / Sequential
 
-| Story  | Task               | Agent             | Est. Files |
-| ------ | ------------------ | ----------------- | ---------- |
-| US-001 | {Task description} | `{subagent_type}` | {N}        |
-| US-002 | {Task description} | `{subagent_type}` | {N}        |
+| Story       | Task               | Agent             | Est. Files |
+| ----------- | ------------------ | ----------------- | ---------- |
+| prj-epc-001 | {Task description} | `{subagent_type}` | {N}        |
+| prj-epc-002 | {Task description} | `{subagent_type}` | {N}        |
 
 **Verification Gate:**
 
@@ -80,10 +80,10 @@ pnpm test
 **Dependencies:** Wave 1 complete
 **Execution:** Parallel / Sequential
 
-| Story  | Task               | Agent             | Est. Files |
-| ------ | ------------------ | ----------------- | ---------- |
-| US-003 | {Task description} | `{subagent_type}` | {N}        |
-| US-004 | {Task description} | `{subagent_type}` | {N}        |
+| Story       | Task               | Agent             | Est. Files |
+| ----------- | ------------------ | ----------------- | ---------- |
+| prj-epc-003 | {Task description} | `{subagent_type}` | {N}        |
+| prj-epc-004 | {Task description} | `{subagent_type}` | {N}        |
 
 **Verification Gate:**
 
@@ -98,9 +98,9 @@ pnpm test
 ## Dependency Graph
 
 ```
-US-001 ──┬──▶ US-003 ──▶ US-005
-         │
-US-002 ──┘
+prj-epc-001 ──┬──▶ prj-epc-003 ──▶ prj-epc-005
+              │
+prj-epc-002 ──┘
 ```
 
 ---
@@ -109,18 +109,18 @@ US-002 ──┘
 
 {List any dependencies on stories in OTHER epics/projects}
 
-| Story  | Depends On       | Epic/Project   | Notes   |
-| ------ | ---------------- | -------------- | ------- |
-| US-003 | {external story} | {epic/project} | {notes} |
+| Story       | Depends On       | Epic/Project   | Notes   |
+| ----------- | ---------------- | -------------- | ------- |
+| prj-epc-003 | {external story} | {epic/project} | {notes} |
 
 ---
 
 ## Agent Assignments
 
-| Wave | Story  | subagent_type                                                        |
-| ---- | ------ | -------------------------------------------------------------------- |
-| 1    | US-001 | `core-claude-plugin:generic:coder`                                   |
-| 1    | US-002 | `core-claude-plugin:config:workspace:typescript-configuration-agent` |
+| Wave | Story       | subagent_type                                                        |
+| ---- | ----------- | -------------------------------------------------------------------- |
+| 1    | prj-epc-001 | `core-claude-plugin:generic:coder`                                   |
+| 1    | prj-epc-002 | `core-claude-plugin:config:workspace:typescript-configuration-agent` |
 
 ---
 
@@ -146,10 +146,10 @@ US-002 ──┘
 
 **Updated:** {YYYY-MM-DD}
 
-| Wave   | Status  | Stories        |
-| ------ | ------- | -------------- |
-| Wave 1 | pending | US-001, US-002 |
-| Wave 2 | pending | US-003, US-004 |
+| Wave   | Status  | Stories                  |
+| ------ | ------- | ------------------------ |
+| Wave 1 | pending | prj-epc-001, prj-epc-002 |
+| Wave 2 | pending | prj-epc-003, prj-epc-004 |
 
 ---
 
@@ -161,7 +161,7 @@ US-002 ──┘
 <!--
 TEMPLATE RULES:
 1. Execution plan lists ALL stories with their wave assignments
-2. Stories reference by ID (US-001) - details in user-stories/ folder
+2. Stories reference by ID ({PROJECT}-{EPIC}-{NNN}, e.g., msm-feat-001) - details in user-stories/ folder
 3. Each wave has verification gates
 4. Agent assignments use full subagent_type
 5. Cross-epic dependencies section for multi-project coordination

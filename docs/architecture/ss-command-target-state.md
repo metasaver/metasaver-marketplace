@@ -121,8 +121,8 @@ sequenceDiagram
         Note over SS,MS: Route to /ms
         SS->>SS: Extract requirements from image
         SS->>MS: /ms "Create React component matching this design: [extracted requirements]"
-        MS->>MS: complexity-check → 18
-        MS->>MS: Full workflow...
+        MS->>MS: HITL approval
+        MS->>MS: Execute with agents
         MS-->>U: Implementation complete
     end
 ```

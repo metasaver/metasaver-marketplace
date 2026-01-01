@@ -159,7 +159,7 @@ Moves story from inProgress to completed array, updates epic progress.
 **Input:**
 
 - state: State object
-- storyId: Story identifier (e.g., "US-003")
+- storyId: Story identifier (e.g., "msm-feat-003")
 
 **Output:** Updated state object
 
@@ -238,7 +238,7 @@ const state = readWorkflowState("/absolute/path/to/project");
 
 if (state) {
   // Mark wave 2 stories complete
-  ["US-003", "US-004", "US-005"].forEach((storyId) => {
+  ["msm-feat-003", "msm-feat-004", "msm-feat-005"].forEach((storyId) => {
     markStoryComplete(state, storyId);
   });
 
@@ -277,7 +277,7 @@ const updates = {
   status: "executing",
   stories: {
     ...state.stories,
-    inProgress: ["US-006", "US-007", "US-008"],
+    inProgress: ["msm-feat-006", "msm-feat-007", "msm-feat-008"],
   },
 };
 

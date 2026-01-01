@@ -63,11 +63,11 @@ Limit waves to ≤10 concurrent agents per wave
 
 ## Wave Structure
 
-| Wave | Stories        | Tester-Implementation Pairs             | Dependencies   |
-| ---- | -------------- | --------------------------------------- | -------------- |
-| 1    | US-001         | T-001 → I-001                           | None           |
-| 2    | US-002, US-003 | T-002 → I-002, T-003 → I-003 (parallel) | US-001         |
-| 3    | US-004         | T-004 → I-004                           | US-002, US-003 |
+| Wave | Stories                  | Tester-Implementation Pairs             | Dependencies             |
+| ---- | ------------------------ | --------------------------------------- | ------------------------ |
+| 1    | prj-epc-001              | T-001 → I-001                           | None                     |
+| 2    | prj-epc-002, prj-epc-003 | T-002 → I-002, T-003 → I-003 (parallel) | prj-epc-001              |
+| 3    | prj-epc-004              | T-004 → I-004                           | prj-epc-002, prj-epc-003 |
 
 ---
 
@@ -82,11 +82,11 @@ Limit waves to ≤10 concurrent agents per wave
   "waves": [
     {
       "waveNumber": 1,
-      "storyIds": ["US-001"],
+      "storyIds": ["msm-auth-001"],
       "tasks": [
         {
           "id": "task-1",
-          "storyId": "US-001",
+          "storyId": "msm-auth-001",
           "description": "User authentication schema",
           "testerAgent": "unit-test",
           "implAgent": "prisma-database-agent",
@@ -96,11 +96,11 @@ Limit waves to ≤10 concurrent agents per wave
     },
     {
       "waveNumber": 2,
-      "storyIds": ["US-002", "US-003"],
+      "storyIds": ["msm-auth-002", "msm-auth-003"],
       "tasks": [
         {
           "id": "task-2",
-          "storyId": "US-002",
+          "storyId": "msm-auth-002",
           "description": "User service contracts",
           "testerAgent": "unit-test",
           "implAgent": "data-service-agent",
@@ -108,7 +108,7 @@ Limit waves to ≤10 concurrent agents per wave
         },
         {
           "id": "task-3",
-          "storyId": "US-003",
+          "storyId": "msm-auth-003",
           "description": "Token service implementation",
           "testerAgent": "unit-test",
           "implAgent": "backend-dev",
@@ -190,24 +190,24 @@ Input: 5 enriched user stories with architecture notes
 
 Design Phase Output:
   storiesFolder: docs/projects/msm008-feature/user-stories/
-  storyFiles: [US-001-schema.md, US-002-contracts.md, US-003a-parser.md, US-003b-parser.md, US-004-api.md]
+  storyFiles: [msm-feat-001-schema.md, msm-feat-002-contracts.md, msm-feat-003-parser.md, msm-feat-004-parser.md, msm-feat-005-api.md]
 
 Planning Phase:
   1. Analyze dependencies:
-     - US-001: No dependencies (Wave 1)
-     - US-002, US-003a, US-003b: Depend on US-001 (Wave 2, parallelizable)
-     - US-004: Depends on US-002, US-003 (Wave 3)
+     - msm-feat-001: No dependencies (Wave 1)
+     - msm-feat-002, msm-feat-003, msm-feat-004: Depend on msm-feat-001 (Wave 2, parallelizable)
+     - msm-feat-005: Depends on msm-feat-002, msm-feat-003, msm-feat-004 (Wave 3)
 
   2. Assign agents:
-     - US-001: prisma-database-agent (schema)
-     - US-002: data-service-agent (contracts)
-     - US-003a, US-003b: backend-dev (parsers - parallel)
-     - US-004: backend-dev (API routes)
+     - msm-feat-001: prisma-database-agent (schema)
+     - msm-feat-002: data-service-agent (contracts)
+     - msm-feat-003, msm-feat-004: backend-dev (parsers - parallel)
+     - msm-feat-005: backend-dev (API routes)
 
   3. Build waves:
      Wave 1: [T-001 → I-001] (sequential pair)
-     Wave 2: [T-002 → I-002] | [T-003a → I-003a] | [T-003b → I-003b] (parallel pairs)
-     Wave 3: [T-004 → I-004] (sequential pair)
+     Wave 2: [T-002 → I-002] | [T-003 → I-003] | [T-004 → I-004] (parallel pairs)
+     Wave 3: [T-005 → I-005] (sequential pair)
 
 Output: execution-plan.md with 3 waves, 5 TDD pairs, dependency graph
 ```

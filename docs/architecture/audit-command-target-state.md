@@ -15,90 +15,57 @@ flowchart TB
     classDef phase fill:#bbdefb,stroke:#1565c0,stroke-width:2px
     classDef skill fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef entry fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef decision fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
+    classDef hitl fill:#ffcdd2,stroke:#c62828,stroke-width:2px
 
     ENTRY["/audit {target}"]:::entry
 
     subgraph P1["Phase 1: Analysis"]
         direction TB
-        CC["/skill complexity-check"]:::skill
         SC["/skill scope-check"]:::skill
         AC["/skill agent-check"]:::skill
     end
 
-    DECIDE{{"complexity < 15?"}}:::decision
-
-    subgraph FAST["FAST PATH"]
-        direction TB
-        subgraph P5F["Investigation"]
-            INVF["/skill audit-investigation"]:::skill
-        end
-        subgraph P6F["Resolution"]
-            RESF["/skill audit-resolution"]:::skill
-        end
-        subgraph P7F["Remediation"]
-            REMF["/skill audit-remediation"]:::skill
-            ACVF["/skill ac-verification"]:::skill
-            PRDF["/skill production-check"]:::skill
-        end
-        subgraph P8F["Report"]
-            RPTF["/skill report-phase"]:::skill
-        end
-        P5F --> P6F --> P7F --> P8F
+    subgraph P2["Phase 2: Investigation"]
+        INV["/skill audit-investigation"]:::skill
     end
 
-    subgraph FULL["FULL PATH"]
-        direction TB
-        subgraph P2["Requirements"]
-            REQ["/skill requirements-phase"]:::skill
-        end
-        subgraph P3["Planning"]
-            PLAN["/skill planning-phase"]:::skill
-        end
-        subgraph P4["Approval"]
-            HITL["/skill hitl-approval"]:::skill
-        end
-        subgraph P5["Investigation"]
-            INV["/skill audit-investigation"]:::skill
-        end
-        subgraph P6["Resolution"]
-            RES["/skill audit-resolution"]:::skill
-        end
-        subgraph P7["Remediation"]
-            TPL["/skill template-update"]:::skill
-            REM["/skill audit-remediation"]:::skill
-            ACV["/skill ac-verification"]:::skill
-            PRD["/skill production-check"]:::skill
-        end
-        subgraph P8["Report"]
-            RPT["/skill report-phase"]:::skill
-        end
-        P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8
+    subgraph P3["Phase 3: Resolution"]
+        RES["/skill audit-resolution"]:::skill
     end
 
-    ENTRY --> P1 --> DECIDE
-    DECIDE -->|Yes| FAST
-    DECIDE -->|No| FULL
+    subgraph P4["Phase 4: HITL Approval"]
+        HITL["/skill hitl-approval"]:::hitl
+    end
+
+    subgraph P5["Phase 5: Remediation"]
+        REM["/skill audit-remediation"]:::skill
+        ACV["/skill ac-verification"]:::skill
+        PRD["/skill production-check"]:::skill
+    end
+
+    subgraph P6["Phase 6: Report"]
+        RPT["/skill report-phase"]:::skill
+    end
+
+    ENTRY --> P1 --> P2 --> P3 --> P4 --> P5 --> P6
 ```
 
 **Legend:**
 
-| Color  | Meaning           |
-| ------ | ----------------- |
-| Purple | Entry point       |
-| Blue   | Phase container   |
-| Yellow | Skill (reusable)  |
-| Orange | Complexity router |
+| Color  | Meaning            |
+| ------ | ------------------ |
+| Purple | Entry point        |
+| Blue   | Phase container    |
+| Yellow | Skill (reusable)   |
+| Red    | HITL approval gate |
 
-**Fast Path (<15):** Skip Requirements, Planning, Approval, template-update. Auto-approve, batch decisions.
-
-**Full Path (≥15):** All phases with HITL gates.
+**/audit workflow:** Analysis → Investigation → Resolution → HITL → Remediation → Report.
 
 ---
 
 ## 2. Phase 1: Analysis (Exploded)
 
-**Execution:** PARALLEL - spawn all 3 skills in single message
+**Execution:** PARALLEL - spawn both skills in single message
 
 ```mermaid
 flowchart TB
@@ -106,12 +73,6 @@ flowchart TB
     classDef step fill:#f5f5f5,stroke:#616161,stroke-width:1px
 
     subgraph P1["Phase 1: Analysis"]
-        subgraph CC["/skill complexity-check"]
-            CC1["Analyze prompt complexity"]:::step
-            CC2["Return: score (1-50)"]:::step
-            CC1 --> CC2
-        end
-
         subgraph SC["/skill scope-check"]
             SC1["Parse prompt for file/config references"]:::step
             SC2["Identify repos in scope"]:::step
@@ -131,7 +92,6 @@ flowchart TB
 
 **Output:**
 
-- `complexity` - Score 1-50 (drives model selection)
 - `repos[]` - Repositories in scope
 - `files[]` - Files to audit
 - `agents[]` - Config agents matched to files

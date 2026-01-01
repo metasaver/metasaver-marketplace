@@ -129,9 +129,9 @@ Reference `/skill agent-selection` for complete agent listing. Common assignment
 
 **Wave Assignment:**
 
-- Wave 1: US-001, US-002 (no deps, parallel)
-- Wave 2: US-003, US-004 (depend on Wave 1)
-- Wave 3: US-005, US-006 (depend on Wave 2)
+- Wave 1: msm-auth-001, msm-auth-002 (no deps, parallel)
+- Wave 2: msm-auth-003, msm-auth-004 (depend on Wave 1)
+- Wave 3: msm-auth-005, msm-auth-006 (depend on Wave 2)
 
 **Output:** `docs/epics/msm007-auth-api/execution-plan.md` with 3 waves, agent assignments, verification gates
 

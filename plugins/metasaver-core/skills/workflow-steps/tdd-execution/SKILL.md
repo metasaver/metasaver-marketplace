@@ -189,7 +189,7 @@ VERIFY: Run test file - confirm 100% passing
 
 ```json
 {
-  "story_id": "US-001",
+  "story_id": "prj-epc-001",
   "wave": 1,
   "tester_agent": "tester",
   "test_file": "src/__tests__/feature.test.ts",
@@ -208,7 +208,7 @@ VERIFY: Run test file - confirm 100% passing
 ## Wave Execution Example
 
 ```
-Wave 1: Story US-001 (Authentication)
+Wave 1: Story prj-epc-001 (Authentication)
   1. Tester writes auth.test.ts (RED)
      - Mock User model
      - Mock login scenarios
@@ -217,16 +217,16 @@ Wave 1: Story US-001 (Authentication)
      - Read auth.test.ts
      - Implement login/logout
      - All 12 tests pass
-  3. Production check: tests still passing ✓
+  3. Production check: tests still passing
 
-Wave 2: US-002 + US-003 (Parallel)
-  Stories US-002 (Database) and US-003 (API) run in parallel:
+Wave 2: prj-epc-002 + prj-epc-003 (Parallel)
+  Stories prj-epc-002 (Database) and prj-epc-003 (API) run in parallel:
 
-  US-002:
+  prj-epc-002:
     1. Tester writes db.test.ts (RED)
     2. Coder implements Repository (GREEN)
 
-  US-003:
+  prj-epc-003:
     1. Tester writes api.test.ts (RED)
     2. Coder implements Routes (GREEN)
 
@@ -237,10 +237,10 @@ Wave 2: US-002 + US-003 (Parallel)
 
 ## Story File Integration
 
-Story files (`US-001.md`) track progress:
+Story files (`prj-epc-001-add-authentication.md`) track progress:
 
 ```markdown
-# US-001: Add Authentication
+# prj-epc-001: Add Authentication
 
 ## Acceptance Criteria
 

@@ -16,7 +16,7 @@ description: Verify that implemented code meets acceptance criteria from user st
 
 ### 1. Extract Acceptance Criteria
 
-For each user story (US-NNN):
+For each user story ({PROJECT}-{EPIC}-{NNN}):
 
 1. Read story file (extract AC list)
 2. Parse AC checkbox format: `- [x]` (complete) or `- [ ]` (incomplete)
@@ -57,7 +57,7 @@ Compile per-story verification:
 
 ```json
 {
-  "story_id": "US-001",
+  "story_id": "prj-epc-001",
   "title": "User Authentication",
   "ac_total": 4,
   "ac_passed": 3,
@@ -170,7 +170,7 @@ Action: Record response, proceed or flag remediation
   },
   "results": [
     {
-      "story_id": "US-001",
+      "story_id": "prj-epc-001",
       "ac_total": 4,
       "ac_passed": 4,
       "ac_failed": 0,
@@ -196,7 +196,7 @@ Action: Record response, proceed or flag remediation
   },
   "results": [
     {
-      "story_id": "US-002",
+      "story_id": "prj-epc-002",
       "ac_total": 4,
       "ac_passed": 3,
       "ac_failed": 1,
@@ -211,9 +211,9 @@ Action: Record response, proceed or flag remediation
     }
   ],
   "unmet_criteria": [
-    "US-002: AC 2 - Password reset email sent within 30 seconds",
-    "US-003: AC 1 - File upload supports .pdf files",
-    "US-005: AC 3 - Admin dashboard shows user count"
+    "prj-epc-002: AC 2 - Password reset email sent within 30 seconds",
+    "prj-epc-003: AC 1 - File upload supports .pdf files",
+    "prj-epc-005: AC 3 - Admin dashboard shows user count"
   ]
 }
 ```
@@ -243,7 +243,7 @@ Action: Record response, proceed or flag remediation
 **Input Story:**
 
 ```markdown
-# US-001: User Authentication
+# prj-epc-001: User Authentication
 
 ## Acceptance Criteria
 
