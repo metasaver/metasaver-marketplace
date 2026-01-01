@@ -22,6 +22,21 @@ Create valid eslint.config.js files using simple re-export pattern and audit exi
 3. **Standards Enforcement:** Ensure correct config type per projectType
 4. **Coordination:** Share decisions via memory
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Skill Reference
 
 Use `/skill config/code-quality/eslint-config` for all ESLint templates and validation logic.
@@ -63,10 +78,13 @@ Use `/skill domain/audit-workflow` for bi-directional comparison workflow.
 1. Determine scope (all configs, specific path, or modified files)
 2. Detect repository type (library vs consumer)
 3. Find all eslint.config.js files via Glob
-4. Validate each against 5 standards from `/skill config/code-quality/eslint-config`
-5. Report violations only (show passing configs concisely)
-6. Check for declared exceptions in package.json
-7. Use `/skill domain/remediation-options` for next steps
+4. Read all target files in parallel (single message with multiple Read calls)
+5. Validate each against 5 standards from `/skill config/code-quality/eslint-config`
+6. Report violations only (show passing configs concisely)
+7. Check for declared exceptions in package.json
+8. Use `/skill domain/remediation-options` for next steps
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Best Practices
 

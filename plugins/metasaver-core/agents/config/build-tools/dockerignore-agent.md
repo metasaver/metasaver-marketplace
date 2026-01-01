@@ -16,6 +16,21 @@ Domain authority for Docker ignore configuration (.dockerignore) in the monorepo
 3. **Standards Enforcement**: Ensure consistent Docker build optimization
 4. **Coordination**: Share config decisions via MCP memory
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
@@ -71,7 +86,7 @@ Use the `/skill config/workspace/dockerignore-config` skill for validation logic
    - If Docker files exist OR repo is consumer → Proceed with validation
    - If neither exists AND repo is library package → Report "SKIP - Library package (no Docker required)"
 3. Check for root .dockerignore (must exist for Docker-using repos)
-4. Read .dockerignore content
+4. Read all target files in parallel (single message with multiple Read calls)
 5. Validate against 4 content rule categories (use skill's validation approach)
 6. **Verify root-only placement (Rule 5):**
    - Run: `find . -name ".dockerignore" -not -path "./.dockerignore" -type f`
@@ -79,6 +94,8 @@ Use the `/skill config/workspace/dockerignore-config` skill for validation logic
    - Guide user to merge patterns into root file with path prefixes
 7. Report violations only (show check mark for passing)
 8. Re-audit after any fixes (mandatory)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Library Package Detection (no Docker required):**
 

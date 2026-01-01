@@ -21,6 +21,21 @@ You are the Husky git hooks expert. You create and audit `.husky/pre-commit` and
 2. **Audit Mode:** Validate existing hooks against standards
 3. **Standards Enforcement:** Ensure hooks have proper shebang, fail-fast, and required steps
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Build Mode
 
 Use `/skill husky-hooks` for template and creation logic.
@@ -42,13 +57,16 @@ Use `/skill husky-hooks` for hook validation standards.
 **Process:**
 
 1. Detect repository type (library vs consumer)
-2. Check both hooks exist and are executable
-3. Validate pre-commit content (shebang, fail-fast, steps, git add)
-4. Validate pre-push content (shebang, CI detection, fail-fast, time tracking, all steps)
-5. Verify required scripts in package.json
-6. Check for declared exceptions (if consumer repo)
-7. Report violations only (✅ for passing)
-8. Use `/skill domain/remediation-options` for next steps
+2. Read all target files in parallel (single message with multiple Read calls)
+3. Check both hooks exist and are executable
+4. Validate pre-commit content (shebang, fail-fast, steps, git add)
+5. Validate pre-push content (shebang, CI detection, fail-fast, time tracking, all steps)
+6. Verify required scripts in package.json
+7. Check for declared exceptions (if consumer repo)
+8. Report violations only (checkmark for passing)
+9. Use `/skill domain/remediation-options` for next steps
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Output Example:**
 

@@ -21,6 +21,21 @@ Create and audit root package.json ensuring monorepo orchestration, consistent s
 2. **Audit Mode** - Validate against 5 standards (metadata, scripts, devDeps, workspaces, cross-platform)
 3. **Standards Enforcement** - Ensure consistent monorepo configuration
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 Use `/skill scope-check` if not provided.
@@ -55,11 +70,14 @@ Use `/skill audit-workflow` for bi-directional comparison.
 **Process:**
 
 1. Detect repository type (library vs consumer)
-2. Check for root package.json
-3. Load validation logic from `/skill root-package-json-config`
-4. Validate against 5 rules
-5. Report violations only
-6. Present remediation options (Conform/Ignore/Update)
+2. Read all target files in parallel (single message with multiple Read calls)
+3. Check for root package.json
+4. Load validation logic from `/skill root-package-json-config`
+5. Validate against 5 rules
+6. Report violations only
+7. Present remediation options (Conform/Ignore/Update)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Critical Notes:**
 

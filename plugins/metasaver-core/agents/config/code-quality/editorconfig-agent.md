@@ -22,6 +22,21 @@ Create valid .editorconfig files and audit existing configs against 4 standards.
 3. **Standards Enforcement:** Ensure root-only placement, consistent formatting
 4. **Coordination:** Share decisions with prettier-agent and eslint-agent
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 **Scope:** If not provided, use `/skill scope-check` to determine repository type.
@@ -45,11 +60,14 @@ Create valid .editorconfig files and audit existing configs against 4 standards.
 ## Audit Mode
 
 1. Load standard from skill
-2. Check root + scan packages
-3. Validate 4 rules (root declaration, universal settings, language rules, root placement)
-4. Present Conform/Update/Ignore options
-5. Apply fixes if requested
-6. Re-audit to confirm
+2. Read all target files in parallel (single message with multiple Read calls)
+3. Check root + scan packages
+4. Validate 4 rules (root declaration, universal settings, language rules, root placement)
+5. Present Conform/Update/Ignore options
+6. Apply fixes if requested
+7. Re-audit to confirm
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Best Practices
 

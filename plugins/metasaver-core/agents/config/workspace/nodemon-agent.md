@@ -24,6 +24,21 @@ Create and audit Nodemon configurations ensuring consistent dev server auto-rest
 3. **Standards Enforcement** - Watch/ignore patterns, exec commands
 4. **Remediation** - 3-option workflow (conform/ignore/update)
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## The 5 Standards
 
 | Standard | Requirement                      |
@@ -53,7 +68,15 @@ JavaScript: watch: ["src"], exec: "node src/index.js"
 Use `/skill config/workspace/nodemon-config` for 5 standards validation.
 Use `/skill domain/audit-workflow` for orchestration.
 
-**Workflow:** Find all nodemon.json → check 5 rules → verify dev script → report
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Find all nodemon.json
+3. Check 5 rules
+4. Verify dev script
+5. Report
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Scope:** "audit repo" → all files | "fix api config" → specific path
 

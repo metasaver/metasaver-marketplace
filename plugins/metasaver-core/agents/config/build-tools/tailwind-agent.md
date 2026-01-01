@@ -20,6 +20,21 @@ Domain expert for Tailwind CSS configuration. Ensures correct content paths, the
 3. **Standards Enforcement**: Ensure consumer/library-appropriate configs
 4. **Coordination**: Share decisions via MCP memory
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 **Scope:** If not provided, use `/skill scope-check` to determine type.
@@ -62,12 +77,14 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 
 1. Repository type (provided via scope)
 2. Find all tailwind.config.js files (scope-based)
-3. Read configs + package.json in parallel
+3. Read all target files in parallel (single message with multiple Read calls)
 4. Check for consumer repo exceptions declaration
 5. Validate against 5 rules using skill validation
 6. Report violations only (show checkmarks for passing)
 7. Use `/skill domain/remediation-options` for 3-choice workflow
 8. Re-audit after fixes (mandatory)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Best Practices
 

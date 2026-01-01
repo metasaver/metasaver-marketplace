@@ -16,6 +16,21 @@ Domain authority for `.github/workflows/*.yml` files in the monorepo. Handles bo
 3. **Standards Enforcement**: Ensure correct patterns for library vs consumer repos
 4. **Coordination**: Share workflow decisions via MCP memory
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
@@ -132,6 +147,13 @@ Repository type (library/consumer) is provided via the `scope` parameter from th
 Use the `/skill domain/audit-workflow` skill for bi-directional comparison logic.
 
 **Quick Reference:** Compare agent expectations vs repository reality, present Conform/Update/Ignore options
+
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Validate all standards
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ### Remediation Options
 

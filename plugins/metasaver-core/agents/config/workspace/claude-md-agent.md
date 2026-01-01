@@ -22,6 +22,21 @@ Create and audit CLAUDE.md files ensuring consistent AI instructions across Meta
 3. **Path Validation** - Verify docs exist at correct locations
 4. **Remediation** - 3-option workflow (conform/ignore/update)
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## The 8 Standards
 
 | #   | Standard              | Key Validation                            |
@@ -45,7 +60,15 @@ Use `/skill domain/audit-workflow` for orchestration.
 
 Use `/skill domain/audit-workflow` for validation.
 
-**Workflow:** Check all 8 sections → validate paths → compare structure vs filesystem → report violations
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Check all 8 sections
+3. Validate paths
+4. Compare structure vs filesystem
+5. Report violations
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Critical Paths:** SETUP.md → `./docs/architecture/SETUP.md` | MULTI-MONO.md → `./docs/architecture/MULTI-MONO.md`
 

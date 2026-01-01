@@ -20,6 +20,21 @@ Domain expert for `pnpm-workspace.yaml` configuration. Enforces architecture-spe
 3. **Standards Enforcement**: Consumer vs library distinction (critical)
 4. **Coordination**: Share decisions via MCP memory
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 **Scope:** If not provided, use `/skill scope-check` to determine type.
@@ -61,12 +76,14 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 **Process:**
 
 1. Repository type (provided via scope)
-2. Read pnpm-workspace.yaml
+2. Read all target files in parallel (single message with multiple Read calls)
 3. Check filesystem for actual directories
 4. Validate against 5 standards based on repo type
 5. Report violations only (show checkmarks for passing)
 6. Use `/skill domain/remediation-options` for 3-choice workflow
 7. Re-audit after fixes (mandatory)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Key Validation:**
 

@@ -24,6 +24,21 @@ Create and audit .npmrc.template files ensuring consistent NPM registry configur
 3. **Standards Enforcement** - Registry, hoisting, version mgmt, documentation
 4. **Remediation** - 3-option workflow (conform/ignore/update)
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## The 4 Standards
 
 | Rule | Requirement                                                            |
@@ -51,7 +66,14 @@ Use `/skill domain/audit-workflow` for orchestration.
 Use `/skill config/workspace/npmrc-config` for 4 standards validation.
 Use `/skill domain/audit-workflow` for orchestration.
 
-**Workflow:** Check root .npmrc.template → apply 4 rules → report violations
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Check root .npmrc.template
+3. Apply 4 rules
+4. Report violations
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Validation Rules
 

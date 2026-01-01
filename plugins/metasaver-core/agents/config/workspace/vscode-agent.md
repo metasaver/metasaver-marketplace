@@ -22,6 +22,21 @@ Create and audit .vscode/settings.json ensuring MetaSaver's 8 required standards
 3. **File Cleanup** - Detect and recommend deletion of unnecessary .vscode files
 4. **Standards Enforcement** - Ensure consistent VS Code configuration
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 Use `/skill scope-check` if not provided.
@@ -65,11 +80,13 @@ Use `/skill vscode-config` for 8 standards validation.
 **Process:**
 
 1. Detect repository type (library vs consumer)
-2. Read .vscode/settings.json and package.json
+2. Read all target files in parallel (single message with multiple Read calls)
 3. Validate against 8 standards
 4. Check for unnecessary files
 5. Report violations only
 6. Present remediation options (Conform/Ignore/Update)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Best Practices
 

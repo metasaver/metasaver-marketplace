@@ -23,6 +23,21 @@ Create and audit .gitignore files to prevent secret leakage, exclude build artif
 4. Support Turborepo, Next.js, Prisma, and Node.js patterns
 5. Maintain cross-platform compatibility
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Build Mode
 
 Use `/skill gitignore-config` for template and validation logic.
@@ -55,6 +70,11 @@ Use `/skill gitignore-config` for template and validation logic.
 Use `/skill domain/audit-workflow` for bi-directional comparison.
 Use `/skill gitignore-config` for standards reference.
 
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Validate all standards
+
 **Validates:**
 
 - All security-critical patterns present (.env, .npmrc with whitelists)
@@ -62,6 +82,8 @@ Use `/skill gitignore-config` for standards reference.
 - All cache and log files excluded
 - OS-specific files excluded (cross-platform)
 - Monorepo-specific patterns present (.turbo, .next, database files)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Severity Levels:**
 

@@ -22,6 +22,21 @@ Create and audit tsconfig.json files following MetaSaver's 6 standards for monor
 3. **Standards Enforcement** - Proper extends + local path properties
 4. **Memory Coordination** - Track config decisions across packages
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 Use `/skill scope-check` if not provided.
@@ -81,11 +96,14 @@ Use `/skill typescript-config` for 6 standards validation.
 **Process:**
 
 1. Detect target type (root-monorepo vs library vs consumer)
-2. For root-monorepo: Check if root tsconfig.json exists (should not)
-3. Find all tsconfig\*.json files in path
-4. Validate against 6 standards
-5. Report violations only
-6. Present remediation options (Conform/Ignore/Update)
+2. Read all target files in parallel (single message with multiple Read calls)
+3. For root-monorepo: Check if root tsconfig.json exists (should not)
+4. Find all tsconfig\*.json files in path
+5. Validate against 6 standards
+6. Report violations only
+7. Present remediation options (Conform/Ignore/Update)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Best Practices
 

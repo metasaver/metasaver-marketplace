@@ -24,6 +24,21 @@ Create and audit .nvmrc files specifying LTS Node versions. Ensures consistency 
 3. **Standards Enforcement** - LTS version, root-only, package.json match
 4. **Remediation** - 3-option workflow (conform/ignore/update)
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## The 3 Standards
 
 | Rule | Requirement                                                |
@@ -44,7 +59,16 @@ Standard: `22` or `lts/jod` in .nvmrc, `"node": ">=22.0.0"` in engines
 
 Use `/skill domain/audit-workflow` for validation.
 
-**Workflow:** Check root .nvmrc → verify LTS → check for package-level files → validate engines match → report
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Check root .nvmrc
+3. Verify LTS
+4. Check for package-level files
+5. Validate engines match
+6. Report
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Scope:** "audit nvmrc" → check root | "check package-level" → search all
 

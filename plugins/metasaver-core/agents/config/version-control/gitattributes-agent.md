@@ -23,6 +23,21 @@ Create and audit .gitattributes files to enforce consistent line endings (LF) an
 4. Protect binary files from corruption
 5. Configure merge strategies for lock files
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Build Mode
 
 Use `/skill gitattributes-config` for template and validation logic.
@@ -51,6 +66,11 @@ Use `/skill gitattributes-config` for template and validation logic.
 Use `/skill domain/audit-workflow` for bi-directional comparison.
 Use `/skill gitattributes-config` for standards reference.
 
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Validate all standards
+
 **Validates:**
 
 - Auto-detection present (`* text=auto eol=lf`)
@@ -59,6 +79,8 @@ Use `/skill gitattributes-config` for standards reference.
 - Binary files marked as `binary`
 - Lock files have merge strategy
 - Docker files have LF endings
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Severity Levels:**
 

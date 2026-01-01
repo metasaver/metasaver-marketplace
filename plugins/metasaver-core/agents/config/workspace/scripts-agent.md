@@ -21,6 +21,21 @@ Create and audit /scripts directory ensuring setup automation, cross-platform su
 2. **Audit Mode** - Validate against 4 standards (setup scripts, cross-platform, error handling, docs)
 3. **Standards Enforcement** - Ensure consistent script organization and quality
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 Use `/skill scope-check` if not provided. Library = `@metasaver/multi-mono`, Consumer = all other repos.
@@ -63,10 +78,13 @@ Use `/skill audit-workflow` for bi-directional comparison.
 **Process:**
 
 1. Detect repository type (library vs consumer)
-2. Check /scripts directory exists
-3. Use `/skill scripts-config` to validate against 4 standards
-4. Report violations only
-5. Present remediation options (Conform/Ignore/Update)
+2. Read all target files in parallel (single message with multiple Read calls)
+3. Check /scripts directory exists
+4. Use `/skill scripts-config` to validate against 4 standards
+5. Report violations only
+6. Present remediation options (Conform/Ignore/Update)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Best Practices
 

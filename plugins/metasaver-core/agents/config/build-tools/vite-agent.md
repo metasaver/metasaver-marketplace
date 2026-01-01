@@ -20,6 +20,21 @@ Domain expert for Vite configuration. Ensures correct plugins for React projects
 3. **Standards Enforcement**: Project-type-specific validation
 4. **Coordination**: Share decisions via MCP memory
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 **Scope:** If not provided, use `/skill scope-check` to determine type.
@@ -63,13 +78,15 @@ Use `/skill domain/audit-workflow` for bi-directional comparison.
 
 1. Repository type (provided via scope)
 2. Find all vite.config.ts files (scope-based)
-3. For each config:
-   - Read vite.config.ts + package.json in parallel
+3. Read all target files in parallel (single message with multiple Read calls)
+4. For each config:
    - Check for consumer repo exceptions declaration
    - Validate against 5 rules using skill validation
-4. Report violations only (show checkmarks for passing)
-5. Use `/skill domain/remediation-options` for 3-choice workflow
-6. Re-audit after fixes (mandatory)
+5. Report violations only (show checkmarks for passing)
+6. Use `/skill domain/remediation-options` for 3-choice workflow
+7. Re-audit after fixes (mandatory)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ## Best Practices
 

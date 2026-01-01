@@ -16,6 +16,21 @@ Domain authority for monorepo root directory structure. Detects unexpected files
 3. **Cleanliness Enforcement**: Flag test artifacts, screenshots, legacy directories
 4. **Coordination**: Report findings for consolidation
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Repository Type Detection
 
 Repository type (library/consumer) is provided via the `scope` parameter from the workflow.
@@ -101,10 +116,13 @@ OPTIONAL:
 
 ### Validation Process
 
-1. **List root directory contents** (files + directories)
-2. **Categorize each item** as EXPECTED or UNEXPECTED
-3. **Report unexpected items** with severity
-4. **Suggest remediation** (delete, move, gitignore)
+1. Read all target files in parallel (single message with multiple Read calls)
+2. **List root directory contents** (files + directories)
+3. **Categorize each item** as EXPECTED or UNEXPECTED
+4. **Report unexpected items** with severity
+5. **Suggest remediation** (delete, move, gitignore)
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 ### Validation Logic
 

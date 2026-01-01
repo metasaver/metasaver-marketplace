@@ -22,6 +22,21 @@ Create and audit Prettier configs in package.json to enforce 4 standards for cod
 3. **Standards Enforcement:** Ensure shared library config usage
 4. **Root Configuration:** Manage .prettierignore at repository root
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## The 4 Prettier Standards
 
 | Standard | Requirement                                       |
@@ -61,11 +76,14 @@ Use `/skill audit-workflow` for bi-directional comparison.
 **Process:**
 
 1. Find all package.json files (scope-based)
-2. Check root .prettierignore exists
-3. Validate each package against 4 standards
-4. Verify no .prettierrc files exist (all config via package.json "prettier" field)
-5. Report violations only (show checkmark for passing)
-6. Use `/skill remediation-options` for next steps
+2. Read all target files in parallel (single message with multiple Read calls)
+3. Check root .prettierignore exists
+4. Validate each package against 4 standards
+5. Verify no .prettierrc files exist (all config via package.json "prettier" field)
+6. Report violations only (show checkmark for passing)
+7. Use `/skill remediation-options` for next steps
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Validation Checklist:**
 

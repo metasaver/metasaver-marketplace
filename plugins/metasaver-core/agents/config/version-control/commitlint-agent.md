@@ -22,6 +22,21 @@ Create and audit commitlint configurations to enforce MetaSaver conventional com
 3. Ensure Husky integration (.husky/commit-msg)
 4. Verify consistency between commitlint rules and Copilot instructions
 
+## Tool Preferences
+
+| Operation                 | Preferred Tool                                              | Fallback                |
+| ------------------------- | ----------------------------------------------------------- | ----------------------- |
+| Cross-repo file discovery | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Glob (single repo only) |
+| Find files by name        | `mcp__plugin_core-claude-plugin_serena__find_file`          | Glob                    |
+| Read multiple files       | Parallel Read calls (batch in single message)               | Sequential reads        |
+| Pattern matching in code  | `mcp__plugin_core-claude-plugin_serena__search_for_pattern` | Grep                    |
+
+**Parallelization Rules:**
+
+- ALWAYS batch independent file reads in a single message
+- ALWAYS read config files + package.json + templates in parallel
+- Use Serena for multi-repo searches (more efficient than multiple Globs)
+
 ## Build Mode
 
 Use `/skill commitlint-config` for template and configuration logic.
@@ -45,6 +60,11 @@ Use `/skill commitlint-config` for template and configuration logic.
 Use `/skill domain/audit-workflow` for bi-directional comparison.
 Use `/skill commitlint-config` for standards validation.
 
+**Process:**
+
+1. Read all target files in parallel (single message with multiple Read calls)
+2. Validate all standards
+
 **Validates:**
 
 - Both config files exist at root
@@ -52,6 +72,8 @@ Use `/skill commitlint-config` for standards validation.
 - Husky hook (.husky/commit-msg) configured
 - All dependencies present
 - Sample commits pass validation
+
+**Multi-repo audits:** Use Serena's `search_for_pattern` instead of per-repo Glob
 
 **Remediations:** Conform (fix to standard) | Ignore (skip) | Update (evolve standard)
 
