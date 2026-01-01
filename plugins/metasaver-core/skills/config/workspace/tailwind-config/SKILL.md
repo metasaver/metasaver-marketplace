@@ -1,6 +1,6 @@
 ---
 name: tailwind-config
-description: Tailwind CSS configuration template and validation logic for tailwind.config.js with src/index.css directives. Includes 5 required standards (required content paths for scanning, must extend default theme not replace, required plugins array, must be named tailwind.config.js, required dependencies). Ensures proper PostCSS integration and Tailwind directive setup. Use when creating or auditing tailwind.config.js files for consistent Tailwind CSS setup.
+description: Tailwind CSS configuration template and validation logic for tailwind.config.js or tailwind.config.ts with src/index.css directives. Includes 5 required standards (required content paths for scanning, must extend default theme not replace, required plugins array, file naming convention for .js or .ts, required dependencies). Ensures proper PostCSS integration and Tailwind directive setup. Use when creating or auditing tailwind.config.js or tailwind.config.ts files for consistent Tailwind CSS setup.
 ---
 
 # Tailwind CSS Configuration Skill
@@ -59,13 +59,13 @@ plugins: [
 - Must have `plugins` array property
 - Empty array is acceptable
 
-### Rule 4: Must Be Named tailwind.config.js
+### Rule 4: File Naming Convention
 
 **Validation:**
 
-- File must be named exactly `tailwind.config.js`
-- NOT `tailwind.config.ts`, `tailwind.config.mjs`
-- PostCSS expects `tailwind.config.js`
+- File must be named `tailwind.config.js` OR `tailwind.config.ts`
+- TypeScript config supported in Tailwind v3.3+ (use `satisfies Config` for type safety)
+- NOT `.mjs`, `.cjs`, or other variants
 
 ### Rule 5: Required Dependencies
 
@@ -121,10 +121,18 @@ function checkTailwindConfig(
 ) {
   const errors: string[] = [];
 
-  // Check file exists
+  // Check file exists (Rule 4: accepts .js or .ts)
   if (!fileExists(configPath)) {
-    errors.push("Rule 4: Missing tailwind.config.js");
+    errors.push("Rule 4: Missing tailwind.config.js or tailwind.config.ts");
     return errors;
+  }
+
+  // Validate file naming convention
+  const fileName = path.basename(configPath);
+  if (!["tailwind.config.js", "tailwind.config.ts"].includes(fileName)) {
+    errors.push(
+      "Rule 4: Config must be named tailwind.config.js or tailwind.config.ts",
+    );
   }
 
   const config = parseTailwindConfig(configPath);

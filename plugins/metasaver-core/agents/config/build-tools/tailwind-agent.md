@@ -50,7 +50,7 @@ Use `/skill config/workspace/tailwind-config` for templates and validation logic
 | 1    | Always include content paths: `./index.html`, `./src/**/*.{js,ts,jsx,tsx}` |
 | 2    | Extend default theme (never replace it)                                    |
 | 3    | Always include plugins array (can be empty)                                |
-| 4    | Use file naming: tailwind.config.js                                        |
+| 4    | File naming: tailwind.config.js OR tailwind.config.ts                      |
 | 5    | Always include dependencies: tailwindcss in devDependencies                |
 
 ## Build Mode

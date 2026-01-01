@@ -1,16 +1,17 @@
 ---
 name: turbo-config
-description: Turbo.json configuration template and validation logic for Turborepo pipelines. Use when creating or auditing turbo.json files to ensure correct pipeline task configuration, caching strategy, and the 7 required MetaSaver standards (schema, globalEnv, globalDependencies, 18 required tasks, build requirements, persistent task cache, clean task cache).
+description: Turbo.json configuration template and validation logic for Turborepo tasks. Use when creating or auditing turbo.json files to ensure correct task configuration, caching strategy, and the 7 required MetaSaver standards (schema, globalEnv, globalDependencies, required tasks by repo type, build requirements, persistent task cache, clean task cache).
 ---
 
 # Turbo.json Configuration Skill
 
-Provides turbo.json template and validation logic for Turborepo pipeline configuration.
+Provides turbo.json template and validation logic for Turborepo task configuration.
 
 ## Purpose
 
 Manage turbo.json configuration to:
-- Define monorepo build pipeline tasks
+
+- Define monorepo build tasks
 - Configure task dependencies and caching
 - Set up persistent development servers
 - Optimize build performance
@@ -55,16 +56,26 @@ Must declare files that invalidate all task caches:
 }
 ```
 
-### Rule 4: Required Pipeline Tasks (18 tasks)
+### Rule 4: Required Tasks (by repository type)
 
-Must include all required tasks:
+**Consumer Repos** (apps like metasaver-com, rugby-crm, resume-builder) require **15 tasks**:
 
 - **Build**: `build`, `clean`
 - **Development**: `dev`
 - **Linting**: `lint`, `lint:fix`, `lint:tsc`
 - **Formatting**: `prettier`, `prettier:fix`
-- **Testing**: `test`, `test:unit`, `test:integration`, `test:e2e`, `test:coverage`, `test:watch`, `test:ui`
+- **Testing**: `test:unit`, `test:coverage`, `test:watch`
 - **Database**: `db:generate`, `db:migrate`, `db:seed`, `db:studio`
+
+**Library Repos** (producers like multi-mono) require **11 tasks**:
+
+- **Build**: `build`, `clean`
+- **Development**: `dev`
+- **Linting**: `lint`, `lint:fix`, `lint:tsc`
+- **Formatting**: `prettier`, `prettier:fix`
+- **Testing**: `test:unit`, `test:coverage`, `test:watch`
+
+Library repos do NOT require `db:*` tasks.
 
 ### Rule 5: Build Task Requirements
 
@@ -117,7 +128,7 @@ To validate a turbo.json file:
 2. Parse JSON and extract configuration
 3. Verify $schema reference
 4. Check globalEnv and globalDependencies
-5. Verify all 18 required tasks exist
+5. Verify required tasks exist (based on repo type)
 6. Check build task configuration
 7. Verify persistent tasks have cache: false
 8. Report violations
@@ -140,18 +151,36 @@ if (missingEnv.length > 0) {
 // Rule 3: Check globalDependencies
 const requiredDeps = [".env"];
 const missingDeps = requiredDeps.filter(
-  (d) => !config.globalDependencies?.some((dep) => dep.includes(d))
+  (d) => !config.globalDependencies?.some((dep) => dep.includes(d)),
 );
 
-// Rule 4: Check required tasks
-const requiredTasks = ["build", "clean", "dev", "lint", "test", "db:generate"];
-const missingTasks = requiredTasks.filter((t) => !config.pipeline?.[t]);
+// Rule 4: Check required tasks (Turborepo v2 uses "tasks" not "pipeline")
+const baseTasks = [
+  "build",
+  "clean",
+  "dev",
+  "lint",
+  "lint:fix",
+  "lint:tsc",
+  "prettier",
+  "prettier:fix",
+  "test:unit",
+  "test:coverage",
+  "test:watch",
+];
+const dbTasks = ["db:generate", "db:migrate", "db:seed", "db:studio"];
+
+// Library repos: 11 tasks (baseTasks only)
+// Consumer repos: 15 tasks (baseTasks + dbTasks)
+const requiredTasks = isLibraryRepo ? baseTasks : [...baseTasks, ...dbTasks];
+
+const missingTasks = requiredTasks.filter((t) => !config.tasks?.[t]);
 if (missingTasks.length > 0) {
   errors.push(`Rule 4: Missing required tasks: ${missingTasks.join(", ")}`);
 }
 
 // Rule 5: Check build task requirements
-const buildTask = config.pipeline?.build;
+const buildTask = config.tasks?.build;
 if (!buildTask?.dependsOn?.includes("^build")) {
   errors.push("Rule 5: build must depend on ^build");
 }
@@ -160,9 +189,9 @@ if (!buildTask?.outputs || buildTask.outputs.length === 0) {
 }
 
 // Rule 6: Check persistent tasks
-const persistentTasks = ["dev", "db:studio"];
+const persistentTasks = isLibraryRepo ? ["dev"] : ["dev", "db:studio"];
 persistentTasks.forEach((task) => {
-  const taskConfig = config.pipeline?.[task];
+  const taskConfig = config.tasks?.[task];
   if (taskConfig?.cache !== false) {
     errors.push(`Rule 6: ${task} must have cache: false`);
   }
@@ -172,21 +201,29 @@ persistentTasks.forEach((task) => {
 });
 
 // Rule 7: Check clean task
-if (config.pipeline?.clean?.cache !== false) {
+if (config.tasks?.clean?.cache !== false) {
   errors.push("Rule 7: clean must have cache: false");
 }
 ```
 
 ## Repository Type Considerations
 
-- **Consumer Repos**: Must strictly follow all 7 standards
-- **Library Repos**: May have subset of tasks relevant to library builds
+| Repo Type    | Examples                                 | Required Tasks | db:\* Tasks  |
+| ------------ | ---------------------------------------- | -------------- | ------------ |
+| **Consumer** | metasaver-com, rugby-crm, resume-builder | 15             | Required     |
+| **Library**  | multi-mono                               | 11             | Not required |
+
+**Determining repo type:**
+
+- Use `/skill scope-check` to identify repository type
+- Consumer repos are applications that consume database services
+- Library repos are package producers without database dependencies
 
 ## Best Practices
 
 1. Place turbo.json at repository root only
 2. Use template as starting point
-3. All 18 tasks define complete build pipeline
+3. Use `tasks` property (Turborepo v2), not `pipeline` (v1 deprecated)
 4. Persistent tasks must disable cache
 5. Build outputs must be specified for caching
 6. Environment variables in globalEnv for all tasks
