@@ -1,6 +1,6 @@
 ---
 name: dockerignore-config
-description: Docker ignore configuration template and validation logic for optimizing Docker build contexts. Includes 4 required standards (build artifacts, development files, CI/CD and testing, logs and temporary files). Use when creating or auditing .dockerignore files to reduce build context size, improve performance, and ensure security.
+description: Docker ignore configuration template and validation logic for optimizing Docker build contexts. Includes 5 required standards (build artifacts, development files, CI/CD and testing, logs and temporary files, root-only placement). Use when creating or auditing .dockerignore files to reduce build context size, improve performance, and ensure security.
 ---
 
 # Docker Ignore Configuration Skill
@@ -32,7 +32,7 @@ The standard .dockerignore template is located at:
 templates/.dockerignore.template
 ```
 
-## The 4 .dockerignore Standards
+## The 5 .dockerignore Standards
 
 ### Rule 1: Build Artifacts
 
@@ -63,13 +63,26 @@ Must exclude logs and temporary files:
 - `*.tmp`, `*.temp`
 - `.cache/`
 
+### Rule 5: Root-Only Placement
+
+Place `.dockerignore` at the repository root where Docker CLI reads it. Docker uses the build context root for consistent, predictable behavior across all builds.
+
+**Benefits of root-only placement:**
+
+- Single source of truth for all Docker exclusions
+- Patterns apply consistently across the entire build context
+- Team members find configuration in the expected location
+- Subdirectory patterns work using path prefixes (e.g., `apps/web/node_modules/`)
+
+**Action:** Consolidate any subdirectory `.dockerignore` content into the root file, then remove the nested files.
+
 ## Validation
 
 To validate a .dockerignore file:
 
 1. Check that the file exists at repository root
 2. Read the file content
-3. Verify it includes patterns for all 4 rule categories
+3. Verify it includes patterns for all 5 rule categories
 4. Report any missing categories
 
 ### Validation Approach
@@ -86,11 +99,14 @@ grep -q ".github" .dockerignore && grep -q "coverage" .dockerignore
 
 # Check Rule 4: Logs and temporary
 grep -q "*.log" .dockerignore && grep -q "*.tmp" .dockerignore
+
+# Check Rule 5: No nested .dockerignore files
+find . -name ".dockerignore" -not -path "./.dockerignore" | wc -l  # Should be 0
 ```
 
 ## Repository Type Considerations
 
-- **Consumer Repos**: Should strictly follow all 4 standards
+- **Consumer Repos**: Should strictly follow all 5 standards
 - **Library Repos**: May have intentional differences (e.g., include documentation)
 
 ## Best Practices

@@ -12,7 +12,7 @@ Domain authority for Docker ignore configuration (.dockerignore) in the monorepo
 ## Core Responsibilities
 
 1. **Build Mode**: Create valid .dockerignore with standard exclusions
-2. **Audit Mode**: Validate existing .dockerignore against the 4 standards
+2. **Audit Mode**: Validate existing .dockerignore against the 5 standards
 3. **Standards Enforcement**: Ensure consistent Docker build optimization
 4. **Coordination**: Share config decisions via MCP memory
 
@@ -28,12 +28,13 @@ Repository type (library/consumer) is provided via the `scope` parameter from th
 
 Use the `/skill config/workspace/dockerignore-config` skill for .dockerignore template and validation logic.
 
-**Quick Reference:** The skill defines 4 required rule categories:
+**Quick Reference:** The skill defines 5 required rule categories:
 
 1. Build artifacts (node_modules, dist, .turbo, etc.)
 2. Development files (.env, IDE, OS, Git files)
 3. CI/CD and testing (.github, coverage, test files, docs)
 4. Logs and temporary files (_.log, _.tmp, .cache)
+5. Root-only placement (Docker reads .dockerignore from build context root)
 
 ## Build Mode
 
@@ -44,7 +45,7 @@ Use the `/skill config/workspace/dockerignore-config` skill for template and cre
 1. Check if .dockerignore exists at root
 2. If not, use template from `/skill config/workspace/dockerignore-config` (at `templates/.dockerignore.template`)
 3. Create .dockerignore at repository root
-4. Re-audit to verify all 4 rule categories are present
+4. Re-audit to verify all 5 rule categories are present
 
 ## Audit Mode
 
@@ -71,9 +72,13 @@ Use the `/skill config/workspace/dockerignore-config` skill for validation logic
    - If neither exists AND repo is library package → Report "SKIP - Library package (no Docker required)"
 3. Check for root .dockerignore (must exist for Docker-using repos)
 4. Read .dockerignore content
-5. Validate against 4 rule categories (use skill's validation approach)
-6. Report violations only (show ✅ for passing)
-7. Re-audit after any fixes (mandatory)
+5. Validate against 4 content rule categories (use skill's validation approach)
+6. **Verify root-only placement (Rule 5):**
+   - Run: `find . -name ".dockerignore" -not -path "./.dockerignore" -type f`
+   - If subdirectory files exist, recommend consolidating to root
+   - Guide user to merge patterns into root file with path prefixes
+7. Report violations only (show check mark for passing)
+8. Re-audit after any fixes (mandatory)
 
 **Library Package Detection (no Docker required):**
 
@@ -90,7 +95,7 @@ Use the `/skill domain/remediation-options` skill for the standard 3-option work
 
 ### Output Format
 
-**For Docker-using repos:**
+**For Docker-using repos (with nested file violation):**
 
 ```
 .dockerignore Audit
@@ -101,24 +106,18 @@ Type: Consumer repo (strict standards enforced)
 
 Checking .dockerignore...
 
-❌ .dockerignore (at root)
+[x] .dockerignore (at root)
   Rule 1: Missing build artifact exclusions (node_modules, dist, .turbo)
   Rule 2: Missing development file exclusions (.env, .vscode, .DS_Store)
 
+[ ] Rule 5: Consolidate to root for consistent Docker behavior
+  Found .dockerignore files in subdirectories:
+  - apps/web/.dockerignore
+  - packages/api/.dockerignore
+  Recommendation: Merge patterns into root .dockerignore with path prefixes,
+  then remove subdirectory files for single source of truth.
+
 Summary: 0/1 configs passing (0%)
-
-──────────────────────────────────────────────
-Remediation Options:
-──────────────────────────────────────────────
-
-  1. Conform to template (fix .dockerignore to match standard)
-  2. Ignore (skip for now)
-  3. Update template (evolve the standard)
-
-💡 Recommendation: Option 1 (Conform to template)
-   Consumer repos should have consistent .dockerignore.
-
-Your choice (1-3):
 ```
 
 **For library packages (no Docker):**
