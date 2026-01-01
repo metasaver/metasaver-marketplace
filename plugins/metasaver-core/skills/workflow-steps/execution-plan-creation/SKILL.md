@@ -14,7 +14,7 @@ owner: project-manager-agent
 
 ## Template Reference
 
-**ALWAYS read before creating:** `templates/docs/execution-plan-template.md`
+**ALWAYS read before creating:** `templates/execution-plan-template.md`
 
 Contains: frontmatter fields, summary metrics, wave structure, story index, verification gates, agent assignments, risk/rollback sections.
 
@@ -23,7 +23,7 @@ Contains: frontmatter fields, summary metrics, wave structure, story index, veri
 ## Workflow
 
 1. **Read the template:**
-   - Load `templates/docs/execution-plan-template.md`
+   - Load `templates/execution-plan-template.md`
    - Note all required frontmatter fields and section structure
 
 2. **Gather inputs:**

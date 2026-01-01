@@ -87,6 +87,10 @@ Run type-specific validation (see checklists below).
 
 **Called by:** `reviewer` agent, `hitl-approval` skill, `/ms` command
 
-**References:** `templates/docs/prd-template.md`, `templates/docs/execution-plan-template.md`, `templates/docs/user-story-template.md`
+**References:**
+
+- PRD template: `../prd-creation/templates/prd-template.md`
+- Execution plan template: `../execution-plan-creation/templates/execution-plan-template.md`
+- User story template: `../user-story-creation/templates/user-story-template.md`
 
 **Next:** Valid -> HITL approval; Invalid -> return to authoring agent

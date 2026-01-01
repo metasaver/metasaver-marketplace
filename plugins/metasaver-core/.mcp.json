@@ -31,7 +31,9 @@
         "--context",
         "ide-assistant",
         "--project",
-        ".."
+        "..",
+        "--enable-web-dashboard",
+        "false"
       ],
       "env": {}
     },

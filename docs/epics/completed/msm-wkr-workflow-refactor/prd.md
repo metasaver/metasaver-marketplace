@@ -2,9 +2,9 @@
 epic_id: "msm-wkr"
 title: "Workflow Refactor - Agent/Skill Separation & Template Enforcement"
 version: "1.0"
-status: "draft"
+status: "complete"
 created: "2024-12-29"
-updated: "2024-12-29"
+updated: "2025-12-29"
 owner: "enterprise-architect-agent"
 ---
 
@@ -156,18 +156,18 @@ Skills wrap templates and provide validation:
 
 ### Technical Requirements
 
-- [ ] EA agent can create PRDs using prd-creation-skill
-- [ ] BA agent creates stories using user-story-creation-skill
-- [ ] PM agent creates plans using execution-plan-skill
-- [ ] Standards Reviewer validates docs before HITL
-- [ ] All documents pass validation before user sees them
-- [ ] No references to complexity-check or tool-check remain
+- [x] EA agent can create PRDs using prd-creation-skill
+- [x] BA agent creates stories using user-story-creation-skill
+- [x] PM agent creates plans using execution-plan-skill
+- [x] Standards Reviewer validates docs before HITL
+- [x] All documents pass validation before user sees them
+- [x] No references to complexity-check or tool-check remain
 
 ### Verification
 
-- [ ] All agents have correct tools per .mcp.json
-- [ ] Templates are referenced (not duplicated) in skills
-- [ ] /build runs full workflow without complexity routing
+- [x] All agents have correct tools per .mcp.json
+- [x] Templates are referenced (not duplicated) in skills
+- [x] /build runs full workflow without complexity routing
 
 ---
 

@@ -50,18 +50,19 @@ Task: subagent_type="core-claude-plugin:generic:command-author"
 
 Use MetaSaver agents for optimal workflow tracking:
 
-**Routing:** Use `/ms` for everything - it analyzes and routes to the appropriate command.
+**Command Selection:**
+
+| Task Type                  | Command      |
+| -------------------------- | ------------ |
+| Quick fixes, small tasks   | `/ms`        |
+| Large features, multi-epic | `/build`     |
+| PRD creation only          | `/architect` |
+| Questions about code       | `/qq`        |
+| Config/standards audits    | `/audit`     |
 
 **Questions to user:** Always use AskUserQuestion tool.
 
-**For complex multi-step work**, use `/ms {description}` to enable:
-
-- PRD creation with HITL approval
-- Wave-based parallel execution
-- Workflow state tracking for resumption
-- Coordinated agent spawning
-
-See [/ms Command Target State](docs/ms-command-target-state.md) for full workflow details.
+See [/ms Command Target State](docs/architecture/ms-command-target-state.md) for workflow details.
 
 **Agent Replacement Table:**
 

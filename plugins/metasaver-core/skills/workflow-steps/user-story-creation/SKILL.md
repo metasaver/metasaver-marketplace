@@ -17,7 +17,7 @@ owner: business-analyst-agent
 **ALWAYS read the template before creating user stories:**
 
 ```
-templates/docs/user-story-template.md
+templates/user-story-template.md
 ```
 
 The template contains required frontmatter, story format, acceptance criteria structure, technical details sections, and Definition of Done checklist.
@@ -26,7 +26,7 @@ The template contains required frontmatter, story format, acceptance criteria st
 
 ## Workflow
 
-1. **Read template:** Load `templates/docs/user-story-template.md`
+1. **Read template:** Load `templates/user-story-template.md`
 2. **Gather inputs:** Read PRD, identify epic boundaries, review existing stories
 3. **Draft sections:** Story statement, acceptance criteria, files to create/modify
 4. **Assign agent:** Use full subagent_type paths (see `/skill agent-selection`)
@@ -139,7 +139,7 @@ The template contains required frontmatter, story format, acceptance criteria st
 
 **Process:**
 
-1. BA reads template from `templates/docs/user-story-template.md`
+1. BA reads template from `templates/user-story-template.md`
 2. BA drafts frontmatter with `story_id: msm-wkr-007`, `agent: core-claude-plugin:generic:skill-author`
 3. BA writes story: "As a BA agent, I want a user-story-creation skill..."
 4. BA validates against checklist

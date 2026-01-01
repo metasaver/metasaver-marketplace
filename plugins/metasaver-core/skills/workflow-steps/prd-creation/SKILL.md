@@ -17,7 +17,7 @@ owner: enterprise-architect-agent
 **ALWAYS read the template before creating a PRD:**
 
 ```
-templates/docs/prd-template.md
+templates/prd-template.md
 ```
 
 The template contains:
@@ -32,7 +32,7 @@ The template contains:
 ## Workflow
 
 1. **Read the template:**
-   - Load `templates/docs/prd-template.md`
+   - Load `templates/prd-template.md`
    - Note all required sections and frontmatter fields
 
 2. **Gather requirements:**
@@ -126,7 +126,7 @@ Run this checklist before marking PRD complete:
 
 **PRD Creation:**
 
-1. EA reads template from `templates/docs/prd-template.md`
+1. EA reads template from `templates/prd-template.md`
 2. EA drafts:
    - Section 1: "Implement secure user authentication..."
    - Section 4: FR-001 Login endpoint, FR-002 Logout endpoint...

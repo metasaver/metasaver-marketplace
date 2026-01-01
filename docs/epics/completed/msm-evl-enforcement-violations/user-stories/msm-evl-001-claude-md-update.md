@@ -1,4 +1,4 @@
-# US-001: Remove "answer directly" guidance from CLAUDE.md
+# msm-evl-001: Remove "answer directly" guidance from CLAUDE.md
 
 **Agent:** `manual-edit` (CLAUDE.md is not a plugin component)
 

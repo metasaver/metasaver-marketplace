@@ -1,13 +1,15 @@
 ---
 name: ms
-description: Lightweight router that analyzes requests and routes to appropriate command or handles inline
+description: Quick fixes and small tasks using MetaSaver agents without full workflow overhead
 ---
 
 # MetaSaver Command
 
-Lightweight router that analyzes requests and routes to the appropriate command or handles simple tasks inline. The universal entry point for all MetaSaver workflows.
+Simple mini-workflow for quick fixes and small tasks. Uses MetaSaver agents, requires HITL approval before execution, verifies work after.
 
-**Use /ms for everything** - it analyzes complexity and routes appropriately.
+**Use /ms for:** Quick fixes, small features, mini tasks that don't need formal requirements docs.
+
+**Use /build for:** Large features, multi-epic work, anything needing PRDs and execution plans.
 
 ---
 
@@ -17,105 +19,88 @@ When /ms is invoked, ALWAYS proceed to Phase 1 regardless of prompt content.
 
 ---
 
-## Phase 1: Scope Analysis
+## Phase 1: Understand
 
-**Follow:** `/skill scope-check`
+**Goal:** Make sure we understand what the user wants before doing anything.
 
-Spawn scope-check agent to identify target and reference repositories:
-
-1. Analyze user request
-2. Identify targets (where changes happen) and references (for learning patterns)
-3. Determine request type (question, simple task, complex project)
-
-**Output:** `targets[]`, `references[]`, `request_type`
+1. Analyze the user request to understand scope
+2. If anything is unclear, ask using AskUserQuestion tool
+3. Present understanding: "Here's what I understand you want: ..."
+4. List specific changes/files that will be affected
 
 ---
 
-## Phase 2: Route Decision
+## Phase 2: HITL Approval
 
-Based on Phase 1 analysis, route to appropriate handler:
+**Goal:** Get user sign-off before executing anything.
 
-| Request Type    | Indicators                                                     | Route To      |
-| --------------- | -------------------------------------------------------------- | ------------- |
-| Quick Question  | Question phrasing, "how", "what", "why", no changes needed     | `/qq`         |
-| Complex Project | Multiple components, new architecture, multi-file changes, PRD | `/build`      |
-| Simple Task     | Single file, quick fix, minor update, straightforward change   | Handle inline |
+Present to user:
 
-**Routing Actions:**
+1. What we understood from the request
+2. What changes we plan to make
+3. Which agents will be used
 
-- **Quick Question:** Redirect to `/qq {original_prompt}` - skip remaining phases
-- **Complex Project:** Redirect to `/build {original_prompt}` - skip remaining phases
-- **Simple Task:** Continue to Phase 3
+Use AskUserQuestion tool with options:
 
----
-
-## Phase 3: Understand (Simple Tasks Only)
-
-Analyze the user request and clarify intent:
-
-1. Read the user prompt
-2. Identify what they want to accomplish
-3. Use AskUserQuestion tool if clarification needed
-4. Present understanding: "Here's what I understand you want..."
+- "Yes, proceed" → Go to Phase 3
+- "No, let me clarify" → Go back to Phase 1
 
 ---
 
-## Phase 4: HITL Approval
+## Phase 3: Execute
 
-**Follow:** `/skill workflow-steps/hitl-approval`
+**Goal:** Do the work using MetaSaver agents.
 
-Get user confirmation before proceeding:
+**Follow:** `/skill agent-selection`
 
-1. Present understanding from Phase 3
-2. Use AskUserQuestion tool with options: "Yes, proceed" / "No, let me clarify"
-3. If clarification needed, return to Phase 3
-4. If approved, proceed to Phase 5
-
----
-
-## Phase 5: Execute
-
-**Follow:** `/skill workflow-steps/execution-phase` and `/skill agent-selection`
-
-Spawn MetaSaver agents in parallel for the work:
-
-1. Select appropriate agents from core-claude-plugin (see `/skill agent-selection`)
+1. Select appropriate agents based on task type
 2. Spawn agents in parallel when tasks are independent
 3. Use Task tool WITHOUT model parameter
-4. ALWAYS use agents from core-claude-plugin for execution
+4. ALWAYS use agents from core-claude-plugin
+
+**Agent selection:**
+
+| Task Type               | Agent                                           |
+| ----------------------- | ----------------------------------------------- |
+| Explore/understand code | `core-claude-plugin:generic:code-explorer`      |
+| Write/modify code       | `core-claude-plugin:generic:coder`              |
+| Write tests             | `core-claude-plugin:generic:tester`             |
+| Review code             | `core-claude-plugin:generic:reviewer`           |
+| Config files            | `core-claude-plugin:config:*` (appropriate one) |
 
 ---
 
-## Phase 6: Verify
+## Phase 4: Verify
 
-**Follow:** `/skill workflow-steps/validation-phase`
+**Goal:** Make sure the changes don't break anything.
 
-Run build validation to ensure changes work:
+Run in sequence:
 
-1. Run: `pnpm build`
-2. Run: `pnpm lint`
-3. Run: `pnpm test`
-4. Report any failures to user
+1. `pnpm build` - Compilation check
+2. `pnpm lint` - Code quality check
+3. `pnpm test` - Test suite check
+
+Report any failures to user.
 
 ---
 
-## Phase 7: Self-Audit
+## Phase 5: Self-Audit
 
-**Follow:** `/skill workflow-postmortem mode=summary`
+**Goal:** Audit your own work before presenting to user.
 
-Before confirming with user, audit your own work:
+Before confirming with user, check:
 
 1. **Scope check:** Did we do ONLY what was requested? List any extras added
 2. **Completeness check:** Is all requested work done? List anything missing
 3. **Side effects:** Did we modify files not related to the request?
 4. **Quality check:** Does the implementation follow the approach we got approval for?
 
-If issues found:
+**If issues found:**
 
 - Minor issues: Note them for user in Confirm phase
-- Major issues: Return to Phase 5 (Execute) to fix before confirming
+- Major issues: Return to Phase 3 (Execute) to fix before confirming
 
-This self-audit catches:
+**This catches:**
 
 - Feature creep (adding things not requested)
 - Incomplete work (forgetting parts of the request)
@@ -123,73 +108,100 @@ This self-audit catches:
 
 ---
 
-## Phase 8: Confirm
+## Phase 6: Confirm
 
-**Follow:** `/skill workflow-steps/hitl-approval`
+**Goal:** Verify we solved what the user asked for.
 
-Confirm completion with user:
+Present:
 
-1. Use AskUserQuestion tool: "Did this solve what you asked for?"
-2. If yes: proceed to Phase 9
-3. If no: ask what adjustments needed, return to Phase 5
+1. What was changed
+2. Files modified/created
+3. Build/lint/test status
+
+Use AskUserQuestion tool: "Did this solve what you asked for?"
+
+- "Yes, done" → Complete
+- "No, need adjustments" → Back to Phase 3 with clarification
 
 ---
 
-## Phase 9: Epic Archival (Conditional)
+## What /ms Does NOT Do
 
-Archive epic folder when task is confirmed complete:
-
-1. Check if `docs/epics/{project}/` exists for this task
-2. If epic folder exists:
-   - Create `docs/epics/completed/` directory if it does not exist
-   - Move `docs/epics/{project}/` to `docs/epics/completed/{project}/`
-   - Report: "Archived epic folder to docs/epics/completed/{project}/"
-3. If no epic folder exists: skip silently
-4. Workflow complete
+| Feature             | /ms | /build |
+| ------------------- | --- | ------ |
+| PRD files           | No  | Yes    |
+| Execution plans     | No  | Yes    |
+| User story files    | No  | Yes    |
+| workflow-state.json | No  | Yes    |
+| Multiple waves      | No  | Yes    |
+| Routing to commands | No  | Yes    |
+| Formal requirements | No  | Yes    |
 
 ---
 
 ## Examples
 
 ```bash
-/ms "how does authentication work?"
---> Route: /qq (question detected)
+# Quick fix
+/ms "fix the typo in the login button"
+→ Phase 1: Understand (clear request)
+→ Phase 2: "I'll fix the typo in the login button. Proceed?"
+→ Phase 3: Spawn coder agent
+→ Phase 4: Build/lint/test pass
+→ Phase 5: Self-Audit (scope ok, complete, no extras)
+→ Phase 6: "Fixed. Did this solve it?"
 
-/ms "fix the typo in the README"
---> Route: inline (simple task)
---> Understand --> Approval --> Execute(coder) --> Verify --> Self-Audit --> Confirm
+# Small feature
+/ms "add a loading spinner to the submit button"
+→ Phase 1: Understand, clarify which button
+→ Phase 2: "I'll add a spinner to the form submit button. Proceed?"
+→ Phase 3: Spawn coder + tester agents in parallel
+→ Phase 4: Build/lint/test pass
+→ Phase 5: Self-Audit (scope ok, tests added as approved)
+→ Phase 6: "Added spinner with tests. Did this solve it?"
 
-/ms "add multi-tenant support with RBAC"
---> Route: /build (complex project detected)
-
-/ms "update the eslint config to use our new rules"
---> Route: inline (simple task)
---> Understand --> Approval --> Execute(config agent) --> Verify --> Self-Audit --> Confirm
-
-/ms "what validation patterns do we use?"
---> Route: /qq (question detected)
-
-/ms "refactor the auth module for better error handling"
---> Route: /build (multi-file refactor detected)
+# Exploration + fix
+/ms "find where the auth token is stored and add expiry check"
+→ Phase 1: Understand (clear enough)
+→ Phase 2: "I'll explore auth code, then add expiry check. Proceed?"
+→ Phase 3: Spawn code-explorer, then coder based on findings
+→ Phase 4: Build/lint/test pass
+→ Phase 5: Self-Audit (only auth.ts modified, matches request)
+→ Phase 6: "Added expiry check in auth.ts. Did this solve it?"
 ```
 
 ---
 
 ## Enforcement
 
-1. ALWAYS run scope-check in Phase 1 to analyze request
-2. ALWAYS route questions to /qq command
-3. ALWAYS route complex projects to /build command
-4. ALWAYS handle simple tasks inline with HITL gates
-5. ALWAYS use AskUserQuestion tool for all questions to the user
-6. ALWAYS get HITL approval before executing inline tasks (Phase 4)
-7. ALWAYS use MetaSaver agents from core-claude-plugin when agents exist for the task
-8. ALWAYS spawn agents WITHOUT model parameter on Task calls
-9. ALWAYS spawn agents in parallel when tasks are independent
-10. ALWAYS verify with build/lint/test after inline execution (Phase 6)
-11. ALWAYS run Self-Audit before confirming (catch feature creep and incomplete work)
-12. ALWAYS confirm completion with user for inline tasks (Phase 8)
-13. ALWAYS present understanding before getting approval (Phase 3 output required)
-14. ALWAYS return to Phase 3 if user provides clarification during approval
-15. ALWAYS consult `/skill agent-selection` for appropriate agent mapping
-16. ALWAYS archive epic folder to `docs/epics/completed/` after user confirms completion (Phase 9)
+1. ALWAYS use AskUserQuestion tool for questions (never inline questions in response)
+2. ALWAYS get HITL approval before executing (Phase 2)
+3. ALWAYS use MetaSaver agents from `core-claude-plugin:*`
+4. ALWAYS spawn independent agents in parallel (single message, multiple Task calls)
+5. ALWAYS verify with build/lint/test after execution (Phase 4)
+6. ALWAYS run Self-Audit before confirming (Phase 5) - catch feature creep and incomplete work
+7. ALWAYS confirm with user after completion (Phase 6)
+8. NEVER use raw tools (Read, Write, Bash) when an agent exists for the task
+9. NEVER specify model parameter on Task calls
+10. NEVER skip HITL approval phase
+11. NEVER assume - ask if unclear
+
+---
+
+## When to Use /build Instead
+
+Use `/build` when:
+
+- Feature is large (multiple epics)
+- Formal requirements documentation needed
+- Multiple developers/stakeholders involved
+- Work spans multiple sessions
+- Need execution plan with waves
+- Complex dependencies between tasks
+
+Use `/ms` when:
+
+- Quick fix
+- Small feature (single session)
+- No formal docs needed
+- Clear, simple scope

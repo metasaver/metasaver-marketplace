@@ -57,7 +57,6 @@
         "./skills/workflow-steps/audit-resolution",
         "./skills/workflow-steps/audit-remediation",
         "./skills/workflow-steps/template-update",
-        "./skills/workflow-steps/user-story-template",
         "./skills/workflow-steps/production-check",
         "./skills/workflow-steps/vibe-check",
         "./skills/workflow-steps/save-prd",

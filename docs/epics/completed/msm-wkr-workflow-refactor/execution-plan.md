@@ -1,11 +1,11 @@
 ---
 epic_id: "MSM-WKR"
 title: "Workflow Refactor - Agent/Skill Separation & Template Enforcement"
-status: "pending"
+status: "complete"
 total_stories: 16
 total_waves: 5
 created: "2024-12-29"
-updated: "2024-12-29"
+updated: "2025-12-29"
 owner: "project-manager-agent"
 ---
 
@@ -242,15 +242,43 @@ MSM-WKR-014, MSM-WKR-015 (depend only on MSM-WKR-001, MSM-WKR-002)
 
 ## Progress Tracking
 
-**Updated:** 2024-12-29
+**Updated:** 2025-12-29
 
-| Wave   | Status  | Stories                                                         |
-| ------ | ------- | --------------------------------------------------------------- |
-| Wave 1 | pending | MSM-WKR-001, MSM-WKR-002                                        |
-| Wave 2 | pending | MSM-WKR-003, MSM-WKR-004, MSM-WKR-005                           |
-| Wave 3 | pending | MSM-WKR-006, MSM-WKR-007                                        |
-| Wave 4 | pending | MSM-WKR-008, MSM-WKR-009, MSM-WKR-010, MSM-WKR-011              |
-| Wave 5 | pending | MSM-WKR-012, MSM-WKR-013, MSM-WKR-014, MSM-WKR-015, MSM-WKR-016 |
+| Wave   | Status     | Stories                                                         | Notes                                       |
+| ------ | ---------- | --------------------------------------------------------------- | ------------------------------------------- |
+| Wave 1 | COMPLETE   | MSM-WKR-001, MSM-WKR-002                                        | Skills deleted, zero refs remain            |
+| Wave 2 | COMPLETE   | MSM-WKR-003, MSM-WKR-004, MSM-WKR-005                           | EA agent + 2 skills created                 |
+| Wave 3 | COMPLETE   | MSM-WKR-006, MSM-WKR-007                                        | 2 skills created                            |
+| Wave 4 | COMPLETE\* | MSM-WKR-008, MSM-WKR-009, MSM-WKR-010, MSM-WKR-011              | \*Done via prior work, not this epic        |
+| Wave 5 | COMPLETE\* | MSM-WKR-012, MSM-WKR-013, MSM-WKR-014, MSM-WKR-015, MSM-WKR-016 | \*Done via prior work; audit pending review |
+
+### Verification Results (2025-12-29)
+
+**Wave 1 Verification:**
+
+```bash
+grep -r "complexity-check" plugins/ --include="*.md" | wc -l  # Result: 0 ✓
+grep -r "tool-check" plugins/ --include="*.md" | wc -l        # Result: 0 ✓
+```
+
+**Wave 2-3 Verification:**
+
+- ✓ `agents/generic/enterprise-architect.md` exists
+- ✓ `skills/workflow-steps/prd-creation/SKILL.md` exists
+- ✓ `skills/workflow-steps/document-validation/SKILL.md` exists
+- ✓ `skills/workflow-steps/execution-plan-creation/SKILL.md` exists
+- ✓ `skills/workflow-steps/user-story-creation/SKILL.md` exists
+
+**Wave 4-5 Verification (already implemented):**
+
+- ✓ BA agent refactored - focuses on story decomposition, references user-story-creation skill
+- ✓ Reviewer agent enhanced - uses document-validation skill, PASS/FAIL structure
+- ✓ requirements-phase uses EA→Reviewer→HITL→BA flow
+- ✓ design-phase uses new skills (execution-plan-creation, user-story-creation, document-validation)
+- ✓ /build command uses full workflow, no complexity routing
+- ✓ /architect command has optional innovation (Phase 5 decision)
+- ✓ /ms command has no complexity-check or tool-check references
+- ✓ /qq and /audit commands have no deprecated skill references
 
 ---
 

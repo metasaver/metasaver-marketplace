@@ -24,15 +24,15 @@ Agent bypassed /ms workflow enforcement:
 
 | Story  | Change                                  | Impact                    |
 | ------ | --------------------------------------- | ------------------------- |
-| US-001 | Remove "answer directly" from CLAUDE.md | Closes the escape hatch   |
-| US-002 | Make Phase 2b analysis mandatory in /ms | Prevents analysis skip    |
-| US-003 | Add AskUserQuestion enforcement to /ms  | Explicit tool requirement |
+| msm-evl-001 | Remove "answer directly" from CLAUDE.md | Closes the escape hatch   |
+| msm-evl-002 | Make Phase 2b analysis mandatory in /ms | Prevents analysis skip    |
+| msm-evl-003 | Add AskUserQuestion enforcement to /ms  | Explicit tool requirement |
 
 ---
 
 ## User Stories
 
-### US-001: Update CLAUDE.md
+### msm-evl-001: Update CLAUDE.md
 
 **Agent:** manual-edit (CLAUDE.md is not a plugin component)
 
@@ -50,7 +50,7 @@ Add:
 
 ---
 
-### US-002: Make Phase 2b Mandatory
+### msm-evl-002: Make Phase 2b Mandatory
 
 **Agent:** command-author
 
@@ -60,7 +60,7 @@ Remove any complexity-based bypass conditions in Phase 2b. Analysis phase runs f
 
 ---
 
-### US-003: Add AskUserQuestion Enforcement
+### msm-evl-003: Add AskUserQuestion Enforcement
 
 **Agent:** command-author
 
@@ -78,12 +78,12 @@ Add to /ms Enforcement section:
 
 **Wave 1 (Sequential):**
 
-- US-001: CLAUDE.md update (manual)
+- msm-evl-001: CLAUDE.md update (manual)
 
 **Wave 2 (Parallel):**
 
-- US-002: /ms Phase 2b mandatory (command-author)
-- US-003: /ms enforcement (command-author)
+- msm-evl-002: /ms Phase 2b mandatory (command-author)
+- msm-evl-003: /ms enforcement (command-author)
 
 **Duration:** ~10 minutes
 

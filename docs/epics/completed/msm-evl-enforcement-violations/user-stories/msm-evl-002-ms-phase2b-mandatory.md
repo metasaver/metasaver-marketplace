@@ -1,4 +1,4 @@
-# US-002: Make Phase 2b analysis mandatory in /ms
+# msm-evl-002: Make Phase 2b analysis mandatory in /ms
 
 **Agent:** `command-author`
 
@@ -103,8 +103,8 @@ Add explicit enforcement rule:
 
 ## Dependencies
 
-- US-001 (CLAUDE.md should be updated first for consistency)
+- msm-evl-001 (CLAUDE.md should be updated first for consistency)
 
 ## Wave Assignment
 
-**Wave 2** (Commands Core - parallel with US-003, US-004)
+**Wave 2** (Commands Core - parallel with msm-evl-003, msm-evl-004)

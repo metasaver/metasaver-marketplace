@@ -1,4 +1,4 @@
-# US-003: Update /ms enforcement section for AskUserQuestion
+# msm-evl-003: Update /ms enforcement section for AskUserQuestion
 
 **Agent:** `command-author`
 
@@ -67,9 +67,9 @@ Renumber subsequent items (current 2-12 become 3-13).
 
 ## Dependencies
 
-- US-001 (CLAUDE.md foundation)
-- Can run parallel with US-002
+- msm-evl-001 (CLAUDE.md foundation)
+- Can run parallel with msm-evl-002
 
 ## Wave Assignment
 
-**Wave 2** (Commands Core - parallel with US-002, US-004)
+**Wave 2** (Commands Core - parallel with msm-evl-002, msm-evl-004)
