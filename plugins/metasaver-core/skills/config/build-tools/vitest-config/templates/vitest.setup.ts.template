@@ -1,0 +1,7 @@
+/**
+ * Vitest Setup File - FRONTEND ONLY
+ *
+ * Place at package root as ./vitest.setup.ts
+ * Only needed for React apps and component libraries that test DOM elements.
+ */
+import "@testing-library/jest-dom";

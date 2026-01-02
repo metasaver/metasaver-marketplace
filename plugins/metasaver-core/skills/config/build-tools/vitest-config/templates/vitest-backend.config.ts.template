@@ -1,0 +1,19 @@
+/**
+ * Vitest Configuration Template - BACKEND (libraries, API services, contracts, database)
+ *
+ * For frontend packages (React apps, components), use vitest.config.ts.template instead.
+ */
+import baseConfig from "@metasaver/core-vitest-config/base";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  ...baseConfig,
+  test: {
+    ...baseConfig.test,
+    environment: "node",
+    coverage: {
+      ...baseConfig.test.coverage,
+      provider: "v8" as const,
+    },
+  },
+});

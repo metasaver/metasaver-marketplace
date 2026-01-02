@@ -49,7 +49,7 @@ Use `/skill vitest-config` for template and creation logic.
 1. Repository type is provided via the `scope` parameter
 2. Check if vite.config.ts exists (required for merging)
 3. Use template from skill (at `templates/vitest.config.ts.template`)
-4. Create src/test/setup.ts if missing (use skill's setup template)
+4. Create ./vitest.setup.ts if frontend package (use skill's setup template)
 5. Update package.json (add dependencies + scripts per skill standards)
 6. Re-audit to verify all 5 rules are met
 
@@ -71,11 +71,22 @@ Use `/skill vitest-config` for 5 standards validation.
 
 **The 5 Standards:**
 
-- Always merge with vite.config.ts (via mergeConfig)
-- Always include test configuration (globals, environment, setupFiles, coverage)
-- Always include setup file (src/test/setup.ts with @testing-library/jest-dom)
-- Always include dependencies (vitest, @vitest/ui, @testing-library/\*)
-- Always include npm scripts (test, test:ui, test:coverage)
+- **Standard 1:** Merge with vite.config.ts (via mergeConfig) - only if vite.config.ts exists
+- **Standard 2:** Include test configuration (globals, environment, setupFiles, coverage)
+- **Standard 3:** Setup file at `./vitest.setup.ts` (root level, per Vitest docs)
+- **Standard 4:** Dependencies based on package type (see below)
+- **Standard 5:** Scripts: `test:unit`, `test:watch`, `test:coverage` (+ `test:ui` for frontend only)
+
+**Package Type Rules:**
+
+| Package Type         | Environment | Setup File                | test:ui | @testing-library/jest-dom |
+| -------------------- | ----------- | ------------------------- | ------- | ------------------------- |
+| React apps (portals) | jsdom       | Yes, with jest-dom import | Yes     | Yes                       |
+| Frontend components  | jsdom       | Yes, with jest-dom import | Yes     | Yes                       |
+| Backend libraries    | node        | No                        | No      | No                        |
+| API services         | node        | No                        | No      | No                        |
+| Contracts packages   | node        | No                        | No      | No                        |
+| Database packages    | node        | No                        | No      | No                        |
 
 ## Scope Detection
 
@@ -96,6 +107,6 @@ Determine scope from user intent:
 
 1. **Use skill for template** - All template and validation logic in `/skill vitest-config`
 2. **Repository type** - Provided via `scope` parameter (library vs consumer)
-3. **Always merge with vite.config.ts** - Vitest requires merging with Vite config
-4. **Always include setup file** - src/test/setup.ts must import @testing-library/jest-dom
+3. **Merge with vite.config.ts if it exists** - Use shared config otherwise
+4. **Setup file at root for frontend only** - ./vitest.setup.ts with jest-dom import
 5. **Re-audit after changes** - Verify fixes work

@@ -193,7 +193,7 @@ function getOption1Details(configType: string): string {
     typescript:
       "→ Overwrites tsconfig.json\n     → Verifies extends paths\n     → Re-audits automatically",
     vitest:
-      "→ Overwrites vitest.config.ts\n     → Creates src/test/setup.ts if missing\n     → Re-audits automatically",
+      "→ Overwrites vitest.config.ts\n     → Creates ./vitest.setup.ts if frontend package\n     → Re-audits automatically",
     tailwind:
       "→ Overwrites tailwind.config.js\n     → Creates src/index.css if missing\n     → Re-audits automatically",
   };
