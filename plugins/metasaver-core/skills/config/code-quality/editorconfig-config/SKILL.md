@@ -1,6 +1,6 @@
 ---
 name: editorconfig-config
-description: EditorConfig file validation and template for enforcing consistent coding styles across editors and IDEs in monorepos. Includes 4 required standards (root declaration, universal settings with UTF-8 and LF line endings, language-specific indentation for JS/TS/Markdown/Python, root-only placement in monorepos). Use when creating or auditing .editorconfig files to ensure consistent code formatting.
+description: EditorConfig file validation and template for enforcing consistent coding styles across editors and IDEs in monorepos. Includes 4 required standards (root declaration, universal settings with UTF-8/LF/2-space defaults, language-specific sections for JS/TS/JSON/YAML/Markdown/Python/Shell/SQL/Docker/Prisma, root-only placement in monorepos). Use when creating or auditing .editorconfig files to ensure consistent code formatting.
 ---
 
 # EditorConfig Configuration Skill
@@ -15,6 +15,7 @@ Manage .editorconfig configuration to:
 - Define language-specific indentation rules
 - Preserve trailing whitespace where needed (Markdown)
 - Ensure monorepo consistency with single root configuration
+- Cover all common file types in MetaSaver projects
 
 ## Usage
 
@@ -44,9 +45,9 @@ root = true
 
 This stops EditorConfig from searching parent directories, ensuring the monorepo has a single source of truth.
 
-### Rule 2: Universal Settings
+### Rule 2: Universal Settings with Default Indentation
 
-Must include `[*]` section with these four settings:
+Must include `[*]` section with these six settings:
 
 ```ini
 [*]
@@ -54,25 +55,74 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
-```
-
-These settings apply to all files unless overridden by language-specific rules.
-
-### Rule 3: Language-Specific Indentation
-
-Must include sections for JavaScript/TypeScript (2 spaces), Markdown (preserve trailing), and Python (4 spaces):
-
-```ini
-[*.{js,jsx,ts,tsx,json,jsonc,yml,yaml}]
 indent_style = space
 indent_size = 2
+```
 
+These settings apply to all files unless overridden by language-specific rules. The default 2-space indentation is inherited by most file types.
+
+### Rule 3: Language-Specific Sections
+
+Must include sections for all common file types:
+
+**Core language sections (required):**
+
+```ini
+# TypeScript, JavaScript, JSX, TSX
+[*.{ts,tsx,js,jsx,mjs,cjs}]
+indent_size = 2
+max_line_length = 100
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Markdown files
 [*.md]
 trim_trailing_whitespace = false
+max_line_length = off
 
+# Python (if used in tooling)
 [*.py]
 indent_style = space
 indent_size = 4
+```
+
+**Extended sections (recommended):**
+
+```ini
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# Makefiles
+[Makefile]
+indent_style = tab
+
+# Package.json (specific formatting)
+[package.json]
+indent_size = 2
+
+# Lock files (should not be edited)
+[{package-lock.json,pnpm-lock.yaml,yarn.lock}]
+indent_size = 2
+insert_final_newline = false
+
+# SQL files
+[*.sql]
+indent_size = 2
+
+# Docker files
+[{Dockerfile,*.dockerfile}]
+indent_size = 2
+
+# Prisma schema files
+[*.prisma]
+indent_size = 2
 ```
 
 ### Rule 4: Root Location Only
@@ -89,8 +139,8 @@ Validation steps:
 
 1. Check file exists at repository root
 2. Verify root declaration is present
-3. Check universal settings section `[*]` with all 4 settings
-4. Verify language-specific sections exist (JS/TS, Markdown, Python)
+3. Check universal settings section `[*]` with all 6 settings (including indent defaults)
+4. Verify core language-specific sections exist (JS/TS, JSON, YAML, Markdown, Python)
 5. Scan for package-level .editorconfig files (monorepo only)
 6. Report violations
 
@@ -102,20 +152,28 @@ if (!content.includes("root = true")) {
   errors.push("Rule 1: Missing 'root = true' declaration");
 }
 
-// Rule 2: Universal settings (check all 4)
+// Rule 2: Universal settings (check all 6)
 [
   "[*]",
   "charset = utf-8",
   "end_of_line = lf",
   "insert_final_newline = true",
   "trim_trailing_whitespace = true",
+  "indent_style = space",
+  "indent_size = 2",
 ].forEach((setting) => {
   if (!content.includes(setting)) errors.push(`Rule 2: Missing ${setting}`);
 });
 
-// Rule 3: Language sections
-if (!/\[\*\.\{[^}]*js[^}]*\}\]/.test(content)) {
+// Rule 3: Core language sections
+if (!/\[\*\.\{[^}]*ts[^}]*\}\]/.test(content)) {
   errors.push("Rule 3: Missing JS/TS indentation rules");
+}
+if (!/\[\*\.json\]/.test(content)) {
+  errors.push("Rule 3: Missing JSON section");
+}
+if (!/\[\*\.\{[^}]*yml[^}]*\}\]/.test(content)) {
+  errors.push("Rule 3: Missing YAML section");
 }
 if (!/\[\*\.md\]/.test(content)) {
   errors.push("Rule 3: Missing Markdown section");
@@ -155,7 +213,7 @@ Repos may declare exceptions in package.json:
 1. Place .editorconfig at repository root (monorepo or standalone)
 2. Use template as starting point
 3. Preserve Markdown trailing whitespace (for double-space line breaks)
-4. Add language-specific rules as needed (follow template pattern)
+4. Keep extended sections for comprehensive coverage
 5. Re-audit after making changes
 
 ## Integration
