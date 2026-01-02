@@ -82,14 +82,14 @@ Output: Approved PRD + execution plan
 
 **Follow:** `/skill audit-investigation`, `/skill workflow-postmortem`
 
-Spawn config agents in waves to investigate discrepancies:
+**SPAWN config agents via Task tool** in waves to investigate discrepancies. The `agents[]` from Phase 1 MUST be spawned as subagents - do NOT investigate configs manually.
 
 1. **For each wave:**
-   - Spawn agents with execution plan (max 10 parallel per wave)
-   - Each agent reads template from skill
-   - Each agent reads actual file from target repo
-   - Each agent compares field-by-field or line-by-line
-   - Each agent reports discrepancies with line numbers, expected/actual values, severity
+   - **SPAWN agents via Task tool** with execution plan (max 10 parallel per wave)
+   - Each spawned agent reads template from skill
+   - Each spawned agent reads actual file from target repo
+   - Each spawned agent compares field-by-field or line-by-line
+   - Each spawned agent reports discrepancies with line numbers, expected/actual values, severity
 
 2. **Wave Checkpoint Flow (multi-wave):**
    - Wave N agents complete their investigations
@@ -276,5 +276,6 @@ End: /skill workflow-postmortem mode=summary → Report
 13. **ALWAYS skip innovation phase** - Focus on standards compliance, not enhancements
 14. **Template updates ALWAYS create PRs** - ALWAYS require review before merging to metasaver-marketplace
 15. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.
+16. **ALWAYS spawn config agents** for investigation in Phase 5 - agents[] from Phase 1 must be spawned via Task tool. NEVER investigate configs manually.
 
 ---
