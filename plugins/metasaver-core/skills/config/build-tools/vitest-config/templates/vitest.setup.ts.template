@@ -1,7 +1,22 @@
 /**
- * Vitest Setup File - FRONTEND ONLY
+ * Vitest Setup File - DEPRECATED
  *
- * Place at package root as ./vitest.setup.ts
- * Only needed for React apps and component libraries that test DOM elements.
+ * This local setup file pattern is deprecated.
+ * Use the shared setup from @metasaver/core-vitest-config instead.
+ *
+ * The factory pattern (createReactAppConfig/createReactLibraryConfig) automatically
+ * configures the shared setup file:
+ *
+ * ```typescript
+ * setupFiles: ["@metasaver/core-vitest-config/setup/jest-dom"]
+ * ```
+ *
+ * If you need custom setup beyond jest-dom matchers, you can still create
+ * a local setup file, but prefer the shared setup for standard React testing.
+ *
+ * Migration:
+ * 1. Switch to factory pattern in vitest.config.ts
+ * 2. Delete this vitest.setup.ts file
+ * 3. The shared setup will be used automatically
  */
 import "@testing-library/jest-dom";

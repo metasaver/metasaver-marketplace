@@ -4,6 +4,15 @@
     "pr": "🤖 Generated with Claude Code"
   },
   "permissions": {
+    "allow": [
+      "mcp__plugin_core-claude-plugin_sequential-thinking__*",
+      "mcp__plugin_core-claude-plugin_Context7__*",
+      "mcp__plugin_core-claude-plugin_chrome-devtools__*",
+      "mcp__plugin_core-claude-plugin_semgrep__*",
+      "mcp__plugin_core-claude-plugin_shadcn__*",
+      "mcp__plugin_core-claude-plugin_serena__*",
+      "mcp__plugin_core-claude-plugin_vibe-check__*"
+    ],
     "deny": ["Read(./.env)", "Read(./.env.*)", "Read(./.npmrc)"]
   },
   "alwaysThinkingEnabled": true,

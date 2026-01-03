@@ -110,6 +110,30 @@ Calling agent proceeds with:
 
 ---
 
+## HITL Tool Enforcement
+
+HITL gates MUST use AskUserQuestion tool. Prose questions are rejected.
+
+**Correct HITL:**
+
+```
+Use AskUserQuestion tool with:
+- question: "Approve PRD package for implementation?"
+- options: ["Approve", "Request Changes"]
+```
+
+**Incorrect HITL (REJECTED):**
+
+```
+"Ready to proceed? Let me know if you'd like any changes."
+```
+
+**Why:** Prose questions allow agents to continue without explicit user consent. The AskUserQuestion tool creates a blocking gate that ensures user acknowledgment before proceeding.
+
+**Detection:** Commands check for AskUserQuestion tool call in agent response. Prose-only responses trigger loop back with instruction to use tool.
+
+---
+
 ## Input Schema
 
 ```json

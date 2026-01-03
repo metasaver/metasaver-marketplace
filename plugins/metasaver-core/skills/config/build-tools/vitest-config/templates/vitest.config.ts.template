@@ -1,24 +1,34 @@
 /**
  * Vitest Configuration Template - FRONTEND (React apps, component libraries)
  *
+ * Uses factory pattern from @metasaver/core-vitest-config for React packages.
  * For backend packages, use vitest-backend.config.ts.template instead.
+ *
+ * Features:
+ * - Automatic vite.config.ts merging
+ * - jsdom environment for DOM simulation
+ * - jest-dom matchers from shared setup
+ * - Support for @testing-library/react
+ *
+ * Available factories:
+ * - createReactAppConfig: For React applications (portals, SPAs)
+ * - createReactLibraryConfig: For React component libraries
  */
-import { mergeConfig } from "vitest/config";
-import { defineConfig } from "vitest/config";
+
+// For React apps (portals, SPAs):
+import { createReactAppConfig } from "@metasaver/core-vitest-config/react-app";
 import viteConfig from "./vite.config";
 
-export default mergeConfig(
-  viteConfig,
-  defineConfig({
-    test: {
-      globals: true,
-      environment: "jsdom",
-      setupFiles: ["./vitest.setup.ts"],
-      coverage: {
-        provider: "v8",
-        reporter: ["text", "json", "html"],
-        exclude: ["node_modules/", "**/*.test.*", "**/*.spec.*"],
-      },
-    },
-  })
-);
+export default createReactAppConfig(viteConfig);
+
+// With overrides:
+// export default createReactAppConfig(viteConfig, {
+//   testTimeout: 15000,
+//   coverage: { threshold: { lines: 80 } },
+// });
+
+// For React component libraries, use createReactLibraryConfig instead:
+// import { createReactLibraryConfig } from "@metasaver/core-vitest-config/react-library";
+// import viteConfig from "./vite.config";
+//
+// export default createReactLibraryConfig(viteConfig);

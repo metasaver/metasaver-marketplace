@@ -72,8 +72,13 @@ Reviewer validates PRD structure before HITL:
 - Verifies requirements have IDs and priorities
 - Confirms scope boundaries defined
 
-**On PASS:** Proceed to Innovation Decision
-**On FAIL:** Return to EA agent with violations list
+### Enforcement Gate (MANDATORY)
+
+1. Reviewer validates PRD structure against `/skill prd-creation` template
+2. **On FAIL:** Return to EA agent with violations list - EA MUST fix all violations before retry
+3. **On PASS:** Continue to Innovation Decision (Phase 5)
+
+Gate is BLOCKING - workflow cannot proceed until PRD passes validation.
 
 ---
 
@@ -120,6 +125,18 @@ Architect checks multi-mono for existing solutions, validates against Context7 d
 **Follow:** `/skill planning-phase`
 
 PM reviews enriched stories, identifies dependencies, groups into execution waves, creates Gantt chart.
+
+### Enforcement Gate (MANDATORY)
+
+**Spawn:** `core-claude-plugin:generic:reviewer` (design artifacts validation mode)
+
+1. Verify enriched stories exist in `docs/epics/{project-id}/user-stories/`
+2. Verify execution plan exists with wave assignments
+3. Validate story format: each story has acceptance criteria, implementation notes, and dependencies
+4. **On FAIL:** Loop back to Design phase - fix missing/invalid artifacts before retry
+5. **On PASS:** Continue to HITL (Phase 8)
+
+Gate is BLOCKING - workflow cannot proceed until design artifacts pass validation.
 
 ---
 
@@ -234,3 +251,7 @@ docs/epics/{project-id}/
 15. Tell user to run `/build {prd-path}` to execute the plan
 16. Save all artifacts to `docs/epics/{project-id}/`
 17. ALWAYS run `/skill workflow-postmortem mode=summary` AFTER HITL approval, BEFORE Output phase
+18. Phase 4 enforcement gate is MANDATORY - PRD validation MUST pass before Phase 5
+19. Phase 7 enforcement gate is MANDATORY - design artifacts validation MUST pass before Phase 8
+20. Enforcement gates are BLOCKING - workflow halts until validation passes
+21. On gate failure, return to originating phase with explicit violation list

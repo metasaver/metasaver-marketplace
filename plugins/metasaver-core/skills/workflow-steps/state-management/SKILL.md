@@ -228,6 +228,70 @@ Validates state object against schema rules.
 - totalWaves: Must be positive integer
 - lastUpdate: Must be valid ISO 8601 timestamp
 
+### 9. checkPhaseRequirements(projectFolder, targetPhase)
+
+Validates required artifacts exist before allowing phase transition.
+
+**Input:**
+
+- projectFolder: Absolute path to project folder
+- targetPhase: Phase number to transition to (1-6)
+
+**Output:** Object with `valid` boolean and `errors` array
+
+**Pseudocode:**
+
+```javascript
+function checkPhaseRequirements(projectFolder, targetPhase):
+  errors = []
+
+  // Phase requirements mapping
+  requirements = {
+    3: { file: "prd.md", desc: "PRD document" },
+    5: { file: "execution-plan.md", desc: "Execution plan" },
+    6: { folder: "user-stories/", minFiles: 1, desc: "User stories" }
+  }
+
+  req = requirements[targetPhase]
+  if req is undefined:
+    return { valid: true, errors: [] }
+
+  if req.file:
+    filePath = join(projectFolder, req.file)
+    if not fileExists(filePath):
+      errors.push("Missing required artifact: " + req.desc + " (" + req.file + ")")
+
+  if req.folder:
+    folderPath = join(projectFolder, req.folder)
+    files = glob(folderPath + "*.md")
+    if files.length < req.minFiles:
+      errors.push("Missing required artifact: " + req.desc + " (folder empty or missing)")
+
+  return {
+    valid: errors.length === 0,
+    errors: errors
+  }
+```
+
+## Phase Requirements Reference
+
+Before advancing to certain phases, verify required artifacts exist:
+
+| Target Phase | Required Artifact | Validation                      |
+| ------------ | ----------------- | ------------------------------- |
+| 3            | prd.md            | File exists in project folder   |
+| 5            | execution-plan.md | File exists in project folder   |
+| 6            | user-stories/     | Folder contains at least 1 file |
+
+**Phases 1, 2, 4:** No artifact requirements (can always enter)
+
+**Check process:**
+
+1. Read target phase from workflow-state.json or function parameter
+2. Verify required artifacts exist using Glob
+3. If missing: Return error object with specific missing artifact
+4. If present: Return valid object allowing phase transition
+
 ## Usage Examples
 
 ### Example 1: PM updating state after wave completion
@@ -284,22 +348,44 @@ const updates = {
 const updatedState = updateWorkflowState("/absolute/path/to/project", updates);
 
 if (updatedState) {
-  console.log(
-    `Wave ${updatedState.currentWave} started with ${updatedState.stories.inProgress.length} stories`,
-  );
+  console.log(`Wave ${updatedState.currentWave} started with ${updatedState.stories.inProgress.length} stories`);
 }
+```
+
+### Example 4: Validating phase requirements before transition
+
+```javascript
+// PM checks if can advance to phase 5 (execution)
+const projectFolder = "/absolute/path/to/project";
+const targetPhase = 5;
+
+const check = checkPhaseRequirements(projectFolder, targetPhase);
+
+if (check.valid) {
+  // Safe to transition
+  updateWorkflowState(projectFolder, { phase: targetPhase, phaseName: "Execution" });
+} else {
+  // Block transition, report missing artifacts
+  console.error("Cannot advance to phase " + targetPhase);
+  check.errors.forEach((err) => console.error("  - " + err));
+}
+
+// Output if missing:
+// Cannot advance to phase 5
+//   - Missing required artifact: Execution plan (execution-plan.md)
 ```
 
 ## Error Handling
 
-| Error Condition          | Response                                   |
-| ------------------------ | ------------------------------------------ |
-| Missing file             | Return null, log warning                   |
-| Invalid JSON             | Return null, log error with parse details  |
-| Schema validation failed | Return false from write, log error details |
-| Write permission denied  | Return false, log error                    |
-| Corrupted state          | Return null, suggest manual inspection     |
-| Duplicate story IDs      | Log warning, deduplicate before processing |
+| Error Condition           | Response                                   |
+| ------------------------- | ------------------------------------------ |
+| Missing file              | Return null, log warning                   |
+| Invalid JSON              | Return null, log error with parse details  |
+| Schema validation failed  | Return false from write, log error details |
+| Write permission denied   | Return false, log error                    |
+| Corrupted state           | Return null, suggest manual inspection     |
+| Duplicate story IDs       | Log warning, deduplicate before processing |
+| Phase requirement not met | Return { valid: false, errors: [...] }     |
 
 ## Integration
 
@@ -319,3 +405,4 @@ if (updatedState) {
 4. **Handle nulls gracefully** - Check return values before proceeding
 5. **Log all state changes** - Maintain audit trail of workflow progress
 6. **Deep merge for updates** - Preserve nested objects when updating
+7. **Check phase requirements** - Use checkPhaseRequirements() before advancing phases

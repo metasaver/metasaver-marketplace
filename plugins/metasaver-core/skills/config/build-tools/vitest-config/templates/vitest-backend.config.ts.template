@@ -1,19 +1,64 @@
 /**
  * Vitest Configuration Template - BACKEND (libraries, API services, contracts, database)
  *
+ * Uses package-type specific configs from @metasaver/core-vitest-config.
  * For frontend packages (React apps, components), use vitest.config.ts.template instead.
+ *
+ * Available configs:
+ * - node-library: Node.js utility packages (core-utils, service-utils)
+ * - node-service: Express/Hono backend services with HTTP testing
+ * - contracts: Zod schema packages
+ * - database: Prisma database packages
+ * - api: API route testing
+ * - integration: Integration tests
  */
-import baseConfig from "@metasaver/core-vitest-config/base";
+
+// For Node.js library packages:
 import { defineConfig } from "vitest/config";
+import nodeLibraryConfig from "@metasaver/core-vitest-config/node-library";
 
 export default defineConfig({
-  ...baseConfig,
+  ...nodeLibraryConfig,
   test: {
-    ...baseConfig.test,
-    environment: "node",
-    coverage: {
-      ...baseConfig.test.coverage,
-      provider: "v8" as const,
-    },
+    ...nodeLibraryConfig.test,
+    // Your overrides here
   },
 });
+
+// For backend service packages (Express/Hono):
+// import { defineConfig } from "vitest/config";
+// import nodeServiceConfig from "@metasaver/core-vitest-config/node-service";
+//
+// export default defineConfig({
+//   ...nodeServiceConfig,
+//   test: {
+//     ...nodeServiceConfig.test,
+//     env: {
+//       DATABASE_URL: process.env.DATABASE_URL || "your-test-db-url",
+//     },
+//   },
+// });
+
+// For contracts packages (Zod schemas):
+// import { defineConfig } from "vitest/config";
+// import contractsConfig from "@metasaver/core-vitest-config/contracts";
+//
+// export default defineConfig({
+//   ...contractsConfig,
+//   test: {
+//     ...contractsConfig.test,
+//     // Your overrides here
+//   },
+// });
+
+// For database packages:
+// import { defineConfig } from "vitest/config";
+// import databaseConfig from "@metasaver/core-vitest-config/database";
+//
+// export default defineConfig({
+//   ...databaseConfig,
+//   test: {
+//     ...databaseConfig.test,
+//     // Your overrides here
+//   },
+// });

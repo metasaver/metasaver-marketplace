@@ -63,6 +63,14 @@ Enterprise Architect (EA) → AskUserQuestion loop until fully understood
 
 **Output:** PRD + Epics + Story outlines (NO HITL - continues to Design)
 
+**Enforcement Gate (MANDATORY):**
+
+1. Call `checkPhaseRequirements(projectFolder, 3)` from `/skill state-management`
+2. Verify `prd.md` exists in project folder
+3. Spawn reviewer agent for PRD validation
+4. On FAIL: Loop back to EA for PRD creation/fixes
+5. On PASS: Continue to Phase 4 (Design)
+
 ---
 
 ## Phase 4: Design
@@ -90,6 +98,22 @@ Architect → annotates PRD with implementation details
 - `/skill document-validation` (Reviewer validates)
 
 **Output:** Execution plan + Complete user stories (NO HITL - continues to Approval)
+
+**Enforcement Gate - Execution Plan (MANDATORY):**
+
+1. Call `checkPhaseRequirements(projectFolder, 5)` from `/skill state-management`
+2. Verify `execution-plan.md` exists in project folder
+3. Spawn reviewer agent for plan validation
+4. On FAIL: Loop back to PM for execution plan creation/fixes
+5. On PASS: Continue to story creation
+
+**Enforcement Gate - User Stories (MANDATORY):**
+
+1. Call `checkPhaseRequirements(projectFolder, 6)` from `/skill state-management`
+2. Verify `user-stories/` folder is populated (at least 1 file)
+3. Spawn reviewer agent for stories validation
+4. On FAIL: Loop back to BA for story creation/fixes
+5. On PASS: Continue to Phase 5 (HITL Approval)
 
 ---
 
@@ -187,29 +211,17 @@ BA + PM produce final build report with:
 
 ---
 
-## Phase 11: Epic Archival
-
-After user approves the final report, archive the epic:
-
-1. Check if `docs/epics/{project}/` exists
-2. If exists, move to `docs/epics/completed/{project}/`
-3. Confirm archival to user
-
-This preserves the complete epic documentation (PRD, stories, execution plan, post-mortem) for future reference.
-
----
-
 ## Examples
 
 ```bash
 /build "add logging to service"
-→ Planning → Analysis → Requirements (EA asks questions → PRD → Reviewer) → Design (Architect → BA → PM → Reviewer) → HITL (approve all docs) → Execution → Validation → Standards Audit → Postmortem → Report → Epic Archival
+→ Planning → Analysis → Requirements (EA asks questions → PRD → Reviewer) → Design (Architect → BA → PM → Reviewer) → HITL (approve all docs) → Execution → Validation → Standards Audit → Postmortem → Report
 
 /build "refactor auth module"
-→ Planning → Analysis → Requirements → Design → HITL → Execution (waves) → Validation → Standards Audit → Postmortem → Report → Epic Archival
+→ Planning → Analysis → Requirements → Design → HITL → Execution (waves) → Validation → Standards Audit → Postmortem → Report
 
 /build "multi-tenant SaaS"
-→ Planning → Analysis → Requirements → Design → HITL → Wave1 → Wave2 → ... → Validation → Standards Audit → Summary → Report → Epic Archival
+→ Planning → Analysis → Requirements → Design → HITL → Wave1 → Wave2 → ... → Validation → Standards Audit → Summary → Report
 
 # Wave checkpoint flow (no HITL between waves):
 Wave1: Task(spawn tester) → Task(spawn coder) → /skill workflow-postmortem mode=log → /compact
@@ -229,7 +241,7 @@ Task: subagent_type="core-claude-plugin:generic:coder" prompt="Implement against
 
 1. Frame all instructions positively. State what to do.
 2. ALWAYS run sequential-thinking MCP tool first to plan approach.
-3. ALWAYS run full workflow: Planning → Analysis → Requirements → Design → HITL → Execution → Validation → Standards Audit → Postmortem → Report → Epic Archival
+3. ALWAYS run full workflow: Planning → Analysis → Requirements → Design → HITL → Execution → Validation → Standards Audit → Postmortem → Report
 4. Requirements phase: EA uses AskUserQuestion until fully understood, then creates PRD → Reviewer validates → BA extracts stories (NO HITL)
 5. Design phase: Architect → BA → PM → Reviewer validates all docs (NO HITL - continues to single HITL gate)
 6. **SINGLE HITL GATE:** After all docs created (PRD, execution plan, stories), present summary and get approval
@@ -245,5 +257,9 @@ Task: subagent_type="core-claude-plugin:generic:coder" prompt="Implement against
 16. When files modified, spawn agent: `subagent_type="general-purpose"` with prompt "Execute /skill repomix-cache-refresh"
 17. Use AskUserQuestion tool for clarifications during Requirements and Design phases.
 18. Use `/architect` command for innovation or vibe check workflows.
-19. ALWAYS archive epic folder after user approves final report: move `docs/epics/{project}/` to `docs/epics/completed/{project}/` if folder exists.
-20. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.
+19. Git operations are outside workflow scope. Changes remain uncommitted for user to handle.
+20. **PHASE GATE - PRD:** ALWAYS call `checkPhaseRequirements(projectFolder, 3)` after Requirements phase. Verify `prd.md` exists before continuing to Design.
+21. **PHASE GATE - EXECUTION PLAN:** ALWAYS call `checkPhaseRequirements(projectFolder, 5)` after execution plan creation. Verify `execution-plan.md` exists before story creation.
+22. **PHASE GATE - USER STORIES:** ALWAYS call `checkPhaseRequirements(projectFolder, 6)` after story creation. Verify `user-stories/` folder is populated before HITL Approval.
+23. **GATE FAILURE HANDLING:** On gate failure, loop back to the producing agent (EA for PRD, PM for plan, BA for stories) and retry until artifact exists.
+24. **GATE VALIDATION:** Use `/skill state-management` for all `checkPhaseRequirements` calls.

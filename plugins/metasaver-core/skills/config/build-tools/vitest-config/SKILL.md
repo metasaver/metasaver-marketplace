@@ -1,6 +1,6 @@
 ---
 name: vitest-config
-description: Vitest configuration template and validation logic for test configuration. Standards differ by package type - frontend (jsdom, jest-dom, test:ui) vs backend (node, no setup file). Use when creating or auditing vitest.config.ts files.
+description: Vitest configuration template and validation logic for test configuration. Standards differ by package type - use package-type specific configs (react-app, react-library, node-library, node-service, contracts, database, api, integration). Use factory pattern for React packages that need vite.config.ts merging.
 ---
 
 # Vitest Configuration Skill
@@ -29,66 +29,131 @@ This skill is invoked by the `vitest-agent` when:
 Templates are located at:
 
 ```
-templates/vitest.config.ts.template         # Frontend (React apps, components)
+templates/vitest.config.ts.template         # Frontend (React apps, components) - factory pattern
 templates/vitest-backend.config.ts.template # Backend (libraries, APIs, contracts, database)
-templates/vitest.setup.ts.template          # Setup file (frontend only)
+templates/vitest.setup.ts.template          # Setup file (frontend only) - DEPRECATED, use shared setup
 ```
+
+## Package-Type Specific Configs
+
+The `@metasaver/core-vitest-config` package exports package-type specific configurations:
+
+| Export Path       | Package Type                    | Environment | Factory |
+| ----------------- | ------------------------------- | ----------- | ------- |
+| `./react-app`     | React applications (portals)    | jsdom       | Yes     |
+| `./react-library` | React component libraries       | jsdom       | Yes     |
+| `./node-library`  | Node.js utility packages        | node        | No      |
+| `./node-service`  | Express/Hono backend services   | node        | No      |
+| `./contracts`     | Zod schema packages             | node        | No      |
+| `./database`      | Prisma database packages        | node        | No      |
+| `./api`           | API route testing               | node        | No      |
+| `./integration`   | Integration tests               | node        | No      |
+| `./base`          | Base config (extend for custom) | none        | No      |
 
 ## The 5 Vitest Standards
 
-### Standard 1: Merge with vite.config.ts (if it exists)
+### Standard 1: Use Package-Type Specific Config
 
-**Frontend packages with vite.config.ts:** Use mergeConfig
+**Frontend packages (React):** Use factory pattern with vite.config.ts merging
 
 ```typescript
-import { mergeConfig, defineConfig } from "vitest/config";
+import { createReactAppConfig } from "@metasaver/core-vitest-config/react-app";
 import viteConfig from "./vite.config";
 
-export default mergeConfig(
-  viteConfig,
-  defineConfig({
-    test: {
-      /* ... */
-    },
-  }),
-);
+export default createReactAppConfig(viteConfig);
 ```
 
-**Backend packages (no vite.config.ts):** Use shared config
+With overrides:
 
 ```typescript
-import baseConfig from "@metasaver/core-vitest-config/base";
+import { createReactAppConfig } from "@metasaver/core-vitest-config/react-app";
+import viteConfig from "./vite.config";
+
+export default createReactAppConfig(viteConfig, {
+  testTimeout: 15000,
+  coverage: { threshold: { lines: 80 } },
+});
+```
+
+**Component libraries:** Same pattern with react-library
+
+```typescript
+import { createReactLibraryConfig } from "@metasaver/core-vitest-config/react-library";
+import viteConfig from "./vite.config";
+
+export default createReactLibraryConfig(viteConfig);
+```
+
+**Backend packages:** Use static config with defineConfig
+
+```typescript
 import { defineConfig } from "vitest/config";
+import nodeLibraryConfig from "@metasaver/core-vitest-config/node-library";
 
 export default defineConfig({
-  ...baseConfig,
+  ...nodeLibraryConfig,
   test: {
-    ...baseConfig.test,
-    environment: "node",
+    ...nodeLibraryConfig.test,
+    // Your overrides here
+  },
+});
+```
+
+**Service packages:**
+
+```typescript
+import { defineConfig } from "vitest/config";
+import nodeServiceConfig from "@metasaver/core-vitest-config/node-service";
+
+export default defineConfig({
+  ...nodeServiceConfig,
+  test: {
+    ...nodeServiceConfig.test,
+    env: {
+      DATABASE_URL: process.env.DATABASE_URL || "your-test-db-url",
+    },
+  },
+});
+```
+
+**Contracts packages:**
+
+```typescript
+import { defineConfig } from "vitest/config";
+import contractsConfig from "@metasaver/core-vitest-config/contracts";
+
+export default defineConfig({
+  ...contractsConfig,
+  test: {
+    ...contractsConfig.test,
+    // Your overrides here
   },
 });
 ```
 
 ### Standard 2: Test Configuration (by package type)
 
-| Package Type        | Environment | setupFiles              |
-| ------------------- | ----------- | ----------------------- |
-| React apps          | jsdom       | `["./vitest.setup.ts"]` |
-| Frontend components | jsdom       | `["./vitest.setup.ts"]` |
-| Backend libraries   | node        | None                    |
-| API services        | node        | None                    |
-| Contracts packages  | node        | None                    |
-| Database packages   | node        | None                    |
+| Package Type        | Environment | setupFiles                                         |
+| ------------------- | ----------- | -------------------------------------------------- |
+| React apps          | jsdom       | `["@metasaver/core-vitest-config/setup/jest-dom"]` |
+| Frontend components | jsdom       | `["@metasaver/core-vitest-config/setup/jest-dom"]` |
+| Backend libraries   | node        | None                                               |
+| API services        | node        | Optional: `./tests/setup.ts`                       |
+| Contracts packages  | node        | None                                               |
+| Database packages   | node        | None                                               |
 
 ### Standard 3: Setup File (frontend only)
 
-**Location:** `./vitest.setup.ts` (at package root, per Vitest docs)
-
-**Content:**
+**Use shared setup from vitest-config package:**
 
 ```typescript
-import "@testing-library/jest-dom";
+// Configured automatically by factory pattern
+setupFiles: ["@metasaver/core-vitest-config/setup/jest-dom"];
 ```
+
+The shared setup imports `@testing-library/jest-dom` for DOM assertions.
+
+**DEPRECATED:** Creating local `./vitest.setup.ts` files. Use the shared setup instead.
 
 Backend packages do NOT need a setup file.
 
@@ -104,6 +169,7 @@ Backend packages do NOT need a setup file.
     "@vitest/ui": "^3.2.4",
     "@testing-library/react": "^16.0.0",
     "@testing-library/jest-dom": "^6.0.0",
+    "@metasaver/core-vitest-config": "workspace:*",
     "jsdom": "^26.0.0"
   }
 }
@@ -117,6 +183,17 @@ Backend packages do NOT need a setup file.
     "vitest": "^3.2.4",
     "@vitest/coverage-v8": "^3.2.4",
     "@metasaver/core-vitest-config": "workspace:*"
+  }
+}
+```
+
+**Service packages (additional):**
+
+```json
+{
+  "devDependencies": {
+    "supertest": "^7.0.0",
+    "@types/supertest": "^6.0.3"
   }
 }
 ```
@@ -147,14 +224,14 @@ Backend packages do NOT need a setup file.
 
 ## Package Type Rules Summary
 
-| Package Type        | Environment | Setup File | test:ui | @testing-library/jest-dom |
-| ------------------- | ----------- | ---------- | ------- | ------------------------- |
-| React apps          | jsdom       | Yes        | Yes     | Yes                       |
-| Frontend components | jsdom       | Yes        | Yes     | Yes                       |
-| Backend libraries   | node        | No         | No      | No                        |
-| API services        | node        | No         | No      | No                        |
-| Contracts packages  | node        | No         | No      | No                        |
-| Database packages   | node        | No         | No      | No                        |
+| Package Type        | Config Export     | Environment | Setup File | test:ui |
+| ------------------- | ----------------- | ----------- | ---------- | ------- |
+| React apps          | `./react-app`     | jsdom       | Shared     | Yes     |
+| Frontend components | `./react-library` | jsdom       | Shared     | Yes     |
+| Backend libraries   | `./node-library`  | node        | No         | No      |
+| API services        | `./node-service`  | node        | Optional   | No      |
+| Contracts packages  | `./contracts`     | node        | No         | No      |
+| Database packages   | `./database`      | node        | No         | No      |
 
 ## Validation
 
@@ -162,10 +239,10 @@ To validate a vitest.config.ts file:
 
 1. Determine package type (frontend vs backend)
 2. Check vitest.config.ts exists
-3. For frontend: verify mergeConfig with vite.config.ts
-4. For backend: verify shared config usage
+3. For frontend: verify factory pattern usage with vite.config.ts
+4. For backend: verify package-type specific config usage
 5. Check environment matches package type
-6. For frontend: verify ./vitest.setup.ts exists with jest-dom import
+6. For frontend: verify shared setup file reference
 7. Check required dependencies for package type
 8. Verify npm scripts (test:unit, test:watch, test:coverage, + test:ui for frontend)
 9. Report violations
@@ -195,10 +272,10 @@ Consumer repos may declare exceptions in package.json:
 ## Best Practices
 
 1. Place vitest.config.ts at workspace root
-2. Frontend: merge with vite.config.ts using mergeConfig
-3. Backend: use @metasaver/core-vitest-config/base shared config
-4. Frontend only: create ./vitest.setup.ts with jest-dom import
-5. Use correct environment (jsdom for frontend, node for backend)
+2. Frontend: use factory pattern (createReactAppConfig/createReactLibraryConfig)
+3. Backend: use package-type specific config (node-library, node-service, contracts, etc.)
+4. Frontend: use shared setup file from vitest-config package
+5. Use correct config for package type
 6. Re-audit after making changes
 
 ## Integration

@@ -59,6 +59,33 @@ Contains: frontmatter fields, summary metrics, wave structure, story index, veri
    - Write to `{projectFolder}/execution-plan.md`
    - Ensure frontmatter is complete
 
+9. **Validation gate:**
+   - Spawn reviewer for mandatory plan validation
+   - On PASS: Continue to execution phase
+   - On FAIL: Loop back with issues for revision
+
+---
+
+## Validation Gate
+
+After execution plan is written, spawn reviewer for mandatory validation.
+
+**Spawn:** `core-claude-plugin:generic:reviewer`
+**Input:** Plan path, validation type `execution-plan`
+**Output:** `{result: "PASS"|"FAIL", issues: []}`
+
+| Result | Action                                              |
+| ------ | --------------------------------------------------- |
+| PASS   | Continue to next phase (wave execution)             |
+| FAIL   | Return issues to project-manager, retry from step 7 |
+
+**Validation Scope:**
+
+- Frontmatter completeness
+- Wave dependency integrity (valid DAG)
+- Agent assignment validity
+- Verification gates defined per wave
+
 ---
 
 ## Wave Organization Rules
@@ -140,7 +167,8 @@ Reference `/skill agent-selection` for complete agent listing. Common assignment
 ## Integration
 
 **Called by:** planning-phase, `/architect`, `/build`, `/ms` commands
-**Calls:** Read (template, PRD, stories), Write (save plan)
+**Calls:** Read (template, PRD, stories), Write (save plan), Task (reviewer validation gate)
+**Spawns:** `core-claude-plugin:generic:reviewer` (mandatory validation gate)
 **References:** `/skill agent-selection`, `/skill user-story-template`, `/skill execution-phase`
 
-**Previous:** Story extraction | **Next:** Wave execution
+**Previous:** Story extraction | **Next:** Wave execution (on PASS) | Retry (on FAIL)

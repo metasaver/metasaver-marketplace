@@ -71,6 +71,42 @@ The template contains required frontmatter, story format, acceptance criteria st
 
 ---
 
+## Agent Name Validation
+
+Before writing story, validate agent assignment against known agent patterns.
+
+### Valid Agent Patterns
+
+| Pattern                                       | Example                                             |
+| --------------------------------------------- | --------------------------------------------------- |
+| `core-claude-plugin:generic:{name}`           | `core-claude-plugin:generic:coder`                  |
+| `core-claude-plugin:domain:{domain}:{name}`   | `core-claude-plugin:domain:backend:api-dev`         |
+| `core-claude-plugin:config:{category}:{name}` | `core-claude-plugin:config:build-tools:vite-config` |
+
+### Validation Process
+
+1. **Read story agent field** from frontmatter
+2. **Check against patterns above** - must match one of the three formats
+3. **If invalid:** Return error with suggestion
+   - `backend-dev` → suggest `core-claude-plugin:generic:backend-dev`
+   - `coder` → suggest `core-claude-plugin:generic:coder`
+   - `vite-config` → suggest `core-claude-plugin:config:build-tools:vite-config`
+4. **If valid:** Continue story creation
+
+### Common Invalid Names
+
+| Invalid Name   | Suggested Correction                      |
+| -------------- | ----------------------------------------- |
+| `backend-dev`  | `core-claude-plugin:generic:backend-dev`  |
+| `frontend-dev` | `core-claude-plugin:generic:frontend-dev` |
+| `coder`        | `core-claude-plugin:generic:coder`        |
+| `skill-author` | `core-claude-plugin:generic:skill-author` |
+| `agent-author` | `core-claude-plugin:generic:agent-author` |
+
+**Reference:** Use `/skill agent-selection` to find valid agent names for specific task types.
+
+---
+
 ## Story Format
 
 ```markdown
@@ -146,6 +182,36 @@ The template contains required frontmatter, story format, acceptance criteria st
 5. BA saves to `docs/epics/msm-wkr-workflow-refactor/user-stories/msm-wkr-007-create-user-story-creation-skill.md`
 
 **Output:** Complete user story ready for wave assignment
+
+---
+
+## Validation Gate
+
+After all stories are written, spawn reviewer for mandatory quality gate:
+
+**Spawn:** `core-claude-plugin:generic:reviewer`
+**Input:** Stories folder path, validation type `user-story`
+**Expected Output:**
+
+```json
+{
+  "result": "PASS" | "FAIL",
+  "issues": []
+}
+```
+
+| Result | Action                                                      |
+| ------ | ----------------------------------------------------------- |
+| PASS   | Continue to execution-plan-creation phase                   |
+| FAIL   | Return issues to business-analyst, fix stories, re-validate |
+
+**Validation Loop:**
+
+1. Reviewer checks all stories against checklist criteria
+2. On FAIL: Issues array contains specific story IDs and problems
+3. BA agent fixes affected stories only
+4. Re-spawn reviewer until PASS received
+5. On PASS: Phase transition allowed
 
 ---
 

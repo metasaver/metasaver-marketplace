@@ -53,6 +53,11 @@ The template contains:
    - Write to `{projectFolder}/prd.md`
    - Ensure frontmatter is complete
 
+6. **Pass validation gate:**
+   - Spawn reviewer agent for PRD validation
+   - On FAIL: Address issues and retry (max 3 attempts)
+   - On PASS: Proceed to story extraction
+
 ---
 
 ## PRD Structure (10 Sections)
@@ -109,6 +114,39 @@ Run this checklist before marking PRD complete:
 
 ---
 
+## Validation Gate
+
+After PRD is written and self-validated, spawn external reviewer for quality gate.
+
+**Spawn:** `core-claude-plugin:generic:reviewer`
+
+| Parameter       | Value                              |
+| --------------- | ---------------------------------- |
+| artifact_path   | Path to written PRD file           |
+| validation_type | `prd`                              |
+| checklist       | Use PRD validation checklist above |
+
+**Expected Output:**
+
+```json
+{
+  "result": "PASS" | "FAIL",
+  "issues": ["issue description", ...]
+}
+```
+
+**Gate Logic:**
+
+1. **On PASS:** Continue to next phase (story extraction)
+2. **On FAIL:** Return issues to enterprise-architect agent
+   - EA addresses each issue in `issues[]` array
+   - EA rewrites/updates PRD sections as needed
+   - Re-run validation gate (loop until PASS)
+
+**Maximum Retries:** 3 attempts before escalating to human reviewer
+
+---
+
 ## Key Rules
 
 | Rule                       | Reason                                  |
@@ -141,10 +179,10 @@ Run this checklist before marking PRD complete:
 ## Integration
 
 **Called by:** requirements-phase, /architect command, /build command
-**Calls:** Read tool (for template), Write tool (for saving)
+**Calls:** Read tool (for template), Write tool (for saving), `core-claude-plugin:generic:reviewer` (validation gate)
 **References:**
 
 - `/skill user-story-template` - For story extraction (separate phase)
 - `/skill save-prd` - For persisting approved PRD artifacts
 
-**Next step:** Story extraction using `/skill user-story-template`
+**Next step:** After passing validation gate, story extraction using `/skill user-story-template`
