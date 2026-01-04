@@ -1,6 +1,6 @@
 ---
 name: vitest-config
-description: Vitest configuration template and validation logic for test configuration. Standards differ by package type - use package-type specific configs (react-app, react-library, node-library, node-service, contracts, database, api, integration). Use factory pattern for React packages that need vite.config.ts merging.
+description: Vitest configuration template and validation logic for test configuration. Standards differ by package type - use package-type specific configs (react-app, react-library, node-library, node-service, contracts, database). Use factory pattern for React packages that need vite.config.ts merging.
 ---
 
 # Vitest Configuration Skill
@@ -46,36 +46,25 @@ The `@metasaver/core-vitest-config` package exports package-type specific config
 | `./node-service`  | Express/Hono backend services   | node        | No      |
 | `./contracts`     | Zod schema packages             | node        | No      |
 | `./database`      | Prisma database packages        | node        | No      |
-| `./api`           | API route testing               | node        | No      |
-| `./integration`   | Integration tests               | node        | No      |
-| `./base`          | Base config (extend for custom) | none        | No      |
+| `./base`          | Base config (internal use only) | none        | No      |
 
 ## The 5 Vitest Standards
 
 ### Standard 1: Use Package-Type Specific Config
 
-**Frontend packages (React):** Use factory pattern with vite.config.ts merging
-
-```typescript
-import { createReactAppConfig } from "@metasaver/core-vitest-config/react-app";
-import viteConfig from "./vite.config";
-
-export default createReactAppConfig(viteConfig);
-```
-
-With overrides:
+**React apps (portals):** Use factory pattern with vite.config.ts merging
 
 ```typescript
 import { createReactAppConfig } from "@metasaver/core-vitest-config/react-app";
 import viteConfig from "./vite.config";
 
 export default createReactAppConfig(viteConfig, {
-  testTimeout: 15000,
-  coverage: { threshold: { lines: 80 } },
+  // Optional overrides
+  setupFiles: ["./vitest.setup.ts"],
 });
 ```
 
-**Component libraries:** Same pattern with react-library
+**React libraries (component packages):**
 
 ```typescript
 import { createReactLibraryConfig } from "@metasaver/core-vitest-config/react-library";
@@ -84,51 +73,36 @@ import viteConfig from "./vite.config";
 export default createReactLibraryConfig(viteConfig);
 ```
 
-**Backend packages:** Use static config with defineConfig
+**Node libraries (utility packages):**
 
 ```typescript
-import { defineConfig } from "vitest/config";
 import nodeLibraryConfig from "@metasaver/core-vitest-config/node-library";
 
-export default defineConfig({
-  ...nodeLibraryConfig,
-  test: {
-    ...nodeLibraryConfig.test,
-    // Your overrides here
-  },
-});
+export default nodeLibraryConfig;
 ```
 
-**Service packages:**
+**Node services (REST APIs):**
 
 ```typescript
-import { defineConfig } from "vitest/config";
 import nodeServiceConfig from "@metasaver/core-vitest-config/node-service";
 
-export default defineConfig({
-  ...nodeServiceConfig,
-  test: {
-    ...nodeServiceConfig.test,
-    env: {
-      DATABASE_URL: process.env.DATABASE_URL || "your-test-db-url",
-    },
-  },
-});
+export default nodeServiceConfig;
 ```
 
-**Contracts packages:**
+**Contracts (Zod schemas):**
 
 ```typescript
-import { defineConfig } from "vitest/config";
 import contractsConfig from "@metasaver/core-vitest-config/contracts";
 
-export default defineConfig({
-  ...contractsConfig,
-  test: {
-    ...contractsConfig.test,
-    // Your overrides here
-  },
-});
+export default contractsConfig;
+```
+
+**Database (Prisma):**
+
+```typescript
+import databaseConfig from "@metasaver/core-vitest-config/database";
+
+export default databaseConfig;
 ```
 
 ### Standard 2: Test Configuration (by package type)

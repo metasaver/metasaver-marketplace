@@ -79,14 +79,14 @@ Use `/skill vitest-config` for 5 standards validation.
 
 **Package Type Rules:**
 
-| Package Type         | Environment | Setup File                | test:ui | @testing-library/jest-dom |
-| -------------------- | ----------- | ------------------------- | ------- | ------------------------- |
-| React apps (portals) | jsdom       | Yes, with jest-dom import | Yes     | Yes                       |
-| Frontend components  | jsdom       | Yes, with jest-dom import | Yes     | Yes                       |
-| Backend libraries    | node        | No                        | No      | No                        |
-| API services         | node        | No                        | No      | No                        |
-| Contracts packages   | node        | No                        | No      | No                        |
-| Database packages    | node        | No                        | No      | No                        |
+| Package Type         | Config Export     | Environment | Setup File | test:ui |
+| -------------------- | ----------------- | ----------- | ---------- | ------- |
+| React apps (portals) | `./react-app`     | jsdom       | Shared     | Yes     |
+| React libraries      | `./react-library` | jsdom       | Shared     | Yes     |
+| Node libraries       | `./node-library`  | node        | No         | No      |
+| Node services        | `./node-service`  | node        | No         | No      |
+| Contracts packages   | `./contracts`     | node        | No         | No      |
+| Database packages    | `./database`      | node        | No         | No      |
 
 ## Scope Detection
 
