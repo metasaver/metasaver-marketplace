@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mkdir:*)",
       "Skill(core-claude-plugin:architect)",
-      "Skill(core-claude-plugin:architect:*)"
+      "Skill(core-claude-plugin:architect:*)",
+      "Bash(git config:*)"
     ]
   }
 }
