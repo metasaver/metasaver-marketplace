@@ -3,7 +3,7 @@ name: Auto Version Bump
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "plugins/**"
       - ".claude-plugin/marketplace.json"
