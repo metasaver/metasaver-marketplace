@@ -118,3 +118,5 @@ Agent:
 | **Location** | `docs/epics/backlog/`          | `docs/epics/in-progress/{folder}/` |
 | **Trigger**  | User request after epic done   | Automatic during /build, /ms       |
 | **Audience** | Team/stakeholders              | Developer debugging workflows      |
+
+<!-- Trigger version bump test: 2026-01-07 -->
