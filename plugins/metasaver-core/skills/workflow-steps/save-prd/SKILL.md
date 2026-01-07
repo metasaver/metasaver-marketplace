@@ -7,10 +7,10 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 > **ROOT AGENT ONLY** - Runs only from root Claude Code agent after HITL approval.
 
-**Purpose:** Persist approved PRD artifacts to project directory
+**Purpose:** Persist approved PRD artifacts to epic directory
 **Trigger:** After hitl-approval phase completes in /architect workflow
 **Input:** PRD content, user stories, execution plan, innovations, architecture notes
-**Output:** Complete project directory ready for /build execution
+**Output:** Complete epic directory ready for /build execution
 
 ---
 
@@ -34,23 +34,24 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 **2. Auto-increment epic number**
 
 - Scan both directories for existing epics:
-  - `docs/projects/`
-  - `docs/projects/completed/`
+  - `docs/epics/in-progress/`
+  - `docs/epics/completed/`
+  - `docs/epics/backlog/`
 - Extract folders matching `{prefix}NNN-*` pattern
 - Find highest number for the detected prefix
 - Increment by 1
 - Format: Zero-padded 3 digits (e.g., `007`)
 - First epic for prefix starts at `001`
 
-**3. Create project directory**
+**3. Create epic directory**
 
-- Generate directory name: `docs/projects/{prefix}{NNN}-{kebab-case-name}/`
-- Example: `docs/projects/msm007-user-authentication-api/`
+- Generate directory name: `docs/epics/in-progress/{prefix}-{kebab-case-name}/`
+- Example: `docs/epics/in-progress/msm-user-authentication-api/`
 - Name derived from PRD title (lowercase, hyphens)
-- Ensure `docs/projects/` parent exists
+- Ensure `docs/epics/in-progress/` parent exists
 - Create directory structure:
   ```
-  {project-dir}/
+  {epic-dir}/
   ├── prd.md
   ├── user-stories/
   ├── execution-plan.md
@@ -60,7 +61,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 **4. Save prd.md**
 
-- Write PRD content to `{project-dir}/prd.md`
+- Write PRD content to `{epic-dir}/prd.md`
 - Include all sections:
   - Title, Overview, Goals
   - User Stories (summary list)
@@ -71,7 +72,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 **5. Save user-stories/ directory**
 
-- Create `{project-dir}/user-stories/` subdirectory
+- Create `{epic-dir}/user-stories/` subdirectory
 - For each story, write individual file:
   - Filename: `{PROJECT}-{EPIC}-{NNN}-{slug}.md` (e.g., `msm-auth-001-user-login.md`)
   - Number: Zero-padded 3 digits
@@ -84,7 +85,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 **6. Save execution-plan.md**
 
-- Write execution plan to `{project-dir}/execution-plan.md`
+- Write execution plan to `{epic-dir}/execution-plan.md`
 - Include:
   - Total stories, total waves
   - Wave breakdown with dependencies
@@ -97,7 +98,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 - **Create only when:** User selected one or more innovations
 - **Omit when:** No innovations selected by user
-- File: `{project-dir}/innovations-selected.md`
+- File: `{epic-dir}/innovations-selected.md`
 - Include:
   - List of selected innovations
   - Brief description of each
@@ -106,7 +107,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 **8. Save architecture-notes.md**
 
-- Write architecture validation notes to `{project-dir}/architecture-notes.md`
+- Write architecture validation notes to `{epic-dir}/architecture-notes.md`
 - Include:
   - Multi-mono repo findings (existing solutions referenced)
   - Example files discovered
@@ -119,7 +120,7 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 - Return absolute path to PRD
 - Tell user: `Run /build {absolute-path}/prd.md`
-- Example: `Run /build /home/user/repo/docs/projects/msm007-user-auth/prd.md`
+- Example: `Run /build /home/user/repo/docs/epics/in-progress/msm-user-auth/prd.md`
 
 ---
 
@@ -127,8 +128,9 @@ description: Save PRD artifacts to project directory after approval. Creates doc
 
 ```pseudocode
 function getNextEpicNumber(prefix):
-  folders = listDirectories("docs/projects/")
-  folders += listDirectories("docs/projects/completed/")
+  folders = listDirectories("docs/epics/in-progress/")
+  folders += listDirectories("docs/epics/completed/")
+  folders += listDirectories("docs/epics/backlog/")
 
   existingNumbers = []
   for folder in folders:
@@ -148,7 +150,7 @@ function getNextEpicNumber(prefix):
 
 1. Detect project prefix from git remote
 2. Scan for existing epic numbers
-3. Create parent directory (`docs/projects/{prefix}{NNN}-{name}/`)
+3. Create parent directory (`docs/epics/in-progress/{prefix}-{name}/`)
 4. Create `user-stories/` subdirectory
 5. Write `prd.md`
 6. Write each `US-{NNN}-{slug}.md` file
@@ -161,16 +163,15 @@ function getNextEpicNumber(prefix):
 
 ## Directory Naming Rules
 
-| Input PRD Title            | Project         | Generated Directory Name          |
-| -------------------------- | --------------- | --------------------------------- |
-| "User Authentication API"  | metasaver-mktpl | `msm007-user-authentication-api`  |
-| "Dashboard Feature"        | multi-mono      | `mum012-dashboard-feature`        |
-| "Stripe Integration Setup" | rugby-crm       | `chc003-stripe-integration-setup` |
+| Input PRD Title            | Project         | Generated Directory Name                               |
+| -------------------------- | --------------- | ------------------------------------------------------ |
+| "User Authentication API"  | metasaver-mktpl | `docs/epics/in-progress/msm-user-authentication-api/`  |
+| "Dashboard Feature"        | multi-mono      | `docs/epics/in-progress/mum-dashboard-feature/`        |
+| "Stripe Integration Setup" | rugby-crm       | `docs/epics/in-progress/chc-stripe-integration-setup/` |
 
 **Rules:**
 
 - Prefix: 3-letter project code (msm, mum, chc, msc)
-- Number: Auto-incremented, zero-padded to 3 digits
 - Name: Lowercase, words separated by hyphens
 - Max name length: 50 characters (truncate if needed)
 - Remove special characters except hyphens
@@ -210,8 +211,8 @@ function getNextEpicNumber(prefix):
 
 **If parent doesn't exist:**
 
-- Create `docs/projects/` directory first
-- Then create project directory
+- Create `docs/epics/in-progress/` directory first
+- Then create epic directory
 
 **If write fails:**
 
@@ -243,7 +244,6 @@ function getNextEpicNumber(prefix):
 Input:
   PRD Title: "User Authentication API"
   Project: metasaver-marketplace (detected from git remote)
-  Existing epics: msm001, msm002, msm003, msm005, msm006
   Stories: 5 enriched stories with architecture notes
   Execution Plan: 3 waves, 5 TDD pairs
   Innovations: 2 selected (passwordless auth, MFA)
@@ -251,23 +251,22 @@ Input:
 
 Save PRD Phase (this skill):
   1. Detect prefix: "msm" (from git remote containing "metasaver-marketplace")
-  2. Scan docs/projects/ and docs/projects/completed/
-  3. Find highest: msm006 -> next is msm007
-  4. Create directory: docs/projects/msm007-user-authentication-api/
-  5. Write prd.md (all sections)
-  6. Write user-stories/:
+  2. Scan docs/epics/in-progress/, docs/epics/completed/, docs/epics/backlog/
+  3. Create directory: docs/epics/in-progress/msm-user-authentication-api/
+  4. Write prd.md (all sections)
+  5. Write user-stories/:
      - msm-auth-001-auth-schema.md
      - msm-auth-002-auth-service.md
      - msm-auth-003-token-service.md
      - msm-auth-004-login-endpoint.md
      - msm-auth-005-logout-endpoint.md
-  7. Write execution-plan.md (3 waves, dependencies)
-  8. Write innovations-selected.md (passwordless, MFA)
-  9. Write architecture-notes.md (multi-mono, patterns)
-  10. Output: "Run /build /home/user/repo/docs/projects/msm007-user-authentication-api/prd.md"
+  6. Write execution-plan.md (3 waves, dependencies)
+  7. Write innovations-selected.md (passwordless, MFA)
+  8. Write architecture-notes.md (multi-mono, patterns)
+  9. Output: "Run /build /home/user/repo/docs/epics/in-progress/msm-user-authentication-api/prd.md"
 
 Result:
-  docs/projects/msm007-user-authentication-api/
+  docs/epics/in-progress/msm-user-authentication-api/
   ├── prd.md
   ├── user-stories/
   │   ├── msm-auth-001-auth-schema.md

@@ -8,7 +8,7 @@ description: Dual-mode workflow issue logger. Use with mode=log to append mistak
 > **ROOT AGENT ONLY** - Called by commands only, never by subagents.
 
 **Purpose:** Track workflow deviations as they happen, summarize at end
-**Output:** `docs/projects/{project-folder}/post-mortem.md`
+**Output:** `docs/epics/in-progress/{project-folder}/post-mortem.md`
 
 ## Modes
 

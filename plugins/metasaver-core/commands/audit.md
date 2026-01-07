@@ -44,7 +44,7 @@ BA investigates codebase and creates requirements:
 
 1. **Understanding:** Parse what user wants audited from prompt + scope
 2. **Confirmation:** Ask user to confirm scope via HITL
-3. **PRD Creation:** Create `docs/prd/audit-{date}.md` with objectives, files, success criteria
+3. **PRD Creation:** Create `docs/epics/in-progress/audit-{date}/prd.md` with objectives, files, success criteria
 4. **Story Creation:** For each (agent, file) pair, create user story with agent, file, template reference, acceptance criteria
 
 Output: PRD + user stories ready for planning
@@ -166,7 +166,7 @@ Output: Fixes applied, templates updated (if needed), all AC verified, build pas
 
 **Follow:** `/skill workflow-postmortem mode=summary`
 
-Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads the accumulated wave logs from `docs/projects/{project}/post-mortem.md` and presents a summary to the user.
+Run `/skill workflow-postmortem mode=summary` to generate final summary. This reads the accumulated wave logs from `docs/epics/in-progress/{project}/post-mortem.md` and presents a summary to the user.
 
 **Output:** Summary of issues logged across waves (count by category, patterns identified), appended to post-mortem.md and included in final report.
 
@@ -269,7 +269,7 @@ End: /skill workflow-postmortem mode=summary → Report
 6. **Template updates happen FIRST** in metasaver-marketplace, then apply to other files
 7. **ALWAYS run build/lint/test** after remediation
 8. **WAVE CHECKPOINT TIMING (multi-wave):** ALWAYS run `/skill workflow-postmortem mode=log` BEFORE compact at each wave checkpoint (log → compact → HITL → next wave)
-9. **POSTMORTEM LOG ACCUMULATION:** Each wave log appends to `docs/projects/{project}/post-mortem.md`, building a record across waves
+9. **POSTMORTEM LOG ACCUMULATION:** Each wave log appends to `docs/epics/in-progress/{project}/post-mortem.md`, building a record across waves
 10. **ALWAYS run `/skill workflow-postmortem mode=summary`** AFTER Remediation, BEFORE Final Report - reads accumulated logs and presents summary
 11. **ALWAYS produce final report** with workflow postmortem section
 12. **ALWAYS skip vibe check** - Audit is compliance-focused, not creation-focused

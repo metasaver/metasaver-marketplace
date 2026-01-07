@@ -6,7 +6,20 @@
       "Skill(core-claude-plugin:architect:*)",
       "Bash(git config:*)",
       "Bash(cat:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm poc:*)",
+      "Bash(PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 pip install:*)",
+      "Bash(docker --version:*)",
+      "Bash(docker compose:*)",
+      "Bash(pnpm poc:hitl:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm poc:llm:*)",
+      "Bash(pnpm add:*)",
+      "Bash(node:*)",
+      "Bash(pnpm poc:scope:*)",
+      "Bash(rsync:*)"
     ]
   }
 }

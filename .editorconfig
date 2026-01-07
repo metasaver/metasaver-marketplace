@@ -39,10 +39,6 @@ indent_size = 2
 [Makefile]
 indent_style = tab
 
-# Package.json (specific formatting)
-[package.json]
-indent_size = 2
-
 # Lock files (should not be edited)
 [{package-lock.json,pnpm-lock.yaml,yarn.lock}]
 indent_size = 2

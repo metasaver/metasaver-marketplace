@@ -39,12 +39,21 @@ templates/eslint.config.template.js
 
 Each projectType maps to a specific config type from @metasaver/core-eslint-config:
 
-| projectType    | Config Type   | Description                 |
-| -------------- | ------------- | --------------------------- |
-| base           | base          | Minimal config (utilities)  |
-| node           | node          | Node.js backend services    |
-| web-standalone | vite-web      | Vite React web applications |
-| react-library  | react-library | React component libraries   |
+| projectType         | Config Type   | Description                   |
+| ------------------- | ------------- | ----------------------------- |
+| base                | base          | Minimal config (utilities)    |
+| node                | node          | Node.js backend services      |
+| web-standalone      | vite-web      | Vite React web applications   |
+| react-library       | react-library | React component libraries     |
+| library             | node          | Node.js utility libraries     |
+| contracts           | node          | Zod contracts packages        |
+| database            | node          | Prisma database packages      |
+| data-service        | node          | REST API data services        |
+| integration-service | node          | External integration services |
+| pipeline-service    | node          | Data pipeline services        |
+| workflow            | node          | Temporal workflow packages    |
+| mcp                 | node          | MCP server packages           |
+| turborepo-monorepo  | base          | Monorepo root configuration   |
 
 The config type determines which shared configuration is imported.
 
@@ -131,17 +140,22 @@ const typeMap = {
   node: "node",
   "web-standalone": "vite-web",
   "react-library": "react-library",
+  library: "node",
+  contracts: "node",
+  database: "node",
+  "data-service": "node",
+  "integration-service": "node",
+  "pipeline-service": "node",
+  workflow: "node",
+  mcp: "node",
+  "turborepo-monorepo": "base",
 };
 const expectedType = typeMap[projectType];
 
 // Rule 2: Check re-export pattern
-const reExportPattern = new RegExp(
-  `export\\s*{\\s*default\\s*}\\s*from\\s*["']@metasaver/core-eslint-config/${expectedType}["']`,
-);
+const reExportPattern = new RegExp(`export\\s*{\\s*default\\s*}\\s*from\\s*["']@metasaver/core-eslint-config/${expectedType}["']`);
 if (!reExportPattern.test(content)) {
-  errors.push(
-    `Rule 2: Must use re-export pattern for config type "${expectedType}"`,
-  );
+  errors.push(`Rule 2: Must use re-export pattern for config type "${expectedType}"`);
 }
 
 // Rule 3: Check filename
@@ -152,9 +166,7 @@ if (!path.endsWith("eslint.config.js")) {
 // Rule 4: Check dependency
 const deps = packageJson.devDependencies || {};
 if (!deps["@metasaver/core-eslint-config"]) {
-  errors.push(
-    "Rule 4: Missing @metasaver/core-eslint-config in devDependencies",
-  );
+  errors.push("Rule 4: Missing @metasaver/core-eslint-config in devDependencies");
 }
 
 // Rule 5: Check npm scripts
