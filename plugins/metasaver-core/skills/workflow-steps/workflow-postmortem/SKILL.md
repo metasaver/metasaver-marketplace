@@ -68,7 +68,7 @@ description: Dual-mode workflow issue logger. Use with mode=log to append mistak
 ```
 Workflow Postmortem: 3 issues logged across 2 waves
 By Category: Wrong agent (1), Skipped step (1), Failed task (1)
-Details in: docs/projects/{folder}/post-mortem.md
+Details in: docs/epics/in-progress/{folder}/post-mortem.md
 ```
 
 ---

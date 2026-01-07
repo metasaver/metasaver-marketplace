@@ -111,10 +111,10 @@ Agent:
 
 ## Distinction from workflow-postmortem
 
-| Aspect       | epic-postmortem                | workflow-postmortem           |
-| ------------ | ------------------------------ | ----------------------------- |
-| **Scope**    | Project/epic retrospective     | Single workflow execution     |
-| **Content**  | Team learnings, process issues | Agent mistakes, skipped steps |
-| **Location** | `docs/epics/backlog/`          | `docs/projects/{folder}/`     |
-| **Trigger**  | User request after epic done   | Automatic during /build, /ms  |
-| **Audience** | Team/stakeholders              | Developer debugging workflows |
+| Aspect       | epic-postmortem                | workflow-postmortem                |
+| ------------ | ------------------------------ | ---------------------------------- |
+| **Scope**    | Project/epic retrospective     | Single workflow execution          |
+| **Content**  | Team learnings, process issues | Agent mistakes, skipped steps      |
+| **Location** | `docs/epics/backlog/`          | `docs/epics/in-progress/{folder}/` |
+| **Trigger**  | User request after epic done   | Automatic during /build, /ms       |
+| **Audience** | Team/stakeholders              | Developer debugging workflows      |

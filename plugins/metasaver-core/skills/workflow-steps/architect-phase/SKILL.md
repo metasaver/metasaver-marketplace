@@ -124,8 +124,8 @@ description: Takes user stories and enriches them with implementation details, p
 
 ```json
 {
-  "storiesFolder": "docs/projects/msm008-feature/user-stories/",
-  "projectFolder": "docs/projects/msm008-feature/",
+  "storiesFolder": "docs/epics/in-progress/msm-feature/user-stories/",
+  "projectFolder": "docs/epics/in-progress/msm-feature/",
   "complexity": 26,
   "scope": {
     "targets": ["/home/user/code/metasaver-com"],
@@ -141,11 +141,7 @@ description: Takes user stories and enriches them with implementation details, p
 
 ```json
 {
-  "enrichedStories": [
-    "user-stories/msm-feat-001-database-schema.md",
-    "user-stories/msm-feat-002-contracts-types.md",
-    "user-stories/msm-feat-003-workflow-scaffolding.md"
-  ],
+  "enrichedStories": ["user-stories/msm-feat-001-database-schema.md", "user-stories/msm-feat-002-contracts-types.md", "user-stories/msm-feat-003-workflow-scaffolding.md"],
   "architectureNotes": "architecture-notes.md",
   "patternReferences": [
     {

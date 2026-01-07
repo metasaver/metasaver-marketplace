@@ -94,7 +94,7 @@ Both include:
 /build JWT Authentication API
 
 Previous Phases Complete:
-  PRD: /docs/prd/prd-msm007-jwt-auth-api.md
+  PRD: /docs/epics/in-progress/msm-jwt-auth-api/prd.md
   Architecture: AuthController, AuthService, TokenService
   Worker Results: 4 tasks, 6 files modified
   Validation: All checks passed

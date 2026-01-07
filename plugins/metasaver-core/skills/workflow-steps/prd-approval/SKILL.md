@@ -55,7 +55,7 @@ This is more useful than approving just the PRD, because:
    PLAN SUMMARY
    ════════════════════════════════════════
 
-   PRD: docs/projects/msm008-feature/prd.md
+   PRD: docs/epics/in-progress/msm-feature/prd.md
 
    User Stories (9 total):
    - Wave 1 (parallel): msm-feat-001, msm-feat-002
@@ -87,20 +87,10 @@ This is more useful than approving just the PRD, because:
 ```json
 {
   "status": "approved",
-  "prdPath": "docs/projects/msm008-feature/prd.md",
-  "storiesFolder": "docs/projects/msm008-feature/user-stories/",
-  "storyFiles": [
-    "msm-feat-001-database-schema.md",
-    "msm-feat-002-contracts-types.md",
-    "msm-feat-003-workflow-scaffolding.md",
-    "msm-feat-004-height-weight-parser.md",
-    "msm-feat-005-team-fuzzy-matching.md",
-    "msm-feat-006-major-entity-parser.md",
-    "msm-feat-007-validation-upsert.md",
-    "msm-feat-008-api-layer.md",
-    "msm-feat-009-frontend.md"
-  ],
-  "executionPlan": "docs/projects/msm008-feature/execution-plan.md",
+  "prdPath": "docs/epics/in-progress/msm-feature/prd.md",
+  "storiesFolder": "docs/epics/in-progress/msm-feature/user-stories/",
+  "storyFiles": ["msm-feat-001-database-schema.md", "msm-feat-002-contracts-types.md", "msm-feat-003-workflow-scaffolding.md", "msm-feat-004-height-weight-parser.md", "msm-feat-005-team-fuzzy-matching.md", "msm-feat-006-major-entity-parser.md", "msm-feat-007-validation-upsert.md", "msm-feat-008-api-layer.md", "msm-feat-009-frontend.md"],
+  "executionPlan": "docs/epics/in-progress/msm-feature/execution-plan.md",
   "iterations": 1
 }
 ```

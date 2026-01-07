@@ -1,6 +1,6 @@
 ---
 name: save-prd
-description: Save PRD artifacts to project directory after approval. Creates docs/projects/{prefix}{NNN}-{name}/ with prd.md, user-stories/, execution-plan.md, innovations-selected.md, and architecture-notes.md. Use when persisting approved PRD from /architect command.
+description: Save PRD artifacts to epic directory after approval. Creates docs/epics/in-progress/{prefix}-{name}/ with prd.md, user-stories/, execution-plan.md, innovations-selected.md, and architecture-notes.md. Use when persisting approved PRD from /architect command.
 ---
 
 # Save PRD Skill

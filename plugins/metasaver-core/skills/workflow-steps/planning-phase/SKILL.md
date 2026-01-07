@@ -189,7 +189,7 @@ Limit waves to ≤10 concurrent agents per wave
 Input: 5 enriched user stories with architecture notes
 
 Design Phase Output:
-  storiesFolder: docs/projects/msm008-feature/user-stories/
+  storiesFolder: docs/epics/in-progress/msm-feature/user-stories/
   storyFiles: [msm-feat-001-schema.md, msm-feat-002-contracts.md, msm-feat-003-parser.md, msm-feat-004-parser.md, msm-feat-005-api.md]
 
 Planning Phase:

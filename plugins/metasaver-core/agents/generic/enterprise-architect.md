@@ -202,9 +202,9 @@ owner: "enterprise-architect-agent"
 
 ## PRD Storage
 
-Save PRDs to: `{repo}/docs/projects/{project-id}/prd.md`
+Save PRDs to: `{repo}/docs/epics/in-progress/{project-id}/prd.md`
 
-Example: `/home/user/code/resume-builder/docs/projects/msm008-feature/prd.md`
+Example: `/home/user/code/resume-builder/docs/epics/in-progress/msm-feature/prd.md`
 
 ## Workflow
 
@@ -222,11 +222,8 @@ If uncertainties exist, return them in the output:
 ```json
 {
   "status": "draft",
-  "prdPath": "docs/projects/msm008/prd.md",
-  "uncertainties": [
-    "Should feature X include Y functionality?",
-    "What is the expected user volume?"
-  ]
+  "prdPath": "docs/epics/in-progress/msm-feature/prd.md",
+  "uncertainties": ["Should feature X include Y functionality?", "What is the expected user volume?"]
 }
 ```
 
