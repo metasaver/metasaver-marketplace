@@ -1,0 +1,23 @@
+{
+  "name": "@metasaver/metasaver-marketplace",
+  "private": true,
+  "version": "0.0.1",
+  "description": "MetaSaver Marketplace - Claude Code plugins and shared configurations",
+  "metasaver": {
+    "projectType": "claude-plugin",
+    "applicationType": "plugin"
+  },
+  "keywords": [
+    "metasaver",
+    "claude-code",
+    "plugin",
+    "marketplace"
+  ],
+  "homepage": "https://github.com/metasaver/metasaver-marketplace",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metasaver/metasaver-marketplace.git"
+  },
+  "license": "UNLICENSED",
+  "author": "Jim Nightingale <info@metasaver.com>"
+}

@@ -77,7 +77,8 @@
         "./skills/domain/monorepo-audit",
         "./skills/domain/prisma-database",
         "./skills/domain/react-app-structure",
-        "./skills/domain/remediation-options"
+        "./skills/domain/remediation-options",
+        "./skills/cross-cutting/workflow-enforcement"
       ]
     }
   ]

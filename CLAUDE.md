@@ -4,6 +4,23 @@ This file provides guidance to Claude Code when working with this repository.
 
 ---
 
+## MetaSaver Constitution (MANDATORY)
+
+These rules apply to EVERY response in this repository:
+
+| #   | Rule                                                                     |
+| --- | ------------------------------------------------------------------------ |
+| 1   | ALWAYS use MetaSaver agents for implementation (coder, tester, reviewer) |
+| 2   | ALWAYS spawn agents in parallel when tasks are independent               |
+| 3   | ALWAYS follow /build or /ms workflow for any code changes                |
+| 4   | ALWAYS get user approval (HITL) before marking work complete             |
+| 5   | ALWAYS update story files during execution (status, acceptance criteria) |
+| 6   | ALWAYS use AskUserQuestion tool for user interactions                    |
+
+**Session Recovery:** After any crash or interruption, type `/session` to restore workflow context.
+
+---
+
 ## CRITICAL: Author Agent Requirements (metasaver-marketplace repo ONLY)
 
 **NEVER edit agent, skill, or command files directly in this repository.**
@@ -35,7 +52,7 @@ Task: subagent_type="core-claude-plugin:generic:command-author"
 
 ---
 
-## MetaSaver Constitution
+## MetaSaver Principles
 
 | #   | Principle        | Rule                                           |
 | --- | ---------------- | ---------------------------------------------- |
@@ -47,6 +64,8 @@ Task: subagent_type="core-claude-plugin:generic:command-author"
 | 6   | **Root Scripts** | Always run npm/pnpm scripts from monorepo root |
 
 ## Always-On Behavior
+
+**See MetaSaver Constitution (MANDATORY) above for mandatory workflow rules.**
 
 Use MetaSaver agents for optimal workflow tracking:
 
@@ -149,10 +168,7 @@ Skills MUST be explicitly listed in marketplace.json for discovery:
       "name": "core-claude-plugin",
       "source": "./plugins/metasaver-core",
       "strict": false,
-      "skills": [
-        "./skills/workflow-steps/analysis-phase",
-        "./skills/domain/monorepo-audit"
-      ]
+      "skills": ["./skills/workflow-steps/analysis-phase", "./skills/domain/monorepo-audit"]
     }
   ]
 }
