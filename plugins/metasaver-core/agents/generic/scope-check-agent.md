@@ -40,7 +40,7 @@ Analyze the user prompt as TEXT input. Return ONLY the structured scope output.
 **When detected, return ALL known repos as targets:**
 
 ```
-scope: { targets: ["{CODE_ROOT}/multi-mono", "{CODE_ROOT}/metasaver-com", "{CODE_ROOT}/resume-builder", "{CODE_ROOT}/rugby-crm", "{CODE_ROOT}/metasaver-marketplace"], references: [] }
+scope: { targets: ["{CODE_ROOT}/multi-mono", "{CODE_ROOT}/metasaver-com", "{CODE_ROOT}/resume-builder", "{CODE_ROOT}/rugby-crm", "{CODE_ROOT}/veenk", "{CODE_ROOT}/metasaver-marketplace"], references: [] }
 ```
 
 ---
@@ -101,6 +101,7 @@ When auditing, detect specific config files:
 | `metasaver-com`         | Consumer | metasaver-com, metasaver.com, main site                 |
 | `resume-builder`        | Consumer | resume, resume-builder                                  |
 | `rugby-crm`             | Consumer | rugby, rugby-crm, commithub                             |
+| `veenk`                 | Consumer | veenk, langgraph, workflow, agentic, mcp                |
 | `metasaver-marketplace` | Plugin   | agent, skill, command, plugin, mcp, claude, marketplace |
 
 ---
