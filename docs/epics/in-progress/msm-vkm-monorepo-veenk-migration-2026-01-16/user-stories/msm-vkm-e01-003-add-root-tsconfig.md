@@ -5,7 +5,7 @@ title: "Add root TypeScript configuration"
 status: "pending"
 complexity: 3
 wave: 0
-agent: "core-claude-plugin:generic:coder"
+agent: "core-claude-plugin:config:workspace:typescript-configuration-agent"
 dependencies: []
 created: "2026-01-16"
 updated: "2026-01-16"

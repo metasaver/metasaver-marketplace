@@ -5,7 +5,7 @@ title: "Add Turborepo configuration"
 status: "pending"
 complexity: 3
 wave: 0
-agent: "core-claude-plugin:generic:coder"
+agent: "core-claude-plugin:config:build-tools:turbo-config-agent"
 dependencies: ["MSM-VKM-E01-001"]
 created: "2026-01-16"
 updated: "2026-01-16"

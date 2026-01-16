@@ -5,7 +5,7 @@ title: "Merge root package.json from both repositories"
 status: "pending"
 complexity: 5
 wave: 0
-agent: "core-claude-plugin:generic:coder"
+agent: "core-claude-plugin:config:workspace:root-package-json-agent"
 dependencies: ["MSM-VKM-E01-001", "MSM-VKM-E01-002"]
 created: "2026-01-16"
 updated: "2026-01-16"

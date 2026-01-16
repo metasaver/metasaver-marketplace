@@ -1,12 +1,12 @@
 ---
 project_id: "MSM-VKM"
 title: "Execution Plan - Veenk Repository Migration"
-version: "1.0"
+version: "1.1"
 status: "ready"
 created: "2026-01-16"
 updated: "2026-01-16"
 owner: "project-manager"
-total_stories: 39
+total_stories: 44
 total_complexity: 95
 total_waves: 6
 ---
@@ -15,9 +15,9 @@ total_waves: 6
 
 ## Summary
 
-This execution plan organizes 39 user stories across 7 epics into 6 parallel execution waves, respecting dependencies and the 10-agent-per-wave limit. The critical path flows through E01 → E02 → E03 → E07, with E04, E05, and E06 executing in parallel where possible.
+This execution plan organizes 44 user stories across 7 epics into 6 parallel execution waves, respecting dependencies and the 10-agent-per-wave limit. The critical path flows through E01 → E02 → E03 → E07, with E04, E05, and E06 executing in parallel where possible.
 
-**Total Stories:** 39 (estimated, 18 files created)
+**Total Stories:** 44 (all files created)
 **Total Waves:** 6
 **Estimated Duration:** ~720 minutes (~12 hours)
 **Critical Path:** E01 → E02 → E03 → E07
