@@ -33,6 +33,7 @@
           }
         ],
         "_blocked_commands": [
+          "=== GIT OPERATIONS ===",
           "git add",
           "git commit",
           "git push",
@@ -48,14 +49,21 @@
           "git stash",
           "git am",
           "git apply",
-          "npm publish",
-          "npm unpublish",
-          "npm dist-tag",
-          "npm version",
+          "=== MULTI-MONO ENFORCEMENT ===",
+          "rm -rf node_modules* → USE: pnpm cb",
+          "rm pnpm-lock.yaml → USE: pnpm cb",
+          "pnpm install → USE: pnpm cb",
+          "pnpm i → USE: pnpm cb",
+          "pnpm add <package> → ALLOWED (proper way to add deps)",
+          "npm publish → USE: pnpm publish or pnpm bp",
+          "npm unpublish → USE: pnpm publish",
+          "npm dist-tag → USE: pnpm publish",
+          "npm version → USE: pnpm publish",
+          "=== DESTRUCTIVE ===",
           "rm -rf /",
           "DROP DATABASE"
         ],
-        "_note": "BROKEN: PreToolUse hooks don't fire (GitHub issue #6305). Using .claude/hooks/pre-dangerous.sh workaround in each repo instead. Claude is BANNED from ALL git operations except read-only (status, log, diff, show, branch -l, fetch, reflog)."
+        "_note": "BROKEN: PreToolUse hooks don't fire (GitHub issue #6305 - STILL OPEN Jan 2026). Using .claude/hooks/pre-dangerous.sh workaround in each repo instead. Claude is BANNED from ALL git operations except read-only (status, log, diff, show, branch -l, fetch, reflog). MULTI-MONO: Must use root scripts for clean/install/publish."
       },
       {
         "matcher": "Read",

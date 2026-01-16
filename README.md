@@ -1,9 +1,8 @@
 # MetaSaver Marketplace
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/metasaver/metasaver-marketplace)
-[![Agents](https://img.shields.io/badge/Agents-54-green)](https://github.com/metasaver/metasaver-marketplace)
-[![Skills](https://img.shields.io/badge/Skills-28-green)](https://github.com/metasaver/metasaver-marketplace)
+[![Agents](https://img.shields.io/badge/Agents-53-green)](https://github.com/metasaver/metasaver-marketplace)
+[![Skills](https://img.shields.io/badge/Skills-71-green)](https://github.com/metasaver/metasaver-marketplace)
 
 Official marketplace for MetaSaver plugins - Professional development tools, agents, and skills for Claude Code.
 
@@ -19,9 +18,9 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 
 **Includes:**
 
-- 52 specialized agents (15 generic, 9 domain, 28 config)
-- 28 reusable skills with templates
-- Intelligent routing commands (/ms, /audit)
+- 53 specialized agents (21 generic, 4 domain, 28 config)
+- 71 reusable skills with templates
+- Intelligent routing commands (/ms, /audit, /build)
 - Complete template libraries
 - Cross-platform compatibility (Windows WSL + Linux)
 
@@ -33,7 +32,7 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 - React/Next.js applications
 - Full-stack applications with Prisma/PostgreSQL
 
-[View Plugin Details →](https://github.com/metasaver/metasaver-core)
+[View Plugin Details](https://github.com/metasaver/metasaver-core)
 
 ## Installation
 
@@ -70,22 +69,24 @@ All agents, skills, and commands are immediately available:
 
 ## Complete Agent & Skill Inventory
 
-### Generic Agents (15)
+### Generic Agents (21)
 
 **Development & Architecture:**
 
 - `architect` - Architecture design specialist with SPARC methodology
+- `enterprise-architect` - Enterprise-level architecture and system design
 - `backend-dev` - Backend development with Express, Prisma, and MetaSaver API patterns
 - `coder` - Implementation specialist enforcing MetaSaver coding standards and SOLID principles
-- `devops` - DevOps specialist with Docker, Turborepo, and GitHub Actions expertise
-- `agent-author` - Meta-level agent for creating, refactoring, and validating agent/skill definitions
-
-> **Roadmap:** Additional agents planned - `frontend-dev` (general frontend development) and `ux-ui-agent` (UX/UI design and patterns)
+- `reviewer` - Code review specialist for quality and standards compliance
+- `agent-author` - Meta-level agent for creating, refactoring, and validating agent definitions
+- `command-author` - Creates and maintains slash commands
+- `skill-author` - Creates and maintains skills
 
 **Quality & Validation:**
 
 - `tester` - Testing specialist with Jest expertise and MetaSaver test patterns
 - `code-quality-validator` - Technical validation with scaled quality checks (build/security/lint/prettier/test based on change size)
+- `agent-check-agent` - Validates agent definitions and configurations
 
 > **Note:** Final workflow validation has two phases:
 >
@@ -99,17 +100,19 @@ All agents, skills, and commands are immediately available:
 - `security-engineer` - Security assessment specialist with automated Semgrep scanning, OWASP expertise, and threat modeling
 - `performance-engineer` - Performance optimization specialist using data-driven profiling
 - `root-cause-analyst` - Systematic debugging specialist using evidence-based investigation
-- `azure-devops-agent` - Azure DevOps specialist for CI/CD pipelines, Azure Repos, and infrastructure automation
 - `code-explorer` - Codebase exploration specialist using Serena, repomix, and MCP ecosystem for token-efficient research
+- `innovation-advisor` - Innovation and improvement recommendations
+- `scope-check-agent` - Determines scope and repository boundaries
+- `complexity-check-agent` - Assesses task complexity for routing decisions
 
-### Domain Agents (9)
+### Domain Agents (4)
 
 All domain agents support both **Build** and **Audit** modes.
 
 **Backend Services:**
 
 - `data-service-agent` - REST APIs, CRUD operations, validation, authentication, database integration
-- `integration-service-agent` - External API integration, webhooks, HTTP clients, retry logic, circuit breakers
+- `contracts-agent` - API contracts and interface definitions
 
 **Database:**
 
@@ -117,18 +120,7 @@ All domain agents support both **Build** and **Audit** modes.
 
 **Frontend:**
 
-- `react-component-agent` - Functional components, hooks, TypeScript props, Tailwind styling, accessibility
-- `shadcn-component-agent` - shadcn/ui component installation, customization, and integration for MetaSaver libraries
-
-**Testing:**
-
-- `unit-test-agent` - Jest unit tests, AAA pattern, mocking strategies, coverage requirements
-- `integration-test-agent` - API integration tests, Supertest, database fixtures, end-to-end flows
-- `e2e-test-agent` - End-to-end testing specialist using Chrome DevTools for browser automation and visual testing
-
-**Monorepo:**
-
-- `monorepo-setup-agent` - Monorepo creation and auditing, Turborepo setup, pnpm workspaces, root structure validation
+- `react-app-agent` - React application structure, components, and patterns
 
 ### Config Agents (28)
 
@@ -166,50 +158,61 @@ All domain agents support both **Build** and **Audit** modes.
 - `npmrc-template-agent` - NPM registry template configuration (build & audit modes)
 - `nvmrc-agent` - Node version (.nvmrc) configuration (build & audit modes)
 - `readme-agent` - README.md documentation (build & audit modes)
+- `repomix-config-agent` - Repomix configuration for AI-friendly codebase compression (build & audit modes)
 - `root-package-json-agent` - Root package.json configuration (build & audit modes)
 - `scripts-agent` - Scripts directory management (build & audit modes)
 - `typescript-agent` - TypeScript configuration (build & audit modes)
 - `vscode-agent` - VS Code settings (build, audit, and file cleanup modes)
-- `repomix-config-agent` - Repomix configuration for AI-friendly codebase compression (build & audit modes)
 
-### Cross-Cutting Skills (9)
+### Skills Overview
 
-- `building-blocks-advisor` - Pattern and building block recommendations
-- `mcp-coordination` - Agent-to-agent coordination via MCP memory (status sharing, task handoffs, swarm communication)
-- `mcp-tool-selection` - Determines WHICH external MCP tools to use based on task type (Context7, Sequential Thinking, Serena, Recall, etc.)
-- `confidence-check` - Pre-implementation confidence assessment (prevents wrong-direction work)
-- `security-scan-workflow` - Automated security scanning workflow using Semgrep (OWASP Top 10, CWE patterns, hardcoded secrets)
-- `monorepo-navigation` - Workspace navigation patterns
-- `scope-check` - Determines which repositories a task affects (replaces repository-detection)
+Skills are organized into four categories:
+
+**Cross-Cutting Skills (11):**
+
+- `agent-check` - Agent definition validation
+- `agent-selection` - Intelligent agent routing
+- `chrome-devtools-testing` - Browser automation patterns
+- `coding-standards` - MetaSaver coding standards reference
+- `dry-check` - DRY principle validation
+- `positive-framing-patterns` - Communication patterns
 - `repomix-cache-refresh` - Repomix cache management for 70% token savings
+- `scope-check` - Determines which repositories a task affects
 - `serena-code-reading` - Serena progressive disclosure patterns for 93% token savings
+- `structure-check` - Project structure validation
+- `workflow-enforcement` - Workflow compliance checks
 
-> **Note:** `mcp-coordination` and `mcp-tool-selection` serve different purposes:
->
-> - **mcp-coordination**: Agent swarm communication patterns (how agents talk to each other via MCP memory)
-> - **mcp-tool-selection**: External tool selection logic (which MCP servers to invoke for a task)
-
-### Domain Skills (5)
+**Domain Skills (7):**
 
 - `audit-workflow` - Comprehensive audit orchestration across files and domains
-- `config-validation` - Configuration file validation and standards compliance
+- `contracts-package` - API contracts patterns and templates
+- `data-service` - Data service patterns and templates
 - `monorepo-audit` - Monorepo-wide auditing with agent coordination
+- `prisma-database` - Prisma schema patterns and templates
+- `react-app-structure` - React application structure patterns
 - `remediation-options` - Issue remediation strategies and recommendations
-- `workflow-orchestration` - Complex workflow coordination for multi-step tasks
+
+**Config Skills (22):**
+
+Complete template libraries for configuration agents covering build tools, code quality, version control, and workspace configurations.
+
+**Workflow-Steps Skills (31):**
+
+Step-by-step workflow execution patterns including analysis, design, execution, validation, and reporting phases.
 
 ## Understanding Skills vs Agents
 
 **Domain Agents** (specialized workers):
 
 - Agents that BUILD or AUDIT domain-specific things
-- Examples: `data-service-agent` builds REST APIs, `react-component-agent` builds React components
+- Examples: `data-service-agent` builds REST APIs, `react-app-agent` builds React apps
 - All domain agents support both Build and Audit modes
 - They DO the actual work (code generation, auditing, testing)
 
 **Domain Skills** (reusable workflows):
 
 - Patterns and processes that agents USE to do their work
-- Examples: `audit-workflow` provides the comparison logic, `config-validation` provides validation patterns
+- Examples: `audit-workflow` provides the comparison logic, `coding-standards` provides standards reference
 - Skills are like libraries/utilities that multiple agents can invoke
 - They define HOW to do something, not the actual implementation
 
@@ -220,20 +223,15 @@ All domain agents support both **Build** and **Audit** modes.
 
 Example: The `eslint-agent` (config agent) uses the `audit-workflow` skill (domain skill) to perform its audit.
 
-### Config Skills (14)
+### Commands (7)
 
-Complete template libraries for configuration agents:
-
-- **Build Tools:** pnpm-workspace, postcss, turbo, vite, vitest configs with templates
-- **Version Control:** commitlint, gitattributes, gitignore, husky hooks with templates
-- **Workspace:** dockerignore, nodemon, npmrc, tailwind, vscode with templates
-
-### Commands (4)
-
+- `/architect` - Architecture design workflow with SPARC methodology
 - `/audit` - Natural language audit command (validates configs, code quality, standards compliance)
 - `/build` - Build new features with architecture validation and technical documentation
+- `/debug` - Systematic debugging workflow
 - `/ms` - MetaSaver intelligent command router (complexity scoring, automatic agent spawning)
-- `/ss` - Screenshot command for processing saved screenshots with instructions
+- `/qq` - Quick question mode for fast responses
+- `/session` - Session recovery after crashes or interruptions
 
 ## MCP Server Configuration
 
@@ -248,11 +246,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--browserUrl=http://127.0.0.1:9222"
-      ]
+      "args": ["-y", "chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"]
     },
     "recall": {
       "command": "npx",
@@ -266,12 +260,7 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
     },
     "serena": {
       "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server"
-      ]
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"]
     },
     "vibe-check": {
       "command": "npx",
@@ -300,19 +289,20 @@ The plugin includes `.mcp.json` configuration for recommended MCP servers:
 
 ## Repository Structure
 
-This repository follows the **official Claude Code marketplace standard**:
-
 ```
 metasaver-marketplace/
-├── .claude-plugin/
-│   └── marketplace.json        # Required: Marketplace manifest
 ├── plugins/
 │   └── metasaver-core/
-│       ├── .claude-plugin/
-│       │   └── plugin.json     # Required: Plugin manifest
-│       ├── agents/             # At plugin root (not in .claude/)
-│       ├── skills/             # At plugin root (not in .claude/)
-│       ├── commands/           # At plugin root (not in .claude/)
+│       ├── agents/             # Agent definitions
+│       │   ├── config/         # Configuration agents (28)
+│       │   ├── domain/         # Domain agents (4)
+│       │   └── generic/        # Generic agents (21)
+│       ├── skills/             # Skill definitions (71)
+│       │   ├── config/         # Config skills (22)
+│       │   ├── cross-cutting/  # Cross-cutting skills (11)
+│       │   ├── domain/         # Domain skills (7)
+│       │   └── workflow-steps/ # Workflow skills (31)
+│       ├── commands/           # Slash commands (7)
 │       ├── templates/          # Template libraries
 │       ├── settings.json       # Plugin settings
 │       ├── README.md
@@ -321,30 +311,26 @@ metasaver-marketplace/
 └── LICENSE                     # Repository license
 ```
 
-**Official Standards:**
-
-- `.claude-plugin/` directory is **required** by Claude Code
-- `marketplace.json` must be in `.claude-plugin/` (not at root)
-- Plugin components (`agents/`, `skills/`, `commands/`) must be at plugin root
-- Do NOT use `.claude/` directory for plugins (that's for project configs only)
-
 ## Support & Documentation
 
 - Repository: https://github.com/metasaver/metasaver-marketplace
 - Plugin Documentation: See `plugins/metasaver-core/README.md`
 - Issues & Feature Requests: Create issues in this repository
 
-## Contributing
-
-Want to contribute a plugin to the MetaSaver marketplace? See our [contribution guidelines](CONTRIBUTING.md) (coming soon).
-
 ## License
 
-Marketplace manifest: MIT License
+This repository is private and not licensed for public distribution.
 
-Individual plugins: See respective plugin repositories for license information.
+Individual plugins: See respective plugin directories for license information.
 
 ## Version History
+
+### v1.4.0 (Current)
+
+- 53 specialized agents (21 generic, 4 domain, 28 config)
+- 71 reusable skills across 4 categories
+- 7 intelligent routing commands
+- Enhanced workflow-steps skills for structured execution
 
 ### v1.0.0 (2025-01-18)
 

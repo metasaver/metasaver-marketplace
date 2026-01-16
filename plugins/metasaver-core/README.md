@@ -4,30 +4,33 @@ Complete agent and skill system for multi-mono (producer-consumer monorepo) arch
 
 ## What's Included
 
-### 54 Specialized Agents
+### 52 Specialized Agents
 
-**Generic Agents (17):**
+**Generic Agents (20):**
 
-- architect, backend-dev, coder, tester, reviewer, business-analyst, project-manager, devops, code-quality-validator, agent-author, skill-author, security-engineer, performance-engineer, root-cause-analyst, code-explorer, azure-devops-agent, innovation-advisor
+- agent-author, agent-check-agent, architect, backend-dev, business-analyst, code-explorer, code-quality-validator, coder, command-author, complexity-check-agent, enterprise-architect, innovation-advisor, performance-engineer, project-manager, reviewer, root-cause-analyst, scope-check-agent, security-engineer, skill-author, tester
 
-**Domain Agents (9):**
+**Domain Agents (4):**
 
-- data-service-agent, integration-service-agent, prisma-database-agent, react-component-agent, shadcn-component-agent, unit-test-agent, integration-test-agent, e2e-test-agent, monorepo-setup-agent
+- contracts-agent, data-service-agent, prisma-database-agent, react-app-agent
 
 **Config Agents (28):**
 
 - Build Tools, Code Quality, Version Control, Workspace configuration
 
-### 39 Reusable Skills
+### 70 Reusable Skills
 
 Cross-cutting skills, domain skills, workflow steps, and complete config skill libraries with templates.
 
 ### Intelligent Routing Commands
 
+- `/architect` - Architecture design workflow
 - `/audit` - Natural language audit command
 - `/build` - Build new features with architecture validation
+- `/debug` - Debug workflow for issue investigation
 - `/ms` - MetaSaver intelligent command router
-- `/ss` - Screenshot processing command
+- `/qq` - Quick question command
+- `/session` - Session recovery after interruptions
 
 ## Installation
 

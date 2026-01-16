@@ -1,6 +1,6 @@
 ---
 name: root-package-json-config
-description: Root package.json configuration for MetaSaver monorepos. Use when creating or auditing root package.json files to ensure workspace configuration, required scripts (build, dev, lint, test, format, clean), turbo pipeline scripts, packageManager field, and only devDependencies at root (no dependencies except cross-platform binaries).
+description: Root package.json configuration for MetaSaver monorepos. Use when creating or auditing root package.json files to ensure workspace configuration, required scripts (build, dev, lint, test:unit, prettier:fix, clean), turbo pipeline scripts, packageManager field, and only devDependencies at root (no dependencies except cross-platform binaries).
 ---
 
 # Root package.json Configuration Skill
@@ -32,7 +32,7 @@ Located at: `templates/root-package.json.template`
   "name": "@metasaver/project-name",
   "private": true,
   "packageManager": "pnpm@10.20.0",
-  "engines": { "node": ">=22.0.0", "pnpm": ">=9.0.0" },
+  "engines": { "node": ">=22.0.0", "pnpm": ">=10.20.0" },
   "type": "module"
 }
 ```
@@ -73,59 +73,21 @@ Validation checks (pseudo-code):
 
 ```javascript
 // Rule 1: Metadata
-validate(
-  config.name?.startsWith("@metasaver/"),
-  config.private === true,
-  config.packageManager?.startsWith("pnpm@"),
-  config.engines?.node,
-  config.engines?.pnpm,
-);
+validate(config.name?.startsWith("@metasaver/"), config.private === true, config.packageManager?.startsWith("pnpm@"), config.engines?.node, config.engines?.pnpm);
 
 // Rule 2: Scripts (18 required)
-const required = [
-  "build",
-  "clean",
-  "dev",
-  "lint",
-  "lint:fix",
-  "lint:tsc",
-  "prettier",
-  "prettier:fix",
-  "test:unit",
-  "test:coverage",
-  "db:generate",
-  "db:migrate",
-  "db:seed",
-  "db:studio",
-  "docker:up",
-  "docker:down",
-  "setup:npmrc",
-  "setup:env",
-];
+const required = ["build", "clean", "dev", "lint", "lint:fix", "lint:tsc", "prettier", "prettier:fix", "test:unit", "test:coverage", "db:generate", "db:migrate", "db:seed", "db:studio", "docker:up", "docker:down", "setup:npmrc", "setup:env"];
 validate(required.every((s) => config.scripts?.[s]));
 
 // Rule 3: DevDependencies
-const devDeps = [
-  "@commitlint/cli",
-  "@metasaver/core-eslint-config",
-  "@metasaver/core-prettier-config",
-  "dotenv",
-  "husky",
-  "lint-staged",
-  "prettier",
-  "turbo",
-  "typescript",
-];
+const devDeps = ["@commitlint/cli", "@metasaver/core-eslint-config", "@metasaver/core-prettier-config", "dotenv", "husky", "lint-staged", "prettier", "turbo", "typescript"];
 validate(devDeps.every((d) => config.devDependencies?.[d]));
 
 // Rule 4: No workspaces field
 validate(!config.workspaces);
 
 // Rule 5: Cross-platform binaries
-validate(
-  config.dependencies?.["turbo-linux-64"],
-  config.dependencies?.["turbo-windows-64"],
-);
+validate(config.dependencies?.["turbo-linux-64"], config.dependencies?.["turbo-windows-64"]);
 ```
 
 ## Best Practices

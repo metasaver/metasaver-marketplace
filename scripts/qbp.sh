@@ -70,7 +70,7 @@ run_step() {
 
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${YELLOW}QBP: Quality Before Push${NC}"
-echo -e "${CYAN}(Complements clean-and-build and build-and-publish)${NC}"
+echo -e "${CYAN}(Complements cb and bp)${NC}"
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 

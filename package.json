@@ -2,6 +2,7 @@
   "name": "@metasaver/metasaver-marketplace",
   "private": true,
   "version": "0.0.1",
+  "packageManager": "pnpm@10.20.0",
   "description": "MetaSaver Marketplace - Claude Code plugins and shared configurations",
   "metasaver": {
     "projectType": "claude-plugin",

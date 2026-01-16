@@ -37,6 +37,7 @@
         "./skills/cross-cutting/chrome-devtools-testing",
         "./skills/cross-cutting/coding-standards",
         "./skills/cross-cutting/dry-check",
+        "./skills/cross-cutting/complexity-check",
         "./skills/cross-cutting/positive-framing-patterns",
         "./skills/cross-cutting/repomix-cache-refresh",
         "./skills/workflow-steps/requirements-phase",

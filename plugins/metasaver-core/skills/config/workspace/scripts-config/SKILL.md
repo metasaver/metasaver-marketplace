@@ -36,32 +36,50 @@ templates/setup.sh.template
 
 ### Rule 1: Setup Scripts (CRITICAL)
 
-**Required scripts for all repositories:**
+**Required scripts for library repositories (multi-mono):**
 
 | Script             | Purpose                                                     | Repository Type |
 | ------------------ | ----------------------------------------------------------- | --------------- |
-| setup-env.js       | Generate .env from .env.example files                       | All repos       |
-| setup-npmrc.js     | Generate .npmrc from .npmrc.template with token replacement | All repos       |
-| clean-and-build.sh | Clean and rebuild monorepo                                  | All repos       |
+| setup-env.js       | Generate .env from .env.example files                       | Library repos   |
+| setup-npmrc.js     | Generate .npmrc from .npmrc.template with token replacement | Library repos   |
+| clean-and-build.sh | Clean and rebuild monorepo                                  | Library repos   |
 
-**Additional scripts for consumer repositories:**
+**Required scripts for consumer repositories:**
 
 | Script                | Purpose                            |
 | --------------------- | ---------------------------------- |
+| setup-env.js          | Generate .env from .env.example    |
+| setup-npmrc.js        | Generate .npmrc with token         |
+| clean-and-build.sh    | Clean and rebuild monorepo         |
 | back-to-prod.sh       | Switch to GitHub Packages registry |
 | use-local-packages.sh | Switch to local Verdaccio registry |
 | killport.sh           | Cross-platform port management     |
 
+**Exemptions:**
+
+- `metasaver-marketplace` - Template repository, does not require setup scripts
+
 **Validation:**
 
 ```bash
-# Check required scripts exist
-[ -f "scripts/setup-env.js" ] || echo "VIOLATION: Missing setup-env.js"
-[ -f "scripts/setup-npmrc.js" ] || echo "VIOLATION: Missing setup-npmrc.js"
-[ -f "scripts/clean-and-build.sh" ] || echo "VIOLATION: Missing clean-and-build.sh"
+# Skip metasaver-marketplace (template repo)
+if [ "$REPO_NAME" = "metasaver-marketplace" ]; then
+  echo "Skipping setup script validation for template repository"
+  exit 0
+fi
 
-# Consumer repos only
+# Library repos (multi-mono)
+if [ "$REPO_TYPE" = "library" ]; then
+  [ -f "scripts/setup-env.js" ] || echo "VIOLATION: Missing setup-env.js"
+  [ -f "scripts/setup-npmrc.js" ] || echo "VIOLATION: Missing setup-npmrc.js"
+  [ -f "scripts/clean-and-build.sh" ] || echo "VIOLATION: Missing clean-and-build.sh"
+fi
+
+# Consumer repos
 if [ "$REPO_TYPE" = "consumer" ]; then
+  [ -f "scripts/setup-env.js" ] || echo "VIOLATION: Missing setup-env.js"
+  [ -f "scripts/setup-npmrc.js" ] || echo "VIOLATION: Missing setup-npmrc.js"
+  [ -f "scripts/clean-and-build.sh" ] || echo "VIOLATION: Missing clean-and-build.sh"
   [ -f "scripts/back-to-prod.sh" ] || echo "VIOLATION: Missing back-to-prod.sh"
   [ -f "scripts/use-local-packages.sh" ] || echo "VIOLATION: Missing use-local-packages.sh"
   [ -f "scripts/killport.sh" ] || echo "VIOLATION: Missing killport.sh"
@@ -130,36 +148,17 @@ grep -q "process.exit" scripts/*.js || echo "WARNING: No process.exit calls foun
 - Shebang line (`#!/usr/bin/env node` or `#!/usr/bin/env bash`)
 - JSDoc comments for Node.js scripts
 - Usage examples in comments
-- scripts/README.md documenting all scripts
 
-**README.md structure:**
-
-```markdown
-# Scripts Directory
-
-Utility scripts for [repository name].
-
-## Available Scripts
-
-### setup-env.js
-
-Description of what it does and when to use it.
-
-### setup-npmrc.js
-
-Description of what it does and when to use it.
-
-...
-```
+**Note:** scripts/README.md is NOT required - scripts should be self-documenting via inline JSDoc and comments.
 
 **Validation:**
 
 ```bash
-# Check for shebang
+# Check for shebang in Node.js scripts
 head -n1 scripts/*.js | grep -q "#!/usr/bin/env node" || echo "VIOLATION: Missing shebang"
 
-# Check for README
-[ -f "scripts/README.md" ] || echo "VIOLATION: Missing scripts/README.md"
+# Check for shebang in shell scripts
+head -n1 scripts/*.sh | grep -q "#!/bin/bash" || echo "VIOLATION: Missing shebang"
 ```
 
 ## Validation
@@ -196,7 +195,7 @@ To validate /scripts directory:
 2. USE Node.js for cross-platform file operations (setup-env.js, setup-npmrc.js)
 3. USE bash for build/deploy scripts with proper error handling
 4. INCLUDE `chmod +x` instructions for shell scripts
-5. DOCUMENT each script in scripts/README.md
+5. USE JSDoc and inline comments instead of separate README.md
 6. TEST scripts on multiple platforms when possible
 7. ALWAYS USE `path` module consistently (avoid hardcoded paths)
 8. RE-AUDIT after making changes
